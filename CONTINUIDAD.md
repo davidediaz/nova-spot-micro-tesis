@@ -39,6 +39,13 @@ Estado: imagen grabada y verificada en el computador. Falta arrancar la
 Raspberry y confirmar Ubuntu 22.04, escritorio gráfico, red, SSH y expansión de
 la partición `writable`. No conectar ni energizar todavía los servos.
 
+Verificación offline posterior: la partición `writable` contiene
+`Ubuntu 22.04.5 LTS (Jammy Jellyfish)`, paquetes `ubuntu-desktop`,
+`ubuntu-desktop-minimal`, `ubuntu-standard` y `gnome-shell`, además de sesiones
+gráficas Xorg y Wayland. La comprobación confirma la imagen y la interfaz
+gráfica instaladas; aún falta el primer arranque físico de la Raspberry para
+validar red, SSH y funcionamiento real del escritorio.
+
 Este archivo es la memoria persistente para continuar el proyecto en sesiones
 posteriores. Antes de realizar nuevas tareas se debe leer este documento y el
 seguimiento operativo ubicado en `Seguimiento/Seguimiento.md`.
