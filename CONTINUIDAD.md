@@ -677,3 +677,12 @@ La próxima acción es rediseñar la forma temporal completa del descenso, no
 solo su penúltima muestra, manteniendo continuidad y elevación máxima. Debe
 compararse primero en pruebas cartesianas y luego en Gazebo antes de congelar
 otra versión.
+
+### Preparación de Thonny y comunicación con Raspberry (19 de agosto de 2026)
+
+Se documentaron `Raspberry/INSTALACION_THONNY.md` y
+`Raspberry/PROTOCOLO_COMUNICACION_RASPBERRY.md`. El canal principal será
+Ethernet + SSH; ROS 2/DDS usará `ROS_DOMAIN_ID=42` y USB-serial de 3,3 V queda
+como respaldo. La instalación de Thonny y la verificación de red, SSH, reloj,
+I2C y arquitectura `aarch64` se realizarán después del primer arranque de la
+Raspberry. No se conectan ni energizan servos en esta fase.

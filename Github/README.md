@@ -44,6 +44,11 @@ configuraciones, las pruebas y los informes experimentales. El código de
 el RL como implementado hasta que su fase correspondiente sea ejecutada y
 validada.
 
+La preparación de la Raspberry está documentada en
+[`Raspberry/INSTALACION_THONNY.md`](../Raspberry/INSTALACION_THONNY.md) y el
+protocolo de Ethernet, SSH, ROS 2/DDS y USB-serial en
+[`Raspberry/PROTOCOLO_COMUNICACION_RASPBERRY.md`](../Raspberry/PROTOCOLO_COMUNICACION_RASPBERRY.md).
+
 Para el estado técnico completo, consultar:
 
 - [`CONTINUIDAD.md`](../CONTINUIDAD.md)
