@@ -21,6 +21,24 @@ motivo, pruebas o evidencia, resultado y siguiente acción. No se deben
 reescribir silenciosamente resultados históricos ni mezclar bolsas producidas
 con configuraciones diferentes.
 
+### Reinstalación de la memoria Raspberry Pi — 19 de agosto de 2026
+
+Se borró y reinstaló la memoria USB/microSD de 32 GB identificada de forma
+inequívoca como `/dev/sda`, modelo `Storage Device`, 28,9 GiB. El SSD interno
+`/dev/nvme0n1` no fue utilizado como destino. Se empleó la imagen oficial
+`ubuntu-22.04.5-preinstalled-desktop-arm64+raspi.img.xz`, cuyo SHA-256 fue
+`74764944dd4a96bdddd30cf1ffc133ecbe5ebb1d1f2eaa34cd5f8fbb57211c86`.
+
+La escritura terminó con 9.269.411.840 bytes y sincronización completada. La
+tabla resultante muestra `system-boot` (512 MiB, FAT) y `writable` (8,1 GiB,
+ext4). El script reproducible y protegido por comprobación de modelo, tamaño,
+hash y confirmación explícita está en
+`Raspberry/reinstalar_ubuntu22_desktop_pi.sh` y en el repositorio público.
+
+Estado: imagen grabada y verificada en el computador. Falta arrancar la
+Raspberry y confirmar Ubuntu 22.04, escritorio gráfico, red, SSH y expansión de
+la partición `writable`. No conectar ni energizar todavía los servos.
+
 Este archivo es la memoria persistente para continuar el proyecto en sesiones
 posteriores. Antes de realizar nuevas tareas se debe leer este documento y el
 seguimiento operativo ubicado en `Seguimiento/Seguimiento.md`.
