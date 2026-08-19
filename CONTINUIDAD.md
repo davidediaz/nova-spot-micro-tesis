@@ -2,6 +2,25 @@
 
 Última actualización: 19 de agosto de 2026, America/Bogota.
 
+## Repositorio público de seguimiento
+
+Desde el 19 de agosto de 2026 el proyecto tiene un repositorio público para
+que el profesor pueda revisar el progreso semanal, la ruta de trabajo, la
+bitácora, el código y las evidencias:
+
+- Repositorio: <https://github.com/davidediaz/nova-spot-micro-tesis>
+- Panel web: <https://davidediaz.github.io/nova-spot-micro-tesis/>
+- Bitácora visual: `Github/BITACORA.html`
+- Cronograma semanal: `Github/CRONOGRAMA_SEMANAL.md`
+- Ruta completa: `Github/RUTA_TRABAJO.md`
+
+Regla permanente de trazabilidad: cada cambio relevante del proyecto debe
+quedar registrado en este archivo y en el repositorio público mediante un
+commit descriptivo. La actualización debe indicar fecha, archivos modificados,
+motivo, pruebas o evidencia, resultado y siguiente acción. No se deben
+reescribir silenciosamente resultados históricos ni mezclar bolsas producidas
+con configuraciones diferentes.
+
 Este archivo es la memoria persistente para continuar el proyecto en sesiones
 posteriores. Antes de realizar nuevas tareas se debe leer este documento y el
 seguimiento operativo ubicado en `Seguimiento/Seguimiento.md`.

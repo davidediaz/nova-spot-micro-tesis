@@ -35,6 +35,15 @@ decisiones y siguiente objetivo.
   aterrizajes todavía no coinciden suficientemente con el plan previsto.
 - El hardware no se ha energizado.
 
+## Código y modelo
+
+El [índice de código](INDICE_CODIGO.md) enlaza el modelado matemático en LaTeX,
+su implementación Python, la cinemática, el controlador de marcha, las
+configuraciones, las pruebas y los informes experimentales. El código de
+`gateo/crawl` y `paso/step` está en `src/nova_gait_controller`; no se presenta
+el RL como implementado hasta que su fase correspondiente sea ejecutada y
+validada.
+
 Para el estado técnico completo, consultar:
 
 - [`CONTINUIDAD.md`](../CONTINUIDAD.md)
