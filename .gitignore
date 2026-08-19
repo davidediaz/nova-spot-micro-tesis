@@ -14,7 +14,12 @@ log/
 # Datos experimentales pesados o regenerables
 Experimentos/rosbag2/**/*.db3
 Experimentos/rosbag2/**/metadata.yaml
+Experimentos/validacion_temporizador_20260814/*.db3
+Experimentos/validacion_temporizador_20260814/metadata.yaml
 *.bag
+
+# Repositorios externos de referencia
+referencias/
 
 # Archivos temporales de LaTeX y editores
 *.aux
