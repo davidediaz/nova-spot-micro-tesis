@@ -53,10 +53,25 @@
     </div></section>
 
     <section class="layout">
-      <article class="card"><h2>Ruta del proyecto</h2><div class="timeline">
-        <div class="event"><div class="date">11–17 agosto</div><h3>Simulación y medición</h3><p class="muted">Se validaron gateo y marcha paso en Gazebo/MuJoCo, se corrigió la cadencia y se incorporaron fase y contactos de las cuatro patas.</p></div>
-        <div class="event"><div class="date">18–24 agosto · en curso</div><h3>Ajuste del gateo</h3><p class="muted">Los despegues ya coinciden mejor. Se está rediseñando el descenso para alinear los aterrizajes delanteros y traseros con el plan.</p></div>
-        <div class="event"><div class="date">Próximo hito</div><h3>Nueva línea base de contactos</h3><p class="muted">Validar en pruebas locales, ensayar en Gazebo, registrar una bolsa nueva y repetirla sin mezclar versiones.</p></div>
+      <article class="card"><h2>Ruta completa del proyecto</h2><div class="timeline">
+        <div class="event"><div class="date">01 · Completada</div><h3>Problema, objetivos y alcance</h3><p class="muted">Definición del problema, objetivos, estado del arte, metodología y presupuesto.</p></div>
+        <div class="event"><div class="date">02 · Completada</div><h3>Modelo matemático nominal</h3><p class="muted">Geometría, FK, IK, Jacobiano, dinámica, actuadores, contacto, estabilidad y control discreto.</p></div>
+        <div class="event"><div class="date">03 · Completada</div><h3>ROS 2 y simulación</h3><p class="muted">URDF/MJCF, controlador, métricas, supervisor, fase y contactos medidos.</p></div>
+        <div class="event"><div class="date">04 · En curso</div><h3>Corrección del gateo</h3><p class="muted">Ajustar el descenso por eje y sincronizar los aterrizajes con el plan de contactos.</p></div>
+        <div class="event"><div class="date">05 · Completada</div><h3>Validación de marcha paso</h3><p class="muted">Ensayos repetidos en Gazebo y validación articular en MuJoCo.</p></div>
+        <div class="event"><div class="date">06 · En curso</div><h3>Protocolo experimental</h3><p class="muted">Aprobar con el profesor métrica primaria, frecuencia, umbrales y criterio de éxito.</p></div>
+        <div class="event"><div class="date">07 · Pendiente</div><h3>Caracterización física</h3><p class="muted">Fotografías, componentes, geometría, masas, holguras y diferencias sin energizar.</p></div>
+        <div class="event"><div class="date">08 · Pendiente</div><h3>Seguridad eléctrica</h3><p class="muted">Fuente, fusible, cableado, tierra común, OE y parada física independiente.</p></div>
+        <div class="event"><div class="date">09 · Bloqueada</div><h3>Calibración de 12 servos</h3><p class="muted">Centros PWM, sentidos, límites, corriente y temperatura, después de seguridad.</p></div>
+        <div class="event"><div class="date">10 · Preparación iniciada</div><h3>Raspberry Pi y PCA9685</h3><p class="muted">Ubuntu 22.04, SSH, red, I2C y PWM sin servos.</p></div>
+        <div class="event"><div class="date">11 · Pendiente</div><h3>Interfaz articulación–PWM</h3><p class="muted">Arranque deshabilitado y estado seguro ante referencias inválidas o pérdida de datos.</p></div>
+        <div class="event"><div class="date">12 · Bloqueada</div><h3>Transferencia progresiva al robot</h3><p class="muted">Sin actuadores, un servo, una pata, robot suspendido, postura y marcha en suelo.</p></div>
+        <div class="event"><div class="date">13 · No iniciar todavía</div><h3>Diseño RL correctivo</h3><p class="muted">Observaciones, acciones pequeñas, recompensa, terminaciones y currículo.</p></div>
+        <div class="event"><div class="date">14 · Pendiente</div><h3>Entrenamiento PPO</h3><p class="muted">Cinco semillas congeladas y aleatorización de dominio en simulación.</p></div>
+        <div class="event"><div class="date">15 · Pendiente</div><h3>Selección e integración RL</h3><p class="muted">Validación separada, saturaciones, supervisor y política final bloqueada.</p></div>
+        <div class="event"><div class="date">16 · Pendiente</div><h3>Comparación final</h3><p class="muted">Nominal frente a nominal más RL para gateo y paso: 400 ciclos programados.</p></div>
+        <div class="event"><div class="date">17 · Pendiente</div><h3>Análisis y tesis</h3><p class="muted">Métricas, estadística, limitaciones, tablas, gráficas y trazabilidad.</p></div>
+        <div class="event"><div class="date">18 · Pendiente</div><h3>Entrega y sustentación</h3><p class="muted">PDF final, anexos, código, datos, hashes, presentación y demostración.</p></div>
       </div></article>
       <aside class="card"><h2>Estado por área</h2>
         <h3>Software y simulación</h3><div class="bar"><span style="width:92%"></span></div><div class="muted">Implementado y reproducible</div>
