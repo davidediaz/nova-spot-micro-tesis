@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="950" viewBox="0 0 1500 950">
+  <style>
+    .title{font:700 34px sans-serif}.head{font:700 25px sans-serif}.txt{font:20px sans-serif}.small{font:17px sans-serif}.body{fill:#f2cf00;stroke:#665700;stroke-width:5}.femur{stroke:#f2cf00;stroke-width:34;stroke-linecap:round}.tibia{stroke:#25282c;stroke-width:30;stroke-linecap:round}.foot{stroke:#7e3c91;stroke-width:24;stroke-linecap:round}.coxa{stroke:#25282c;stroke-width:28;stroke-linecap:round}.axis{fill:#fff;stroke-width:7}.fl{stroke:#1665d8}.fr{stroke:#259b35}.rl{stroke:#ed7700}.rr{stroke:#7835a5}.lead{fill:none;stroke-width:4}.box{fill:#fff;stroke:#333;stroke-width:3}
+  </style>
+  <rect width="1500" height="950" fill="#fafafa"/>
+  <text x="750" y="52" text-anchor="middle" class="title">NOVA SPOT MICRO 3 — EJES CORRECTOS DE LOS 12 SERVOS</text>
+  <text x="750" y="88" text-anchor="middle" class="txt">Cada CHx es un puerto del PCA9685; ningún servo se conecta directamente a un GPIO</text>
+
+  <text x="430" y="142" text-anchor="middle" class="head">VISTA SUPERIOR · FRENTE +X HACIA LA IZQUIERDA</text>
+  <path d="M175 185 H95" stroke="#111" stroke-width="15"/><path d="M95 185 L130 160 M95 185 L130 210" stroke="#111" stroke-width="15" fill="none"/>
+  <rect x="270" y="230" width="410" height="300" rx="55" class="body"/>
+  <rect x="215" y="295" width="85" height="170" rx="30" class="body"/>
+  <text x="475" y="385" text-anchor="middle" class="head">NOVA SM3</text>
+
+  <!-- FL: coxa axis at body, femur axis after lateral coxa, tibia at knee -->
+  <path d="M310 245 L245 195" class="coxa"/><path d="M245 195 L185 135" class="femur"/><path d="M185 135 L125 105" class="tibia"/><path d="M125 105 L105 98" class="foot"/>
+  <circle cx="310" cy="245" r="14" class="axis fl"/><circle cx="245" cy="195" r="14" class="axis fl"/><circle cx="185" cy="135" r="14" class="axis fl"/>
+  <path d="M310 245 L115 250" class="lead fl"/><text x="108" y="257" text-anchor="end" class="txt" fill="#1665d8">PCA CH0 · FL coxa</text>
+  <path d="M245 195 L115 200" class="lead fl"/><text x="108" y="207" text-anchor="end" class="txt" fill="#1665d8">PCA CH1 · FL fémur</text>
+  <path d="M185 135 L115 145" class="lead fl"/><text x="108" y="152" text-anchor="end" class="txt" fill="#1665d8">PCA CH2 · FL tibia</text>
+
+  <!-- FR -->
+  <path d="M310 515 L245 565" class="coxa"/><path d="M245 565 L185 625" class="femur"/><path d="M185 625 L125 655" class="tibia"/><path d="M125 655 L105 662" class="foot"/>
+  <circle cx="310" cy="515" r="14" class="axis fr"/><circle cx="245" cy="565" r="14" class="axis fr"/><circle cx="185" cy="625" r="14" class="axis fr"/>
+  <path d="M310 515 L115 510" class="lead fr"/><text x="108" y="517" text-anchor="end" class="txt" fill="#259b35">PCA CH3 · FR coxa</text>
+  <path d="M245 565 L115 560" class="lead fr"/><text x="108" y="567" text-anchor="end" class="txt" fill="#259b35">PCA CH4 · FR fémur</text>
+  <path d="M185 625 L115 615" class="lead fr"/><text x="108" y="622" text-anchor="end" class="txt" fill="#259b35">PCA CH5 · FR tibia</text>
+
+  <!-- RL -->
+  <path d="M640 245 L705 195" class="coxa"/><path d="M705 195 L765 135" class="femur"/><path d="M765 135 L825 105" class="tibia"/><path d="M825 105 L845 98" class="foot"/>
+  <circle cx="640" cy="245" r="14" class="axis rl"/><circle cx="705" cy="195" r="14" class="axis rl"/><circle cx="765" cy="135" r="14" class="axis rl"/>
+  <path d="M640 245 L845 250" class="lead rl"/><text x="852" y="257" class="txt" fill="#ed7700">PCA CH6 · RL coxa</text>
+  <path d="M705 195 L845 200" class="lead rl"/><text x="852" y="207" class="txt" fill="#ed7700">PCA CH7 · RL fémur</text>
+  <path d="M765 135 L845 145" class="lead rl"/><text x="852" y="152" class="txt" fill="#ed7700">PCA CH8 · RL tibia</text>
+
+  <!-- RR -->
+  <path d="M640 515 L705 565" class="coxa"/><path d="M705 565 L765 625" class="femur"/><path d="M765 625 L825 655" class="tibia"/><path d="M825 655 L845 662" class="foot"/>
+  <circle cx="640" cy="515" r="14" class="axis rr"/><circle cx="705" cy="565" r="14" class="axis rr"/><circle cx="765" cy="625" r="14" class="axis rr"/>
+  <path d="M640 515 L845 510" class="lead rr"/><text x="852" y="517" class="txt" fill="#7835a5">PCA CH9 · RR coxa</text>
+  <path d="M705 565 L845 560" class="lead rr"/><text x="852" y="567" class="txt" fill="#7835a5">PCA CH10 · RR fémur</text>
+  <path d="M765 625 L845 615" class="lead rr"/><text x="852" y="622" class="txt" fill="#7835a5">PCA CH11 · RR tibia</text>
+
+  <!-- Side-view explanation -->
+  <rect x="920" y="180" width="530" height="470" rx="25" class="box"/>
+  <text x="1185" y="220" text-anchor="middle" class="head">DETALLE LATERAL DE UNA PATA</text>
+  <rect x="1010" y="260" width="290" height="95" rx="25" class="body"/>
+  <path d="M1080 350 L1145 382" class="coxa"/><path d="M1145 382 L1235 495" class="femur"/><path d="M1235 495 L1280 600" class="tibia"/><path d="M1280 600 L1310 608" class="foot"/>
+  <circle cx="1080" cy="350" r="16" class="axis fl"/><circle cx="1145" cy="382" r="16" class="axis fl"/><circle cx="1235" cy="495" r="16" class="axis fl"/>
+  <path d="M1080 350 L1340 310" class="lead fl"/><text x="1350" y="315" class="txt" fill="#1665d8">COXA: junto al cuerpo</text>
+  <path d="M1145 382 L1340 380" class="lead fl"/><text x="1350" y="387" class="txt" fill="#1665d8">FÉMUR: pivote superior</text>
+  <path d="M1235 495 L1340 500" class="lead fl"/><text x="1350" y="507" class="txt" fill="#1665d8">TIBIA: rodilla</text>
+  <text x="1185" y="635" text-anchor="middle" class="small" fill="#a11212">No hay servo en la espinilla, tobillo ni pie.</text>
+
+  <rect x="70" y="720" width="1360" height="170" rx="22" class="box"/>
+  <text x="750" y="760" text-anchor="middle" class="head">REGLA DE IDENTIFICACIÓN FÍSICA</text>
+  <text x="110" y="805" class="txt">1. Coxa: primer eje, fijado al cuerpo; abre/cierra lateralmente la pata.</text>
+  <text x="110" y="842" class="txt">2. Fémur: segundo eje, después del enlace lateral de coxa; mueve el segmento superior.</text>
+  <text x="110" y="879" class="txt">3. Tibia: tercer eje, en la rodilla; mueve únicamente la pata inferior.</text>
+  <text x="750" y="930" text-anchor="middle" class="small">Raspberry → I2C → PCA9685 → CH0–CH11 → servos. Posiciones derivadas de nova_sm3.urdf.xacro.</text>
+</svg>

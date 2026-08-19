@@ -1,0 +1,115 @@
+% ---------------------------------------------------------------------------
+% ------------------- DRAFT-UNDERGRADUATE PROJECT TEMPLATE ------------------
+% ----------------------                        ---------------------
+% ---------------------------------------------------------------------------
+
+
+
+% Document Settings
+% ----------------------------
+\documentclass[letterpaper, 11pt, oneside, spanish]{Thesis}
+\usepackage{tikz}
+\usetikzlibrary{shapes, arrows, positioning, decorations.pathreplacing, babel}
+\usepackage{float}  % al inicio, antes de \begin{document}
+
+% This is class based on 'ECSthesis.cls' made by by Steve R. Gunn
+% It was modified by: 	Jhon E. Navarrete Gómez
+%						jhonnavarrete@usantotomas.edu.co
+\usepackage{graphicx}
+\begin{document}
+% Turns off chapter numbering and uses roman numerals for page numbers
+
+\frontmatter      
+% Set up Basic Information
+
+\ProyectodeGrado{I}
+	% I - Draft-thesis Template
+	% II - Thesis Template	
+\title{Diseño de un sistema de control para la
+locomoción y estabilización de un robot cuadrúpedo basado en
+aprendizaje por refuerzo
+ }
+%Implementación de un sistema multiagente PSO con comportamiento de rebaño en base a Q-learning, utilizando ROS y Python para plataformas UAV  Crazyflie2.1.
+\group{GED}
+
+\authors{
+\texorpdfstring{\href{david.diazc@usantotomas.edu.co}
+{DAVID ESTEBAN DÍAZ CASTRO}}{Author1}
+\\[0.5cm]
+\texorpdfstring{\href{davidfdiaz@usantotomas.edu.co}
+{DAVID FELIPE DÍAZ SUESCA}}{Author2}
+}
+
+\director{MsC. Armando Mateus Rojas}
+
+\codirector{
+{PhD. Billy Vladimir Toro Tovar}
+\\[0.5cm]
+{MsC. Carlos Javier Mojica Casallas}
+}
+
+
+
+\addresses{\groupname\\\deptname\\\univname}
+% Do not change this here, instead these must be set in the "Thesis.cls" file, please look through it instead
+\date{\today}
+\subject{}
+\keywords{}
+
+
+\maketitle
+%% ----------------------------------------------------------------
+
+\setstretch{1.3}  % It is better to have smaller font and larger line spacing than the other way round
+
+% Define the page headers using the FancyHdr package and set up for one-sided printing
+\fancyhead{}
+	% Clears all page headers and footers
+\rhead{\thepage}
+	% Sets the right side header to show the page number
+\lhead{}
+	% Clears the left side page header
+\pagestyle{fancy}
+	% Finally, use the "fancy" page style to implement the FancyHdr headers
+
+%\lhead{\emph{Contents}}
+%	% Set the left side page header to "Contents"
+\tableofcontents  
+	% Write out the Table of Contents
+
+
+%% ----------------------------------------------------------------
+\mainmatter	  
+% Turns on chapter numbering, resets page numbering and uses arabic numerals for page numbers;
+% Begin normal, numeric (1,2,3...) page numbering
+
+\pagestyle{fancy}
+% Return the page headers back to the "fancy" style
+
+\input{Chapters/0 Firmas}
+\input{Chapters/1 Introducción}
+\input{Chapters/2 Planteamiento}
+\input{Chapters/3 Objetivos}
+\input{Chapters/4 Justificación }
+\input{Chapters/5 Alcance}
+\input{Chapters/6 Marco}
+\input{Chapters/7 Estado del arte}
+\input{Chapters/8 Metodologia}
+\input{Chapters/9 Cronograma}
+\input{Chapters/10 Presupuesto}
+
+\addtocontents{toc}{\vspace{2em}}
+	% Add a gap in the Contents, for aesthetics
+	
+\backmatter
+	% Turns off chapter numbering and doesn't fiddle with page numbering.
+
+%----------------------------------------------------------------------------------------
+%	BIBLIOGRAPHY
+%----------------------------------------------------------------------------------------
+\begin{otherlanguage}{english}
+\printbibliography[title=Referencias,heading=bibintoc]
+\end{otherlanguage}
+%----------------------------------------------------------------------------------------
+
+\end{document}  

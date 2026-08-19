@@ -1,0 +1,184 @@
+\chapter{Metodología}
+
+El proyecto corresponde a una \textbf{investigación aplicada, cuantitativa,
+experimental y de desarrollo tecnológico}. Su propósito es reactivar el robot
+cuadrúpedo Nova Spot Micro y evaluar, mediante mediciones repetibles, el efecto
+de una política de aprendizaje por refuerzo sobre una estrategia convencional
+de locomoción.
+
+La arquitectura de control tendrá dos niveles. El primero generará una marcha
+nominal mediante una máquina de estados finitos, trayectorias de los pies y
+referencias articulares para postura, paso y gateo. El segundo estará compuesto
+por una política de aprendizaje por refuerzo que producirá únicamente
+correcciones pequeñas y acotadas sobre dichas referencias. La política no
+controlará directamente las señales PWM de los servomotores y permanecerá
+subordinada a un supervisor independiente de seguridad, límites articulares y
+saturaciones.
+
+El desarrollo seguirá un esquema secuencial con retroalimentación. Cada etapa
+deberá superar sus verificaciones antes de avanzar a pruebas que impliquen un
+mayor riesgo para el hardware.
+
+\section{Fases del desarrollo}
+
+La metodología se organiza en ocho fases principales.
+
+\subsection{Fase 1: Caracterización de la plataforma}
+
+Se realizará el inventario técnico y la inspección mecánica y eléctrica del
+robot. Se medirán la geometría, los límites articulares, los ceros mecánicos,
+las masas y la ubicación aproximada del centro de masa. Las dimensiones
+relevantes se medirán al menos tres veces y se reportarán mediante promedio e
+incertidumbre. También se identificarán las variables que pueden medirse en el
+robot real y las limitaciones de los actuadores y sensores disponibles.
+
+\textbf{Resultado esperado:} ficha técnica, tabla de parámetros geométricos e
+inerciales, inventario de componentes y lista de riesgos.
+
+\subsection{Fase 2: Modelado y simulación}
+
+Se formularán la cinemática directa e inversa, el jacobiano, los límites
+articulares y el espacio de trabajo de cada pata. El modelo se extenderá a las
+cuatro extremidades y se validará comparando posiciones calculadas y medidas.
+Posteriormente se construirá el modelo del robot en URDF y se integrará con ROS
+2 y MuJoCo, incluyendo masas, inercias, colisiones, fricción, actuadores e IMU
+simulada.
+
+\textbf{Resultado esperado:} modelo matemático validado y simulación
+reproducible capaz de permanecer de pie y recibir referencias articulares.
+
+\subsection{Fase 3: Arquitectura electrónica y seguridad}
+
+Se dimensionarán la fuente de alimentación, la distribución de potencia, las
+protecciones y el cableado a partir de la corriente máxima prevista. Se definirá
+la comunicación entre el computador embebido, el controlador PWM, la IMU y los
+demás sensores. Los servomotores utilizarán una alimentación de potencia
+separada de la electrónica de control, con tierra común, fusible, interruptor y
+parada de emergencia. Cada articulación se calibrará individualmente antes de
+integrar las patas.
+
+\textbf{Resultado esperado:} diagramas eléctricos, presupuesto energético,
+archivo de calibración de las articulaciones y protocolos de encendido, apagado
+y emergencia.
+
+\subsection{Fase 4: Control convencional y marcha nominal}
+
+Se implementarán el control de postura, la interpolación suave de referencias,
+las trayectorias de los pies y una máquina de estados finitos para coordinar las
+fases de apoyo y oscilación. Esta línea base ejecutará postura, paso y gateo en
+una superficie plana. Incluirá límites de posición y velocidad, detección de
+referencias no alcanzables y un supervisor de seguridad.
+
+No se fija una meta de velocidad máxima. El robot operará a baja velocidad y
+esta se limitará según la estabilidad observada, la capacidad de los actuadores
+y la seguridad. La velocidad obtenida se medirá y reportará, mientras que el
+criterio funcional será completar ciclos de locomoción verificables y
+repetibles.
+
+\textbf{Resultado esperado:} robot simulado ejecutando postura, paso y gateo
+sin aprendizaje por refuerzo, como condición de referencia para la comparación.
+
+\subsection{Fase 5: Formulación y entrenamiento del aprendizaje por refuerzo}
+
+El problema se formulará como un proceso de decisión de Markov. Las
+observaciones incluirán, según la disponibilidad de sensado, orientación y
+velocidad angular de la IMU, posiciones articulares, fase de marcha,
+referencias nominales y contactos estimados o medidos. Las acciones serán
+correcciones limitadas de las referencias articulares o de las posiciones de
+los pies. La recompensa considerará avance, estabilidad, seguimiento,
+suavidad, esfuerzo y penalización por caída o saturación.
+
+Se evaluará inicialmente el algoritmo PPO por su compatibilidad con espacios de
+acción continuos. El entrenamiento se realizará primero en MuJoCo, empleando
+aleatorización de masa, centro de masa, fricción, ganancias, retardos, ruido de
+sensores y capacidad de los actuadores. Se conservarán semillas, curvas de
+recompensa, hiperparámetros, configuraciones y políticas entrenadas.
+
+\textbf{Resultado esperado:} formulación matemática completa, protocolo de
+entrenamiento reproducible y política correctiva validada en simulación.
+
+\subsection{Fase 6: Integración y transferencia al robot}
+
+La transferencia se realizará progresivamente: ejecución sin activar los
+servos, servo individual, pata suspendida, cuatro patas con el robot suspendido,
+postura con soporte, transferencia de peso, un paso, ciclo completo de gateo y
+marcha continua. Solo después se habilitarán las correcciones aprendidas, con
+amplitud limitada. En todas las etapas se mantendrán la parada de emergencia y
+los límites independientes de la política.
+
+\textbf{Resultado esperado:} ejecución segura de la marcha nominal y de la
+marcha con corrección aprendida en el robot físico.
+
+\subsection{Fase 7: Validación experimental comparativa}
+
+Se evaluarán dos condiciones principales: marcha nominal sin aprendizaje y la
+misma marcha con la capa correctiva aprendida. Ambas se probarán en simulación y
+en el robot físico sobre una superficie plana y en condiciones controladas. Se
+realizarán al menos diez ciclos válidos por modo de marcha y condición.
+
+Las variables de respuesta serán el margen de estabilidad estática, la
+inclinación del cuerpo, el desplazamiento, la desviación lateral, la longitud y
+el tiempo de paso, la repetibilidad ciclo a ciclo y el número de fallos o
+caídas. El seguimiento articular se evaluará mediante RMSE, error máximo,
+retardo, sobreimpulso y error en estado estable únicamente si existe medición
+real de la posición; el controlador PWM por sí solo no proporciona esta
+realimentación.
+
+\textbf{Resultado esperado:} conjunto de datos y comparación estadística que
+permita determinar en qué medida la política mejora la estabilidad y la
+repetibilidad respecto de la marcha nominal.
+
+\subsection{Fase 8: Análisis y documentación}
+
+Se contrastarán los resultados de simulación y del robot físico, se analizarán
+las limitaciones impuestas por el hardware y se establecerá la trazabilidad
+entre cada objetivo, método, evidencia y conclusión. Se documentarán el código,
+las configuraciones, el protocolo experimental y el manual de operación.
+
+\textbf{Resultado esperado:} informe final reproducible, conclusiones
+vinculadas con los objetivos y documentación técnica para reutilizar la
+plataforma.
+
+\section{Diagrama de flujo de la metodología}
+
+\begin{figure}[h!]
+\centering
+\resizebox{0.96\textwidth}{!}{%
+\begin{tikzpicture}[
+    node distance=0.65cm,
+    block/.style={rectangle, draw, fill=blue!20, text width=10em,
+        text centered, rounded corners, minimum height=3.5em},
+    arrow/.style={-latex, thick}
+]
+\node (f1) [block] {1. Caracterización de la plataforma};
+\node (f2) [block, right=of f1] {2. Modelado y simulación};
+\node (f3) [block, right=of f2] {3. Electrónica y seguridad};
+\node (f4) [block, right=of f3] {4. Marcha nominal};
+\node (f5) [block, below=of f4] {5. Aprendizaje por refuerzo};
+\node (f6) [block, left=of f5] {6. Transferencia al robot};
+\node (f7) [block, left=of f6] {7. Validación comparativa};
+\node (f8) [block, left=of f7] {8. Análisis y documentación};
+
+\draw[arrow] (f1) -- (f2);
+\draw[arrow] (f2) -- (f3);
+\draw[arrow] (f3) -- (f4);
+\draw[arrow] (f4) -- (f5);
+\draw[arrow] (f5) -- (f6);
+\draw[arrow] (f6) -- (f7);
+\draw[arrow] (f7) -- (f8);
+\draw[-latex, dashed] (f7.north) .. controls +(up:1.2cm) and +(down:1.2cm) .. (f4.south);
+\draw[-latex, dashed] (f6.north) .. controls +(up:1.0cm) and +(down:1.0cm) .. (f3.south);
+\end{tikzpicture}%
+}
+\caption{Fases de desarrollo y ciclos de retroalimentación del proyecto.}
+\label{fig:metodologia_fases}
+\end{figure}
+
+\section{Articulación con los objetivos}
+
+La caracterización y el modelado responden al primer objetivo específico; la
+arquitectura electrónica y de seguridad, al segundo; la marcha nominal, al
+tercero; el entrenamiento y la transferencia de la política correctiva, al
+cuarto; y la validación comparativa con y sin aprendizaje por refuerzo, al
+quinto. Esta correspondencia permite relacionar cada conclusión con evidencia
+experimental concreta.

@@ -1,0 +1,119 @@
+\chapter{Alcance}
+El presente anteproyecto tiene como alcance proponer la reactivación funcional
+del robot cuadrúpedo Nova Spot Micro del laboratorio de robótica de
+la Universidad Santo Tomás mediante la caracterización de su modelo cinemático y la implementación de un sistema electrónico de
+control que permita la ejecución de patrones de locomoción cuadrúpeda.
+
+En este sentido, se proyecta:
+
+
+
+\begin{itemize}
+
+\item Realizar la caracterización geométrica y estructural de la plataforma con el
+fin de identificar los parámetros necesarios para su modelado.
+
+\item Formular el modelo cinemático directo e inverso de las extremidades del
+robot y de igual manera los jacobianos del sistema junto con el modelo dinámico como base para la generación de trayectorias articulares.
+
+\item Integrar la arquitectura electrónica necesaria para el accionamiento y
+sensado de las articulaciones.
+
+\item Implementar una marcha nominal mediante una máquina de estados finitos,
+orientada a la coordinación de movimientos en fases de apoyo y oscilación para
+postura, paso y gateo.
+
+\item Entrenar en simulación y evaluar tanto en simulación como en el robot
+físico una política de aprendizaje por refuerzo que actúe como capa correctiva
+sobre la marcha nominal.
+
+\item Establecer un mecanismo HRI (human-robot-interface) para la operación del
+robot.
+
+\item Definir un esquema de validación experimental que permita evaluar la
+estabilidad y funcionamiento en condiciones controladas de laboratorio.
+
+\end{itemize}
+
+El impacto esperado del proyecto radica en la habilitación operativa de la
+plataforma como herramienta académica y de investigación, generando una base
+técnica documentada que facilite futuros desarrollos en controles mas complejos y con
+mejoras del desempeño en locomoción cuadrúpeda.
+
+\section{Limitaciones del proyecto}
+
+
+El presente proyecto se orienta a la reactivación funcional de la plataforma
+cuadrúpeda mediante su caracterización mecánica, modelado cinemático y dinámico e
+implementación de un sistema de control para los modos de locomoción tipo paso y gateo.
+En coherencia con este enfoque, no se contempla el desarrollo de un sistema
+completamente autónomo ni la integración de conectividad a internet,
+comunicación en la nube. El control estará
+basado en patrones nominales de marcha predefinidos y programados mediante una
+máquina de estados finitos. Sobre estas referencias se evaluará una política de
+aprendizaje por refuerzo encargada exclusivamente de generar correcciones
+pequeñas y acotadas de estabilización. La política no comandará directamente
+las señales PWM de los servomotores, no sustituirá los límites articulares ni
+el supervisor de seguridad, y no incorporará navegación autónoma o toma de
+decisiones en entornos dinámicos.
+
+Asimismo, el proyecto no incluye el diseño ni la optimización avanzada del
+sistema energético. No se realizará una caracterización detallada de baterías
+orientada a maximizar densidad energética o autonomía prolongada, ya que la
+selección del sistema de alimentación estará limitada por las restricciones de
+peso y capacidad estructural de la plataforma existente.
+
+En cuanto al desempeño locomotor, el robot estará orientado a operar en
+superficies planas y condiciones controladas de laboratorio. No se contempla la
+implementación de estrategias que permitan subir o bajar desniveles,
+desplazarse en terrenos altamente irregulares o ejecutar maniobras complejas
+en ambientes no estructurados.
+
+El proyecto se orientará a locomoción de baja velocidad y no establecerá como
+requisito una velocidad máxima de desplazamiento. La velocidad se limitará de
+acuerdo con la estabilidad observada, la capacidad de los actuadores y los
+criterios de seguridad definidos durante la caracterización. Se considerará
+funcional el desplazamiento cuando el robot complete de forma verificable y
+repetible los ciclos de paso y gateo establecidos; la velocidad alcanzada se
+medirá y reportará como resultado experimental.
+
+Finalmente, el proyecto se limitará al estudio y aplicación de modelos
+cinemáticos para la generación de marchas estáticas tipo paso y gateo, sin
+abordar un modelado dinámico complejo o muy robusto del sistema ni la implementación de
+locomoción rápida como trote o galope. El entrenamiento de la política se
+realizará primero en simulación y su transferencia al robot físico será
+progresiva, con correcciones limitadas y una parada de emergencia independiente.
+
+\section{Productos esperados}
+
+
+\begin{enumerate}
+
+\item Informe técnico final del proyecto, que documente de manera estructurada el proceso de caracterización mecánica, modelado cinemático, diseño electrónico e implementación del sistema de control de la plataforma cuadrúpeda.
+
+\item Modelos cinemático y dinámico formales del robot, incluyendo el desarrollo matemático de la cinemática directa e inversa de las extremidades y de los jacobianos articulares, debidamente sustentados y validados en simulación o pruebas experimentales.
+
+\item Implementación de la arquitectura electrónica de control, que incluya:
+
+\begin{itemize}
+
+\item Diagramas eléctricos.
+
+\item Implementación de micro-computador necesario con sus respectivos componentes electrónicos para ejecutar los algoritmos de control.
+
+\item Integración de actuadores y sensores necesarios para el control articular.
+
+\end{itemize}
+
+\item Código fuente documentado del sistema de control, correspondiente a la
+generación y coordinación de postura, paso y gateo, así como al entrenamiento e
+integración de la política correctiva de aprendizaje por refuerzo.
+
+\item Prototipo funcional de la plataforma reactivada, capaz de mantener una
+postura y ejecutar los patrones nominales de paso y gateo en condiciones
+controladas de laboratorio, con evaluación comparativa de su desempeño con y
+sin la capa correctiva aprendida.
+
+\item Manual técnico de operación y puesta en marcha, que permita a futuros estudiantes o investigadores comprender la arquitectura del sistema y reutilizar la plataforma en proyectos posteriores.
+
+\end{enumerate}

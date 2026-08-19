@@ -1,0 +1,38 @@
+
+\chapter{Objetivos}
+
+\section{Objetivo general}
+
+Desarrollar y evaluar un sistema de control para el robot cuadrúpedo Nova Spot
+Micro que combine una marcha nominal con una política de aprendizaje por
+refuerzo como capa correctiva acotada, con el propósito de mejorar la
+estabilidad y la repetibilidad durante la postura y la locomoción tipo paso y
+gateo en una superficie plana y bajo condiciones controladas de laboratorio.
+
+
+\section{Objetivos específicos}
+
+
+\begin{itemize}
+
+\item Caracterizar la plataforma Nova Spot Micro y desarrollar los modelos
+cinemático y dinámico necesarios para su representación en simulación y para la
+generación de referencias de movimiento.
+
+\item Diseñar e implementar una arquitectura electrónica y de software que
+permita accionar y supervisar el robot de forma segura, respetando los límites
+eléctricos, mecánicos y articulares de la plataforma.
+
+\item Implementar una estrategia convencional de locomoción basada en una
+máquina de estados finitos y referencias nominales para postura, paso y gateo.
+
+\item Entrenar en simulación e integrar progresivamente en el robot una política
+de aprendizaje por refuerzo que genere correcciones pequeñas y acotadas sobre
+las referencias nominales, sin comandar directamente las señales PWM ni
+sustituir el supervisor de seguridad.
+
+\item Comparar experimentalmente el desempeño de la marcha nominal con y sin la
+capa correctiva aprendida mediante métricas de estabilidad, seguimiento y
+repetibilidad, tanto en simulación como en el robot físico.
+
+\end{itemize}

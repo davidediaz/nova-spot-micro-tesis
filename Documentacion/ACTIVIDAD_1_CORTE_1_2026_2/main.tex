@@ -1,0 +1,234 @@
+\documentclass[10pt,letterpaper]{article}
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=1.7cm]{geometry}
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{array,longtable,booktabs,tabularx,multirow,pdflscape}
+\usepackage[table]{xcolor}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\definecolor{azul}{HTML}{17365D}
+\definecolor{azulclaro}{HTML}{DCE6F1}
+\definecolor{verde}{HTML}{E2F0D9}
+\definecolor{amarillo}{HTML}{FFF2CC}
+\definecolor{gris}{HTML}{E7E6E6}
+\hypersetup{colorlinks=true,linkcolor=azul,urlcolor=azul}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\setlist{nosep,leftmargin=*}
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{Proyecto de Grado II -- 2026-2}
+\rhead{Cronograma y matriz objetivo--evidencia}
+\cfoot{\thepage\ de \pageref{LastPage}}
+\newcommand{\finalizada}{\cellcolor{verde}Finalizada}
+\newcommand{\ejecucion}{\cellcolor{amarillo}En ejecución}
+\newcommand{\pendiente}{\cellcolor{gris}Pendiente}
+\newcommand{\encabezado}[1]{\rowcolor{azul}\color{white}\bfseries #1}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+
+\begin{document}
+
+\begin{titlepage}
+\centering
+{\large UNIVERSIDAD SANTO TOMÁS\par}
+\vspace{1cm}
+{\Large\bfseries Proyecto de Grado II\par}
+\vspace{0.4cm}
+{\LARGE\bfseries Cronograma actualizado y matriz objetivo--evidencia\par}
+\vspace{1.2cm}
+{\Large Diseño de un sistema de control para la locomoción y estabilización de un robot cuadrúpedo basado en aprendizaje por refuerzo\par}
+\vfill
+\begin{tabular}{rl}
+\textbf{Estudiantes:} & David Esteban Díaz Castro\\
+& David Felipe Díaz Suesca\\[4pt]
+\textbf{Director:} & MsC. Armando Mateus Rojas\\
+\textbf{Codirectores:} & PhD. Billy Vladimir Toro Tovar\\
+& MsC. Carlos Javier Mojica Casallas\\[4pt]
+\textbf{Programa:} & Ingeniería Electrónica\\
+\textbf{Semestre:} & 2026-2\\
+\textbf{Fecha:} & 18 de agosto de 2026
+\end{tabular}
+\vfill
+{Bogotá D. C., Colombia\par}
+\end{titlepage}
+
+\section{Estado real del proyecto al inicio del semestre}
+
+La ruta se actualizó a partir de evidencias existentes, no solo de actividades planeadas. A 18 de agosto de 2026 están implementados el modelo nominal URDF/MJCF, la cinemática directa e inversa, el controlador ROS~2, las marchas de gateo y paso, las métricas de pose, el supervisor provisional y los contactos de los cuatro pies en Gazebo. La línea base de gateo con cadencia corregida y su repetición presentaron diferencias menores al 0,2\,\% en sus medias; la marcha paso completó dos ensayos Gazebo de 12 ciclos y una validación articular de 12 ciclos en MuJoCo.
+
+El ensayo cuantitativo de contactos reveló una limitación relevante: el patrón ejecutado no coincide todavía con el plan discreto de apoyo. Las subfases explícitas corrigieron el despegue de las patas traseras, pero el aterrizaje continúa desfasado. El modelo sigue siendo nominal computable y no un gemelo digital identificado. La caracterización física, la seguridad eléctrica, la calibración, la integración en Raspberry Pi/PCA9685, el entrenamiento por refuerzo y la comparación final permanecen pendientes y conservan dependencias estrictas de seguridad.
+
+\subsection*{Decisiones de alcance y dependencias críticas}
+
+\begin{itemize}
+\item El galope queda fuera del alcance principal; solo se conserva como experimento opcional de simulación.
+\item La política aprendida corregirá referencias nominales de forma pequeña y acotada; no comandará PWM directamente ni sustituirá el supervisor.
+\item No se energizarán simultáneamente los doce servos antes de cerrar caracterización, diseño eléctrico, parada física y calibración individual.
+\item Los ensayos finales usarán cinco ejecuciones de 20 ciclos por condición y por marcha. Las semillas de entrenamiento serán 11, 23, 37, 53 y 71; las evaluaciones emparejadas usarán 101, 202, 303, 404 y 505.
+\end{itemize}
+
+\textbf{Nota para revisión del director.} La matriz suministrada en \texttt{Tabla\_Objectivos.docx} contiene cuatro objetivos y se transcribe literalmente en este documento. La versión de trabajo de la tesis contiene cinco objetivos reformulados. Antes del aval debe confirmarse cuál redacción corresponde al anteproyecto formalmente aprobado; cualquier sustitución requiere autorización del director.
+
+\section{Cronograma actualizado 2026-2}
+
+En las tablas, OE1--OE4 corresponden, en orden, a los cuatro objetivos transcritos en la matriz de la sección~\ref{sec:matriz}. ``Ambos'' identifica a los dos estudiantes como responsables; la asignación interna no elimina la responsabilidad conjunta por integración y trazabilidad.
+
+\begin{landscape}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{longtable}{p{0.55cm}p{0.65cm}p{4.2cm}p{4.0cm}p{1.3cm}p{1.35cm}p{1.35cm}p{3.7cm}p{1.5cm}}
+\rowcolor{azul}
+\color{white}\textbf{N.°} & \color{white}\textbf{Obj.} & \color{white}\textbf{Actividad verificable} & \color{white}\textbf{Producto o evidencia} & \color{white}\textbf{Resp.} & \color{white}\textbf{Inicio} & \color{white}\textbf{Fin} & \color{white}\textbf{Requisito previo} & \color{white}\textbf{Estado}\\
+\endfirsthead
+\rowcolor{azul}
+\color{white}\textbf{N.°} & \color{white}\textbf{Obj.} & \color{white}\textbf{Actividad verificable} & \color{white}\textbf{Producto o evidencia} & \color{white}\textbf{Resp.} & \color{white}\textbf{Inicio} & \color{white}\textbf{Fin} & \color{white}\textbf{Requisito previo} & \color{white}\textbf{Estado}\\
+\endhead
+1 & OE1 & Formular FK, IK, Jacobiano, dinámica nominal, COM, contacto y control discreto. & Fuentes Python, pruebas y modelo matemático LaTeX de 39 páginas. & Ambos & 01/02/26 & 16/08/26 & Geometría nominal y bibliografía. & \finalizada\\
+2 & OE1 & Verificar modelos ROS~2/Gazebo y MJCF/MuJoCo y coherencia articular. & URDF, MJCF, prueba de consistencia y simulaciones ejecutables. & Ambos & 01/03/26 & 14/08/26 & Actividad 1. & \finalizada\\
+3 & OE1 & Caracterizar estructura física sin energizar: geometría, masas, componentes, holguras y diferencias. & Inventario fotográfico, tres mediciones por dimensión, tabla de masas e informe de desviaciones. & Ambos & 19/08/26 & 28/08/26 & Acceso al robot e instrumentos. & \pendiente\\
+4 & OE1 & Actualizar URDF/MJCF y parámetros del modelo con mediciones trazables. & Modelos versionados, tabla nominal--medido y pruebas de regresión. & Ambos & 31/08/26 & 04/09/26 & Actividad 3. & \pendiente\\
+5 & OE2 & Definir arquitectura ROS~2, métricas, fase de marcha, contactos y supervisor provisional. & Nodos, archivos YAML, diagramas y 37 pruebas automatizadas. & Ambos & 01/04/26 & 18/08/26 & Modelo de simulación funcional. & \finalizada\\
+6 & OE2 & Diseñar seguridad eléctrica: fuente, distribución, fusible, cableado, tierra común, OE y parada física. & Esquema revisado, cálculos, lista de materiales y protocolo de emergencia. & Ambos & 24/08/26 & 04/09/26 & Caracterización de componentes. & \pendiente\\
+7 & OE2 & Medir un MG996R asegurado con fuente limitada y calibrar individualmente los doce canales. & YAML por articulación, curvas PWM--ángulo, corriente, temperatura y límites seguros. & Ambos & 07/09/26 & 18/09/26 & Actividad 6 aprobada. & \pendiente\\
+8 & OE2 & Preparar Raspberry Pi, ROS~2, red, reloj e I2C; verificar PCA9685 sin servos. & Registro de instalación, prueba SSH/I2C y medición instrumental de PWM. & Ambos & 14/09/26 & 25/09/26 & MicroSD, Raspberry Pi y actividad 6. & \pendiente\\
+9 & OE2 & Implementar interfaz limitada articulación--PWM y vigilancia de comunicaciones. & Paquete ROS~2, pruebas sin carga, arranque deshabilitado y parada por pérdida de datos. & Ambos & 21/09/26 & 02/10/26 & Actividades 7 y 8. & \pendiente\\
+10 & OE3 & Implementar postura, gateo y paso mediante trayectorias cartesianas e IK propia. & Código, configuración, pruebas y documentación de diseño. & Ambos & 01/05/26 & 14/08/26 & OE1 nominal. & \finalizada\\
+11 & OE3 & Corregir la curva completa de descenso del gateo y sincronizar contacto planificado/medido. & Bolsa exploratoria, CSV de transiciones y prueba de continuidad menor a 0,20 rad. & Ambos & 17/08/26 & 28/08/26 & Contactos Gazebo y subfases publicadas. & \ejecucion\\
+12 & OE3 & Congelar y repetir líneas base finales de gateo y paso en Gazebo/MuJoCo. & Dos ensayos por marcha, al menos 10 ciclos cada uno, configuración y hashes. & Ambos & 31/08/26 & 11/09/26 & Actividad 11 aceptada. & \pendiente\\
+13 & OE3 & Transferir gradualmente postura y marchas al robot: sin actuadores, un servo, una pata, robot suspendido y suelo. & Listas de chequeo, registros, videos y bolsas de cada etapa. & Ambos & 05/10/26 & 23/10/26 & OE2 cerrado; actividades 7--9. & \pendiente\\
+14 & OE3 & Definir observaciones, acciones acotadas, recompensa, terminaciones y currículo RL. & Especificación congelada, límites de acción y pruebas del entorno. & Ambos & 07/09/26 & 18/09/26 & Línea nominal estable en simulación. & \pendiente\\
+15 & OE3 & Entrenar PPO con cinco semillas y aleatorización de dominio. & Configuraciones, curvas, modelos y bitácora de semillas 11/23/37/53/71. & Ambos & 21/09/26 & 16/10/26 & Actividad 14. & \pendiente\\
+16 & OE3 & Seleccionar política con validación separada e integrarla bajo supervisor en Gazebo. & Política congelada, informe de selección y pruebas de saturación/parada. & Ambos & 19/10/26 & 30/10/26 & Actividad 15. & \pendiente\\
+17 & OE4 & Aprobar protocolo, métrica primaria, frecuencia y umbrales con el director. & Protocolo firmado y matriz experimental congelada. & Ambos & 18/08/26 & 28/08/26 & Revisión de directores. & \ejecucion\\
+18 & OE4 & Ejecutar comparación final nominal frente a nominal+RL para paso y gateo. & 20 ensayos de 20 ciclos: 400 ciclos programados y bolsas trazables. & Ambos & 02/11/26 & 13/11/26 & Actividades 13, 16 y 17; seguridad cerrada. & \pendiente\\
+19 & OE4 & Calcular métricas por ensayo y análisis estadístico emparejado. & Dataset, scripts, gráficas, IC y tabla comparativa con fallos incluidos. & Ambos & 09/11/26 & 20/11/26 & Actividad 18. & \pendiente\\
+20 & OE4 & Integrar resultados, limitaciones y trazabilidad en la tesis. & PDF completo enviado al director. & Ambos & 16/11/26 & 27/11/26 & Actividad 19. & \pendiente\\
+21 & OE4 & Incorporar observaciones y generar versión final reproducible. & Fuentes, PDF final, anexos, datos, hashes y lista de cambios. & Ambos & 30/11/26 & 04/12/26 & Revisión del director. & \pendiente\\
+\end{longtable}
+\end{landscape}
+
+\begin{landscape}
+\section{Matriz objetivo--evidencia}\label{sec:matriz}
+
+Los objetivos se reproducen literalmente desde la tabla suministrada. Se desagregan en varias filas para que cada actividad produzca una evidencia y un criterio medible.
+
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{longtable}{p{3.6cm}p{3.7cm}p{4.2cm}p{3.6cm}p{5.0cm}p{1.6cm}}
+\rowcolor{azul}
+\color{white}\textbf{Objetivo específico} & \color{white}\textbf{Actividades necesarias} & \color{white}\textbf{Método o procedimiento} & \color{white}\textbf{Evidencia o producto} & \color{white}\textbf{Criterio de aceptación o cumplimiento} & \color{white}\textbf{Estado actual}\\
+\endfirsthead
+\rowcolor{azul}
+\color{white}\textbf{Objetivo específico} & \color{white}\textbf{Actividades necesarias} & \color{white}\textbf{Método o procedimiento} & \color{white}\textbf{Evidencia o producto} & \color{white}\textbf{Criterio de aceptación o cumplimiento} & \color{white}\textbf{Estado actual}\\
+\endhead
+\multirow{3}{3.6cm}{\textbf{OE1.} Analizar el modelo cinemático y los parámetros físicos y estructurales del robot para su modelado matemático.}
+& Definir marcos, geometría, transformaciones, FK, IK y Jacobiano. & Derivación analítica propia; implementación Python; sustituciones numéricas y pruebas FK--IK. & Modelo LaTeX, código y pruebas automatizadas. & Error de reconstrucción FK--IK $<10^{-8}$ rad en casos alcanzables; soluciones finitas dentro de límites; trazabilidad ecuación--código--prueba. & \finalizada\\
+& Formular dinámica, actuadores, contacto, COM, margen y control discreto nominal. & Newton--Euler/Lagrange nominal, Jacobiano, modelo de contacto penalizado y discretización; ejemplos generados por script. & PDF matemático de 39 páginas y generador reproducible. & PDF compila sin referencias indefinidas; cada ecuación numerada identifica variables, fuente, adaptación y uso; resultados reproducibles por script. & \finalizada\\
+& Caracterizar geometría, masas, componentes y holguras físicas; actualizar modelos. & Tres mediciones independientes por longitud, pesaje por subconjunto, fotografías e inventario; comparación nominal--medido. & Fichas de medición, fotografías, tabla de incertidumbre, URDF/MJCF actualizados. & 12 actuadores y electrónica identificados; tres mediciones por dimensión; masa total y subconjuntos registrados; toda diferencia trasladada o justificada en el modelo. & \pendiente\\[2pt]
+\hline
+\multirow{4}{3.6cm}{\textbf{OE2.} Construir el sistema de control y adquisición de variables del robot.}
+& Definir arquitectura de cómputo, control, sensado y comunicaciones. & Selección por compatibilidad eléctrica, interfaces, frecuencia, disponibilidad y requisitos de ROS~2. & Diagrama de bloques, lista de interfaces y matriz de requisitos. & Cada variable requerida tiene sensor/tópico, unidad, frecuencia y responsable; componentes compatibles en tensión, niveles lógicos y protocolo. & \ejecucion\\
+& Verificar métricas, fase, contactos y supervisor en simulación. & Pruebas ROS~2 provocadas, auditoría de tópicos y rosbag2. & Nodos, YAML, bolsas, diagnósticos y pruebas. & Pose, articulaciones, fase y cuatro contactos registrados; supervisor detiene ante altura/inclinación fuera de umbral; cero nodos duplicados antes de ensayos. & \finalizada\\
+& Diseñar y probar seguridad eléctrica antes de energizar el conjunto. & Medición de un servo con fuente limitada; cálculo de fuente/cable/fusible; prueba de OE y parada física. & Esquema, cálculos, mediciones y protocolo firmado. & Fuente y conductores dimensionados con margen a partir de corriente medida; fusible instalado; tierra común controlada; parada corta/deshabilita potencia sin depender de ROS~2. & \pendiente\\
+& Calibrar 12 servos e integrar Raspberry Pi/PCA9685 y adquisición. & Calibración individual, PWM instrumental, prueba incremental y vigilancia de pérdida de comunicación. & YAML por articulación, curvas, registros I2C/PWM y paquete ROS~2. & 12 canales con centro, sentido, mínimos/máximos y límites seguros; arranque con salidas deshabilitadas; referencia inválida o pérdida de datos conduce a estado seguro. & \pendiente\\[2pt]
+\hline
+\multirow{5}{3.6cm}{\textbf{OE3.} Generar y coordinar patrones de marcha e implementar el sistema electrónico y el algoritmo de control en el robot.}
+& Generar postura, paso y gateo con trayectorias cartesianas e IK. & Máquina de estados finitos, referencias discretas y verificación de alcance/continuidad. & Código, YAML, pruebas y documentos de diseño. & 100\,\% de referencias alcanzables y dentro de límites; salto articular máximo del gateo $<0,20$ rad; orden FL--RR--FR--RL verificable. & \finalizada\\
+& Validar gateo y paso repetibles en Gazebo y MuJoCo. & Ensayos continuos, segmentación por referencias y comparación de repeticiones. & Bolsas, CSV, gráficas e informes. & Al menos 10 ciclos por ejecución, cero paradas no provocadas y configuración congelada; cadencia observada dentro de 1\,\% de 4,32 s (gateo) o 5,76 s (paso). & \finalizada\\
+& Sincronizar contactos planificados y medidos. & Sensores a 100 Hz, subfases publicadas y emparejamiento temporal de transiciones por pata. & Diagnósticos y tabla de retardos de despegue/aterrizaje. & Las cuatro patas presentan despegue y aterrizaje en su ventana; retardos y coincidencia reportados por pata; umbral final aprobado antes de congelar línea base. & \ejecucion\\
+& Diseñar, entrenar e integrar corrección RL acotada. & PPO con cinco semillas, aleatorización de dominio, validación separada y saturación de acciones. & Entorno, configuraciones, curvas, cinco políticas e informe de selección. & Cinco semillas completas; ninguna acción comanda PWM; límites y tasa de cambio probados; política final bloqueada antes de evaluar el conjunto final. & \pendiente\\
+& Integrar progresivamente electrónica y marcha en el robot. & Secuencia sin potencia, un servo, una pata, cuatro patas suspendidas, postura y ciclos en suelo. & Listas de chequeo, videos, telemetría y registros de intervención. & Ninguna etapa inicia sin aprobar la anterior; parada accesible; límites eléctricos/articulares respetados; postura, paso y gateo completan el protocolo aprobado. & \pendiente\\[2pt]
+\hline
+\multirow{3}{3.6cm}{\textbf{OE4.} Evaluar el desempeño global del sistema y la reactivación funcional del robot.}
+& Congelar protocolo y ejecutar matriz comparativa. & Diseño emparejado: cinco ensayos de 20 ciclos por condición para paso y gateo; ciclo 1 conservado como transitorio. & Protocolo aprobado y 20 bolsas finales (400 ciclos programados). & Cinco unidades experimentales por condición; mismas condiciones iniciales; fallos conservados; semillas/configuraciones/hashes registrados. & \pendiente\\
+& Calcular estabilidad, locomoción, repetibilidad, seguridad y seguimiento cuando exista medición real. & Procesamiento reproducible por ensayo; estadística descriptiva, intervalos de confianza y comparación emparejada. & Dataset, scripts, tablas y gráficas comparativas. & Reportar inclinación RMS/máxima, avance, velocidad, desviación lateral, variabilidad, margen, ciclos, caídas e intervenciones; error articular solo con realimentación física real. & \pendiente\\
+& Determinar cumplimiento y documentar limitaciones. & Contrastar resultados con métrica primaria y umbrales aprobados; revisión de trazabilidad. & Informe de validación y tesis final. & Cada conclusión enlaza evidencia; se distingue simulación de hardware; no se declara gemelo digital sin identificación; PDF y anexos son reproducibles. & \pendiente\\
+\end{longtable}
+\end{landscape}
+
+\section{Métricas de trabajo y criterios que deben congelarse}
+
+La guía evalúa la calidad de los criterios de aceptación. Por ello, antes de la campaña final el director debe aprobar los umbrales aún abiertos. Las métricas ya computables son:
+
+\begin{longtable}{p{4.0cm}p{7.0cm}p{4.0cm}}
+\toprule
+\textbf{Familia} & \textbf{Métricas y forma de cálculo} & \textbf{Unidad experimental / frecuencia}\\
+\midrule
+\endhead
+Locomoción & Avance por ciclo, velocidad media, desviación lateral y ciclos completados. Segmentación mediante referencias/fase, no por división ciega del tiempo. & Ensayo como unidad independiente; 20 ciclos programados.\\
+Estabilidad & Roll y pitch RMS/máximos; altura; margen del COM respecto al polígono formado por contactos medidos. & Pose/contactos sincronizados; frecuencia efectiva documentada.\\
+Contacto & Coincidencia temporal total e individual; retardo de despegue y aterrizaje de FL, FR, RL y RR. & Contactos agregados a 100 Hz; porcentajes ponderados por tiempo.\\
+Control & Error RMS/máximo y continuidad articular. En hardware solo se reportará seguimiento si existe medición real de posición. & Estados/referencias sincronizados por ensayo.\\
+Repetibilidad & Media, dispersión entre ciclos y entre ensayos; diferencia nominal frente a nominal+RL e intervalo de confianza emparejado. & $n=5$ ensayos por condición; ciclos no tratados como réplicas independientes.\\
+Seguridad & Caídas, fallos, intervenciones, activaciones del supervisor, saturaciones y pérdida de comunicación. & Conteos completos, incluyendo ensayos fallidos.\\
+Energía & Corriente, tensión, temperatura y energía, si la instrumentación instalada lo permite. & Frecuencia y exactitud definidas tras caracterización.\\
+\bottomrule
+\end{longtable}
+
+\textbf{Pendiente de aval:} métrica primaria, frecuencia mínima común, límites máximos de inclinación/error, mejora mínima atribuible a RL, tolerancia de contactos y regla formal de éxito. Estos valores deben congelarse antes de abrir los resultados finales para evitar ajustarlos a posteriori.
+
+\section{Hitos y productos verificables del semestre}
+
+\begin{tabularx}{\textwidth}{p{1.1cm}Yp{2.3cm}p{4.8cm}}
+\rowcolor{azul}\color{white}\textbf{Hito} & \color{white}\textbf{Resultado demostrable} & \color{white}\textbf{Fecha objetivo} & \color{white}\textbf{Producto verificable}\\
+H1 & Caracterización física y modelo actualizado. & 04/09/26 & Inventario, mediciones, incertidumbre y URDF/MJCF versionados.\\
+H2 & Seguridad eléctrica y calibración aprobadas. & 18/09/26 & Esquema, parada, mediciones y YAML de 12 servos.\\
+H3 & Nueva línea base nominal con contactos coherentes. & 11/09/26 & Bolsas repetidas, CSV, gráficas, hashes e informe.\\
+H4 & Subsistema embebido funcional y seguro. & 02/10/26 & Raspberry Pi/PCA9685, interfaz ROS~2 y vigilancia probadas.\\
+H5 & Política RL entrenada y bloqueada. & 30/10/26 & Cinco políticas, curvas, validación separada e informe de selección.\\
+H6 & Comparación experimental terminada. & 20/11/26 & Dataset final y análisis emparejado nominal vs. nominal+RL.\\
+H7 & Documento final revisado. & 04/12/26 & Tesis, anexos, código/datos reproducibles y correcciones del director.\\
+\end{tabularx}
+
+\section{Riesgos y acciones de control}
+
+\begin{tabularx}{\textwidth}{p{4.2cm}Yp{5.2cm}}
+\rowcolor{azul}\color{white}\textbf{Riesgo} & \color{white}\textbf{Impacto} & \color{white}\textbf{Control y decisión}\\
+Modelo físico no identificado & Transferencia simulación--robot deficiente. & Medir antes de ajustar; separar parámetros nominales de identificados y aplicar aleatorización de dominio.\\
+Fuente o cableado insuficientes & Daño, reinicio o movimiento inseguro. & No energizar el conjunto sin medición individual, cálculo, fusible, OE y parada física.\\
+Contactos desfasados & Polígono de soporte y recompensa incorrectos. & Corregir descenso, medir por pata y no ocultar discrepancias ajustando etiquetas.\\
+Falta de realimentación articular & No puede afirmarse seguimiento físico real. & Limitar conclusiones o incorporar sensado; distinguir referencia comandada de posición medida.\\
+Tiempo de entrenamiento/ensayo & Retraso de comparación final. & Congelar alcance, excluir galope, automatizar análisis y mantener hitos de decisión.\\
+Cambio tardío de métricas & Sesgo en resultados. & Firmar protocolo, métrica primaria y umbrales antes de campaña final.\\
+\end{tabularx}
+
+\newpage
+\section{Constancia de revisión y aval}
+
+\renewcommand{\arraystretch}{1.6}
+\begin{tabularx}{\textwidth}{p{5cm}Y}
+\textbf{Título del proyecto:} & Diseño de un sistema de control para la locomoción y estabilización de un robot cuadrúpedo basado en aprendizaje por refuerzo.\\
+\textbf{Estudiantes:} & David Esteban Díaz Castro; David Felipe Díaz Suesca.\\
+\textbf{Director del Proyecto de Grado:} & MsC. Armando Mateus Rojas.\\
+\textbf{Fecha de revisión:} & 18 de agosto de 2026.\\
+\end{tabularx}
+
+\vspace{0.8cm}
+\textbf{Declaración de aval}
+
+Declaro que he revisado el cronograma actualizado y la matriz objetivo--evidencia presentada para el desarrollo del Proyecto de Grado durante el semestre 2026-2, y que la ruta propuesta corresponde con el alcance, los objetivos y las condiciones previstas para su ejecución.
+
+\vspace{2.2cm}
+\begin{tabularx}{\textwidth}{X}
+\centering\arraybackslash\includegraphics[width=5.2cm]{firma_mateus.jpeg}\\[-2pt]
+\centering\arraybackslash\rule{7cm}{0.4pt}\\
+\centering\arraybackslash Firma del director\\
+\end{tabularx}
+
+\vfill
+\textbf{Observaciones de la revisión:}
+
+\vspace{2.5cm}
+\hrule
+\vspace{1.2cm}
+\hrule
+\vspace{1.2cm}
+\hrule
+
+\end{document}

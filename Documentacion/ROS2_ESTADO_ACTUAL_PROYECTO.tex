@@ -1,0 +1,340 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage{lmodern}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{geometry}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{microtype}
+\geometry{margin=2.35cm}
+\hypersetup{colorlinks=true,linkcolor=blue!55!black,urlcolor=blue!55!black}
+\lstdefinestyle{terminal}{basicstyle=\ttfamily\small,breaklines=true,
+  frame=single,showstringspaces=false,columns=fullflexible}
+
+\title{¿Qué está haciendo ROS 2 actualmente en el proyecto?\\Nova Spot Micro}
+\author{Proyecto de tesis --- robot cuadrúpedo Nova Spot Micro}
+\date{Actualizado el 16 de agosto de 2026}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+Este documento explica el papel que cumple ROS 2 Humble en el estado actual del
+proyecto Nova Spot Micro. Describe cómo se carga el modelo, cómo se inicia
+Gazebo o MuJoCo, cómo se generan y transmiten las referencias articulares, cómo
+se observan los estados y cuáles componentes faltan para llegar al robot físico
+con Raspberry Pi 3, PCA9685, MG996R y sensores. El sistema actual constituye
+una arquitectura funcional de simulación, no una interfaz de hardware terminada.
+\end{abstract}
+\tableofcontents
+
+\section{Papel de ROS 2 en el proyecto}
+ROS 2 es la infraestructura que conecta las partes del sistema. No calcula por
+sí solo cómo caminar ni simula la física: coordina nodos, parámetros, mensajes,
+tiempo y controladores para que el código de marcha, el modelo y el simulador
+trabajen como un solo sistema.
+
+En el estado actual, ROS 2 realiza además observación y seguridad:
+\begin{enumerate}
+\item procesa y distribuye la descripción del robot;
+\item inicia los procesos necesarios mediante archivos \texttt{launch};
+\item recibe comandos de alto nivel como \texttt{gateo} o \texttt{stand};
+\item transporta referencias para las doce articulaciones mediante
+  \texttt{JointTrajectory};
+\item publica los estados articulares producidos por el simulador.
+\item publica fase, métricas de pose y contactos de los cuatro pies;
+\item compara contacto previsto y observado y supervisa altura e inclinación.
+\end{enumerate}
+
+\section{Paquetes ROS 2 desarrollados}
+El workspace contiene dos paquetes propios importantes:
+\begin{table}[h]
+\centering
+\begin{tabular}{p{0.34\textwidth}p{0.58\textwidth}}
+\toprule
+Paquete & Función\\
+\midrule
+\texttt{nova\_sm3\_description} & Contiene URDF/Xacro, modelo MJCF,
+configuración de \texttt{ros2\_control}, RViz y lanzadores de Gazebo/MuJoCo.\\
+\texttt{nova\_gait\_controller} & Contiene cinemática directa e inversa,
+generación de gateo y marcha paso, máquina de estados, métricas, supervisor,
+contactos, parámetros y lanzadores de demostración.\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Estos paquetes se compilan con \texttt{colcon}. La opción
+\texttt{--symlink-install} permite que los cambios en archivos Python y datos
+instalados se reflejen con mayor facilidad durante el desarrollo.
+
+\section{Descripción del robot y \texttt{robot\_description}}
+El archivo Xacro describe el cuerpo, cuatro patas, doce articulaciones, enlaces,
+colisiones, masas e inercias provisionales. También declara nombres, ejes,
+límites y las interfaces que utilizará \texttt{ros2\_control}.
+
+Al iniciar la simulación, ROS 2 ejecuta \texttt{xacro} y convierte las macros en
+URDF. El texto completo se entrega como el parámetro
+\texttt{robot\_description}. A partir de ese parámetro:
+\begin{itemize}
+\item \texttt{robot\_state\_publisher} conoce la estructura cinemática;
+\item Gazebo crea el modelo físico;
+\item el complemento de \texttt{ros2\_control} descubre las doce articulaciones;
+\item RViz puede representar enlaces y transformaciones.
+\end{itemize}
+
+Las posiciones iniciales articulares son
+$(0.10,0.42,-0.84)$ rad por pata. Esto permite que el robot aparezca en postura
+en lugar de hacerlo con las piernas rectas mientras arrancan los controladores.
+
+\section{Procesos que se ejecutan en Gazebo}
+El comando principal es
+\begin{lstlisting}[style=terminal]
+ros2 launch nova_gait_controller demo.launch.py
+\end{lstlisting}
+Este lanzador incluye \texttt{sim.launch.py} y, después de cinco segundos,
+inicia el nodo \texttt{gait\_controller}. El conjunto resultante contiene:
+
+\subsection{Gazebo Sim}
+Calcula gravedad, contactos, colisiones y movimiento del cuerpo. El robot se
+crea con nombre \texttt{nova\_sm3} a una altura inicial de $0.245$ m. Gazebo
+no decide los pasos: recibe las órdenes articulares desde ROS 2 y devuelve el
+estado físico resultante.
+
+\subsection{\texttt{robot\_state\_publisher}}
+Publica las transformaciones entre enlaces usando el URDF y los estados
+articulares. Gracias a él, herramientas como RViz pueden reconstruir la postura
+completa a partir de doce ángulos.
+
+\subsection{\texttt{controller\_manager}}
+Administra interfaces y ciclos de control. En Gazebo está incorporado mediante
+\texttt{gz\_ros2\_control}; en MuJoCo se ejecuta como
+\texttt{ros2\_control\_node} con la interfaz específica de MuJoCo.
+
+\subsection{Spawners de controladores}
+Dos procesos temporales solicitan al administrador cargar, configurar y activar:
+\begin{itemize}
+\item \texttt{joint\_state\_broadcaster};
+\item \texttt{joint\_trajectory\_controller}.
+\end{itemize}
+Cuando terminan exitosamente, desaparecen; los controladores permanecen activos
+dentro del administrador.
+
+\subsection{Nodo \texttt{gait\_controller}}
+Es el código propio que recibe el modo de marcha, genera la tabla cartesiana,
+aplica cinemática inversa y publica un punto articular en cada fase.
+
+\section{Comandos y temas ROS 2}
+El usuario selecciona el comportamiento publicando un mensaje de texto:
+\begin{lstlisting}[style=terminal]
+ros2 topic pub --once /nova/gait_command \
+  std_msgs/msg/String "{data: gateo}"
+\end{lstlisting}
+El nodo acepta \texttt{stand}, \texttt{gateo/crawl}, \texttt{paso/step},
+\texttt{galope/gallop} y \texttt{stop/parar}. Para la tesis, el gateo es la
+marcha nominal desarrollada; el galope queda como demostración opcional de
+simulación, deshabilitada por defecto mediante
+\texttt{enable\_experimental\_gallop=false} y excluida del hardware.
+
+Los temas principales son:
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{p{0.39\textwidth}p{0.20\textwidth}p{0.33\textwidth}}
+\toprule
+Tema & Tipo & Uso\\
+\midrule
+\texttt{/nova/gait\_command} & \texttt{std\_msgs/String} & Comando de alto nivel.\\
+\texttt{/joint\_trajectory\_controller/joint\_trajectory} &
+\texttt{trajectory\_msgs/JointTrajectory} & Referencias para 12 articulaciones.\\
+\texttt{/joint\_states} & \texttt{sensor\_msgs/JointState} & Posición y velocidad simuladas.\\
+\texttt{/nova/gait\_phase} & \texttt{std\_msgs/String} & Fase y contactos previstos.\\
+\texttt{/nova/metrics/json} & \texttt{std\_msgs/String} & Pose y articulaciones sincronizadas.\\
+\texttt{/nova/foot\_contacts} & \texttt{std\_msgs/String} & Contactos medidos agregados.\\
+\texttt{/nova/contact\_diagnostics} & \texttt{std\_msgs/String} & Comparación previsto--observado.\\
+\texttt{/robot\_description} o parámetro equivalente & URDF/XML & Descripción completa.\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Cómo fluye una orden de gateo}
+Cuando se publica \texttt{gateo}, ocurre esta secuencia:
+\begin{enumerate}
+\item DDS/ROS 2 entrega el mensaje al suscriptor de
+  \texttt{gait\_controller}.
+\item El nodo lee los parámetros: 24 muestras, paso de 18 mm, elevación de
+  14 mm y 0.18 s por muestra.
+\item Se valida que los valores estén dentro de los intervalos permitidos.
+\item Se generan posiciones cartesianas para los cuatro pies. Tres permanecen
+  en apoyo y una entra en oscilación.
+\item La cinemática inversa convierte cada posición de pie en coxa, fémur y
+  tibia, y rechaza puntos inalcanzables o fuera de límites.
+\item Cada vector de doce ángulos se envía como \texttt{JointTrajectory}.
+\item \texttt{joint\_trajectory\_controller} interpola la referencia.
+\item \texttt{gz\_ros2\_control} aplica los comandos a las articulaciones de
+  Gazebo.
+\item Gazebo resuelve física y contactos.
+\item \texttt{joint\_state\_broadcaster} publica el estado resultante.
+\end{enumerate}
+
+El ciclo nominal dura
+\[
+24\text{ muestras}\times0.18\text{ s}=4.32\text{ s}.
+\]
+
+\section{Función de \texttt{ros2\_control}}
+\texttt{ros2\_control} separa el algoritmo de marcha del destino físico o
+simulado. El controlador publica el mismo concepto de posición articular,
+mientras una interfaz de sistema decide cómo aplicarlo.
+
+Actualmente existen estos destinos:
+\begin{itemize}
+\item \textbf{hardware falso}: útil para verificar mensajes sin dinámica;
+\item \textbf{Gazebo}: \texttt{gz\_ros2\_control/GazeboSimSystem};
+\item \textbf{MuJoCo}: \texttt{mujoco\_ros2\_control/MujocoSystemInterface}.
+\end{itemize}
+
+No existe todavía una interfaz física para PCA9685. Por tanto, seleccionar una
+marcha hoy mueve la simulación, no los MG996R.
+
+\section{RViz, Gazebo y MuJoCo}
+Las tres herramientas cumplen tareas distintas:
+\begin{itemize}
+\item \textbf{RViz}: inspecciona geometría, ejes, transformaciones y postura;
+  no simula gravedad ni contacto.
+\item \textbf{Gazebo}: verifica integración URDF/ROS 2, controladores, colisión,
+  gravedad y marcha nominal.
+\item \textbf{MuJoCo}: será el entorno principal de entrenamiento; hoy valida
+  cadencia y articulaciones, pero no expone pose y contactos equivalentes.
+\end{itemize}
+
+El lanzador \texttt{mujoco\_demo.launch.py} usa el mismo
+\texttt{gait\_controller} y el mismo YAML; cambia la interfaz de simulación.
+Esto ayuda a evitar que la lógica de marcha dependa de un único simulador.
+
+\section{Parámetros ROS 2 actuales}
+El archivo \texttt{gaits.yaml} configura el nodo:
+\begin{lstlisting}[style=terminal]
+initial_gait: stand
+crawl_phase_duration: 0.18
+crawl_samples: 24
+crawl_step_length: 0.018
+crawl_step_height: 0.014
+transition_ratio: 0.90
+command_topic: /nova/gait_command
+phase_topic: /nova/gait_phase
+trajectory_topic: /joint_trajectory_controller/joint_trajectory
+\end{lstlisting}
+Los parámetros se cargan al iniciar el nodo. El gateo se vuelve a construir al
+recibir el comando, de modo que se validan los valores vigentes antes de mover.
+
+\section{Qué se ha verificado con ROS 2}
+Hasta el momento se comprobó:
+\begin{itemize}
+\item compilación de los dos paquetes con \texttt{colcon};
+\item carga del modelo y de las doce interfaces articulares;
+\item activación de ambos controladores;
+\item recepción de comandos de marcha;
+\item publicación y seguimiento de trayectorias de doce articulaciones;
+\item movimiento observable en \texttt{/joint\_states};
+\item gateo con cinemática inversa en Gazebo durante más de diez ciclos;
+\item avance aproximado de $0.219$ m sin caída en esa prueba;
+\item altura entre $0.22287$ y $0.22428$ m;
+\item ejecución previa del gateo en MuJoCo con estados articulares.
+\item marcha paso reproducida en Gazebo y validada articularmente en MuJoCo;
+\item cadencia corregida de 4.32 s por ciclo de gateo;
+\item métricas sincronizadas, supervisor y cuatro contactos en Gazebo;
+\item ensayo de 76 ciclos que detectó deslizamiento trasero.
+\end{itemize}
+
+ROS 2 permitió mantener la marcha, el simulador y el observador desacoplados,
+así como repetir las pruebas mediante comandos explícitos.
+
+\section{Raspberry Pi 3 y comunicación futura}
+Se preparó el script \texttt{preparar\_raspberry\_pi\_ros2.sh} para Ubuntu
+Server 22.04 ARM64. Instalará ROS 2 Humble base, SSH, I2C,
+\texttt{ros2\_control} y controladores. También configura
+\texttt{ROS\_DOMAIN\_ID=30} y \texttt{ROS\_LOCALHOST\_ONLY=0}.
+
+La arquitectura prevista es:
+\begin{itemize}
+\item el computador ejecuta desarrollo, Gazebo, MuJoCo y entrenamiento;
+\item la Raspberry Pi ejecuta control en tiempo real práctico, sensores,
+  interfaz PCA9685 y registro básico;
+\item ambos equipos comparten red y el mismo \texttt{ROS\_DOMAIN\_ID};
+\item SSH permite administrar la Pi, mientras DDS transporta temas ROS 2.
+\end{itemize}
+
+Raspberry Pi Imager 2.0.10 ya fue descargado, pero no se ha grabado la microSD
+porque todavía no se conectó una. Tampoco se ha detectado una Pi en la red.
+
+\section{Qué todavía no hace ROS 2 en este proyecto}
+Es importante no confundir simulación funcional con robot físico terminado.
+Actualmente ROS 2 no:
+\begin{itemize}
+\item genera PWM para PCA9685;
+\item conoce centros, sentidos y límites físicos de los doce MG996R;
+\item mide corriente, tensión o temperatura;
+\item recibe todavía BNO055 ni contactos de pies reales;
+\item conoce el estado de una parada física de emergencia;
+\item calcula margen de estabilidad en línea;
+\item detecta contacto corporal o caída mediante una señal dedicada; el
+  supervisor actual actúa por altura e inclinación;
+\item ejecuta una política de aprendizaje por refuerzo;
+\item garantiza comportamiento del robot real a partir de la simulación.
+\end{itemize}
+
+El comando lógico \texttt{stop} conserva postura en el controlador; no corta
+energía. La parada física debe actuar independientemente de ROS 2.
+
+\section{Próxima arquitectura ROS 2}
+Los siguientes componentes pendientes son:
+\begin{enumerate}
+\item corregir la trayectoria de gateo y repetir la medición de contactos;
+\item incorporar IMU y contactos equivalentes en MuJoCo;
+\item calcular polígono de soporte y margen de estabilidad en línea;
+\item ampliar el supervisor a límites, pérdida de datos y referencias inválidas,
+  con mecanismo explícito de rearme;
+\item una interfaz \texttt{ros2\_control} para PCA9685 con conversiones
+  radianes--PWM calibradas;
+\item nodos de BNO055, corriente/tensión, contactos y parada física;
+\item registro mediante \texttt{rosbag2} para comparar marcha nominal y marcha
+  con corrección aprendida.
+\end{enumerate}
+
+La política de aprendizaje por refuerzo se añadirá después de validar estos
+elementos. Su salida será una corrección pequeña y acotada; ROS 2 seguirá
+transportando referencias, pero el supervisor conservará la autoridad final.
+
+\section{Comandos útiles de inspección}
+\begin{lstlisting}[style=terminal]
+# Ver nodos
+ros2 node list
+
+# Ver temas y tipos
+ros2 topic list -t
+
+# Ver controladores activos
+ros2 control list_controllers
+
+# Observar una muestra articular
+ros2 topic echo /joint_states --once
+
+# Ver parametros del nodo de marcha
+ros2 param list /gait_controller
+
+# Enviar postura segura logica
+ros2 topic pub --once /nova/gait_command \
+  std_msgs/msg/String "{data: stand}"
+\end{lstlisting}
+
+\section{Resumen}
+ROS 2 ya integra el modelo, los dos simuladores, dos marchas nominales, la
+cinemática inversa, métricas, fase, contactos de Gazebo y un supervisor
+provisional. El siguiente salto es corregir el patrón físico de apoyo, añadir
+estabilidad en línea y equivalencia sensorial en MuJoCo. La transferencia a
+servos sigue bloqueada hasta caracterizar, proteger y calibrar el hardware.
+
+\end{document}

@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000">
+  <style>
+    .title{font:700 34px sans-serif}.head{font:700 25px sans-serif}.txt{font:20px sans-serif}.small{font:17px sans-serif}.pin{font:700 18px sans-serif}.box{fill:#fff;stroke:#20252b;stroke-width:3}.logic{stroke:#d62828;stroke-width:7;fill:none}.sda{stroke:#1976d2;stroke-width:7;fill:none}.scl{stroke:#2a9d4b;stroke-width:7;fill:none}.gnd{stroke:#161616;stroke-width:7;fill:none}.oe{stroke:#7b2cbf;stroke-width:7;fill:none}.power{stroke:#e31a1c;stroke-width:9;fill:none}.signal{stroke:#f59e0b;stroke-width:5;fill:none}.warn{fill:#fff1f1;stroke:#c1121f;stroke-width:4}.servo{fill:#32363b;stroke:#111;stroke-width:2}.label{fill:#eef5ff;stroke:#3776c2;stroke-width:2}
+  </style>
+  <rect width="1600" height="1000" fill="#fafafa"/>
+  <text x="800" y="55" text-anchor="middle" class="title">NOVA SPOT MICRO — CONEXIÓN RASPBERRY, PCA9685 Y 12 SERVOS</text>
+
+  <rect x="45" y="120" width="350" height="520" rx="22" class="box"/>
+  <text x="220" y="165" text-anchor="middle" class="head">RASPBERRY PI 3</text>
+  <rect x="95" y="205" width="210" height="365" rx="18" fill="#3b8d58" stroke="#205b37" stroke-width="4"/>
+  <text x="200" y="390" text-anchor="middle" fill="white" class="head">Raspberry Pi 3</text>
+  <circle cx="350" cy="250" r="10" fill="#d62828"/><text x="60" y="257" class="pin">Pin 1 · 3V3</text>
+  <circle cx="350" cy="320" r="10" fill="#1976d2"/><text x="60" y="327" class="pin">Pin 3 · GPIO2/SDA</text>
+  <circle cx="350" cy="390" r="10" fill="#2a9d4b"/><text x="60" y="397" class="pin">Pin 5 · GPIO3/SCL</text>
+  <circle cx="350" cy="460" r="10" fill="#161616"/><text x="60" y="467" class="pin">Pin 6 · GND</text>
+  <circle cx="350" cy="530" r="10" fill="#7b2cbf"/><text x="60" y="537" class="pin">Pin 11 · GPIO17/OE</text>
+
+  <rect x="520" y="120" width="420" height="520" rx="22" class="box"/>
+  <text x="730" y="165" text-anchor="middle" class="head">PCA9685 · 16 CANALES PWM</text>
+  <rect x="585" y="205" width="290" height="365" rx="18" fill="#17688c" stroke="#0c3f59" stroke-width="4"/>
+  <text x="730" y="390" text-anchor="middle" fill="white" class="head">PCA9685</text>
+  <circle cx="555" cy="250" r="10" fill="#d62828"/><text x="585" y="257" class="pin" fill="white">VCC lógica 3,3 V</text>
+  <circle cx="555" cy="320" r="10" fill="#1976d2"/><text x="585" y="327" class="pin" fill="white">SDA</text>
+  <circle cx="555" cy="390" r="10" fill="#2a9d4b"/><text x="585" y="397" class="pin" fill="white">SCL</text>
+  <circle cx="555" cy="460" r="10" fill="#161616"/><text x="585" y="467" class="pin" fill="white">GND común</text>
+  <circle cx="555" cy="530" r="10" fill="#7b2cbf"/><text x="585" y="537" class="pin" fill="white">OE activo en LOW</text>
+  <circle cx="830" cy="220" r="10" fill="#e31a1c"/><text x="765" y="205" class="pin" fill="white">V+ servos</text>
+
+  <path d="M350 250 H555" class="logic"/><path d="M350 320 H555" class="sda"/><path d="M350 390 H555" class="scl"/><path d="M350 460 H555" class="gnd"/><path d="M350 530 H555" class="oe"/>
+  <path d="M350 250 V585 H425" class="logic"/>
+  <polyline points="425,585 435,565 445,605 455,565 465,605 475,565 485,585" fill="none" stroke="#d62828" stroke-width="5"/>
+  <path d="M485 585 V530" class="logic"/>
+  <text x="455" y="625" text-anchor="middle" class="small" fill="#a31313">10 kΩ: OE ↔ 3V3</text>
+  <text x="455" y="655" text-anchor="middle" class="small" fill="#7b2cbf">OE alto = PWM apagado</text>
+
+  <rect x="535" y="700" width="390" height="210" rx="20" class="box"/>
+  <text x="730" y="740" text-anchor="middle" class="head">FUENTE EXTERNA 5–6 V</text>
+  <text x="575" y="795" class="txt" fill="#c1121f">+ → V+ PCA9685</text>
+  <text x="575" y="840" class="txt">− → GND común</text>
+  <text x="575" y="885" class="small">Fusible + parada física obligatorios</text>
+  <path d="M730 700 V665 H830 V220" class="power"/>
+  <path d="M560 840 H430 V930 H1470" class="gnd"/>
+  <path d="M350 460 V930" class="gnd"/><path d="M555 460 V930" class="gnd"/>
+
+  <rect x="980" y="100" width="570" height="810" rx="22" class="box"/>
+  <text x="1265" y="145" text-anchor="middle" class="head">CANALES Y SERVOS MG996R</text>
+  <text x="1010" y="180" class="small">Cada conector: señal PWM · V+ externo · GND común</text>
+  <g class="txt">
+    <rect x="1010" y="210" width="510" height="145" rx="15" class="label"/><text x="1030" y="242" class="head" fill="#225a9b">FL · delantera izquierda</text>
+    <text x="1030" y="278">CH0 coxa</text><text x="1180" y="278">CH1 fémur</text><text x="1340" y="278">CH2 tibia</text>
+    <rect x="1040" y="295" width="90" height="35" rx="8" class="servo"/><rect x="1190" y="295" width="90" height="35" rx="8" class="servo"/><rect x="1350" y="295" width="90" height="35" rx="8" class="servo"/>
+    <rect x="1010" y="370" width="510" height="145" rx="15" fill="#effbef" stroke="#2d8a46" stroke-width="2"/><text x="1030" y="402" class="head" fill="#23713a">FR · delantera derecha</text>
+    <text x="1030" y="438">CH3 coxa</text><text x="1180" y="438">CH4 fémur</text><text x="1340" y="438">CH5 tibia</text>
+    <rect x="1040" y="455" width="90" height="35" rx="8" class="servo"/><rect x="1190" y="455" width="90" height="35" rx="8" class="servo"/><rect x="1350" y="455" width="90" height="35" rx="8" class="servo"/>
+    <rect x="1010" y="530" width="510" height="145" rx="15" fill="#fff5e9" stroke="#dc7815" stroke-width="2"/><text x="1030" y="562" class="head" fill="#bd5f08">RL · trasera izquierda</text>
+    <text x="1030" y="598">CH6 coxa</text><text x="1180" y="598">CH7 fémur</text><text x="1340" y="598">CH8 tibia</text>
+    <rect x="1040" y="615" width="90" height="35" rx="8" class="servo"/><rect x="1190" y="615" width="90" height="35" rx="8" class="servo"/><rect x="1350" y="615" width="90" height="35" rx="8" class="servo"/>
+    <rect x="1010" y="690" width="510" height="145" rx="15" fill="#f7efff" stroke="#7044a1" stroke-width="2"/><text x="1030" y="722" class="head" fill="#60358d">RR · trasera derecha</text>
+    <text x="1030" y="758">CH9 coxa</text><text x="1180" y="758">CH10 fémur</text><text x="1340" y="758">CH11 tibia</text>
+    <rect x="1040" y="775" width="90" height="35" rx="8" class="servo"/><rect x="1190" y="775" width="90" height="35" rx="8" class="servo"/><rect x="1350" y="775" width="90" height="35" rx="8" class="servo"/>
+  </g>
+  <text x="1265" y="875" text-anchor="middle" class="txt">CH12–CH15 libres</text>
+
+  <rect x="45" y="700" width="420" height="210" rx="20" class="warn"/>
+  <text x="255" y="755" text-anchor="middle" class="head" fill="#c1121f">NO ALIMENTAR SERVOS</text>
+  <text x="255" y="795" text-anchor="middle" class="head" fill="#c1121f">DESDE LA RASPBERRY</text>
+  <text x="70" y="845" class="small">Servo: marrón/negro = GND</text>
+  <text x="70" y="875" class="small" fill="#c1121f">rojo = V+ externo · naranja = señal</text>
+  <text x="800" y="975" text-anchor="middle" class="small">Verificar colores del fabricante y calibrar un servo asegurado antes de conectar los doce.</text>
+</svg>

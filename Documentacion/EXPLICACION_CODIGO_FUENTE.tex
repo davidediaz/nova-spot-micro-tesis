@@ -1,0 +1,300 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage{lmodern}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{geometry}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{microtype}
+\geometry{margin=2.35cm}
+\hypersetup{colorlinks=true,linkcolor=blue!55!black,urlcolor=blue!55!black}
+\lstdefinestyle{python}{language=Python,basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue!65!black},commentstyle=\color{green!45!black},
+  stringstyle=\color{orange!55!black},breaklines=true,frame=single,
+  showstringspaces=false,columns=fullflexible}
+\lstdefinestyle{yaml}{basicstyle=\ttfamily\small,breaklines=true,frame=single,
+  showstringspaces=false,columns=fullflexible}
+
+\title{Explicación del código fuente de locomoción\\Nova Spot Micro}
+\author{Proyecto de tesis --- robot cuadrúpedo Nova Spot Micro}
+\date{Actualizado el 16 de agosto de 2026}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+Este documento explica cómo el código ROS 2 genera la marcha cartesiana, aplica
+cinemática inversa y controla las doce articulaciones del Nova Spot Micro en
+Gazebo y MuJoCo. Se describen responsabilidades, flujo de datos, validaciones,
+configuración, pruebas y comandos de ejecución. El controlador es todavía una
+línea base de simulación; no debe conectarse directamente a servomotores sin
+calibración y supervisor físico.
+\end{abstract}
+\tableofcontents
+
+\section{Arquitectura general}
+El sistema se divide en dos paquetes ROS 2:
+\begin{itemize}
+\item \texttt{nova\_sm3\_description}: URDF/Xacro, propiedades físicas
+  provisionales, integración \texttt{ros2\_control} y lanzador de Gazebo.
+\item \texttt{nova\_gait\_controller}: cinemática, generación de marchas,
+  nodo de control, parámetros y pruebas.
+\end{itemize}
+
+El flujo de ejecución es
+\[
+\text{comando ``gateo''}\rightarrow
+\text{trayectoria de pies}\rightarrow
+\text{IK}\rightarrow
+\texttt{JointTrajectory}\rightarrow
+\texttt{ros2\_control}\rightarrow\text{Gazebo}.
+\]
+Gazebo devuelve los estados articulares mediante \texttt{/joint\_states}; la
+pose del cuerpo, la fase y los contactos medidos se publican para validar
+altura, orientación y cumplimiento del patrón de apoyo.
+
+\section{Mapa de archivos}
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{p{0.42\textwidth}p{0.50\textwidth}}
+\toprule
+Archivo & Responsabilidad\\
+\midrule
+\texttt{nova\_gait\_controller/kinematics.py} & FK, IK, límites y generación
+cartesiana del gateo y de la marcha paso.\\
+\texttt{nova\_gait\_controller/gait\_controller.py} & Nodo ROS 2, máquina de
+estados, parámetros, fase y publicación de trayectorias.\\
+\texttt{contact\_monitor.py}, \texttt{contact\_comparator.py} & Agregación de
+sensores y comparación de contactos previstos frente a observados.\\
+\texttt{metrics\_node.py}, \texttt{safety\_supervisor.py} & Métricas de pose y
+articulaciones; parada lógica por altura o inclinación insegura.\\
+\texttt{config/gaits.yaml} & Valores operativos de marcha.\\
+\texttt{test/test\_kinematics.py} & Pruebas FK--IK y continuidad.\\
+\texttt{nova\_sm3\_description/urdf/*.xacro} & Geometría, articulaciones,
+límites e interfaces de control.\\
+\texttt{nova\_sm3\_description/config/controllers.yaml} & Configuración del
+administrador y controladores.\\
+\texttt{nova\_sm3\_description/launch/sim.launch.py} & Inicio de Gazebo,
+publicación del modelo y activación de controladores.\\
+\texttt{nova\_gait\_controller/launch/demo.launch.py} & Composición de
+simulador y nodo de marcha.\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Módulo \texttt{kinematics.py}}
+\subsection{Constantes geométricas}
+El archivo declara las tres longitudes que deben coincidir con el URDF:
+\begin{lstlisting}[style=python]
+COXA_LENGTH = 0.090
+FEMUR_LENGTH = 0.105
+TIBIA_LENGTH = 0.132
+\end{lstlisting}
+Se mantienen centralizadas para evitar mezclar las dimensiones del repositorio
+de referencia con las del NovaSM3. En una fase posterior deben leerse de una
+fuente única generada a partir de mediciones.
+
+\subsection{\texttt{forward\_leg}}
+Recibe tres ángulos y \texttt{side}, que vale $+1$ a la izquierda y $-1$ a la
+derecha. Primero calcula la cadena fémur--tibia en el plano y después aplica la
+rotación de la coxa al plano lateral/vertical. Devuelve una tupla
+\texttt{(x, y, z)} relativa al pivote de cadera.
+
+Esta función se utiliza para obtener la ubicación neutral de cada pie desde la
+postura nominal. También permite comprobar que la IK reconstruye los ángulos
+de partida.
+
+\subsection{\texttt{inverse\_leg}}
+Recibe una posición de pie y devuelve la terna articular compatible con los
+ejes del URDF. El orden de sus defensas es importante:
+\begin{enumerate}
+\item verifica que exista separación radial suficiente para la coxa;
+\item calcula y normaliza el ángulo de coxa;
+\item aplica ley de cosenos al plano fémur--tibia;
+\item limita errores numéricos pequeños de $D$ al intervalo $[-1,1]$;
+\item selecciona la rama de rodilla negativa;
+\item rechaza valores no finitos o fuera de límites.
+\end{enumerate}
+Los errores se comunican mediante \texttt{ValueError}. El controlador captura
+esta excepción antes de activar la marcha.
+
+\subsection{\texttt{cartesian\_crawl}}
+Esta función genera toda la tabla articular de un ciclo. Sus argumentos son la
+postura, el número de muestras, la longitud y la elevación del paso. Los
+desfases de pata son:
+\begin{lstlisting}[style=python]
+offsets = {'fl': 0.75, 'rr': 0.50,
+           'fr': 0.25, 'rl': 0.00}
+\end{lstlisting}
+Al tener cuatro desfases separados por un cuarto de ciclo y un apoyo del 75\%,
+solamente una pata se eleva. En apoyo, el pie retrocede linealmente respecto al
+cuerpo; en oscilación, avanza y sigue una parábola vertical. Cada punto se
+convierte inmediatamente con \texttt{inverse\_leg}. El resultado es una lista
+de $N$ vectores, cada uno con doce ángulos en el orden exigido por ROS 2.
+
+La medición de contacto reveló que esta formulación no realiza transferencia
+lateral explícita: aunque el cuerpo avanza, las patas traseras permanecen
+apoyadas y deslizan durante su oscilación prevista. Esta limitación motiva una
+nueva versión de la trayectoria.
+
+\subsection{\texttt{cartesian\_step\_walk}}
+Genera 32 referencias por ciclo con paso de 16 mm, elevación de 8 mm y
+transferencia lateral sinusoidal de 4 mm. Mantiene el orden FL--RR--FR--RL y
+fue validada en dos ensayos de Gazebo y una ejecución headless de MuJoCo.
+
+\section{Nodo \texttt{gait\_controller.py}}
+\subsection{Orden articular}
+La constante \texttt{JOINTS} fija el contrato con
+\texttt{joint\_trajectory\_controller}: delantera izquierda, delantera derecha,
+trasera izquierda y trasera derecha; en cada pata, coxa, fémur y tibia. Alterar
+este orden sin cambiar el URDF y la configuración movería articulaciones
+equivocadas.
+
+\subsection{Postura nominal}
+\begin{lstlisting}[style=python]
+STAND = (0.10, 0.42, -0.84)
+\end{lstlisting}
+La función \texttt{pose} repite o combina cuatro ternas y las aplana en un
+vector de doce elementos. \texttt{stand} y \texttt{stop} publican esta postura
+en una transición de $0.8$ s. En la implementación actual \texttt{stop} detiene
+la secuencia y conserva postura; no equivale a cortar físicamente la energía.
+
+\subsection{Inicialización ROS 2}
+El constructor:
+\begin{enumerate}
+\item declara parámetros;
+\item crea un publicador de \texttt{JointTrajectory};
+\item se suscribe a \texttt{/nova/gait\_command};
+\item inicializa modo, fase y reloj;
+\item crea un temporizador de 20 ms;
+\item entra en la marcha inicial, normalmente \texttt{stand}.
+\end{enumerate}
+
+\subsection{Comandos}
+\texttt{command\_callback} normaliza alias en español:
+\texttt{gateo}$\rightarrow$\texttt{crawl},
+\texttt{paso}$\rightarrow$\texttt{step},
+\texttt{galope}$\rightarrow$\texttt{gallop} y
+\texttt{parar}$\rightarrow$\texttt{stop}. \texttt{set\_mode} rechaza nombres
+desconocidos y reinicia el índice de fase cuando acepta un cambio.
+El galope se rechaza mientras
+\texttt{enable\_experimental\_gallop=false}; solo se permite una habilitación
+explícita para experimentos opcionales de simulación y no para hardware.
+
+Al solicitar \texttt{crawl}, \texttt{build\_crawl} lee los parámetros actuales,
+valida sus intervalos y construye las referencias cartesianas. Esto permite
+cambiar el YAML o parámetros ROS sin modificar las ecuaciones. Si la tabla no
+puede construirse, se registra el error, se conserva \texttt{stand} y no se
+publica el gateo.
+
+\subsection{Bucle temporal}
+El temporizador llama a \texttt{update}. La función retorna sin publicar si el
+modo está detenido o todavía no se alcanza el instante de la fase siguiente.
+Cuando corresponde, selecciona la tabla, publica el vector y un JSON sincronizado
+en \texttt{/nova/gait\_phase}, incrementa el índice y programa el siguiente
+instante desde el vencimiento planificado anterior, sin acumular jitter.
+
+\subsection{Publicación de trayectorias}
+\texttt{publish\_target} crea un único \texttt{JointTrajectoryPoint}:
+\begin{itemize}
+\item copia las doce posiciones para no compartir referencias mutables;
+\item solicita velocidad final cero en las doce articulaciones;
+\item convierte el tiempo decimal en segundos y nanosegundos ROS;
+\item adjunta los nombres articulares y publica el mensaje.
+\end{itemize}
+El parámetro \texttt{transition\_ratio=0.90} hace que la interpolación termine
+antes del límite completo de fase.
+
+\section{Configuración \texttt{gaits.yaml}}
+La línea base validada es:
+\begin{lstlisting}[style=yaml]
+gait_controller:
+  ros__parameters:
+    initial_gait: stand
+    crawl_phase_duration: 0.18
+    crawl_samples: 24
+    crawl_step_length: 0.018
+    crawl_step_height: 0.014
+    transition_ratio: 0.90
+\end{lstlisting}
+Los intervalos admitidos están codificados en \texttt{build\_crawl}. Que un
+valor esté dentro del intervalo no garantiza por sí solo estabilidad en todas
+las combinaciones; la IK y las pruebas de simulación son defensas adicionales.
+
+\section{Descripción, controladores y Gazebo}
+El Xacro declara doce articulaciones controladas con interfaz de comando de
+posición y estados de posición/velocidad. Cada articulación recibe como valor
+inicial la postura nominal, evitando una caída libre antes de activar el
+controlador.
+
+\texttt{controllers.yaml} configura:
+\begin{itemize}
+\item \texttt{joint\_state\_broadcaster}, que publica estados;
+\item \texttt{joint\_trajectory\_controller}, que interpola y aplica los puntos.
+\end{itemize}
+
+\texttt{sim.launch.py} procesa el Xacro con Gazebo habilitado, inicia el mundo
+vacío, publica \texttt{robot\_description}, crea el robot a $z=0.245$ m y,
+después de cinco segundos, activa ambos controladores. El lanzador
+\texttt{demo.launch.py} añade el nodo de marcha usando el YAML.
+
+\section{Pruebas automatizadas}
+La suite cubre FK--IK, continuidad y periodicidad de las marchas, temporización,
+plan de contactos, diagnósticos, seguridad, dinámica y consistencia
+Python--URDF--MJCF. La verificación actual registra 33 pruebas aprobadas. Además, los
+módulos pasan \texttt{py\_compile}, el URDF pasa \texttt{check\_urdf} y ambos
+paquetes compilan con \texttt{colcon}.
+
+\section{Ejecución reproducible}
+\begin{lstlisting}[style=yaml]
+cd /home/pavilion/Documentos/Cuadrupedo
+source /opt/ros/humble/setup.bash
+colcon build --symlink-install
+source install/setup.bash
+ros2 launch nova_gait_controller demo.launch.py
+\end{lstlisting}
+En otra terminal:
+\begin{lstlisting}[style=yaml]
+source /opt/ros/humble/setup.bash
+source /home/pavilion/Documentos/Cuadrupedo/install/setup.bash
+ros2 topic pub --once /nova/gait_command \
+  std_msgs/msg/String "{data: gateo}"
+\end{lstlisting}
+Comandos de postura y detención lógica:
+\begin{lstlisting}[style=yaml]
+ros2 topic pub --once /nova/gait_command \
+  std_msgs/msg/String "{data: stand}"
+ros2 topic pub --once /nova/gait_command \
+  std_msgs/msg/String "{data: stop}"
+\end{lstlisting}
+
+\section{Resultado y limitaciones}
+La cadencia corregida del gateo se reprodujo en dos ensayos de 13 ciclos con
+periodo medio cercano a 4.320 s y diferencias menores al 0.2\% en las medias.
+La marcha paso completó dos ensayos de 12 ciclos en Gazebo y 12 ciclos en
+MuJoCo. El sistema publica métricas, posee un supervisor provisional y mide los
+cuatro contactos en Gazebo.
+
+El ensayo cuantitativo de 76 ciclos obtuvo solo 32.550\% de coincidencia de
+contactos: las patas delanteras tuvieron transiciones tardías y las traseras no
+despegaron. Faltan IMU simulada, contactos equivalentes en MuJoCo, margen de
+estabilidad en línea e interfaz física PCA9685.
+Las constantes geométricas y dinámicas son provisionales. Por ello, este código
+es válido como línea base de simulación y no autoriza energizar los MG996R.
+
+\section{Próximas extensiones recomendadas}
+\begin{enumerate}
+\item corregir el gateo y repetir el ensayo cuantitativo de contactos;
+\item añadir contactos equivalentes en MuJoCo y una IMU simulada;
+\item calcular polígono de soporte y margen del centro de masa;
+\item ampliar y rearmar de forma segura el supervisor;
+\item sustituir longitudes, límites y dinámica por mediciones físicas;
+\item mantener esta marcha como referencia nominal para comparar posteriormente
+  la capa correctiva de aprendizaje por refuerzo.
+\end{enumerate}
+
+\end{document}

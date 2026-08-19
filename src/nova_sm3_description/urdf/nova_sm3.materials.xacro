@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <material name="nova_yellow"><color rgba="0.95 0.72 0.05 1"/></material>
+  <material name="nova_black"><color rgba="0.08 0.08 0.08 1"/></material>
+  <material name="nova_grey"><color rgba="0.35 0.35 0.35 1"/></material>
+</robot>

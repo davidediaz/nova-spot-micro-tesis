@@ -1,0 +1,47 @@
+
+
+\clearpage
+\chapter*{}
+\thispagestyle{fancy}
+
+\vspace*{-3cm}
+
+
+\vspace{0.5cm}
+\section{Cronograma}
+
+\begin{center}
+\resizebox{\textwidth}{0.85\textheight}{
+\begin{ganttchart}[
+vgrid,
+hgrid,
+bar/.style={fill=blue!40},
+bar height=0.6
+]{1}{32}
+
+\gantttitle{Cronograma del proyecto de tesis}{32} \\
+\gantttitle{Semanas de Trabajo}{32} \\
+\gantttitlelist{1,...,32}{1} \\
+
+\ganttbar{Definición del problema}{1}{2} \\
+\ganttbar{Formulación de objetivos y alcance}{2}{3} \\
+\ganttbar{ Estado del arte y Revisión bibliográfica }{3}{5} \\
+\ganttbar{Redacción del marco teórico y alcance}{4}{5} \\
+\ganttbar{Definición Metodología y presupuesto}{5}{6} \\
+\ganttbar{Modelado cinemático del robot}{7}{15} \\
+\ganttbar{Validación de los modelos}{16}{17} \\
+\ganttbar{Diseño de arquitectura electrónica}{16}{18} \\
+\ganttbar{Implementación electrónica}{17}{20} \\
+\ganttbar{Programación del sistema embebido}{19}{23} \\
+\ganttbar{Pruebas individuales de articulaciones}{21}{25} \\
+\ganttbar{Desarrollo de algoritmos de locomoción}{23}{29} \\
+\ganttbar{Evaluación de estabilidad}{26}{31} \\
+\ganttbar{Validación experimental}{27}{31} \\
+\ganttbar{Redacción del documento final}{28}{31} \\
+\ganttbar{Revisión del asesor}{28}{31} \\
+\ganttbar{Entrega del trabajo de grado}{31}{32} \\
+\ganttbar{Sustentación}{31}{32}
+
+\end{ganttchart}
+}
+\end{center}

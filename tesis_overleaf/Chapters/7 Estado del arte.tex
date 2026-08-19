@@ -1,0 +1,25 @@
+\chapter{Estado del arte}
+
+La investigación sobre locomoción cuadrúpeda combina modelado, simulación y validación experimental. Plataformas como MIT Cheetah~3 y ANYmal han servido para evaluar arquitecturas de control capaces de coordinar múltiples articulaciones y mantener la estabilidad durante desplazamientos dinámicos~\cite{bledt2018cheetah3,hutter2016anymal}. Estos trabajos evidencian la importancia de validar el controlador tanto en condiciones nominales como ante perturbaciones.
+
+Una línea de trabajo utiliza optimización para generar movimientos de cuerpo completo. Bellicoso \textit{et al.} formulan la locomoción como un problema de optimización no lineal en línea, mientras que Neunert \textit{et al.} incorporan la dinámica y los contactos en un esquema de control predictivo no lineal~\cite{bellicoso2018dynamic,neunert2018wholebody}. En ambos casos, las restricciones físicas del robot forman parte explícita del problema de control.
+
+Otra aproximación emplea modelos simplificados para reducir el costo computacional. El controlador predictivo convexo desarrollado para MIT Cheetah~3 calcula fuerzas de reacción y referencias de movimiento en tiempo real, permitiendo ejecutar locomoción dinámica y responder a perturbaciones externas~\cite{dicarlo2018mpc}. Para un prototipo educativo, esta línea ofrece criterios útiles para separar la generación nominal de marcha de la capa de estabilización.
+
+La planificación tradicional de marcha continúa siendo relevante, especialmente cuando se busca una implementación interpretable y segura. Los modelos cinemáticos y dinámicos permiten definir secuencias de apoyo, verificar el espacio alcanzable y conservar condiciones de estabilidad durante marchas lentas~\cite{zamani2011dynamics}. Una máquina de estados finitos puede utilizar estas secuencias como referencia nominal antes de incorporar estrategias adaptativas.
+
+El aprendizaje por refuerzo constituye una línea complementaria. Se ha observado que políticas entrenadas con objetivos relacionados con locomoción y consumo energético pueden producir comportamientos coordinados y diferentes patrones de marcha~\cite{heess2017emergence,fu2021energy}. Sin embargo, la transferencia al robot físico exige controlar el dominio de entrenamiento, las acciones permitidas y los mecanismos de seguridad.
+
+La simulación dinámica permite repetir experimentos y modificar parámetros sin exponer el hardware. MuJoCo fue diseñado para simulación física y control basado en modelos, y se utiliza como soporte para desarrollar y evaluar estrategias antes de transferirlas al robot~\cite{todorov2012mujoco,tassa2018controlsuite}. En esta tesis se combinará la simulación con ROS~2 para conservar una arquitectura modular de comunicación y ejecución.
+
+\section{Comparación con desarrollos actuales}
+
+Los sistemas de referencia emplean actuadores, sensores y computadores de alto desempeño~\cite{bledt2018cheetah3,hutter2016anymal}. El presente proyecto trabaja con una plataforma de laboratorio de recursos más limitados; por ello, propone una marcha discreta como línea base y una política aprendida como capa correctiva limitada. Esta separación busca conservar interpretabilidad y facilitar una transferencia progresiva y segura.
+
+\section{Vacío identificado}
+
+Los trabajos revisados demuestran resultados avanzados en plataformas especialmente diseñadas para locomoción dinámica. Existe una oportunidad de evaluar qué parte de esas estrategias puede trasladarse a un robot educativo de bajo costo, con actuadores de posición y capacidad computacional limitada. El aporte de esta tesis será una implementación documentada y una comparación experimental bajo métricas comunes, no la formulación de un nuevo algoritmo de aprendizaje.
+
+\section{Punto de partida del proyecto}
+
+El trabajo parte de la caracterización del Nova Spot Micro y de un controlador discreto existente. Sobre esta base se desarrollarán los modelos, la instrumentación y el protocolo experimental. La política de aprendizaje por refuerzo se evaluará como corrección de referencias nominales, manteniendo límites de acción y un supervisor independiente de seguridad.

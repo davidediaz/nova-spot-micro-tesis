@@ -1,0 +1,1916 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{geometry}
+\geometry{left=2.5cm,right=2.2cm,top=2.4cm,bottom=2.4cm}
+\usepackage{amsmath,amssymb,mathtools,bm}
+\usepackage{siunitx}
+\sisetup{output-decimal-marker={,},per-mode=symbol}
+\usepackage{booktabs,longtable,tabularx,array}
+\usepackage{xcolor}
+\definecolor{novaBlue}{HTML}{1F4E79}
+\definecolor{novaLight}{HTML}{EAF2F8}
+\usepackage{enumitem}
+\usepackage{tcolorbox}
+\tcbuselibrary{breakable}
+\usepackage{xurl}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=novaBlue,urlcolor=novaBlue,citecolor=novaBlue,
+ pdftitle={Modelo matemático Nova Spot Micro}}
+\usepackage{cleveref}
+\usepackage{fancyhdr}
+\pagestyle{fancy}\fancyhf{}
+\fancyhead[L]{Modelo matemático Nova Spot Micro}
+\fancyhead[R]{NovaSM3}\fancyfoot[C]{\thepage}
+\setlength{\headheight}{14pt}
+\setcounter{tocdepth}{2}
+\newcommand{\vect}[1]{\bm{#1}}
+\newcommand{\mat}[1]{\bm{#1}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\trans}{^{\mathsf T}}
+\newcommand{\sat}{\operatorname{sat}}
+\newcommand{\clip}{\operatorname{clip}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\rank}{\operatorname{rank}}
+\newcommand{\sign}{\operatorname{sign}}
+\newcommand{\FK}{\operatorname{FK}}
+\newcommand{\IK}{\operatorname{IK}}
+\newcommand{\argmin}{\operatorname*{arg\,min}}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\newtcolorbox{validity}{colback=novaLight,colframe=novaBlue,
+ title=Estado de validez,fonttitle=\bfseries}
+\newtcolorbox{workedexample}[1]{breakable,colback=white,colframe=novaBlue,
+ title={Ejemplo desarrollado: #1},fonttitle=\bfseries,
+ before skip=8pt,after skip=8pt}
+\newtcolorbox{projectresult}[1]{breakable,colback=novaLight,colframe=novaBlue,
+ title={Resultado para Nova: #1},fonttitle=\bfseries,
+ before skip=8pt,after skip=8pt}
+\newtcolorbox{tracebox}[1]{breakable,colback=gray!4,colframe=gray!65,
+ title={Trazabilidad: #1},fonttitle=\bfseries,boxrule=0.6pt,
+ before skip=6pt,after skip=6pt}
+
+\begin{document}
+\hypersetup{pageanchor=false}
+\pagenumbering{roman}
+\begin{titlepage}
+\centering
+\vspace*{3cm}
+{\Huge\bfseries\color{novaBlue} Modelo matemático del robot cuadrúpedo\\[0.3cm]
+Nova Spot Micro\par}
+\vspace{2cm}
+{\Large Modelo nominal computable para postura, paso, gateo y otros patrones de locomoción\par}
+\vfill
+{\large Proyecto de tesis --- NovaSM3\par}
+\vspace{1cm}
+ROS 2 Humble $\cdot$ Gazebo Sim $\cdot$ MuJoCo
+\vfill
+Versión LaTeX ampliada con control discreto: 16 de agosto de 2026
+\end{titlepage}
+
+\tableofcontents
+\clearpage
+\hypersetup{pageanchor=true}
+\pagenumbering{arabic}
+
+\section*{Resumen}\addcontentsline{toc}{section}{Resumen}
+Este documento presenta el modelo matemático nominal del robot cuadrúpedo Nova
+Spot Micro. Integra geometría, cinemática directa e inversa, espacio de trabajo,
+Jacobianos, singularidades, cinemática de segundo orden, dinámica rígida,
+actuadores, contacto pie--suelo, centro de masa, estabilidad, generación de
+marchas, teoría y diseño de control discreto, identificación y validación. Su estructura es independiente del patrón
+de locomoción y puede aplicarse a postura, paso, gateo y otros movimientos que
+respeten las hipótesis y límites declarados.
+
+\begin{validity}
+La estructura matemática es computable y ha sido verificada internamente. Las
+dimensiones generales y la masa total tienen respaldo público; la distribución
+de masa, inercias, fricción, contacto y actuadores contiene valores nominales de
+ingeniería hasta identificar el ejemplar físico. En consecuencia, este es un
+\emph{modelo nominal completo y computable}, no un gemelo digital validado.
+\end{validity}
+
+\section{Alcance, hipótesis y niveles de modelado}
+El modelo completo emplea una base flotante de seis grados de libertad, doce
+coordenadas articulares y fuerzas de contacto. El modelo reducido representa
+una pata como cadena serial de tres grados de libertad. El primero sirve para
+pose corporal, contactos y estabilidad global; el segundo para FK, IK,
+Jacobianos, workspace, pares locales y trayectorias cartesianas.
+\begin{align}
+ \vect q &= [\vect r_B\trans,\,\vect\eta_B\trans,\,\vect q_J\trans]\trans
+ \in\R^{18}, &
+ \vect q_i &= [q_{c,i},q_{f,i},q_{t,i}]\trans\in\R^3. \label{eq:qlevels}
+\end{align}
+Se asumen eslabones rígidos, suelo nominal plano, contacto unilateral, control
+de posición en los servos y gateo suficientemente lento para aplicar el
+criterio cuasiestático. Holgura, flexibilidad y dispersión de fabricación se
+representarán mediante incertidumbre. Una coincidencia entre ecuaciones y
+simuladores constituye verificación de implementación, no validación física.
+
+\section{Convenciones, marcos y nomenclatura}
+Se usa el Sistema Internacional y REP--103: $x$ hacia delante, $y$ hacia la
+izquierda y $z$ hacia arriba. Los marcos son $\{W\}$ (mundo), $\{B\}$ (cuerpo),
+$\{H_i\}$ (cadera), $\{C_i\}$ (coxa), $\{F_i\}$ (fémur), $\{T_i\}$ (tibia) y
+$\{P_i\}$ (pie). FL, FR, RL y RR designan las cuatro patas. El factor
+$s_i=+1$ para patas izquierdas y $s_i=-1$ para derechas.
+\begin{table}[ht]
+\centering\caption{Posición de los pivotes de coxa en el marco corporal.}
+\begin{tabular}{ccc}\toprule
+Pata & $s_i$ & ${}^B\vect p_{H_i}$ \\ \midrule
+FL & $+1$ & $[d_x/2,d_y/2,0]\trans$ \\
+FR & $-1$ & $[d_x/2,-d_y/2,0]\trans$ \\
+RL & $+1$ & $[-d_x/2,d_y/2,0]\trans$ \\
+RR & $-1$ & $[-d_x/2,-d_y/2,0]\trans$ \\ \bottomrule
+\end{tabular}\end{table}
+
+\section{Cómo se construyó el modelo y cómo leer su trazabilidad}
+El modelado no se obtuvo de una sola fórmula ni de copiar un robot distinto. Se
+siguió el método de modelado físico por capas:
+\begin{enumerate}
+ \item definir marcos, signos y unidades;
+ \item obtener geometría y parámetros nominales del NovaSM3;
+ \item derivar la cadena cinemática bajo esas convenciones;
+ \item comprobar FK e IK entre sí y contra el URDF;
+ \item construir Jacobianos y energía para obtener dinámica;
+ \item añadir actuador, contacto y estabilidad con supuestos declarados;
+ \item discretizar únicamente después de fijar el modelo continuo y el periodo;
+ \item contrastar cada salida calculada con pruebas o ensayos independientes.
+\end{enumerate}
+
+Cada familia de ecuaciones tiene cuatro niveles de trazabilidad:
+\begin{description}[style=nextline,leftmargin=2.4cm]
+ \item[Base T] fuente teórica u oficial que justifica el método general;
+ \item[Adaptación A] decisiones propias de ejes, signos, dimensiones y alcance;
+ \item[Código C] archivo o función que evalúa la formulación;
+ \item[Evidencia E] prueba automatizada, simulación o ensayo que la contrasta.
+\end{description}
+Una fuente teórica no valida el robot, y un ensayo favorable no demuestra por sí
+solo que la ecuación sea correcta. La tesis exige conservar los cuatro niveles.
+
+\subsection{Fuentes base identificadas}
+\small
+\begin{longtable}{p{0.7cm}p{4.2cm}p{8.0cm}}
+\caption{Fuentes de las familias matemáticas.}\\
+\toprule ID&Fuente&Uso y límite en esta tesis\\\midrule\endfirsthead
+\toprule ID&Fuente&Uso y límite en esta tesis\\\midrule\endhead
+T01&REP--103, ROS&Convención $x$ adelante, $y$ izquierda, $z$ arriba. Se usa
+para evitar cambios de signo entre modelo, ROS 2 y simuladores.\\
+T02&Craig, \emph{Introduction to Robotics}&Transformaciones homogéneas,
+cinemática serial y Jacobiano. La cadena concreta y sus signos se derivaron
+nuevamente para Nova.\\
+T03&Mike4192, \path{spot_micro_kinematics_python}&Referencia conceptual MIT
+para geometría de Spot Micro e IK. No se copiaron dimensiones ni parámetros de
+marcha; la implementación Nova es propia.\\
+T04&Formulación de Euler--Lagrange y dinámica multicuerpo; Featherstone y notas
+MIT Underactuated&Forma $M(q)\ddot q+C(q,\dot q)\dot q+g(q)$, positividad de
+$M$ y fuerza generalizada $J^T f$.\\
+T05&Contacto unilateral de Signorini y fricción de Coulomb&Complementariedad,
+cono de fricción y modelo penalizado. El resorte--amortiguador es una
+aproximación nominal, no el algoritmo interno exacto de Gazebo o MuJoCo.\\
+T06&TowerPro MG996R, documentación del fabricante&Voltaje, velocidad, par de
+bloqueo y corrientes de catálogo. No proporciona par continuo identificado.\\
+T07&Ogata; Franklin, Powell y Workman&Muestreo, ZOH, transformada Z,
+discretización, Jury, lugar de raíces, PID y respuesta en frecuencia.\\
+T08&Bellman y formulación LQR; notas MIT Underactuated&Índice cuadrático,
+ecuación de Riccati y realimentación óptima para el modelo lineal declarado.\\
+T09&Kalman, 1960, DOI 10.1115/1.3662552&Estimación recursiva lineal y evolución
+de covarianza. Su inclusión es diseño futuro hasta disponer de IMU y ruido
+caracterizado.\\
+T10&Documentación oficial \path{trajectory_msgs} y
+\path{joint_trajectory_controller}&Contrato de nombres, puntos, posiciones,
+velocidades y tiempo usado para enviar referencias desde ROS 2.\\
+T11&Documentación oficial de sensores Gazebo&Significado y publicación de
+sensores de contacto. Justifica la adquisición, no el plan ideal de apoyo.\\
+\bottomrule
+\end{longtable}
+\normalsize
+
+\subsection{Matriz de trazabilidad de las ecuaciones Nova}
+\small
+\begin{longtable}{p{0.7cm}p{2.5cm}p{1.7cm}p{3.2cm}p{4.3cm}}
+\caption{Cadena teoría--adaptación--código--evidencia.}\\
+\toprule ID&Resultado buscado&Base&Implementación&Comprobación y uso en tesis\\
+\midrule\endfirsthead
+\toprule ID&Resultado buscado&Base&Implementación&Comprobación y uso en tesis\\
+\midrule\endhead
+A01&Posición 3D del pie&T01--T03&\path{forward_leg}&Ida y vuelta FK--IK;
+genera objetivos y permite reportar trayectoria.\\
+A02&Ángulos desde posición&T02--T03&\path{inverse_leg}&Dominio, límites,
+rama de rodilla y continuidad; convierte marcha cartesiana a 12 referencias.\\
+A03&Velocidad y fuerza--par&T02,T04&\path{leg_jacobian},
+\path{foot_force_to_joint_torque}&Diferencias centrales y potencia
+virtual; cuantifica singularidad y carga articular.\\
+A04&Masa, Coriolis y gravedad&T04&\path{leg_mass_matrix},
+\path{coriolis_torque}, \path{gravity_torque}&Simetría, autovalores
+positivos y casos finitos; sustenta el modelo nominal de esfuerzo.\\
+A05&Capacidad del MG996R&T06&\path{actuator_torque_limit},
+\path{actuator_current}&Comparación preliminar par requerido/disponible;
+dimensionamiento, no autorización de hardware.\\
+A06&Contacto y soporte&T05,T11&URDF, \path{contact_monitor},
+\path{static_stability_margin}&Sensores Gazebo y bolsa de 76 ciclos;
+detectó que el patrón ideal no se cumple.\\
+A07&Trayectoria de gateo&T02--T03&\path{cartesian_crawl}&Alcanzabilidad,
+continuidad, cadencia y rosbag; línea base nominal de comparación.\\
+A08&Marcha paso&T02--T03&\path{cartesian_step_walk}&Dos ensayos Gazebo y
+uno MuJoCo; segunda marcha nominal de la tesis.\\
+A09&Tiempo discreto&T07,T10&\path{advance_phase_deadline}&Prueba unitaria y
+ciclos de \SI{4.32}{s}; evita deriva de fase.\\
+A10&Modelo discreto local&T04,T07&Exponencial por bloques en
+\path{generar_ejemplos_modelo.py}&Polos y rango de controlabilidad; puente
+entre dinámica y futuro diseño digital.\\
+A11&Control LQR nominal&T08&\path{solve_discrete_are} en el generador&Polos
+cerrados y respuesta a $10^\circ$; ejemplo de diseño, no implementación actual.\\
+A12&Retardos de apoyo&T11 y método propio&\path{analizar_contactos_rosbag.py}&
+76 transiciones delanteras y ausencia trasera; criterio para corregir gateo.\\
+\bottomrule
+\end{longtable}
+\normalsize
+
+\subsection{Trazabilidad de código y evidencia}
+\small
+\begin{longtable}{p{0.7cm}p{5.5cm}p{6.7cm}}
+\toprule ID&Archivo o evidencia&Qué demuestra exactamente\\\midrule\endfirsthead
+\toprule ID&Archivo o evidencia&Qué demuestra exactamente\\\midrule\endhead
+C01--C03&\path{src/nova_gait_controller/nova_gait_controller/kinematics.py}&
+FK, IK, Jacobiano geométrico indirecto y generadores cartesianos.\\
+C04--C06&\path{src/nova_gait_controller/nova_gait_controller/mathematical_model.py}&
+Jacobiano analítico, dinámica, actuador, contacto, COM y margen nominal.\\
+C07--C09&\path{src/nova_gait_controller/nova_gait_controller/gait_controller.py}&
+Máquina de estados, validación, deadline, trayectoria y fase publicada.\\
+C10--C11&\path{scripts/generar_ejemplos_modelo.py}&Cálculos numéricos que se
+transcriben en las cajas desarrolladas; salida JSON reproducible.\\
+C12&\path{Experimentos/analizar_contactos_rosbag.py}&Emparejamiento de
+transiciones, retardos y coincidencia ponderada por tiempo.\\
+E01--E05&\path{src/nova_gait_controller/test/}&Pruebas de cinemática, modelo,
+temporización, seguridad y consistencia entre representaciones.\\
+E06&\path{Experimentos/rosbag2/contactos_gateo_validado_20260814_1410}&Bolsa
+aceptada de 76 ciclos con fase, contactos, métricas y cero eventos de seguridad.\\
+E07&\path{Experimentos/analisis/contactos_gateo_validado_20260814_1410/INFORME_CONTACTOS.md}&
+Retardos, porcentajes por pata y 32.550\% de coincidencia simultánea.\\
+E08&\path{Experimentos/comparacion_cadencia_corregida_20260814/INFORME_REPRODUCIBILIDAD.md}&
+Repetibilidad de la cadencia corregida en dos ensayos independientes.\\
+E09&\path{Documentacion/MARCHA_PASO_VALIDACION.md}&Dos ensayos Gazebo y
+validación articular de 12 ciclos en MuJoCo.\\
+\bottomrule
+\end{longtable}
+\normalsize
+
+\subsection{Estructura obligatoria de los ejemplos}
+Cada ejemplo desarrollado responde, en este orden, siete preguntas:
+\begin{enumerate}
+ \item \textbf{¿Qué se quiere obtener?} Define la salida útil para la tesis.
+ \item \textbf{¿De dónde sale el método?} Identifica T, A, C y E.
+ \item \textbf{¿Qué datos entran?} Lista valor, unidad y estado de validez.
+ \item \textbf{¿Qué hipótesis se usan?} Expone simplificaciones y dominio.
+ \item \textbf{¿Cómo se sustituye?} Conserva pasos y unidades intermedias.
+ \item \textbf{¿Cómo se comprueba?} Usa identidad, prueba o evidencia separada.
+ \item \textbf{¿Qué significa?} Indica para qué decisión de tesis sirve y qué
+ no permite afirmar.
+\end{enumerate}
+Los ejemplos que usan parámetros nominales son ejercicios de verificación del
+modelo. Los que usan rosbag son resultados experimentales de simulación. Ninguno
+se etiqueta como resultado físico mientras no exista medición del ejemplar.
+
+\section{Diccionario razonado de variables}
+Las variables no se incluyen por costumbre: cada una responde una pregunta de
+la tesis. Su estado se clasifica como \emph{entrada}, \emph{parámetro},
+\emph{estado}, \emph{salida calculada} o \emph{medición}.
+
+\subsection{Geometría y cinemática}
+\footnotesize
+\begin{longtable}{p{2.2cm}p{1.7cm}p{3.9cm}p{5.5cm}}
+\toprule Símbolo&Unidad o tipo&Qué representa&Por qué se obtiene\\\midrule\endfirsthead
+\toprule Símbolo&Unidad o tipo&Qué representa&Por qué se obtiene\\\midrule\endhead
+$i$&índice&FL, FR, RL o RR&Permite aplicar una ecuación a cuatro patas sin
+duplicarla.\\
+$s_i$&$\{-1,+1\}$&Signo izquierda/derecha&Corrige simetría de coxa y evita
+ecuaciones manuales con signos incompatibles.\\
+$d_x,d_y$&m&Separaciones de caderas&Ubican cada pata respecto al cuerpo y
+determinan el polígono de soporte.\\
+$l_c,l_f,l_t$&m&Longitudes de coxa, fémur y tibia&Definen alcance, FK, IK,
+Jacobiano y dinámica; deben medirse físicamente después.\\
+$q_c,q_f,q_t$&rad&Ángulos articulares&Son estados y referencias que puede
+transportar ROS 2; conectan modelo cartesiano con actuadores.\\
+$\vect p_i=[x,y,z]^T$&m&Posición del pie&Es la variable natural para diseñar
+altura, longitud de paso y ubicación de contacto.\\
+$Q=q_f+q_t$&rad&Ángulo acumulado planar&Reduce notación y expresa la orientación
+de la tibia respecto al fémur.\\
+$\mat J_i$&m/rad&Jacobiano del pie&Convierte velocidad articular en cartesiana y
+fuerza del pie en par; permite detectar singularidades.\\
+$\sigma_{min},\kappa$&m/rad, --&Valor singular mínimo y condición&Cuantifican
+pérdida de movilidad y sensibilidad numérica antes de ordenar un objetivo.\\
+\bottomrule
+\end{longtable}
+\normalsize
+
+\subsection{Dinámica, actuador, contacto y estabilidad}
+\footnotesize
+\begin{longtable}{p{2.2cm}p{1.7cm}p{3.9cm}p{5.5cm}}
+\toprule Símbolo&Unidad o tipo&Qué representa&Por qué se obtiene\\\midrule\endfirsthead
+\toprule Símbolo&Unidad o tipo&Qué representa&Por qué se obtiene\\\midrule\endhead
+$\mat M(q)$&kg m$^2$&Inercia articular&Relaciona aceleración con par y permite
+comparar demanda frente al actuador.\\
+$\vect c$&N m&Coriolis y centrífugo&Captura acoplamiento dependiente de velocidad;
+evita atribuir todo el par a gravedad.\\
+$\vect g$&N m&Par gravitacional&Cuantifica el esfuerzo para sostener postura.\\
+$\vect\tau_f$&N m&Fricción pasiva&Representa disipación nominal y permite hacer
+explícita una incertidumbre importante.\\
+$\vect f_i$&N&Fuerza cartesiana del pie&Entra por $J^Tf$ y conecta contacto con
+carga articular.\\
+$\vect\tau$&N m&Par requerido&Salida central para seguridad, selección de servo
+y comparación de controladores.\\
+$V,\omega$&V, rad/s&Tensión y velocidad del servo&Modifican el par disponible;
+impiden usar el par de bloqueo como constante universal.\\
+$I$&A&Corriente estimada o medida&Sirve para dimensionar fuente, energía y
+criterios de protección.\\
+$\phi,\delta$&m&Separación y penetración&Deciden si existe contacto y cuánto
+actúa el modelo penalizado.\\
+$\lambda_n,\vect\lambda_t$&N&Fuerza normal y tangencial&Permiten evaluar apoyo,
+fricción y deslizamiento.\\
+$\vect r_{COM}$&m&Centro de masa total&Se proyecta sobre contactos para medir
+estabilidad, no solo inclinación visual.\\
+$m_s$&m&Margen estático firmado&Será una métrica de tesis: positivo dentro del
+soporte, negativo fuera.\\
+\bottomrule
+\end{longtable}
+\normalsize
+
+\subsection{Marcha, control discreto y experimento}
+\footnotesize
+\begin{longtable}{p{2.2cm}p{1.7cm}p{3.9cm}p{5.5cm}}
+\toprule Símbolo&Unidad o tipo&Qué representa&Por qué se obtiene\\\midrule\endfirsthead
+\toprule Símbolo&Unidad o tipo&Qué representa&Por qué se obtiene\\\midrule\endhead
+$L,H$&m&Longitud y elevación del paso&Parámetros independientes que determinan
+avance, despeje y exigencia articular.\\
+$N,\Delta t,T$&--, s, s&Muestras, periodo de referencia y ciclo&Definen la
+cadencia reproducible y la segmentación de rosbag.\\
+$\beta,\varphi_i$&--&Factor de apoyo y fase&Generan el orden FL--RR--FR--RL y el
+contacto previsto.\\
+$k,T_s$&--, s&Índice y periodo discreto&Convierten ecuaciones continuas en un
+algoritmo que se ejecuta a instantes definidos.\\
+$\mat A_d,\mat B_d$&--&Dinámica discreta&Predicen el estado siguiente y permiten
+analizar polos, controlabilidad y diseñar ganancias.\\
+$\mat K$&según estado&Ganancia de realimentación&Transforma error de estado en
+acción; en esta tesis el LQR actual es solo ejemplo nominal.\\
+$\mat Q,\mat R$&pesos&Penalizaciones LQR&Expresan el compromiso entre error y
+esfuerzo y hacen reproducible la sintonización.\\
+$t_{LO},t_{TD}$&s&Instantes de despegue y aterrizaje&Permiten comprobar si la
+pata físicamente ejecuta la fase publicada.\\
+$\Delta t_{LO},\Delta t_{TD}$&s&Retardos de transición&Diagnostican dónde debe
+corregirse la trayectoria.\\
+$\gamma_i$&\%&Coincidencia de contacto&Cuantifica cumplimiento del plan sin
+depender de apreciación visual.\\
+$v_x$, roll, pitch&m/s, grados&Avance e inclinación&Resultados comparativos para
+nominal frente a nominal más RL.\\
+\bottomrule
+\end{longtable}
+\normalsize
+
+\section{Parámetros nominales}
+\begin{longtable}{p{4.6cm}p{1.7cm}p{2.8cm}p{5.3cm}}
+\caption{Geometría, masa y entorno.}\label{tab:param}\\
+\toprule Parámetro & Símbolo & Valor & Estado \\ \midrule\endfirsthead
+\toprule Parámetro & Símbolo & Valor & Estado \\ \midrule\endhead
+Separación longitudinal de caderas & $d_x$ & \SI{0.180}{m} & Referencia NovaSM3\\
+Separación lateral de caderas & $d_y$ & \SI{0.120}{m} & Referencia NovaSM3\\
+Longitud de coxa & $l_c$ & \SI{0.090}{m} & Referencia geométrica\\
+Longitud de fémur & $l_f$ & \SI{0.105}{m} & Referencia geométrica\\
+Longitud de tibia & $l_t$ & \SI{0.132}{m} & Referencia geométrica\\
+Masa del cuerpo & $m_b$ & \SI{1.20}{kg} & Estimación nominal\\
+Masa coxa/fémur/tibia/pie & --- & \SIlist{0.12;0.12;0.11;0.03}{kg} & Estimaciones nominales\\
+Masa total & $m$ & \SI{2.72}{kg} & Referencia pública aproximada\\
+Gravedad & $g$ & \SI{9.80665}{m.s^{-2}} & Convención estándar\\
+Fricción pie--suelo & $\mu$ & $0.90$ & Parámetro de simulación\\ \bottomrule
+\end{longtable}
+
+\section{Transformaciones homogéneas}
+\begin{tracebox}{T02 $\rightarrow$ A01 $\rightarrow$ C01 $\rightarrow$ E01}
+La forma homogénea procede de robótica serial. Se eligió porque reúne rotación y
+traslación sin perder el marco de referencia. En Nova se sustituyeron ejes REP--103,
+posiciones de cadera y longitudes propias. La última columna se contrasta con
+\texttt{forward\_leg} y con el URDF.
+\end{tracebox}
+Una transformación reúne orientación y traslación:
+\begin{equation}
+ {}^A\mat T_B=\begin{bmatrix}{}^A\mat R_B&{}^A\vect p_B\\
+ 0&0&0&1\end{bmatrix}. \label{eq:homogeneous}
+\end{equation}
+La cadena cuerpo--pie es
+\begin{align}
+ {}^B\mat T_{P_i}={}&{}^B\mat T_{H_i}\,
+ \mat R_x(s_iq_{c,i})\mat T_y(s_il_c)\mat R_y(q_{f,i})
+ \mat T_z(-l_f)\mat R_y(q_{t,i})\mat T_z(-l_t),\label{eq:chain}\\
+ {}^W\vect p_i={}&{}^W\vect r_B+{}^W\mat R_B\,{}^B\vect p_i.\label{eq:worldfoot}
+\end{align}
+La última columna de \cref{eq:chain} debe coincidir numéricamente con la FK
+trigonométrica. ROS 2 representa la orientación de base mediante cuaternión;
+roll, pitch y yaw se derivan solo para métricas y visualización.
+
+\section{Cinemática directa de una pata}
+\begin{tracebox}{T01--T03 $\rightarrow$ A01 $\rightarrow$ C01 $\rightarrow$ E01}
+Método: multiplicación de transformaciones y simplificación trigonométrica.
+Objetivo de tesis: obtener la posición del pie a partir de las 12 posiciones
+articulares para diseñar y verificar marchas cartesianas.
+\end{tracebox}
+Sea $a=s_iq_c$, $Q=q_f+q_t$ y
+\begin{align}
+ x &= -l_f\sin q_f-l_t\sin Q,\label{eq:fkx}\\
+ z_p &= -l_f\cos q_f-l_t\cos Q,\label{eq:fkzp}\\
+ y &= \cos(a)s_il_c-\sin(a)z_p,\label{eq:fky}\\
+ z &= \sin(a)s_il_c+\cos(a)z_p.\label{eq:fkz}
+\end{align}
+Por tanto, $\vect p_i=[x,y,z]\trans=\FK_i(\vect q_i)$. Estas expresiones se
+obtienen al formar primero la cadena planar fémur--tibia, sumar el
+desplazamiento lateral de la coxa y rotar alrededor de $x$. El factor $s_i$
+cambia simultáneamente lado y sentido de coxa, manteniendo una formulación
+única para las cuatro patas.
+
+\begin{workedexample}{cinemática directa de la pata delantera izquierda}
+Se usa la postura nominal que realmente carga el controlador:
+\[
+ q_c=\SI{0.10}{rad},\quad q_f=\SI{0.42}{rad},\quad
+ q_t=\SI{-0.84}{rad},\quad s_{FL}=+1.
+\]
+Primero, $Q=q_f+q_t=\SI{-0.42}{rad}$. Sustituyendo longitudes y ángulos:
+\begin{align*}
+ x&=-0.105\sin(0.42)-0.132\sin(-0.42)
+    =\SI{0.0110095}{m},\\
+ z_p&=-0.105\cos(0.42)-0.132\cos(-0.42)
+    =\SI{-0.2164021}{m}.
+\end{align*}
+Como $a=sq_c=0.10$ rad y $s l_c=0.090$ m:
+\begin{align*}
+ y&=\cos(0.10)(0.090)-\sin(0.10)(-0.2164021)
+   =\SI{0.1111545}{m},\\
+ z&=\sin(0.10)(0.090)+\cos(0.10)(-0.2164021)
+   =\SI{-0.2063360}{m}.
+\end{align*}
+Por tanto,
+\[
+ \boxed{{}^{H_{FL}}\vect p_{FL}=
+ [0.0110095,\;0.1111545,\;-0.2063360]\trans\ \si{m}}.
+\]
+Este valor se obtiene con \texttt{forward\_leg} y constituye la posición
+neutral usada para construir las trayectorias de gateo y marcha paso.
+\end{workedexample}
+
+\subsection{Centros de masa de la cadena}
+Con $\vect e_z=[0,0,-1]\trans$:
+\begin{align}
+ \vect r_c &=\mat R_x(a)[0,s_il_c/2,0]\trans,\\
+ \vect r_{ce}&=\mat R_x(a)[0,s_il_c,0]\trans,\\
+ \vect u_f&=\mat R_x(a)\mat R_y(q_f)\vect e_z,
+ &\vect u_t&=\mat R_x(a)\mat R_y(Q)\vect e_z,\\
+ \vect r_f&=\vect r_{ce}+\tfrac{l_f}{2}\vect u_f,
+ &\vect r_k&=\vect r_{ce}+l_f\vect u_f,\\
+ \vect r_t&=\vect r_k+\tfrac{l_t}{2}\vect u_t,
+ &\vect r_{pie}&=\vect r_k+l_t\vect u_t.
+\end{align}
+
+\section{Cinemática inversa, ramas y dominio}
+\begin{tracebox}{T02--T03 $\rightarrow$ A02 $\rightarrow$ C02 $\rightarrow$ E01}
+Método: eliminar primero la coxa y resolver después el triángulo fémur--tibia
+por ley de cosenos. Se usa la rama de rodilla flexionada compatible con el URDF.
+Objetivo: convertir cada punto cartesiano de la marcha en una referencia articular
+alcanzable, continua y limitada.
+\end{tracebox}
+Para $\vect p=[x,y,z]\trans$, se elimina primero la coxa:
+\begin{align}
+ z_p&=-\sqrt{y^2+z^2-l_c^2},\label{eq:ikzp}\\
+ a&=\operatorname{atan2}(z,y)-\operatorname{atan2}(z_p,s_il_c),
+ &q_c&=s_i a.\label{eq:ikcoxa}
+\end{align}
+Si $y^2+z^2-l_c^2<0$, no existe solución real. Definiendo $d=-z_p$,
+$b=-x$ y $r^2=b^2+d^2$:
+\begin{align}
+ D&=\frac{r^2-l_f^2-l_t^2}{2l_fl_t}, & -1\le D\le1,\label{eq:D}\\
+ q_t&=-\arccos D,\label{eq:kneebranch}\\
+ q_f&=\operatorname{atan2}(b,d)-
+ \operatorname{atan2}\!\left(l_t\sin q_t,l_f+l_t\cos q_t\right).\label{eq:ikfemur}
+\end{align}
+La rama negativa representa rodilla flexionada. La rama positiva puede ser
+matemáticamente válida, pero se descarta si invierte la rodilla, colisiona o
+rompe continuidad. La solución se acepta si
+\begin{equation}
+ q_{j,\min}\le q_j\le q_{j,\max},\qquad
+ \|\vect q_i(k)-\vect q_i(k-1)\|_\infty\le\delta_q.\label{eq:iklimits}
+\end{equation}
+La marcha nominal rechaza un objetivo inválido y conserva \texttt{stand}; no
+lo satura silenciosamente. Una proyección futura deberá formularse como
+$\vect p^*=\argmin_{\vect p\in\mathcal W_i}\|\vect p-\vect p_d\|$.
+
+\begin{workedexample}{comprobación completa FK--IK}
+Se usa el punto calculado anteriormente. Primero:
+\begin{align*}
+ z_p&=-\sqrt{0.1111545^2+(-0.2063360)^2-0.090^2}
+      =\SI{-0.2164021}{m},\\
+ a&=\operatorname{atan2}(-0.2063360,0.1111545)
+ -\operatorname{atan2}(-0.2164021,0.090)=\SI{0.10}{rad},\\
+ q_c&=s a=\SI{0.10}{rad}.
+\end{align*}
+Con $b=-0.0110095$ m y $d=0.2164021$ m:
+\begin{align*}
+ D&=\frac{b^2+d^2-0.105^2-0.132^2}{2(0.105)(0.132)}
+ =0.6674628,\\
+ q_t&=-\arccos(0.6674628)=\SI{-0.84}{rad},\\
+ q_f&=\operatorname{atan2}(b,d)-\operatorname{atan2}(0.132\sin q_t,
+ 0.105+0.132\cos q_t)=\SI{0.42}{rad}.
+\end{align*}
+La IK devuelve $[0.10,0.42,-0.84]\trans$ rad. El error máximo calculado por
+el script fue menor que $10^{-12}$ rad. Esto verifica ecuaciones y código; no
+convierte las longitudes nominales en mediciones físicas.
+\end{workedexample}
+
+\section{Espacio de trabajo}
+\begin{align}
+ \mathcal W_i&=\{\vect p\in\R^3:\exists\vect q_i\in\mathcal Q_i,
+ \FK_i(\vect q_i)=\vect p\},\label{eq:workspace}\\
+ \mathcal W_i^{\mathrm{safe}}&=\{\FK_i(\vect q_i):
+ \vect q_{\min}+\vect\epsilon_q\le\vect q_i\le
+ \vect q_{\max}-\vect\epsilon_q,\ \sigma_{\min}(\mat J_i)\ge\epsilon_\sigma\}.
+\end{align}
+La construcción práctica muestrea el espacio articular, elimina colisiones y
+márgenes insuficientes y genera una nube 3D. Deben incluirse cortes $x$--$z$ y
+$y$--$z$, trayectoria nominal superpuesta y distancia mínima a límites.
+
+\section{Jacobiano y singularidades}
+\begin{tracebox}{T02,T04 $\rightarrow$ A03 $\rightarrow$ C03 $\rightarrow$ E02}
+Método: derivación analítica de FK y principio de potencia virtual. Objetivo:
+relacionar velocidades, detectar configuraciones mal condicionadas y convertir
+fuerzas del pie en pares comparables con el MG996R.
+\end{tracebox}
+De \cref{eq:fkx,eq:fky,eq:fkz}:
+\begin{equation}
+ \dot{\vect p}_i=\mat J_i(\vect q_i)\dot{\vect q}_i,\qquad
+ \mat J_i=\frac{\partial\vect p_i}{\partial\vect q_i}.\label{eq:jacdef}
+\end{equation}
+Sea $A=l_f\sin q_f+l_t\sin Q=-x$, $B=l_t\sin Q$ y $L=s_il_c$.
+El Jacobiano analítico es
+\begin{equation}
+\mat J_i=\begin{bmatrix}
+0&z_p&-l_t\cos Q\\
+s_i[-\sin(a)L-\cos(a)z_p]&-\sin(a)A&-\sin(a)B\\
+s_i[ \cos(a)L-\sin(a)z_p]& \cos(a)A& \cos(a)B
+\end{bmatrix}.\label{eq:jacobian}
+\end{equation}
+La potencia virtual produce $\vect\tau_i=\mat J_i\trans\vect f_i$. La cercanía
+a singularidad se evalúa mediante
+\begin{equation}
+ \kappa(\mat J_i)=\frac{\sigma_{\max}}{\sigma_{\min}},\qquad
+ w_i=\sqrt{\det(\mat J_i\mat J_i\trans)}.\label{eq:singularity}
+\end{equation}
+Cuando $\sigma_{\min}<\epsilon_\sigma$ o $\kappa>\kappa_{\max}$ se reduce la
+velocidad o se rechaza el objetivo. La pseudoinversa amortiguada es
+\begin{equation}
+\mat J_i^{\#}=\mat J_i\trans(\mat J_i\mat J_i\trans+\lambda^2\mat I)^{-1}.
+\end{equation}
+
+\begin{workedexample}{Jacobiano, singularidad y conversión fuerza--par}
+Evaluando \cref{eq:jacobian} en la postura nominal FL se obtiene
+\[
+\mat J_{FL}=\begin{bmatrix}
+0&-0.216402&-0.120528\\
+0.206336&0.001099&0.005373\\
+0.111155&-0.010955&-0.053555
+\end{bmatrix}\ \si{m.rad^{-1}}.
+\]
+La descomposición en valores singulares calculada por NumPy entrega
+\[
+ (\sigma_1,\sigma_2,\sigma_3)=(0.252836,0.232233,0.038037)\ \si{m.rad^{-1}}.
+\]
+Por tanto,
+\[
+ \boxed{\kappa(\mat J)=\frac{0.252836}{0.038037}=6.647}.
+\]
+El valor es finito y la postura no es singular, aunque la dirección asociada a
+$\sigma_3$ es menos manipulable. Si el pie ejerce
+$\vect f=[1,0.5,5]\trans$ N, la potencia virtual da
+\begin{align*}
+ \vect\tau_f&=\mat J\trans\vect f\\
+ &=\begin{bmatrix}
+0&0.206336&0.111155\\-0.216402&0.001099&-0.010955\\
+-0.120528&0.005373&-0.053555
+\end{bmatrix}
+\begin{bmatrix}1\\0.5\\5\end{bmatrix}\\
+&=\boxed{[0.658941,-0.270625,-0.385618]\trans\ \si{N.m}}.
+\end{align*}
+Este término se resta en la dinámica inversa porque la fuerza externa ayuda o
+se opone al par que debe generar el actuador según su signo.
+\end{workedexample}
+
+\subsection{Cinemática diferencial de segundo orden}
+\begin{align}
+ \ddot{\vect p}_i&=\mat J_i\ddot{\vect q}_i+\dot{\mat J}_i\dot{\vect q}_i,
+ \label{eq:accel}\\
+ \dot{\mat J}(\vect q,\dot{\vect q})&\approx
+ \frac{\mat J(\vect q+h\dot{\vect q})-
+ \mat J(\vect q-h\dot{\vect q})}{2h}.\label{eq:jdot}
+\end{align}
+$\dot{\mat J}$ debe verificarse contra diferencias finitas independientes. Se
+comprueban límites articulares y cartesianos de posición, velocidad y
+aceleración antes de emitir referencias.
+
+\section{Modelo dinámico}
+\begin{tracebox}{T04 $\rightarrow$ A04 $\rightarrow$ C04 $\rightarrow$ E03}
+Método: energía cinética/potencial, Euler--Lagrange y símbolos de Christoffel.
+La forma general se toma de dinámica multicuerpo; masas, inercias, signos y
+geometría se adaptan a Nova. Objetivo: separar qué par se debe a aceleración,
+velocidad, gravedad, fricción y contacto.
+\end{tracebox}
+La ecuación de base flotante es
+\begin{equation}
+ \mat M(\vect q)\ddot{\vect q}+\mat C(\vect q,\dot{\vect q})\dot{\vect q}
+ +\vect g(\vect q)+\vect\tau_f
+ =\mat S\trans\vect\tau+\mat J_c\trans\vect\lambda.\label{eq:dynamics}
+\end{equation}
+$\mat S$ selecciona las doce articulaciones porque la base no está actuada.
+Para cada cuerpo $k$:
+\begin{align}
+ K&=\frac12\sum_k\left[m_k\vect v_{C_k}\trans\vect v_{C_k}+
+ \vect\omega_k\trans{}^B\mat R_k\mat I_k{}^B\mat R_k\trans\vect\omega_k\right],
+ \label{eq:kinetic}\\
+ U&=\sum_km_kgz_{C_k},\label{eq:potential}\\
+ M_{ab}&=\frac{\partial^2K}{\partial\dot q_a\partial\dot q_b},
+ &g_a&=\frac{\partial U}{\partial q_a}.\label{eq:mg}
+\end{align}
+Para un paralelepípedo homogéneo de dimensiones $(a,b,c)$:
+\begin{equation}
+ \mat I_C=\frac{m}{12}\diag(b^2+c^2,a^2+c^2,a^2+b^2),\qquad
+ \mat I_O=\mat I_C+m(\|\vect d\|^2\mat I-\vect d\vect d\trans).
+\end{equation}
+El símbolo de Christoffel de primera especie es
+\begin{equation}
+ c_{ijk}=\frac12\left(\frac{\partial M_{ij}}{\partial q_k}+
+ \frac{\partial M_{ik}}{\partial q_j}-\frac{\partial M_{jk}}{\partial q_i}\right),
+ \qquad [\vect c]_i=\sum_{j,k}c_{ijk}\dot q_j\dot q_k.\label{eq:christoffel}
+\end{equation}
+Las derivadas se evalúan mediante diferencias centrales con
+$\varepsilon=10^{-5}$. La fricción pasiva suavizada es
+\begin{equation}
+ \vect\tau_f=\mat D\dot{\vect q}+\vect\tau_C\odot
+ \tanh(\dot{\vect q}/v_s),\quad
+ b=\SI{0.08}{N.m.s.rad^{-1}},\ \tau_C=\SI{0.03}{N.m},\ v_s=\SI{0.01}{rad.s^{-1}}.
+\end{equation}
+La dinámica inversa reducida resulta
+\begin{equation}
+ \vect\tau_i=\mat M_i\ddot{\vect q}_i+\vect c_i+\vect g_i+
+ \vect\tau_{f,i}-\mat J_i\trans\vect f_i.\label{eq:inverse-dynamics}
+\end{equation}
+Se verifica $\mat M=\mat M\trans>0$ y
+$\dot{\vect q}\trans(\dot{\mat M}-2\mat C)\dot{\vect q}=0$.
+
+\begin{workedexample}{dinámica inversa de una pata, término por término}
+Se emplean valores ejecutados por nuestro script reproducible:
+\begin{align*}
+ \vect q&=[0.10,0.42,-0.84]\trans\ \si{rad},\\
+ \dot{\vect q}&=[0.10,-0.05,0.08]\trans\ \si{rad.s^{-1}},\\
+ \ddot{\vect q}&=[0.20,0.10,-0.15]\trans\ \si{rad.s^{-2}},\\
+ \vect f&=[1,0.5,5]\trans\ \si{N}.
+\end{align*}
+La matriz de masa obtenida de los Jacobianos de los centros de masa y las
+inercias rotacionales es
+\[
+\mat M=\begin{bmatrix}
+0.00904783&0.00035891&-0.00041176\\
+0.00035891&0.00673928&0.00195619\\
+-0.00041176&0.00195619&0.00316985
+\end{bmatrix}\ \si{kg.m^2}.
+\]
+El primer término se calcula mediante multiplicación explícita:
+\begin{align*}
+ \mat M\ddot{\vect q}
+ &=\mat M\begin{bmatrix}0.20\\0.10\\-0.15\end{bmatrix}
+ =\begin{bmatrix}0.00190722\\0.00045228\\-0.00036221\end{bmatrix}\si{N.m}.
+\end{align*}
+Los restantes términos, calculados con las mismas funciones que pasan las
+pruebas automatizadas, son
+\begin{align*}
+ \vect c&=[0.00002208,0.00000165,-0.00001087]\trans\ \si{N.m},\\
+ \vect g&=[0.30982337,0.03891254,-0.04464199]\trans\ \si{N.m},\\
+ \vect\tau_f&=[0.03800000,-0.03399728,0.03639999]\trans\ \si{N.m},\\
+ \mat J\trans\vect f&=[0.65894065,-0.27062517,-0.38561842]\trans\ \si{N.m}.
+\end{align*}
+Sustituyendo sin agrupar términos:
+\begin{align*}
+ \vect\tau={}&
+ \begin{bmatrix}0.00190722\\0.00045228\\-0.00036221\end{bmatrix}+
+ \begin{bmatrix}0.00002208\\0.00000165\\-0.00001087\end{bmatrix}+
+ \begin{bmatrix}0.30982337\\0.03891254\\-0.04464199\end{bmatrix}\\
+ &+\begin{bmatrix}0.03800000\\-0.03399728\\0.03639999\end{bmatrix}
+ -\begin{bmatrix}0.65894065\\-0.27062517\\-0.38561842\end{bmatrix}\\
+ ={}&\boxed{[-0.309188,0.275994,0.377003]\trans\ \si{N.m}}.
+\end{align*}
+Los autovalores de $\mat M$ son
+$(0.00226642,0.00758520,0.00910534)$ \si{kg.m^2}; todos son positivos. Así se
+comprueba numéricamente que la energía cinética local es positiva para cualquier
+velocidad articular distinta de cero.
+\end{workedexample}
+
+\section{Modelo del actuador MG996R}
+\begin{table}[ht]\centering\caption{Datos de catálogo a \SI{6}{V}.}
+\begin{tabular}{ll}\toprule Magnitud&Valor\\\midrule
+Masa&\SI{55}{g}\\Par de bloqueo&\SI{1.0787}{N.m}\\
+Velocidad sin carga&\SI{6.981}{rad.s^{-1}}\\
+Corriente sin carga&\SI{0.170}{A}\\Corriente de bloqueo&\SI{1.40}{A}\\
+Tensión&\SIrange{4.8}{6.6}{V}\\Banda muerta&\SI{1}{\micro s}\\\bottomrule
+\end{tabular}\end{table}
+Se distinguen articulación ideal, servo de posición y actuador físico:
+\begin{align}
+ q_{\mathrm{ref}}&=f_{\mathrm{cal}}(p_{\mathrm{PWM}};p_0,s,k,p_{\min},p_{\max}),\\
+ \tau_{\mathrm{cmd}}&=\sat_{[-\tau_{\max},\tau_{\max}]}
+ [K_p\operatorname{deadzone}(e,e_d)-K_d\dot q-\tau_f],\\
+ |\tau_{\max}(\omega,V)|&=\tau_{\mathrm{stall}}(V)
+ \max\!\left(0,1-\frac{|\omega|}{\omega_0(V)}\right).\label{eq:actuator}
+\end{align}
+Una aproximación inicial de corriente es
+$I\approx I_0+(I_{\mathrm{stall}}-I_0)|\tau|/\tau_{\mathrm{stall}}$.
+Centro, extremos, sentido, zona muerta, velocidad, corriente, temperatura y
+respuesta bajo carga deben medirse por unidad. El par de bloqueo no es par
+continuo seguro.
+
+\begin{workedexample}{envolvente nominal de par y corriente}
+Para la coxa del ejemplo, $|\omega|=\SI{0.10}{rad.s^{-1}}$. A \SI{6}{V},
+$\tau_{stall}=\SI{1.0787315}{N.m}$ y
+$\omega_0=\SI{6.981317}{rad.s^{-1}}$. Entonces
+\begin{align*}
+ \tau_{max}&=1.0787315\left(1-\frac{0.10}{6.981317}\right)
+ =\SI{1.063280}{N.m}.
+\end{align*}
+El par requerido fue $|\tau_c|=\SI{0.309188}{N.m}$, equivalente al
+$29.08\%$ de esa envolvente nominal. La corriente aproximada es
+\begin{align*}
+ I&=0.170+(1.40-0.170)\frac{0.309188}{1.0787315}\\
+  &=\boxed{\SI{0.5225}{A}}.
+\end{align*}
+Para las tres articulaciones, el modelo estima
+$[0.523,0.485,0.600]$ A. Estos valores sirven para dimensionamiento preliminar
+y comparación, pero no sustituyen la medición con fuente limitada: el catálogo
+no especifica par continuo, dispersión ni corriente transitoria de cada unidad.
+\end{workedexample}
+
+\section{Contacto pie--suelo}
+\begin{tracebox}{T05,T11 $\rightarrow$ A06 $\rightarrow$ C06 $\rightarrow$ E06}
+La complementariedad y Coulomb son la base física; el resorte--amortiguador es
+una aproximación computable. Los sensores oficiales de Gazebo suministran la
+evidencia observada. Objetivo: comprobar apoyo real y deslizamiento, no asumir
+contacto porque la fase lo declara.
+\end{tracebox}
+La separación $\phi_i(\vect q)$ y las fuerzas satisfacen
+\begin{align}
+ \phi_i&\ge0,&\lambda_{n,i}&\ge0,&\phi_i\lambda_{n,i}&=0,\label{eq:complementarity}\\
+ \sqrt{\lambda_{x,i}^2+\lambda_{y,i}^2}&\le\mu\lambda_{z,i}.\label{eq:frictioncone}
+\end{align}
+El modelo penalizado computable es
+\begin{align}
+ \delta_i&=\max(0,-\phi_i),\\
+ \lambda_{n,i}&=\max(0,k_n\delta_i-c_n\dot\phi_i),\\
+ \vect\lambda_{t,i}&=-\mu\lambda_{n,i}
+ \tanh(\|\vect v_{t,i}\|/v_s)\frac{\vect v_{t,i}}
+ {\|\vect v_{t,i}\|+\epsilon}.
+\end{align}
+Se usan nominalmente $k_n=\SI{12000}{N.m^{-1}}$,
+$c_n=\SI{80}{N.s.m^{-1}}$, $\mu=0.90$ y $v_s=\SI{0.01}{m.s^{-1}}$.
+Gazebo y MuJoCo resuelven contacto con algoritmos propios; no se afirma que
+estos parámetros sean idénticos a los internos de cada solver.
+
+\section{Centro de masa y estabilidad}
+\begin{equation}
+ {}^B\vect r_{COM}=\frac{m_b\vect r_b+
+ \sum_{i=1}^4\sum_jm_{ij}({}^B\vect p_{H_i}+\vect r_{ij})}{m_{\mathrm{total}}}.
+\end{equation}
+Para contactos ordenados antihorariamente, la distancia firmada a la arista
+$\vect e_j=\vect p_{j+1}-\vect p_j$ es
+\begin{equation}
+ d_j=\frac{e_{x,j}(c_y-p_{y,j})-e_{y,j}(c_x-p_{x,j})}{\|\vect e_j\|},
+ \qquad m_s=\min_jd_j.\label{eq:staticmargin}
+\end{equation}
+$m_s>0$ indica COM dentro del polígono. Se requieren tres contactos no
+colineales. Para movimientos rápidos se usa balance centroidal:
+\begin{align}
+ m\ddot{\vect r}_{COM}&=\sum_i\vect f_i+m\vect g,\\
+ \dot{\vect L}_{COM}&=\sum_i(\vect r_i-\vect r_{COM})\times\vect f_i.
+\end{align}
+El galope no se valida mediante margen estático; requerirá dinámica centroidal,
+ZMP u otro criterio justificado.
+
+\begin{workedexample}{centro de masa y margen con cuatro apoyos}
+Para las cuatro patas en $[0.10,0.42,-0.84]\trans$ rad, la suma ponderada de
+los centros de masa nominales produce
+\[
+ {}^B\vect r_{COM}=\boxed{[-0.0058646,0,-0.0388199]\trans\ \si{m}}.
+\]
+Al sumar la posición de cada cadera y la FK local, los contactos proyectados son
+\begin{align*}
+ FL&=(0.101010,\phantom{-}0.171155),&
+ FR&=(0.101010,-0.171155),\\
+ RL&=(-0.078990,\phantom{-}0.171155),&
+ RR&=(-0.078990,-0.171155)\quad\si{m}.
+\end{align*}
+El COM proyectado está a \SI{0.0731259}{m} de la arista trasera, a
+\SI{0.0958646}{m} de la delantera y a \SI{0.1711545}{m} de cada arista lateral.
+El mínimo es
+\[
+ \boxed{m_s=\SI{0.0731259}{m}>0}.
+\]
+Así se obtuvo el margen nominal reportado. Es válido para cuatro contactos
+ideales en esa postura; durante el gateo debe recalcularse con los contactos
+medidos y no con los tres apoyos que el plan simplemente supone.
+\end{workedexample}
+
+\section{Generación matemática de marchas}
+\begin{tracebox}{T02,T03 $\rightarrow$ A07/A08 $\rightarrow$ C07/C08 $\rightarrow$ E07/E08}
+Método: parametrización por fase, apoyo lineal, oscilación parabólica e IK por
+muestra. Objetivo: producir dos líneas base deterministas y repetibles contra
+las cuales se comparará la corrección RL.
+\end{tracebox}
+La fase de cada pata y el indicador ideal de contacto son
+\begin{equation}
+ \varphi_i(t)=\operatorname{mod}\left(\frac{t}{T}+\Delta_i,1\right),\qquad
+ c_i(\varphi)=\begin{cases}1,&0\le\varphi<\beta,\\0,&\beta\le\varphi<1.
+ \end{cases}\label{eq:gaitphase}
+\end{equation}
+Para gateo, $\beta=0.75$ y
+$(\Delta_{FL},\Delta_{RR},\Delta_{FR},\Delta_{RL})=(0,0.25,0.50,0.75)$.
+Sea $L$ la longitud, $H$ la elevación, $z_0$ el suelo y $u$ fase local:
+\begin{align}
+ 0\le\varphi<\beta:\quad &u=\varphi/\beta,&
+ x&=x_0+L(1/2-u),&z&=z_0,\label{eq:stance}\\
+ \beta\le\varphi<1:\quad &u=(\varphi-\beta)/(1-\beta),&
+ x&=x_0+L(u-1/2),&z&=z_0+4Hu(1-u).\label{eq:swing}
+\end{align}
+La línea base usa $N=24$, $\Delta t=\SI{0.18}{s}$, $L=\SI{0.018}{m}$ y
+$H=\SI{0.014}{m}$, por lo que
+\begin{equation}T=N\Delta t=\SI{4.32}{s}.\end{equation}
+La cadena completa es
+\begin{equation}
+ (L,H,T,\beta,\Delta_i)\rightarrow\vect p_i^d(t)\rightarrow\IK
+ \rightarrow\vect q_i^d(t)\rightarrow\text{controlador}\rightarrow
+ \vect\tau_i\rightarrow\text{movimiento/contacto}.\label{eq:motionchain}
+\end{equation}
+
+\subsection{Trayectorias suaves}
+La parábola de \cref{eq:swing} es útil, pero no garantiza aceleración continua
+en todos los cambios. Una interpolación quíntica es
+\begin{align}
+ b(u)&=10u^3-15u^4+6u^5,\\
+ \vect p(t)&=\vect p_0+b(t/T)(\vect p_1-\vect p_0),\label{eq:quintic}\\
+ \vect p^-&=\vect p^+,\quad\dot{\vect p}^-=\dot{\vect p}^+,\quad
+ \ddot{\vect p}^-=\ddot{\vect p}^+.
+\end{align}
+Todo cambio de $L,H,T,\beta,N$ exige repetir alcanzabilidad, singularidad,
+continuidad, límites, estabilidad y ensayo mínimo de diez ciclos.
+
+\begin{workedexample}{una oscilación discreta de la pata FL}
+Con $N=24$ y $\beta=0.75$, cada pata dispone de
+$(1-\beta)N=6$ referencias de oscilación. Para FL, las fases discretas usan
+$u\in\{0,1/6,2/6,3/6,4/6,5/6\}$. La altura relativa sigue
+$h(u)=4Hu(1-u)$, con $H=0.014$ m:
+\begin{center}
+\begin{tabular}{c@{\qquad}c@{\qquad}c}
+\toprule Muestra local&$u$&$h(u)$ [mm]\\\midrule
+0&0&0.000\\1&1/6&7.778\\2&2/6&12.444\\
+3&3/6&14.000\\4&4/6&12.444\\5&5/6&7.778\\\bottomrule
+\end{tabular}
+\end{center}
+El código alcanza exactamente \SI{14}{mm}, pero la última referencia todavía
+está \SI{7.778}{mm} elevada y la siguiente muestra vuelve inmediatamente a
+apoyo. Esta discontinuidad discreta ayuda a explicar por qué la etiqueta de
+aterrizaje no coincide con el contacto físico. No se oculta: es una propiedad
+de la trayectoria que debe corregirse en la siguiente versión.
+\end{workedexample}
+
+\begin{projectresult}{cadencia comprobada en Gazebo}
+El cálculo nominal es $24(0.18)=\SI{4.32}{s}$. La línea base corregida midió
+\SI{4.320013}{s} por ciclo. El error absoluto medio fue aproximadamente
+\[
+ |4.320013-4.320000|=\SI{13}{\micro s},
+\]
+equivalente a $0.00030\%$. La repetición midió \SI{4.320002}{s} en el ensayo de
+contactos, confirmando que el cambio de deadline eliminó la deriva acumulativa.
+\end{projectresult}
+
+\section{Fundamentos del control discreto}
+\label{sec:discrete-control}
+\begin{tracebox}{T07,T10 $\rightarrow$ A09 $\rightarrow$ C09 $\rightarrow$ E09}
+La teoría de sistemas muestreados aporta $k$, $T_s$, ZOH y plano Z. La
+adaptación distingue temporizador, referencia y controlador articular ROS 2.
+Objetivo: demostrar que la cadencia implementada corresponde a un algoritmo
+discreto verificable y preparar futuros lazos físicos.
+\end{tracebox}
+Esta sección desarrolla el sistema de control como se estudiaría en un curso de
+control discreto y lo conecta con la implementación del robot. Es esencial
+distinguir tres escalas de tiempo:
+\begin{enumerate}
+ \item el temporizador de software consulta el reloj cada $T_{timer}=\SI{0.02}{s}$;
+ \item el secuenciador publica una nueva referencia cada $T_r=\SI{0.18}{s}$;
+ \item el controlador articular interno del simulador opera con su propio
+ periodo $T_c$, normalmente menor que $T_r$.
+\end{enumerate}
+El temporizador de \SI{20}{ms} no convierte la marcha en un controlador de
+\SI{50}{Hz}: solo comprueba si venció la próxima fase. La señal de referencia
+nominal cambia a $1/T_r=\SI{5.556}{Hz}$. El instante programado se actualiza
+desde el vencimiento anterior,
+\begin{equation}
+ t_{k+1}^{d}=t_k^{d}+T_r,
+ \qquad e_k^t=t_k^{pub}-t_k^d,
+ \label{eq:deadline}
+\end{equation}
+para evitar que el jitter $e_k^t$ se acumule ciclo tras ciclo.
+
+\subsection{De tiempo continuo a secuencias}
+Sea $x(t)$ una señal continua. Un muestreador ideal produce
+\begin{equation}
+ x[k]=x(kT_s),\qquad k=0,1,2,\ldots,
+ \label{eq:sampling}
+\end{equation}
+donde $T_s$ es el periodo y $f_s=1/T_s$ la frecuencia de muestreo. La señal
+muestreada puede representarse mediante un tren de impulsos
+\begin{equation}
+ x_s(t)=x(t)\sum_{k=-\infty}^{\infty}\delta(t-kT_s).
+\end{equation}
+Su espectro contiene réplicas separadas por $\omega_s=2\pi/T_s$. Para evitar
+aliasing, una señal limitada a $\omega_b$ debe satisfacer idealmente
+\begin{equation}
+ \omega_s>2\omega_b.
+ \label{eq:nyquist}
+\end{equation}
+En un robot real se requiere además un filtro analógico antialias antes del
+conversor. El cumplimiento de Nyquist es necesario, pero no garantiza buen
+control: en práctica se selecciona una frecuencia de muestreo entre 10 y 20
+veces el ancho de banda de lazo cerrado, sujeta a cómputo, ruido y retardos.
+
+Entre muestras, un retenedor de orden cero (ZOH) mantiene constante el comando:
+\begin{equation}
+ u(t)=u[k],\qquad kT_s\le t<(k+1)T_s.
+ \label{eq:zoh}
+\end{equation}
+Esta hipótesis representa adecuadamente una salida digital de posición o PWM
+actualizada periódicamente. Las referencias ROS 2 se interpolan internamente,
+por lo que el comportamiento exacto debe identificarse como ZOH, rampa u otra
+interpolación antes de diseñar un controlador físico equivalente.
+
+\subsection{Ecuaciones en diferencias}
+Un sistema discreto lineal causal puede expresarse como
+\begin{equation}
+ y[k]+a_1y[k-1]+\cdots+a_ny[k-n]
+ =b_0u[k]+b_1u[k-1]+\cdots+b_mu[k-m].
+ \label{eq:difference}
+\end{equation}
+Esta ecuación indica exactamente qué memoria necesita una implementación. Por
+ejemplo, el filtro de primer orden
+\begin{equation}
+ y[k]=\alpha y[k-1]+(1-\alpha)u[k],\qquad 0<\alpha<1,
+\end{equation}
+almacena una salida anterior. Si se parte de una constante de tiempo $\tau$ y
+se usa discretización exacta, $\alpha=e^{-T_s/\tau}$.
+
+\subsection{Transformada Z}
+La transformada Z unilateral de una secuencia es
+\begin{equation}
+ X(z)=\mathcal Z\{x[k]\}=\sum_{k=0}^{\infty}x[k]z^{-k}.
+ \label{eq:ztransform}
+\end{equation}
+El operador $z^{-1}$ representa un retardo de una muestra. Con condiciones
+iniciales nulas,
+\begin{equation}
+ \mathcal Z\{x[k-r]\}=z^{-r}X(z).
+\end{equation}
+Aplicar la transformada a \cref{eq:difference} produce la función de
+transferencia de pulsos
+\begin{equation}
+ G(z)=\frac{Y(z)}{U(z)}=
+ \frac{b_0+b_1z^{-1}+\cdots+b_mz^{-m}}
+ {1+a_1z^{-1}+\cdots+a_nz^{-n}}.
+ \label{eq:pulse-transfer}
+\end{equation}
+Los polos son las raíces del denominador y los ceros las del numerador. La
+región de convergencia debe incluir el círculo unitario para que una respuesta
+causal racional sea BIBO estable.
+
+\subsection{Correspondencia entre los planos $s$ y $z$}
+El muestreo relaciona los modos continuos y discretos mediante
+\begin{equation}
+ z=e^{sT_s}.
+ \label{eq:szmap}
+\end{equation}
+Si $s=\sigma+j\omega$, entonces $|z|=e^{\sigma T_s}$ y
+$\angle z=\omega T_s$. Por tanto, el semiplano continuo estable $\sigma<0$ se
+mapea al interior del círculo unitario $|z|<1$; el eje imaginario se mapea al
+círculo unitario y el semiplano inestable queda fuera.
+
+Para recuperar especificaciones aproximadas de un polo discreto
+$z_p=r e^{j\theta}$:
+\begin{equation}
+ s_p=\frac{\ln z_p}{T_s}
+ =\frac{\ln r}{T_s}+j\frac{\theta}{T_s}.
+\end{equation}
+De $s_p=-\zeta\omega_n+j\omega_n\sqrt{1-\zeta^2}$ se obtienen amortiguamiento,
+frecuencia natural, sobreimpulso y tiempo de establecimiento esperados.
+
+\section{Discretización de modelos del robot}
+\subsection{Discretización exacta con ZOH}
+Para el modelo continuo linealizado
+\begin{equation}
+ \dot{\vect x}(t)=\mat A\vect x(t)+\mat B\vect u(t),\qquad
+ \vect y(t)=\mat C\vect x(t)+\mat D\vect u(t),
+ \label{eq:sscontinuous}
+\end{equation}
+y entrada constante durante una muestra, la solución exacta es
+\begin{align}
+ \vect x[k+1]&=\mat A_d\vect x[k]+\mat B_d\vect u[k],\label{eq:ssdiscrete}\\
+ \mat A_d&=e^{\mat A T_s},&
+ \mat B_d&=\int_0^{T_s}e^{\mat A\tau}\mat B\,d\tau,\label{eq:exactdisc}\\
+ \vect y[k]&=\mat C_d\vect x[k]+\mat D_d\vect u[k],
+\end{align}
+con $\mat C_d=\mat C$ y $\mat D_d=\mat D$. No debe calcularse
+$\mat A^{-1}(\mat A_d-\mat I)\mat B$ si $\mat A$ es singular. Una forma
+numéricamente robusta usa la exponencial por bloques:
+\begin{equation}
+ \exp\!\left(
+ \begin{bmatrix}\mat A&\mat B\\\mat 0&\mat 0\end{bmatrix}T_s
+ \right)=
+ \begin{bmatrix}\mat A_d&\mat B_d\\\mat 0&\mat I\end{bmatrix}.
+ \label{eq:blockexp}
+\end{equation}
+
+\subsection{Euler hacia delante, Euler hacia atrás y Tustin}
+Cuando se requiere una aproximación explícita:
+\begin{align}
+ \text{Euler directo: }&s\approx\frac{z-1}{T_s},&
+ \mat A_d&\approx\mat I+T_s\mat A,&\mat B_d&\approx T_s\mat B;\\
+ \text{Euler inverso: }&s\approx\frac{z-1}{T_sz},\\
+ \text{Tustin: }&s\approx\frac{2}{T_s}\frac{z-1}{z+1}.
+\end{align}
+Euler directo puede volver inestable una simulación de un sistema estable si
+$T_s$ es grande. Euler inverso es estable para una clase mayor de problemas,
+pero introduce amortiguamiento numérico. Tustin mapea el semiplano izquierdo al
+interior del círculo unitario y suele ser apropiado para discretizar filtros y
+controladores. Si interesa preservar una frecuencia $\omega_p$, se aplica
+prewarping sustituyendo $2/T_s$ por $\omega_p/\tan(\omega_pT_s/2)$.
+
+\subsection{Linealización articular alrededor de una postura}
+Partiendo de la dinámica reducida
+\begin{equation}
+ \mat M(\vect q)\ddot{\vect q}+\vect c(\vect q,\dot{\vect q})
+ +\vect g(\vect q)=\vect\tau+\mat J\trans\vect f,
+\end{equation}
+se elige un equilibrio $(\vect q_0,\dot{\vect q}_0=0,\vect\tau_0)$ y se
+definen perturbaciones $\delta\vect q=\vect q-\vect q_0$. Al primer orden,
+\begin{equation}
+ \mat M_0\delta\ddot{\vect q}+\mat D_0\delta\dot{\vect q}
+ +\mat K_0\delta\vect q=\delta\vect\tau+\mat J_0\trans\delta\vect f,
+ \label{eq:linearjoint}
+\end{equation}
+donde $\mat K_0=\partial\vect g/\partial\vect q|_0$ y $\mat D_0$ agrupa
+amortiguamiento físico y del actuador. Con
+$\vect x=[\delta\vect q\trans,\delta\dot{\vect q}\trans]\trans$:
+\begin{equation}
+ \mat A=\begin{bmatrix}\mat 0&\mat I\\-\mat M_0^{-1}\mat K_0&
+ -\mat M_0^{-1}\mat D_0\end{bmatrix},\quad
+ \mat B=\begin{bmatrix}\mat 0\\\mat M_0^{-1}\end{bmatrix}.
+ \label{eq:jointss}
+\end{equation}
+Este modelo permite diseñar control local, pero cambia con la postura y el
+contacto. Deben estudiarse varios puntos de operación o emplearse programación
+de ganancias; una sola linealización no representa el ciclo completo.
+
+\begin{workedexample}{linealización y discretización del eje de fémur Nova}
+Para mostrar el procedimiento con nuestros parámetros, se aísla localmente el
+eje de fémur alrededor de la postura nominal. Se usan
+\begin{align*}
+ M_f&=M_{22}=\SI{0.006739276}{kg.m^2},\\
+ D_f&=\SI{0.08}{N.m.s.rad^{-1}},\\
+ K_g&=\left.\frac{\partial g_f}{\partial q_f}\right|_{\vect q_0}
+ \approx\frac{g_f(q_f+10^{-6})-g_f(q_f-10^{-6})}{2(10^{-6})}
+ =\SI{0.287048}{N.m.rad^{-1}}.
+\end{align*}
+La ecuación perturbada es
+\[
+ M_f\delta\ddot q_f+D_f\delta\dot q_f+K_g\delta q_f=\delta\tau_f.
+\]
+Dividiendo cada término por $M_f$:
+\[
+ \delta\ddot q_f=-42.593324\,\delta q_f
+ -11.870711\,\delta\dot q_f+148.383894\,\delta\tau_f.
+\]
+Con $\vect x=[\delta q_f,\delta\dot q_f]\trans$:
+\[
+ \mat A=\begin{bmatrix}0&1\\-42.593324&-11.870711\end{bmatrix},\qquad
+ \mat B=\begin{bmatrix}0\\148.383894\end{bmatrix}.
+\]
+Se elige $T_s=\SI{0.02}{s}$, correspondiente al periodo de consulta del nodo,
+y se evalúa la exponencial por bloques de \cref{eq:blockexp}. El resultado es
+\[
+ \boxed{\mat A_d=\begin{bmatrix}
+0.992128&0.017753\\-0.756144&0.781392
+\end{bmatrix}},\qquad
+ \boxed{\mat B_d=\begin{bmatrix}0.027423\\2.634206\end{bmatrix}}.
+\]
+Los polos abiertos son $0.886760\pm j0.048178$, cuyo módulo es $0.888068<1$.
+La matriz de controlabilidad
+$\mathcal C=[\mat B_d,\mat A_d\mat B_d]$ tiene rango 2. El modo local es, por
+tanto, estable y controlable bajo estas hipótesis nominales.
+\end{workedexample}
+
+\section{Análisis de sistemas discretos}
+\subsection{Respuesta libre, forzada y estabilidad}
+La solución de \cref{eq:ssdiscrete} es
+\begin{equation}
+ \vect x[k]=\mat A_d^k\vect x[0]
+ +\sum_{j=0}^{k-1}\mat A_d^{k-1-j}\mat B_d\vect u[j].
+ \label{eq:discretesolution}
+\end{equation}
+El primer término es la respuesta libre y el segundo la respuesta forzada. El
+sistema lineal autónomo es asintóticamente estable si y solo si
+\begin{equation}
+ \rho(\mat A_d)=\max_i|\lambda_i(\mat A_d)|<1.
+ \label{eq:schur}
+\end{equation}
+Para sistemas racionales escalares, todos los polos deben quedar estrictamente
+dentro del círculo unitario, sin cancelaciones inestables ocultas.
+
+\subsection{Criterio de Jury}
+El criterio de Jury comprueba estabilidad sin calcular explícitamente las
+raíces. Para un polinomio de segundo orden
+$P(z)=z^2+a_1z+a_2$, las condiciones necesarias y suficientes son
+\begin{equation}
+ |a_2|<1,\qquad 1+a_1+a_2>0,\qquad 1-a_1+a_2>0.
+ \label{eq:jury2}
+\end{equation}
+En órdenes mayores se construye la tabla de Jury. En este proyecto se prefiere
+verificar numéricamente polos y margen de robustez, conservando Jury como una
+comprobación analítica para modelos de bajo orden.
+
+\subsection{Estabilidad de Lyapunov}
+Una matriz $\mat A_d$ es Schur estable si, para toda $\mat Q=\mat Q\trans>0$,
+existe una única $\mat P=\mat P\trans>0$ que satisface
+\begin{equation}
+ \mat A_d\trans\mat P\mat A_d-\mat P=-\mat Q.
+ \label{eq:dlyap}
+\end{equation}
+Con $V[k]=\vect x[k]\trans\mat P\vect x[k]$ se obtiene
+$\Delta V=-\vect x[k]\trans\mat Q\vect x[k]<0$. Para el robot híbrido, una
+misma $\mat P$ para todos los modos aportaría una garantía común fuerte; si se
+usan funciones distintas por contacto, deben verificarse las transiciones.
+
+\subsection{Error permanente y tipo del sistema}
+Para realimentación unitaria, $E(z)=R(z)/(1+L(z))$. Si los polos de
+$(z-1)E(z)$ quedan dentro del círculo unitario, el teorema del valor final da
+\begin{equation}
+ e_{ss}=\lim_{k\to\infty}e[k]=\lim_{z\to1}(z-1)E(z).
+ \label{eq:finalvalue}
+\end{equation}
+El número de polos de lazo abierto en $z=1$ determina el tipo discreto y el
+error ante escalón, rampa o parábola. Añadir acción integral incorpora un polo
+en $z=1$, pero aumenta el orden y exige rediseñar estabilidad y anti-windup.
+
+\subsection{Controlabilidad y observabilidad}
+Para $n$ estados, las matrices son
+\begin{align}
+ \mathcal C&=[\mat B_d,\mat A_d\mat B_d,\ldots,
+ \mat A_d^{n-1}\mat B_d],& \rank(\mathcal C)&=n,\label{eq:ctrb}\\
+ \mathcal O&=\begin{bmatrix}\mat C_d\\\mat C_d\mat A_d\\\vdots\\
+ \mat C_d\mat A_d^{n-1}\end{bmatrix},&\rank(\mathcal O)&=n.
+ \label{eq:obsv}
+\end{align}
+Controlabilidad significa que una secuencia finita puede mover el estado;
+observabilidad, que las salidas permiten reconstruirlo. Rango numérico debe
+evaluarse con valores singulares y condición, no solo con igualdad exacta. Un
+sistema casi no controlable u observable será sensible a ruido y redondeo.
+
+\section{Diseño de controladores digitales}
+\subsection{PID discreto}
+Con error $e[k]=r[k]-y[k]$, una realización posicional sencilla es
+\begin{align}
+ I[k]&=I[k-1]+T_s e[k],\\
+ D_f[k]&=\alpha D_f[k-1]+(1-\alpha)\frac{e[k]-e[k-1]}{T_s},\\
+ u_0[k]&=K_pe[k]+K_iI[k]+K_dD_f[k],\\
+ u[k]&=\sat_{[u_{min},u_{max}]}(u_0[k]).
+ \label{eq:pid}
+\end{align}
+La derivada debe filtrarse y, para evitar golpes ante cambios de consigna,
+puede aplicarse a la medida en lugar del error. Una realización incremental,
+útil para actualizar directamente el comando, es
+\begin{equation}
+ \Delta u[k]=K_p(e[k]-e[k-1])+K_iT_se[k]
+ +\frac{K_d}{T_s}(e[k]-2e[k-1]+e[k-2]).
+\end{equation}
+Los coeficientes dependen de $T_s$: cambiar la frecuencia sin recalcularlos
+cambia el controlador físico.
+
+\subsection{Saturación y anti-windup}
+Los MG996R y las referencias articulares tienen límites de posición, velocidad,
+par y PWM. Si el integrador continúa creciendo durante saturación aparece
+windup. La realimentación por seguimiento corrige
+\begin{equation}
+ I[k]=I[k-1]+T_s\left(e[k]+K_{aw}(u[k-1]-u_0[k-1])\right).
+ \label{eq:antiwindup}
+\end{equation}
+También puede usarse integración condicional. La saturación debe aparecer en
+simulación, entrenamiento y supervisor; no basta con recortar PWM al final.
+
+\subsection{Realimentación de estados y asignación de polos}
+Para el sistema controlable se propone
+\begin{equation}
+ \vect u[k]=-\mat K\vect x[k]+\mat N_r\vect r[k].
+ \label{eq:statefeedback}
+\end{equation}
+La dinámica cerrada es $\mat A_d-\mat B_d\mat K$. La ganancia $\mat K$ puede
+obtenerse por asignación de polos. Para una referencia constante y salida
+cuadrada compatible, el precompensador satisface
+\begin{equation}
+ \mat N_r=\left[\mat C_d(\mat I-\mat A_d+\mat B_d\mat K)^{-1}\mat B_d
+ +\mat D_d\right]^{-1}.
+\end{equation}
+No se deben escoger polos arbitrariamente rápidos: elevan esfuerzo, amplifican
+ruido y hacen dominante el retardo computacional.
+
+\subsection{Acción integral en espacio de estados}
+Para eliminar error constante se define
+\begin{equation}
+ \vect\xi[k+1]=\vect\xi[k]+T_s(\vect r[k]-\vect y[k]).
+\end{equation}
+El sistema aumentado es
+\begin{equation}
+ \begin{bmatrix}\vect x[k+1]\\\vect\xi[k+1]\end{bmatrix}=
+ \begin{bmatrix}\mat A_d&\mat 0\\-T_s\mat C_d&\mat I\end{bmatrix}
+ \begin{bmatrix}\vect x[k]\\\vect\xi[k]\end{bmatrix}+
+ \begin{bmatrix}\mat B_d\\-T_s\mat D_d\end{bmatrix}\vect u[k]
+ +\begin{bmatrix}\mat 0\\T_s\mat I\end{bmatrix}\vect r[k].
+ \label{eq:augmented}
+\end{equation}
+Se diseña $\vect u=-\mat K_x\vect x-\mat K_i\vect\xi$ verificando la
+controlabilidad aumentada y usando anti-windup.
+
+\subsection{Regulador cuadrático lineal discreto}
+El LQR minimiza
+\begin{equation}
+ J=\sum_{k=0}^{\infty}
+ \left(\vect x[k]\trans\mat Q\vect x[k]
+ +\vect u[k]\trans\mat R\vect u[k]\right),
+ \label{eq:lqrcost}
+\end{equation}
+con $\mat Q\succeq0$ y $\mat R\succ0$. La ecuación algebraica de Riccati es
+\begin{equation}
+ \mat P=\mat A_d\trans\mat P\mat A_d-
+ \mat A_d\trans\mat P\mat B_d(\mat R+\mat B_d\trans\mat P\mat B_d)^{-1}
+ \mat B_d\trans\mat P\mat A_d+\mat Q,
+\end{equation}
+y
+\begin{equation}
+ \mat K=(\mat R+\mat B_d\trans\mat P\mat B_d)^{-1}
+ \mat B_d\trans\mat P\mat A_d.
+\end{equation}
+$\mat Q$ y $\mat R$ no son ``ganancias mágicas'': codifican el compromiso
+entre error y esfuerzo y deben normalizarse según rangos físicos.
+
+\begin{workedexample}{diseño LQR discreto sobre el fémur nominal}
+Se continúa el ejemplo anterior. Para penalizar con mayor fuerza el error
+angular que la velocidad se selecciona, únicamente como diseño reproducible,
+\[
+ \mat Q=\diag(400,4),\qquad \mat R=[0.5].
+\]
+El procedimiento ejecutado por SciPy es:
+\begin{enumerate}
+ \item resolver la ecuación de Riccati discreta para $\mat P$;
+ \item calcular
+ $\mat K=(\mat R+\mat B_d\trans\mat P\mat B_d)^{-1}
+ \mat B_d\trans\mat P\mat A_d$;
+ \item formar $\mat A_{cl}=\mat A_d-\mat B_d\mat K$;
+ \item verificar que todos los polos cerrados tengan módulo menor que uno.
+\end{enumerate}
+El resultado numérico fue
+\[
+ \boxed{\mat K=[3.115982\quad0.325030]},
+ \qquad\lambda(\mat A_{cl})=\boxed{\{0.817918,0.013957\}}.
+\]
+Para una perturbación inicial de $10^\circ=0.174533$ rad y velocidad cero, el
+primer comando es
+\[
+ \tau[0]=-\mat K\vect x[0]
+ =-3.115982(0.174533)=\SI{-0.54384}{N.m}.
+\]
+Al iterar $\vect x[k+1]=\mat A_{cl}\vect x[k]$, el ángulo entra y permanece
+dentro de $\pm0.2^\circ$ a los \SI{0.40}{s}. El par máximo es
+\SI{0.54384}{N.m}, cerca del 50\% del par de bloqueo nominal. Esto demuestra el
+proceso de diseño, pero no autoriza esa ganancia en hardware: faltan identificar
+el servo cerrado real, retardos, saturación continua y flexibilidad.
+\end{workedexample}
+
+\section{Estimación de estado}
+\subsection{Observador de Luenberger}
+Si no se miden todas las velocidades o estados corporales,
+\begin{equation}
+ \hat{\vect x}[k+1]=\mat A_d\hat{\vect x}[k]+\mat B_d\vect u[k]
+ +\mat L(\vect y[k]-\hat{\vect y}[k]),
+ \quad \hat{\vect y}[k]=\mat C_d\hat{\vect x}[k]+\mat D_d\vect u[k].
+ \label{eq:observer}
+\end{equation}
+El error evoluciona con $\mat A_d-\mat L\mat C_d$. Sus polos suelen elegirse
+más rápidos que los del control, pero no tanto que amplifiquen cuantización,
+impactos y ruido de IMU.
+
+\subsection{Filtro de Kalman discreto}
+Con ruidos $\vect w[k]\sim(0,\mat Q_w)$ y
+$\vect v[k]\sim(0,\mat R_v)$:
+\begin{align}
+ \hat{\vect x}_{k|k-1}&=\mat A_d\hat{\vect x}_{k-1|k-1}+\mat B_d\vect u[k-1],\\
+ \mat P_{k|k-1}&=\mat A_d\mat P_{k-1|k-1}\mat A_d\trans+\mat Q_w,\\
+ \mat K_k&=\mat P_{k|k-1}\mat C_d\trans
+ (\mat C_d\mat P_{k|k-1}\mat C_d\trans+\mat R_v)^{-1},\\
+ \hat{\vect x}_{k|k}&=\hat{\vect x}_{k|k-1}+\mat K_k
+ (\vect y[k]-\mat C_d\hat{\vect x}_{k|k-1}),\\
+ \mat P_{k|k}&=(\mat I-\mat K_k\mat C_d)\mat P_{k|k-1}.
+\end{align}
+Las covarianzas se estiman con datos en reposo y movimiento; no deben ajustarse
+solo para producir curvas visualmente suaves. Para el modelo no lineal pueden
+evaluarse EKF o UKF, conservando pruebas de consistencia de innovación.
+
+\section{Diseño en el dominio Z y respuesta en frecuencia}
+\subsection{Lugar geométrico de las raíces}
+Para $L(z)=K G(z)H(z)$, la ecuación característica es
+\begin{equation}
+ 1+K G(z)H(z)=0.
+\end{equation}
+Un punto $z_0$ pertenece al lugar de raíces si cumple
+\begin{align}
+ \angle G(z_0)H(z_0)&=(2\ell+1)\pi,\\
+ K&=\frac{1}{|G(z_0)H(z_0)|},\qquad K>0.
+\end{align}
+Las ramas parten de los polos de lazo abierto y terminan en sus ceros, incluidos
+los ceros en infinito. A diferencia del plano $s$, la frontera de estabilidad
+es el círculo unitario. Se deben superponer líneas de amortiguamiento y
+frecuencia obtenidas mediante $s=\ln(z)/T_s$, no copiarlas directamente del
+plano continuo.
+
+Un compensador discreto de adelanto o atraso puede escribirse
+\begin{equation}
+ C(z)=K_c\frac{z-z_0}{z-p_0}.
+\end{equation}
+En adelanto, el par polo--cero aporta fase para mover polos dominantes; en
+atraso mejora ganancia de baja frecuencia y error permanente. Todo cero o polo
+añadido modifica respuesta transitoria, sensibilidad al ruido y realización
+numérica, por lo que se verifica el controlador completo.
+
+\subsection{Respuesta en frecuencia discreta}
+La respuesta se evalúa sobre el círculo unitario:
+\begin{equation}
+ G(e^{j\Omega})=G(z)|_{z=e^{j\Omega}},\qquad
+ \Omega=\omega T_s\in[0,\pi].
+\end{equation}
+$\Omega=\pi$ corresponde a Nyquist. El lazo
+$L(e^{j\Omega})$ permite obtener margen de ganancia, margen de fase y ancho de
+banda. Para un modelo SISO:
+\begin{equation}
+ S(z)=\frac{1}{1+L(z)},\qquad
+ T(z)=\frac{L(z)}{1+L(z)},\qquad S(z)+T(z)=1.
+\end{equation}
+$S$ describe rechazo de perturbaciones e incertidumbre a baja frecuencia;
+$T$ describe seguimiento y transmisión de ruido/modelo a alta frecuencia. No
+es posible hacer ambas arbitrariamente pequeñas en todas las frecuencias.
+
+\subsection{Criterio de Nyquist discreto}
+El criterio conserva la lógica de rodeos del punto $-1$, pero el contorno se
+construye a partir del círculo unitario y considera polos fuera de él. En
+práctica se verifican polos cerrados y diagramas de Nyquist/Bode del modelo
+discreto, incluyendo ZOH, retardo y filtros. Analizar solo el controlador
+continuo antes de discretizar puede ocultar pérdida de margen de fase.
+
+\subsection{Control deadbeat}
+Un diseño deadbeat coloca todos los polos cerrados en $z=0$, de modo que la
+respuesta ideal alcanza el valor final en un número finito de muestras. Para
+una planta mínima fase puede buscarse $C(z)$ tal que la función cerrada tenga
+un denominador monomial. Su atractivo teórico viene acompañado de comandos
+grandes, sensibilidad al modelo y mal comportamiento con ceros no mínimos,
+retardo o saturación. Por ello no se propone para los MG996R sin identificación
+y límites explícitos; se incluye como resultado clásico del control discreto.
+
+\section{Robustez y sistemas no mínimos}
+\subsection{Ceros introducidos por muestreo}
+La discretización con ZOH puede introducir ceros que no corresponden a ceros
+continuos. En plantas de grado relativo alto algunos pueden quedar cerca o
+fuera del círculo unitario. Un cero $|z_0|>1$ es no mínimo fase: invertirlo de
+forma causal y estable no es posible. Esto limita rapidez de seguimiento y
+descarta ciertas estrategias deadbeat o de cancelación.
+
+\subsection{Incertidumbre y estabilidad robusta}
+Sea una familia multiplicativa
+\begin{equation}
+ G_p(z)=G_0(z)[1+W_m(z)\Delta(z)],\qquad
+ \|\Delta\|_\infty\le1.
+\end{equation}
+Una condición de pequeña ganancia suficiente para estabilidad robusta es
+\begin{equation}
+ \|W_m T\|_\infty<1.
+\end{equation}
+En Nova, la incertidumbre incluye masa, voltaje, fricción, holgura, ganancia del
+servo, retardo y estado de contacto. Antes de aplicar teoría $H_\infty$ formal,
+se evaluará una rejilla de modelos y Monte Carlo, conservando las peores
+respuestas y no solo el promedio.
+
+\subsection{Perturbaciones y rechazo}
+Para perturbación $d$ a la entrada de planta y ruido $n$ en el sensor,
+\begin{equation}
+ y=T r+G S d-T n.
+\end{equation}
+Esta igualdad explica el compromiso: ganancia alta reduce $S$ y perturbaciones
+de baja frecuencia, pero hace $T\approx1$ y transmite ruido. Contactos e
+impactos contienen alta frecuencia; la derivada, el observador y el filtro de
+IMU deben diseñarse conjuntamente.
+
+\section{Realización computacional del controlador}
+Una función racional debe convertirse en ecuación causal. Para
+\begin{equation}
+ C(z)=\frac{b_0+b_1z^{-1}+\cdots+b_mz^{-m}}
+ {1+a_1z^{-1}+\cdots+a_nz^{-n}},
+\end{equation}
+la forma directa es
+\begin{equation}
+ u[k]=-\sum_{i=1}^{n}a_i u[k-i]+
+ \sum_{j=0}^{m}b_j e[k-j].
+\end{equation}
+Cada llamada debe seguir el orden: leer y validar sensores; calcular error;
+actualizar estimador; calcular control no saturado; aplicar saturación y
+anti-windup; publicar; actualizar memorias; registrar diagnóstico. Las memorias
+se inicializan de manera coherente al cambiar de modo para obtener transferencia
+sin salto (\emph{bumpless transfer}).
+
+\subsection{Forma directa frente a espacio de estados}
+Las formas directas I y II son compactas, pero coeficientes de alto orden pueden
+ser sensibles. Se prefieren secciones de segundo orden para filtros o espacio
+de estados balanceado para sistemas MIMO. Tras cuantizar coeficientes se vuelven
+a calcular polos; estabilidad matemática con doble precisión no garantiza
+estabilidad en un microcontrolador de precisión limitada.
+
+\subsection{Pseudocódigo temporal verificable}
+\begin{verbatim}
+al vencer instante k:
+  medir y[k] y su antiguedad
+  si dato invalido o supervisor enclavado: entrar en estado seguro
+  actualizar x_hat[k]
+  obtener referencia nominal q_ref[k]
+  limitar correccion residual y tasa de cambio
+  calcular u0[k]
+  saturar u[k] y actualizar anti-windup
+  publicar antes del deadline
+  registrar tiempos, estados, saturaciones y modo
+\end{verbatim}
+Se medirá tiempo de cómputo peor caso, no únicamente promedio. La suma de
+adquisición, cómputo y publicación debe dejar margen respecto a $T_s$.
+
+\section{Control predictivo y restricciones}
+El control predictivo basado en modelo (MPC) formula, sobre horizonte $N_p$,
+\begin{align}
+ \min_{\vect u_{0:N_p-1}}\quad &
+ \sum_{j=0}^{N_p-1}(\|\vect x_j-\vect x_j^r\|_{\mat Q}^2+
+ \|\vect u_j\|_{\mat R}^2)+\|\vect x_{N_p}-\vect x_{N_p}^r\|_{\mat P}^2,\\
+ \text{sujeto a}\quad &\vect x_{j+1}=\mat A_d\vect x_j+\mat B_d\vect u_j,\\
+ &\vect x_j\in\mathcal X,\quad\vect u_j\in\mathcal U,
+ \quad\Delta\vect u_j\in\Delta\mathcal U.
+\end{align}
+Su ventaja es incorporar límites articulares y de tasa explícitamente. Su costo
+es resolver una optimización dentro del deadline y disponer de un modelo
+adecuado por contacto. No está implementado ni es requisito actual; se presenta
+para completar el panorama de control discreto con restricciones.
+
+\section{Efectos digitales no ideales}
+\subsection{Retardo, jitter y pérdida de muestras}
+Un retardo entero de $d$ muestras introduce $z^{-d}$. Puede incorporarse como
+estados adicionales:
+\begin{equation}
+ u_1[k+1]=u[k],\quad u_2[k+1]=u_1[k],\ldots,
+ \quad u_{aplicado}[k]=u_d[k].
+\end{equation}
+El retardo agrega fase y reduce margen de estabilidad. El jitter convierte el
+sistema en variante en el tiempo; se registrarán periodo medio, desviación,
+percentiles y peor caso. Una referencia perdida no debe sustituirse sin
+criterio: se define si mantener el último comando, interpolar o entrar en modo
+seguro según antigüedad y estado de contacto.
+
+\subsection{Cuantización y precisión numérica}
+Para resolución $\Delta$, el cuantizador ideal es
+\begin{equation}
+ Q(x)=\Delta\operatorname{round}(x/\Delta),\qquad
+ e_q=Q(x)-x\in[-\Delta/2,\Delta/2].
+\end{equation}
+El error no siempre es ruido blanco: puede producir ciclos límite en presencia
+de integral y fricción. Se deben documentar resolución PWM, resolución de IMU,
+tipos numéricos y conversiones radianes--pulso. La implementación debe evitar
+restas catastróficas, acumuladores sin límite y coeficientes mal condicionados.
+
+\subsection{Sistemas multirrate y sincronización}
+La marcha, control articular, IMU, contacto y registro pueden tener frecuencias
+distintas. Para una señal lenta que alimenta un lazo rápido se usa retención o
+interpolación; para diezmar una señal rápida se filtra antes. Cada mensaje debe
+llevar sello temporal y marco. La comparación de contactos usa el estado más
+reciente, pero su antigüedad forma parte del diagnóstico para no confundir
+ausencia física de contacto con pérdida de comunicación.
+
+\section{Control híbrido y discreto de la marcha Nova}
+El sistema completo no es solamente LTI. Combina dinámica continua, control
+muestreado y eventos de contacto. Se representa como
+\begin{equation}
+ \mathcal H=(\mathcal X,\mathcal U,\mathcal M,F,G,\mathcal D,\mathcal R),
+\end{equation}
+donde $\mathcal M$ contiene modos como stand, crawl, step y stop; $F$ describe
+la evolución dentro de un modo; $\mathcal D$ las guardas de transición y
+$\mathcal R$ los reinicios. El índice de fase obedece
+\begin{equation}
+ j[k+1]=(j[k]+1)\bmod N,qquad
+ n_c[k+1]=n_c[k]+\mathbf 1_{j[k]=N-1}.
+\end{equation}
+La salida de referencia es una tabla
+$\vect q^d[k]=\mathcal Q_m(j[k])$. Para crawl y step, el plan previsto
+$\mathcal C_m(j)$ declara una pata en oscilación y tres apoyos.
+
+La arquitectura en cascada propuesta queda
+\begin{equation}
+ \text{modo/fase}\rightarrow\vect p^d[k]\rightarrow\IK
+ \rightarrow\vect q^d[k]\rightarrow
+ \text{control articular discreto}\rightarrow\vect\tau[k]
+ \rightarrow\text{robot/contacto}.
+ \label{eq:cascade}
+\end{equation}
+El supervisor es una capa paralela de mayor autoridad:
+\begin{equation}
+ \vect q^{cmd}[k]=
+ \begin{cases}
+ \vect q^{safe},&s[k]=1,\\
+ \vect q^d[k]+\Delta\vect q^{RL}[k],&s[k]=0,
+ \end{cases}
+\end{equation}
+con corrección aprendida limitada por posición y tasa. En el estado actual,
+solo altura e inclinación pueden enclavar stand; contacto permanece informativo.
+
+\subsection{Coherencia entre fase prevista y movimiento discreto}
+El plan lógico no garantiza el evento físico. Para pata $i$ se definen tiempos
+previstos $t_{LO,i}^d,t_{TD,i}^d$ y observados
+$t_{LO,i}^o,t_{TD,i}^o$:
+\begin{equation}
+ \Delta t_{LO,i}=t_{LO,i}^o-t_{LO,i}^d,\qquad
+ \Delta t_{TD,i}=t_{TD,i}^o-t_{TD,i}^d.
+\end{equation}
+La coincidencia ponderada por tiempo es
+\begin{equation}
+ \gamma_i=\frac{1}{T_E}\int_{T_E}
+ \mathbf 1\{c_i^d(t)=c_i^o(t)\}\,dt,
+\end{equation}
+y la coincidencia simultánea exige igualdad de las cuatro patas. El ensayo
+vigente obtuvo $32.550\%$ simultáneo: FL y FR despegaron cerca de
+\SI{0.38}{s} tarde y aterrizaron cerca de \SI{1.364}{s} tarde; RL y RR no
+despegaron. Por ello, la próxima versión debe modificar transferencia y forma
+de oscilación, no simplemente cambiar la etiqueta de contacto.
+
+\begin{workedexample}{cálculo experimental de retardos de contacto}
+El ensayo contiene 76 pares válidos de despegue para FL. Para cada ciclo se
+calculó
+\[
+ \Delta t_{LO,FL}^{(r)}=t_{LO,FL}^{o,(r)}-t_{LO,FL}^{d,(r)},
+ \qquad r=1,\ldots,76.
+\]
+La media no se obtuvo restando promedios redondeados, sino promediando los 76
+retardos individuales:
+\[
+ \overline{\Delta t}_{LO,FL}
+ =\frac{1}{76}\sum_{r=1}^{76}\Delta t_{LO,FL}^{(r)}
+ =\boxed{\SI{0.380296989}{s}}.
+\]
+Los extremos fueron \SI{0.368741637}{s} y \SI{0.392315495}{s}. Para aterrizaje:
+\[
+ \overline{\Delta t}_{TD,FL}=\SI{1.364317218}{s}.
+\]
+Como cada referencia dura \SI{0.18}{s}, estos valores equivalen a
+\begin{align*}
+ 0.380297/0.18&=2.1139\text{ referencias de retraso en despegue},\\
+ 1.364317/0.18&=7.5795\text{ referencias de retraso en aterrizaje}.
+\end{align*}
+Para RL y RR no hubo pares de transición: asignar retardo cero habría sido
+incorrecto. Se reporta ``sin pares'' porque permanecieron en contacto. Esta
+decisión evita convertir ausencia de evento en una medición favorable falsa.
+\end{workedexample}
+
+\begin{workedexample}{reproducibilidad de la cadencia corregida}
+Los promedios de duración en ciclos 2--13 fueron
+$\bar T_1=\SI{4.320013}{s}$ y $\bar T_2=\SI{4.319959}{s}$. Usando el primer
+ensayo como referencia:
+\begin{align*}
+ \Delta_{rel,T}&=100\frac{\bar T_2-\bar T_1}{\bar T_1}\\
+ &=100\frac{4.319959-4.320013}{4.320013}
+ =\boxed{-0.00125\%}\approx-0.001\%.
+\end{align*}
+Para avance:
+\begin{align*}
+ \Delta_{rel,x}&=100\frac{0.023384-0.023338}{0.023338}\\
+ &\approx\boxed{0.197\%},
+\end{align*}
+con pequeñas diferencias frente al $0.194\%$ del informe porque la tabla
+impresa redondea las medias antes de mostrarlas; el analizador calcula con
+precisión completa. Esta observación explica por qué los resultados finales
+deben obtenerse desde CSV, no desde números copiados de una tabla redondeada.
+\end{workedexample}
+
+\section{Procedimiento completo de diseño discreto}
+Para que el capítulo se traduzca en ingeniería reproducible se seguirá esta
+secuencia:
+\begin{enumerate}
+ \item definir variables, entradas, salidas, marcos, restricciones y punto de
+ operación;
+ \item fijar especificaciones: error, sobreimpulso, establecimiento, esfuerzo,
+ robustez, contacto y seguridad;
+ \item identificar o derivar el modelo continuo y cuantificar incertidumbre;
+ \item elegir $T_s$ con base en ancho de banda, sensores, cómputo y retardo;
+ \item discretizar con ZOH exacto y comparar contra Tustin o aproximaciones;
+ \item verificar polos, ceros, estabilidad, controlabilidad y observabilidad;
+ \item seleccionar PID, realimentación de estados, LQR u otro método coherente;
+ \item añadir observador, integral, saturaciones, anti-windup y retardos;
+ \item simular casos nominales y extremos, incluyendo pérdida de datos;
+ \item implementar con sellos temporales, límites y estado seguro;
+ \item verificar ecuaciones contra una implementación independiente;
+ \item validar primero en MuJoCo y Gazebo y después progresivamente en hardware.
+\end{enumerate}
+
+\subsection{Especificaciones mínimas antes de sintonizar}
+No se aceptará una ganancia solo porque ``se ve estable''. Para cada lazo se
+registrarán: $T_s$, ancho de banda o polos deseados, sobreimpulso, tiempo de
+establecimiento, error RMS y máximo, saturación, energía, ruido, retardo máximo,
+margen de ganancia/fase cuando aplique y región de posturas/contactos válida.
+Se separarán datos de identificación, sintonización y validación.
+
+\subsection{Ejemplo numérico didáctico de un servo de primer orden}
+Como ejemplo, no como identificación del MG996R, sea
+\begin{equation}
+ G(s)=\frac{1}{\tau s+1},\qquad \tau=\SI{0.12}{s},\quad T_s=\SI{0.02}{s}.
+\end{equation}
+La discretización ZOH exacta produce
+\begin{equation}
+ x[k+1]=e^{-T_s/\tau}x[k]+(1-e^{-T_s/\tau})u[k]
+ =0.8465x[k]+0.1535u[k].
+\end{equation}
+Su polo $z=0.8465$ está dentro del círculo unitario. Con control proporcional
+$u=K_p(r-x)$, el polo cerrado es
+\begin{equation}
+ z_{cl}=0.8465-0.1535K_p.
+\end{equation}
+Exigir $|z_{cl}|<1$ da aproximadamente $-1.00<K_p<12.03$. Este intervalo solo
+garantiza estabilidad del modelo ideal; restricciones, ruido y retardo reducen
+el rango útil. El ejemplo muestra el procedimiento: modelo, discretización,
+polo, desigualdad y luego validación.
+
+\section{Qué está implementado y qué es diseño propuesto}
+\begin{longtable}{p{5.0cm}p{4.0cm}p{5.0cm}}
+\toprule Elemento&Estado&Observación\\\midrule
+Secuenciador de marcha discreto&Implementado&24 o 32 referencias; vencimiento
+sin deriva acumulativa.\\
+Publicación de fase y contacto previsto&Implementado&JSON sincronizado con cada
+referencia.\\
+Interpolación articular&Implementada en \texttt{ros2\_control}&Debe caracterizarse
+su equivalente discreto exacto.\\
+Supervisor de altura e inclinación&Implementado, provisional&Ordena stand y se
+enclava; no sustituye parada física.\\
+PID propio de los MG996R&No implementado&El servo tiene electrónica interna no
+identificada; la interfaz PCA9685 sigue pendiente.\\
+Realimentación de estados, LQR y observador&Formulación propuesta&Requieren
+modelo identificado y sensores suficientes.\\
+IMU y contacto equivalente en MuJoCo&Pendiente&Necesarios para observación y
+comparación homogénea.\\
+Polígono y margen en línea&Pendiente&Debe usar contactos físicamente válidos.\\
+Corrección RL acotada&Pendiente&Será residual, nunca PWM directo.\\
+\bottomrule
+\end{longtable}
+
+\section{Resultados nominales}
+Para $\vect q_i=(0.10,0.42,-0.84)\trans$ rad:
+\begin{align}
+\mat M_i&=\begin{bmatrix}
+0.00904783&0.00035891&-0.00041176\\
+0.00035891&0.00673928&0.00195619\\
+-0.00041176&0.00195619&0.00316985
+\end{bmatrix}\ \si{kg.m^2},\\
+\operatorname{eig}(\mat M_i)&=(0.00226642,0.00758520,0.00910534)\ \si{kg.m^2},\\
+\vect g_i&=(0.30982,0.03891,-0.04464)\trans\ \si{N.m}.
+\end{align}
+\begin{table}[ht]\centering\caption{Indicadores nominales.}
+\begin{tabular}{ll}\toprule Indicador&Resultado\\\midrule
+COM corporal&$(-0.00586,0,-0.03882)$ m\\
+Margen estático con cuatro apoyos&\SI{0.07313}{m}\\
+Mayor par gravitacional&\SI{0.30982}{N.m}\\
+Proporción del par de bloqueo&$28.7\%$\\\bottomrule
+\end{tabular}\end{table}
+
+\section{Implementación y verificación}
+La implementación se encuentra en
+\texttt{nova\_gait\_controller/mathematical\_model.py}. Se comprobaron FK--IK,
+Jacobiano frente a diferencias centrales, potencia virtual, simetría y
+definitud positiva de $\mat M$, Coriolis nulo a velocidad cero, dinámica
+inversa finita, COM, contacto, margen estático, actuador y consistencia entre
+código, URDF/Xacro y MuJoCo. La verificación actual registra 33 pruebas aprobadas,
+URDF válido y paquetes ROS 2 compilados.
+
+El ejemplo reproducible se ejecuta con:
+\begin{verbatim}
+cd /home/pavilion/Documentos/Cuadrupedo
+source /opt/ros/humble/setup.bash
+source install/setup.bash
+python3 scripts/ejemplo_modelo_matematico.py
+\end{verbatim}
+Para $\vect q=(0.10,0.42,-0.84)$ rad,
+$\dot{\vect q}=(0.10,-0.05,0.08)$ rad/s,
+$\ddot{\vect q}=(0.20,0.10,-0.15)$ rad/s$^2$ y
+$\vect f=(1,0.5,5)$ N, reconstruye término por término \cref{eq:inverse-dynamics}.
+
+\section{Identificación paramétrica}
+Los parámetros se separan en geometría, inercia, actuadores y contacto. Cada
+registro debe contener símbolo, unidad, valor nominal, método, instrumento,
+repeticiones, estimación, incertidumbre, fecha, condiciones y fuente. El ajuste
+ponderado se formula como
+\begin{equation}
+ \vect\theta^*=\argmin_{\vect\theta}\sum_{k=1}^N
+ \|\vect y_k-\hat{\vect y}_k(\vect\theta)\|_{\mat W}^2.\label{eq:identification}
+\end{equation}
+Los datos de ajuste deben separarse de los de validación. El orden seguro es:
+medir sin energizar; caracterizar un MG996R asegurado con límite de corriente;
+dimensionar potencia y parada; calibrar unidades; y solo entonces probar patas.
+
+\section{Validación cuantitativa}
+Se distinguen verificación interna, validación en simulación y validación
+física. Para posición de pie:
+\begin{align}
+ \vect e_p(k)&=\vect p_{\mathrm{ref}}(k)-\vect p_{\mathrm{modelo}}(k),\\
+ \operatorname{RMSE}_p&=\sqrt{\frac1N\sum_{k=1}^N\|\vect e_p(k)\|^2}.
+\end{align}
+También se reportan error máximo, retardo, altura, roll, pitch, avance, deriva y,
+si existe instrumentación, fuerza, par y corriente. La línea base de gateo ya
+fue registrada y repetida; la cadencia corregida mostró diferencias menores al
+0.2\% en las medias. La marcha paso fue validada en Gazebo y articularmente en
+MuJoCo. Un ensayo adicional de 76 ciclos cuantificó solo 32.550\% de
+coincidencia entre contacto previsto y observado y ausencia de despegue trasero.
+La trayectoria debe corregirse antes de interpretar el margen de soporte. El
+hardware requiere medición física real.
+
+\section{Sensibilidad e incertidumbre}
+\begin{align}
+ S_{y,\theta_j}&=\frac{\partial y}{\partial\theta_j},&
+ \widetilde S_{y,\theta_j}&=\frac{\theta_j}{y}
+ \frac{\partial y}{\partial\theta_j},\\
+ \frac{\partial y}{\partial\theta_j}&\approx
+ \frac{y(\theta_j+h)-y(\theta_j-h)}{2h}.
+\end{align}
+Se variarán longitudes, masas, COM, fricción, tensión, ganancias, retardos y
+contacto. Las salidas son posición de pie, margen, par, altura, inclinación y
+avance. Monte Carlo complementará la sensibilidad local. Los parámetros con
+mayor efecto reciben prioridad experimental.
+
+\section{Consistencia entre modelo, código y simuladores}
+Una fuente de parámetros debe alimentar Python, URDF/Xacro y MJCF. Las pruebas
+comparan geometría, masas, tensores, límites, nombres, ejes, FK/IK, Jacobiano,
+COM y saturaciones. Se documentan versiones, solver, paso de integración,
+unidades y marcos. La ganancia observada en Gazebo Humble es $0.1$ aunque el
+YAML contenga $0.5$; por ello $0.5$ no es un valor validado.
+
+\section{Evidencia requerida y criterio de cierre}
+La versión final deberá incorporar: robot con marcos y dimensiones; pata con
+ángulos; workspace 3D; mapa de $\sigma_{\min}$ o $\kappa$; trayectoria $x$--$z$
+con velocidad y aceleración; fases temporales; polígono de soporte y COM; y
+curvas sincronizadas modelo--Gazebo--MuJoCo--experimento.
+
+El modelo estará cerrado cuando pueda seguirse sin saltos la cadena desde
+trayectoria hasta coordenadas, velocidades, aceleraciones, pares, contacto y
+respuesta corporal; cuando alcance, singularidad y límites estén definidos; y
+cuando las predicciones se comparen con datos independientes. Permanecen
+pendientes las gráficas de workspace/singularidad, implementación verificada de
+$\dot{\mat J}$, identificación física y validación experimental.
+
+\section{Registro de procedencia y uso de las ecuaciones}
+Esta tabla cierra la trazabilidad a nivel de ecuación. ``Procedencia'' significa
+la teoría de la que se deriva la forma matemática; ``adaptación Nova'' identifica
+qué se decidió específicamente para este robot. Las referencias T01--T11 están
+definidas en la matriz inicial. Cuando varias ecuaciones aparecen juntas es
+porque constituyen una sola derivación y no deben aplicarse aisladamente.
+
+\scriptsize
+\begin{longtable}{p{2.5cm}p{2.1cm}p{3.1cm}p{3.5cm}p{3.3cm}}
+\caption{Trazabilidad ecuación--método--propósito.}\label{tab:eqtrace}\\
+\toprule Ecuación o familia&Procedencia&Variables que entrega&Adaptación Nova&Uso verificable en la tesis\\
+\midrule\endfirsthead
+\toprule Ecuación o familia&Procedencia&Variables que entrega&Adaptación Nova&Uso verificable en la tesis\\
+\midrule\endhead
+\cref{eq:qlevels}&Definición propia&$\vect q_i$&Orden coxa--fémur--tibia y
+orden FL--FR--RL--RR&Evitar permutaciones entre URDF, ROS y vectores del modelo.\\
+\cref{eq:homogeneous,eq:chain,eq:worldfoot}&T01,T02&$\mat T$, $\mat R$,
+$\vect p_i$&Ejes REP--103, caderas $d_x,d_y$ y cadena Nova&Transformar pie
+local a cuerpo y mundo; contraste FK--URDF.\\
+\cref{eq:fkx,eq:fkzp,eq:fky,eq:fkz}&T02,T03&$x,y,z$&Longitudes Nova,
+$s_i$ y ceros articulares propios&Generar referencias cartesianas y comprobar
+posición del pie.\\
+\cref{eq:ikzp,eq:ikcoxa,eq:D,eq:kneebranch,eq:ikfemur,eq:iklimits}&T02,T03&
+$q_c,q_f,q_t,D$&Rama de rodilla negativa, límites URDF y continuidad&Convertir
+cada punto de marcha en una orden articular segura.\\
+\cref{eq:workspace}&T02&$\mathcal W_i$&Caja articular y geometría Nova&Rechazar
+objetivos inalcanzables antes de publicarlos.\\
+\cref{eq:jacdef,eq:jacobian,eq:singularity}&T02&$\mat J_i,w_i$&Derivación
+analítica de la FK Nova&Velocidad, fuerza--par y proximidad a singularidad.\\
+\cref{eq:accel,eq:jdot}&T02&$\ddot{\vect p},\dot{\mat J}$&Diferencia central
+con paso declarado&Obtener aceleración cartesiana y verificar derivadas.\\
+\cref{eq:dynamics,eq:kinetic,eq:potential,eq:mg,eq:christoffel}&T04&
+$\mat M,\vect c,\vect g$&Masas, COM e inercias nominales Nova&Separar los
+términos físicos del par y preparar identificación.\\
+\cref{eq:inverse-dynamics}&T04&$\vect\tau$&Fricción y fuerzas externas con
+signos Nova&Comparar demanda calculada con capacidad del servo.\\
+\cref{eq:actuator}&T06&$\tau_{\max}$&Escalado nominal con tensión y velocidad&
+Filtro preliminar de factibilidad; no reemplaza ensayo de banco.\\
+\cref{eq:complementarity,eq:frictioncone}&T05&$\lambda_n,\vect\lambda_t$&
+$\mu=0.90$ nominal y normal vertical&Decidir apoyo y detectar deslizamiento en
+simulación.\\
+\cref{eq:staticmargin}&T05&$\vect r_{COM},m_s$&Proyección sobre casco convexo
+de pies activos&Cuantificar estabilidad estática con signo y unidad.\\
+\cref{eq:gaitphase,eq:stance,eq:swing,eq:motionchain}&T02,T03 y adaptación
+propia&$\phi_i,x,z,\vect q_i$&Orden FL--RR--FR--RL, $L,H,N,T$ Nova&Construir
+la marcha y conservar la cadena fase--contacto.\\
+\cref{eq:quintic}&T07&$\vect p(t)$ y derivadas&Interpolación entre puntos Nova&
+Evitar saltos de velocidad y aceleración en trayectorias futuras.\\
+\cref{eq:deadline,eq:sampling}&T07,T10&$k,t_k,T_s$&Reloj monotónico y avance
+por vencimiento&Impedir deriva acumulativa y hacer repetible la cadencia.\\
+\cref{eq:nyquist,eq:zoh,eq:difference,eq:ztransform,eq:pulse-transfer,eq:szmap}&
+T07&$x[k],X(z),G(z)$&Aplicación al periodo real del nodo&Pasar correctamente
+del fenómeno continuo al algoritmo digital.\\
+\cref{eq:sscontinuous,eq:ssdiscrete,eq:exactdisc,eq:blockexp}&T04,T07&
+$\mat A_d,\mat B_d$&ZOH exacto calculado por exponencial en bloques&Predecir
+estado por muestra y habilitar análisis discreto.\\
+\cref{eq:linearjoint,eq:jointss}&T04,T07&$J,b,k_t,\vect x$&Eje de fémur en
+postura nominal&Ejemplo reproducible que une dinámica articular y control.\\
+\cref{eq:discretesolution,eq:schur,eq:jury2,eq:dlyap,eq:finalvalue}&T07&
+polos, $\mat P$, error final&Aplicación al modelo discretizado Nova&Probar
+estabilidad y desempeño, no juzgarlos solo por una gráfica.\\
+\cref{eq:ctrb,eq:obsv}&T07&$\mathcal C,\mathcal O$&Estados y sensores que
+realmente estarán disponibles&Comprobar si se puede controlar y reconstruir el
+estado propuesto.\\
+\cref{eq:pid,eq:antiwindup}&T07&$u[k],I[k]$&Límites de referencia/par Nova&
+Plantear un PID implementable sin acumulación integral en saturación.\\
+\cref{eq:statefeedback,eq:augmented,eq:lqrcost}&T08&$\mat K,\vect x_I$&Pesos
+y modelo nominal declarados&Diseñar y comparar realimentación con seguimiento
+sin ocultar la sintonización.\\
+\cref{eq:observer}&T07,T09&$\hat{\vect x}$&Salidas disponibles aún por fijar&
+Propuesta para estimar velocidad/estado; pendiente de sensores identificados.\\
+\cref{eq:cascade}&T07 y arquitectura propia&$\vect p_d,\vect q_d,\vect\tau_d$&
+Capas cartesiana, articular y servo Nova&Delimitar responsabilidades y ubicar
+qué señales deben medirse en cada lazo.\\
+\cref{eq:identification}&Método de mínimos cuadrados ponderados&$\vect\theta^*$&
+Pesos, repeticiones y partición de datos por definir&Reemplazar parámetros
+nominales por estimaciones físicas con incertidumbre.\\
+\bottomrule
+\end{longtable}
+\normalsize
+
+\section{Fuentes técnicas}
+Las fuentes web siguientes se verificaron el 16 de agosto de 2026. Se citan
+como base de método o contrato de software; los resultados numéricos Nova
+proceden del código y los experimentos identificados en la matriz de
+trazabilidad.
+\begin{enumerate}
+ \item ROS Enhancement Proposal 103, convenciones de coordenadas:
+ \url{https://www.ros.org/reps/rep-0103.html}.
+ \item NovaSM3, ``The Muscles'': \url{https://novaspotmicro.com/the-muscles.html}.
+ \item Repositorio Nova-SM3: \url{https://github.com/cguweb-com/Arduino-Projects/tree/main/Nova-SM3}.
+ \item Lista NovaSM3 v5.2b: \url{https://novaspotmicro.com/parts-list.html}.
+ \item TowerPro, MG996R: \url{https://towerpro.com.tw/product/mg996R/}.
+ \item DSServo, DS3218: \url{https://www.dsservo.com/down.asp?id=22}.
+ \item Mike4192, Spot Micro Kinematics: \url{https://github.com/mike4192/spot_micro_kinematics_python}.
+ \item K. Ogata, \emph{Discrete-Time Control Systems}, 2.a ed., Prentice Hall, 1995.
+ \item G. F. Franklin, J. D. Powell y M. L. Workman, \emph{Digital Control of
+ Dynamic Systems}, 3.a ed., Addison-Wesley, 1998.
+ \item K. J. \AA str\"om y B. Wittenmark, \emph{Computer-Controlled Systems},
+ 3.a ed., Prentice Hall, 1997.
+ \item C.-T. Chen, \emph{Linear System Theory and Design}, 3.a ed., Oxford
+ University Press, 1999.
+ \item R. Tedrake, MIT Underactuated Robotics, ``Multi-Body Dynamics'':
+ \url{https://underactuated.mit.edu/multibody.html}.
+ \item R. Tedrake, MIT Underactuated Robotics, ``Linear Quadratic Regulators'':
+ \url{https://underactuated.mit.edu/lqr.html}.
+ \item R. E. Kalman, ``A New Approach to Linear Filtering and Prediction
+ Problems'', \emph{Journal of Basic Engineering}, 82(1), 35--45, 1960,
+ \url{https://doi.org/10.1115/1.3662552}.
+ \item ROS 2, definición oficial de \texttt{JointTrajectory}:
+ \url{https://docs.ros.org/en/jazzy/p/trajectory_msgs/msg/JointTrajectory.html}.
+ \item ROS 2 Control, documentación de \texttt{joint\_trajectory\_controller}:
+ \url{https://docs.ros.org/en/ros2_packages/rolling/api/joint_trajectory_controller/doc/userdoc.html}.
+ \item Gazebo Sim, tutorial oficial de sensores IMU y contacto:
+ \url{https://gazebosim.org/docs/garden/sensors/}.
+\end{enumerate}
+
+\section{Conclusión}
+Se consolidó una estructura nominal computable que enlaza geometría,
+cinemática, dinámica, actuadores, contacto, estabilidad, generación de marcha y
+control discreto. Se desarrollaron muestreo, transformada Z, discretización,
+estabilidad, controlabilidad, observabilidad, PID, realimentación de estados,
+LQR, observadores, robustez, implementación digital y sistemas híbridos. Las
+formulaciones de control avanzado se presentan como diseño verificable, no como
+funciones ya implementadas en el robot.
+Esta versión reconstruye todas las expresiones como matemáticas LaTeX nativas y
+define workspace, singularidades, aceleraciones, complementariedad,
+identificación, validación, sensibilidad y trazabilidad. Solo después de
+sustituir parámetros estimados y cuantificar errores frente al robot podrá
+considerarse representativa del ejemplar físico.
+
+\end{document}

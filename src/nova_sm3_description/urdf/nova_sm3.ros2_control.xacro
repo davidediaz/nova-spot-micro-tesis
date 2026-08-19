@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:macro name="nova_ros2_control" params="use_fake_hardware:=true use_mujoco:=false use_gazebo:=false headless:=false">
+    <ros2_control name="NovaSM3System" type="system">
+      <hardware>
+        <xacro:if value="${use_fake_hardware}">
+          <plugin>mock_components/GenericSystem</plugin>
+          <param name="calculate_dynamics">false</param>
+        </xacro:if>
+        <xacro:if value="${use_mujoco}">
+          <plugin>mujoco_ros2_control/MujocoSystemInterface</plugin>
+          <param name="mujoco_model">$(find nova_sm3_description)/mujoco/nova_sm3.xml</param>
+          <param name="headless">${headless}</param>
+          <param name="sim_speed_factor">1.0</param>
+        </xacro:if>
+        <xacro:if value="${use_gazebo}">
+          <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+        </xacro:if>
+      </hardware>
+      <xacro:macro name="controlled_joint" params="name initial_position">
+        <joint name="${name}">
+          <command_interface name="position"/>
+          <state_interface name="position">
+            <param name="initial_value">${initial_position}</param>
+          </state_interface>
+          <state_interface name="velocity"/>
+        </joint>
+      </xacro:macro>
+      <xacro:controlled_joint name="front_left_coxa_joint" initial_position="0.10"/>
+      <xacro:controlled_joint name="front_left_femur_joint" initial_position="0.42"/>
+      <xacro:controlled_joint name="front_left_tibia_joint" initial_position="-0.84"/>
+      <xacro:controlled_joint name="front_right_coxa_joint" initial_position="0.10"/>
+      <xacro:controlled_joint name="front_right_femur_joint" initial_position="0.42"/>
+      <xacro:controlled_joint name="front_right_tibia_joint" initial_position="-0.84"/>
+      <xacro:controlled_joint name="rear_left_coxa_joint" initial_position="0.10"/>
+      <xacro:controlled_joint name="rear_left_femur_joint" initial_position="0.42"/>
+      <xacro:controlled_joint name="rear_left_tibia_joint" initial_position="-0.84"/>
+      <xacro:controlled_joint name="rear_right_coxa_joint" initial_position="0.10"/>
+      <xacro:controlled_joint name="rear_right_femur_joint" initial_position="0.42"/>
+      <xacro:controlled_joint name="rear_right_tibia_joint" initial_position="-0.84"/>
+    </ros2_control>
+  </xacro:macro>
+</robot>

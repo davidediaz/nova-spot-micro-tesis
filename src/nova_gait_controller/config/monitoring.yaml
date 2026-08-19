@@ -1,0 +1,29 @@
+nova_metrics:
+  ros__parameters:
+    use_sim_time: true
+    pose_topic: /world/empty/dynamic_pose/info
+    model_frame: nova_sm3
+    joint_states_topic: /joint_states
+    sync_tolerance: 0.10
+    sync_queue_size: 30
+
+nova_safety_supervisor:
+  ros__parameters:
+    use_sim_time: true
+    pose_topic: /world/empty/dynamic_pose/info
+    model_frame: nova_sm3
+    command_topic: /nova/gait_command
+    # Umbrales provisionales exclusivos de simulación; no usar en hardware.
+    min_height: 0.16
+    max_height: 0.32
+    max_tilt_deg: 20.0
+    consecutive_unsafe_samples: 3
+    startup_grace_period: 8.0
+
+nova_contact_monitor:
+  ros__parameters:
+    use_sim_time: true
+    gait_phase_topic: /nova/gait_phase
+    contacts_topic: /nova/foot_contacts
+    diagnostics_topic: /nova/contact_diagnostics
+    contact_timeout: 0.10

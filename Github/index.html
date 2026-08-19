@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Panel de progreso de la tesis Nova Spot Micro">
+  <title>Nova Spot Micro · Progreso de tesis</title>
+  <style>
+    :root { --bg:#08111f; --panel:#101d31; --panel2:#142640; --text:#eef5ff; --muted:#9db0c9; --cyan:#53e0d0; --blue:#6aa8ff; --orange:#ffb86b; --line:#253957; }
+    * { box-sizing:border-box; }
+    body { margin:0; color:var(--text); background:radial-gradient(circle at 85% 0%,#19365a 0,#08111f 42%); font:16px/1.6 Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif; }
+    a { color:var(--cyan); text-decoration:none; } a:hover { text-decoration:underline; }
+    .wrap { width:min(1120px,calc(100% - 40px)); margin:auto; }
+    header { padding:72px 0 42px; position:relative; overflow:hidden; }
+    header:after { content:""; position:absolute; width:300px; height:300px; border:1px solid #53e0d033; border-radius:50%; right:-70px; top:-80px; box-shadow:0 0 0 35px #53e0d00d,0 0 0 70px #53e0d008; }
+    .eyebrow { color:var(--cyan); text-transform:uppercase; letter-spacing:.16em; font-size:.76rem; font-weight:700; }
+    h1 { font-size:clamp(2.3rem,6vw,4.8rem); line-height:1.02; margin:14px 0 18px; max-width:780px; letter-spacing:-.05em; }
+    .lead { color:var(--muted); max-width:700px; font-size:1.13rem; }
+    .buttons { display:flex; gap:12px; flex-wrap:wrap; margin-top:28px; }
+    .button { display:inline-block; padding:11px 17px; border-radius:10px; border:1px solid var(--line); background:var(--panel); color:var(--text); font-weight:650; }
+    .button.primary { background:var(--cyan); color:#06201e; border-color:var(--cyan); }
+    section { padding:26px 0; } h2 { font-size:1.5rem; margin:0 0 18px; } h3 { margin:0 0 8px; font-size:1.05rem; }
+    .grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+    .card { background:linear-gradient(145deg,var(--panel),#0d192a); border:1px solid var(--line); border-radius:16px; padding:21px; box-shadow:0 12px 30px #0000001a; }
+    .metric { font-size:2rem; font-weight:800; letter-spacing:-.04em; } .metric small { color:var(--cyan); font-size:.9rem; letter-spacing:0; }
+    .muted { color:var(--muted); font-size:.92rem; }
+    .layout { display:grid; grid-template-columns:1.25fr .75fr; gap:18px; }
+    .timeline { position:relative; padding-left:28px; } .timeline:before { content:""; position:absolute; left:7px; top:7px; bottom:7px; width:2px; background:linear-gradient(var(--cyan),var(--blue),transparent); }
+    .event { position:relative; padding:0 0 26px; } .event:before { content:""; position:absolute; left:-27px; top:6px; width:12px; height:12px; border-radius:50%; background:var(--cyan); box-shadow:0 0 0 5px #53e0d01c; }
+    .date { color:var(--orange); font-size:.8rem; font-weight:750; text-transform:uppercase; letter-spacing:.08em; }
+    ul { padding-left:20px; color:var(--muted); } li+li { margin-top:6px; }
+    .bar { height:10px; border-radius:99px; background:#20334f; overflow:hidden; margin:12px 0 7px; } .bar span { display:block; height:100%; width:70%; background:linear-gradient(90deg,var(--cyan),var(--blue)); border-radius:inherit; }
+    .tag { display:inline-block; padding:5px 10px; border-radius:99px; background:#53e0d01a; color:var(--cyan); font-size:.78rem; font-weight:700; margin:3px 4px 3px 0; }
+    footer { border-top:1px solid var(--line); margin-top:28px; padding:26px 0 45px; color:var(--muted); font-size:.9rem; }
+    @media (max-width:800px) { .grid { grid-template-columns:repeat(2,1fr); } .layout { grid-template-columns:1fr; } }
+    @media (max-width:500px) { .wrap { width:min(100% - 28px,1120px); } header { padding-top:46px; } .grid { grid-template-columns:1fr 1fr; gap:9px; } .card { padding:16px; } .metric { font-size:1.55rem; } }
+  </style>
+</head>
+<body>
+  <header><div class="wrap">
+    <div class="eyebrow">Tesis · Nova Spot Micro · actualización 19 agosto 2026</div>
+    <h1>El robot aprende a caminar, paso a paso.</h1>
+    <p class="lead">Panel público de avance del proyecto de control de locomoción del cuadrúpedo NovaSM3. Aquí se registran resultados, decisiones y la evidencia que sostiene cada semana de trabajo.</p>
+    <div class="buttons"><a class="button primary" href="BITACORA.html">Abrir bitácora →</a><a class="button" href="PROGRESO_SEMANAL.md">Ver progreso semanal</a><a class="button" href="../README.md">Ver documentación técnica</a></div>
+  </div></header>
+
+  <main class="wrap">
+    <section><div class="grid">
+      <article class="card"><div class="metric">37 <small>✓</small></div><div class="muted">pruebas aprobadas</div></article>
+      <article class="card"><div class="metric">4,32 s</div><div class="muted">ciclo corregido de gateo</div></article>
+      <article class="card"><div class="metric">&lt;0,2 %</div><div class="muted">diferencia entre repeticiones</div></article>
+      <article class="card"><div class="metric">0</div><div class="muted">activaciones de seguridad</div></article>
+    </div></section>
+
+    <section class="layout">
+      <article class="card"><h2>Ruta del proyecto</h2><div class="timeline">
+        <div class="event"><div class="date">11–17 agosto</div><h3>Simulación y medición</h3><p class="muted">Se validaron gateo y marcha paso en Gazebo/MuJoCo, se corrigió la cadencia y se incorporaron fase y contactos de las cuatro patas.</p></div>
+        <div class="event"><div class="date">18–24 agosto · en curso</div><h3>Ajuste del gateo</h3><p class="muted">Los despegues ya coinciden mejor. Se está rediseñando el descenso para alinear los aterrizajes delanteros y traseros con el plan.</p></div>
+        <div class="event"><div class="date">Próximo hito</div><h3>Nueva línea base de contactos</h3><p class="muted">Validar en pruebas locales, ensayar en Gazebo, registrar una bolsa nueva y repetirla sin mezclar versiones.</p></div>
+      </div></article>
+      <aside class="card"><h2>Estado por área</h2>
+        <h3>Software y simulación</h3><div class="bar"><span style="width:92%"></span></div><div class="muted">Implementado y reproducible</div>
+        <h3 style="margin-top:18px">Contactos y estabilidad</h3><div class="bar"><span style="width:62%"></span></div><div class="muted">Medición activa; aterrizajes en ajuste</div>
+        <h3 style="margin-top:18px">Hardware</h3><div class="bar"><span style="width:18%"></span></div><div class="muted">Preparación; servos aún sin energizar</div>
+        <div style="margin-top:18px"><span class="tag">ROS 2 Humble</span><span class="tag">Gazebo</span><span class="tag">MuJoCo</span><span class="tag">Python</span></div>
+      </aside>
+    </section>
+
+    <section class="layout"><article class="card"><h2>Próximos pasos</h2><ul><li>Ajustar la curva completa de descenso del gateo por eje.</li><li>Verificar continuidad, altura, periodicidad y subfases.</li><li>Grabar y repetir al menos diez ciclos con métricas y contactos.</li><li>Validar el primer arranque de la Raspberry Pi con Ubuntu 22.04.</li></ul></article><article class="card"><h2>Documentos clave</h2><ul><li><a href="BITACORA.html">Bitácora visual</a></li><li><a href="SEGUIMIENTO_PROFESOR.md">Seguimiento profesor–estudiante</a></li><li><a href="../CONTINUIDAD.md">Memoria de continuidad</a></li><li><a href="../Seguimiento/Seguimiento.md">Seguimiento operativo</a></li><li><a href="../Documentacion/PROTOCOLO_EXPERIMENTAL_BORRADOR.md">Protocolo experimental</a></li></ul></article></section>
+  </main>
+  <footer><div class="wrap">Nova Spot Micro · seguimiento académico verificable · <a href="PROGRESO_SEMANAL.md">última actualización semanal</a></div></footer>
+</body>
+</html>

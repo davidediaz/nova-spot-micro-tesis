@@ -1,0 +1,282 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{geometry}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{microtype}
+\geometry{margin=2.4cm}
+\hypersetup{colorlinks=true,linkcolor=blue!55!black,urlcolor=blue!55!black}
+\newcommand{\vect}[1]{\boldsymbol{#1}}
+\newcommand{\atan}{\operatorname{atan2}}
+
+\title{Desarrollo matemático de la cinemática y la marcha cartesiana\\
+Nova Spot Micro}
+\author{Proyecto de tesis --- robot cuadrúpedo Nova Spot Micro}
+\date{13 de agosto de 2026}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+Este documento registra la formulación matemática implementada para convertir
+posiciones cartesianas de los pies en referencias articulares del modelo
+Nova Spot Micro y generar una marcha de gateo estable en Gazebo. Se presentan
+las convenciones, la cinemática directa, la solución analítica de cinemática
+inversa, la trayectoria por fases, las restricciones y la validación realizada.
+Las dimensiones dinámicas y articulares continúan siendo provisionales hasta
+medir el robot físico.
+\end{abstract}
+\tableofcontents
+
+\section{Objetivo y alcance}
+El controlador inicial utilizaba listas fijas de ángulos. Aunque una versión
+conservadora mantenía el equilibrio, el robot casi no avanzaba. La modificación
+consistió en definir el movimiento en el espacio cartesiano de cada pie y
+calcular en cada muestra los tres ángulos de su pata mediante cinemática
+inversa. La política implementada sigue siendo control convencional nominal;
+no corresponde todavía a la capa de aprendizaje por refuerzo de la tesis.
+
+La formulación toma como referencia conceptual el proyecto MIT
+\href{https://github.com/mike4192/spot_micro_kinematics_python}{spot\_micro\_kinematics\_python}
+de Mike4192, pero fue rederivada para las longitudes, ejes ROS y signos del URDF
+propio. No se trasladaron directamente sus dimensiones ni su numeración.
+
+\section{Convenciones y parámetros geométricos}
+El marco local de una cadera coincide, antes de las rotaciones, con el marco del
+cuerpo: $x$ apunta hacia delante, $y$ hacia la izquierda y $z$ hacia arriba.
+Cada pata tiene tres variables:
+\[
+  \vect q_i = [q_{c,i},\ q_{f,i},\ q_{t,i}]^T,
+\]
+donde los subíndices indican coxa, fémur y tibia. Se usa
+$s=+1$ para patas izquierdas y $s=-1$ para patas derechas. El eje de la coxa
+en el URDF es $s\vect e_x$; fémur y tibia rotan alrededor del eje $y$ local.
+
+\begin{table}[h]
+\centering
+\caption{Parámetros geométricos provisionales empleados.}
+\begin{tabular}{lll}
+\toprule
+Símbolo & Valor & Significado\\
+\midrule
+$l_c$ & $0.090$ m & longitud de coxa\\
+$l_f$ & $0.105$ m & longitud de fémur\\
+$l_t$ & $0.132$ m & longitud de tibia\\
+$(q_c,q_f,q_t)_0$ & $(0.10,0.42,-0.84)$ rad & postura nominal\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Los límites provisionales usados como supervisor cinemático son
+\[
+-0.60\le q_c\le0.60,\qquad
+-1.20\le q_f\le1.20,\qquad
+-2.20\le q_t\le0.10.
+\]
+
+\section{Cinemática directa de una pata}
+Primero se resuelve el plano fémur--tibia. La posición horizontal y vertical
+antes de aplicar la rotación de coxa es
+\begin{align}
+x_p &= -l_f\sin q_f-l_t\sin(q_f+q_t),\\
+z_p &= -l_f\cos q_f-l_t\cos(q_f+q_t).
+\end{align}
+El desplazamiento lateral sin rotación es $y_p=s l_c$. La coxa gira el vector
+$(y_p,z_p)$ un ángulo $a=sq_c$ alrededor de $x$. Por tanto,
+\begin{align}
+x &= x_p,\\
+y &= \cos(a)\,s l_c-\sin(a)\,z_p,\\
+z &= \sin(a)\,s l_c+\cos(a)\,z_p.
+\end{align}
+La función completa queda
+\[
+\boxed{
+\vect p_F(q_c,q_f,q_t,s)=
+\begin{bmatrix}
+-l_f\sin q_f-l_t\sin(q_f+q_t)\\
+\cos(sq_c)s l_c-\sin(sq_c)z_p\\
+\sin(sq_c)s l_c+\cos(sq_c)z_p
+\end{bmatrix}}
+\]
+y se implementa como \texttt{forward\_leg}.
+
+\section{Cinemática inversa}
+Se desea encontrar $\vect q$ a partir de un objetivo
+$\vect p_F=[x,y,z]^T$.
+
+\subsection{Separación de la coxa}
+La rotación de coxa conserva la norma en el plano $yz$. Por geometría,
+\[
+r_{yz}^2=y^2+z^2=l_c^2+z_p^2.
+\]
+Se elige la rama de la pata que apunta hacia abajo:
+\[
+\boxed{z_p=-\sqrt{y^2+z^2-l_c^2}}.
+\]
+Una condición necesaria de alcanzabilidad es
+$y^2+z^2-l_c^2\ge0$. El ángulo aplicado alrededor de $x$ se obtiene como
+la diferencia entre el argumento del vector final y el inicial:
+\begin{align}
+a &= \atan(z,y)-\atan(z_p,s l_c),\\
+q_c &= \boxed{\frac{1}{s}\atan(\sin a,\cos a)}.
+\end{align}
+La segunda expresión normaliza $a$ al intervalo principal y respeta el signo
+del eje de las patas derecha e izquierda.
+
+\subsection{Solución del plano fémur--tibia}
+Se definen coordenadas positivas convenientes
+\[
+d=-z_p,\qquad b=-x.
+\]
+Por ley de cosenos,
+\[
+D=\frac{d^2+b^2-l_f^2-l_t^2}{2l_fl_t}.
+\]
+Debe cumplirse $-1\le D\le1$. Se selecciona la configuración de rodilla
+flexionada compatible con el URDF:
+\[
+\boxed{q_t=-\arccos D}.
+\]
+Finalmente, la descomposición geométrica del manipulador plano da
+\[
+\boxed{
+q_f=\atan(b,d)-
+\atan\!\left(l_t\sin q_t,\ l_f+l_t\cos q_t\right)}.
+\]
+Antes de aceptar la solución se comprueba que los tres valores sean finitos y
+se encuentren en los límites articulares. Si falla alguna condición, la marcha
+se rechaza y el controlador conserva la postura.
+
+\section{Comprobación FK--IK}
+La prueba automatizada toma la postura nominal para ambos valores de $s$:
+\[
+\vect q_0=(0.10,0.42,-0.84)\ \text{rad}.
+\]
+Calcula $\vect p_0=FK(\vect q_0,s)$ y luego
+$\widehat{\vect q}_0=IK(\vect p_0,s)$. La condición verificada es
+\[
+|q_{0,j}-\widehat q_{0,j}|<10^{-9}\quad\forall j.
+\]
+También se genera un ciclo completo y se comprueba que el mayor salto entre
+muestras consecutivas sea menor que $0.20$ rad. Las dos pruebas aprobaron.
+
+\section{Trayectoria cartesiana de gateo}
+Cada pata parte de su posición neutral $\vect p_{0,i}$ obtenida por FK. La fase
+global discretizada es
+\[
+\phi_k=\frac{k}{N},\qquad k=0,\ldots,N-1.
+\]
+Para cada pata se aplica un desfase $\delta_i$ y un módulo unitario:
+\[
+\phi_i=(\phi_k+\delta_i)\bmod 1.
+\]
+Los desfases implementados producen el orden de oscilación
+delantera izquierda, trasera derecha, delantera derecha y trasera izquierda.
+El factor de apoyo es $\beta=0.75$, por lo que solamente una pata entra en
+oscilación a la vez.
+
+\subsection{Fase de apoyo}
+Para $0\le\phi_i<\beta$ se define
+\[
+u=\frac{\phi_i}{\beta},\qquad
+x_i=x_{0,i}+L\left(\frac12-u\right),\qquad z_i=z_{0,i}.
+\]
+El pie se desplaza hacia atrás respecto del cuerpo, representando el avance del
+cuerpo sobre un apoyo aproximadamente fijo.
+
+\subsection{Fase de oscilación}
+Para $\beta\le\phi_i<1$ se usa
+\[
+v=\frac{\phi_i-\beta}{1-\beta},
+\]
+\begin{align}
+x_i &= x_{0,i}+L\left(-\frac12+v\right),\\
+z_i &= z_{0,i}+4H v(1-v).
+\end{align}
+La parábola vertical vale cero en los extremos y alcanza exactamente $H$ en
+$v=1/2$. La coordenada lateral se mantiene como $y_i=y_{0,i}$. Cada punto
+$(x_i,y_i,z_i)$ se convierte en ángulos mediante IK.
+
+\section{Discretización y temporización}
+La línea base validada utiliza
+\[
+N=24,\quad L=0.018\ \text{m},\quad H=0.014\ \text{m},
+\quad \Delta t=0.18\ \text{s}.
+\]
+Por ello, el periodo nominal es
+\[
+\boxed{T=N\Delta t=24(0.18)=4.32\ \text{s}}.
+\]
+La trayectoria articular usa un tiempo de transición del $90\%$ de cada fase:
+\[
+t_{\mathrm{tr}}=0.90\Delta t=0.162\ \text{s}.
+\]
+El resto de la fase ofrece un margen pequeño antes de enviar el punto siguiente.
+
+\section{Restricciones paramétricas}
+El controlador valida los parámetros antes de iniciar el gateo:
+\begin{align*}
+8&\le N\le80, & N&\equiv0\pmod4,\\
+0.002&\le L\le0.040\ \text{m},\\
+0.004&\le H\le0.030\ \text{m},\\
+0.08&\le\Delta t\le1.0\ \text{s}.
+\end{align*}
+Estas cotas son de simulación y no autorizan su transferencia automática a los
+MG996R. La calibración física debe establecer límites definitivos.
+
+\section{Validación en Gazebo}
+Se tomaron doce muestras separadas aproximadamente cuatro segundos, cubriendo
+más de diez ciclos. Los resultados fueron:
+\begin{table}[h]
+\centering
+\begin{tabular}{ll}
+\toprule
+Métrica & Resultado\\
+\midrule
+Posición longitudinal inicial & $-0.00212$ m\\
+Posición longitudinal final & $0.21676$ m\\
+Desplazamiento & $0.21887$ m\\
+Altura mínima--máxima & $0.22287$--$0.22428$ m\\
+Desviación lateral absoluta máxima & $0.00986$ m\\
+Componente $|w|$ mínima del cuaternión & $0.99906$\\
+Caídas & 0\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Tomando aproximadamente $44$ s entre la primera y la última muestra, la
+velocidad media estimada es
+\[
+\bar v_x\approx\frac{0.21887}{44}=4.97\times10^{-3}\ \text{m/s}.
+\]
+La variación total observada de altura fue
+\[
+\Delta z=0.22428-0.22287=1.41\times10^{-3}\ \text{m}.
+\]
+La cota angular global asociada únicamente a $w$ puede expresarse como
+$\theta=2\arccos|w|$; con $|w|=0.99906$ corresponde aproximadamente a
+$0.087$ rad, es decir, $5.0^{\circ}$. Esta magnitud no sustituye el cálculo
+separado de roll, pitch y yaw. El nodo de métricas implementado posteriormente
+ya realiza esa conversión y la publica junto con los estados articulares.
+
+\section{Limitaciones y siguiente desarrollo}
+El resultado demuestra avance estable en el modelo actual, no valida todavía
+un gemelo digital ni el robot físico. Permanecen provisionales masas, inercias,
+fricción, esfuerzos, ganancias y geometría. La marcha no desplaza explícitamente
+el cuerpo para maximizar margen estático; su estabilidad se observó en la
+configuración actual de Gazebo.
+
+Los contactos de los cuatro pies y el supervisor provisional de altura e
+inclinación ya están integrados en Gazebo. Un ensayo de 76 ciclos mostró solo
+32.550\% de coincidencia con el plan ideal y ausencia de despegue trasero. Los
+siguientes pasos son corregir esa trayectoria, repetir la medición, calcular el
+polígono de soporte con contactos válidos, proyectar el centro de masa y definir
+el margen de estabilidad. Después se podrá comparar sistemáticamente la
+marcha nominal y la misma marcha con correcciones acotadas de aprendizaje por
+refuerzo.
+
+\end{document}

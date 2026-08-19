@@ -1,0 +1,32 @@
+# Parámetros nominales del 17 de agosto de 2026.
+# Esta copia sirve como referencia para Raspberry; la configuración ROS 2
+# autoritativa está en src/nova_gait_controller/config/gaits.yaml.
+gateo:
+  comando: gateo
+  alias: crawl
+  muestras: 24
+  duracion_muestra_s: 0.18
+  duracion_ciclo_s: 4.32
+  longitud_paso_m: 0.018
+  elevacion_pie_m: 0.014
+  transferencia_lateral_m: 0.004
+  transferencia_longitudinal_m: 0.008
+  orden: [fl, rr, fr, rl]
+
+paso:
+  comando: paso
+  alias: step
+  muestras: 32
+  duracion_muestra_s: 0.18
+  duracion_ciclo_s: 5.76
+  longitud_paso_m: 0.016
+  elevacion_pie_m: 0.008
+  transferencia_lateral_m: 0.004
+  orden: [fl, rr, fr, rl]
+
+galope:
+  comando: galope
+  alias: gallop
+  habilitado: false
+  hardware_autorizado: false
+

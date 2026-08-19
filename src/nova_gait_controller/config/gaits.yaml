@@ -1,0 +1,27 @@
+gait_controller:
+  ros__parameters:
+    initial_gait: stand
+    crawl_phase_duration: 0.18
+    crawl_samples: 24
+    crawl_step_length: 0.018
+    crawl_step_height: 0.014
+    crawl_lateral_shift: 0.004
+    crawl_fore_aft_shift: 0.008
+    # Altura normalizada en la referencia "landing": descenso delantero
+    # adelantado y elevación trasera sostenida hasta "touchdown".
+    # 0,70710678 reproduce el perfil sinusoidal previo. Ajustar únicamente en
+    # ensayos exploratorios y congelar después de validar contactos.
+    crawl_front_landing_height_ratio: 0.7071067811865476
+    crawl_rear_landing_height_ratio: 0.7071067811865476
+    step_phase_duration: 0.18
+    step_samples: 32
+    step_length: 0.016
+    step_height: 0.008
+    step_weight_shift: 0.004
+    gallop_phase_duration: 0.20
+    # Fuera del alcance principal; no habilitar en hardware.
+    enable_experimental_gallop: false
+    transition_ratio: 0.90
+    command_topic: /nova/gait_command
+    phase_topic: /nova/gait_phase
+    trajectory_topic: /joint_trajectory_controller/joint_trajectory

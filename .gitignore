@@ -1,0 +1,39 @@
+# ROS 2 y compilación
+build/
+install/
+log/
+**/__pycache__/
+*.pyc
+
+# Entornos y herramientas locales
+.venv*/
+.vscode/
+*.deb
+*.AppImage
+
+# Datos experimentales pesados o regenerables
+Experimentos/rosbag2/**/*.db3
+Experimentos/rosbag2/**/metadata.yaml
+*.bag
+
+# Archivos temporales de LaTeX y editores
+*.aux
+*.log
+*.out
+*.toc
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.swp
+
+# Exportaciones grandes; conservar en Git las fuentes y los informes Markdown
+*.pdf
+*.png
+*.jpeg
+*.odt
+*.docx
+
+# Datos privados/locales
+.env
+*.key
+*.pem
