@@ -757,6 +757,15 @@ Próxima acción segura: comprobar desde la Raspberry los nodos de diagnóstico
 y parámetros de entorno ROS 2, y preparar el workspace para comunicación con
 el PC. La validación de I2C, PWM deshabilitado y hardware continúa pendiente.
 
+La comprobación posterior confirmó que el overlay
+`/home/pavilion/nova-spot-micro-tesis/install/setup.bash` existe y carga
+correctamente `nova_gait_controller` y `nova_sm3_description`. No se ejecutó
+ningún launch, controlador, trayectoria, comando I2C/PWM ni componente físico.
+
+Siguiente acción: documentar el estado de reloj y red, y preparar la prueba de
+I2C/PCA9685 solo después de cerrar el esquema eléctrico y las condiciones de
+salida deshabilitada.
+
 ### Comunicación ROS 2 por Wi-Fi validada (20 de agosto de 2026)
 
 Con el `talker` ejecutándose en la Raspberry Pi 4, el computador principal

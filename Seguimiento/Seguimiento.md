@@ -358,6 +358,12 @@ los dos paquetes y reconoció `nova_gait_controller` y
 `nova_sm3_description`. No se ejecutó ningún launch, controlador, trayectoria
 ni componente del PCA9685.
 
+La validación del overlay también quedó completada: existe
+`/home/pavilion/nova-spot-micro-tesis/install/setup.bash` y, tras cargarlo,
+ambos paquetes aparecen con código de salida 0. No hay nodos, procesos físicos,
+adaptadores I2C ni PWM activos. La siguiente fase será preparar I2C/PCA9685
+con seguridad eléctrica cerrada.
+
 Criterio de cierre: referencias articulares convertidas de forma limitada a
 PWM, inicialmente sin actuadores y después con un solo servo.
 
