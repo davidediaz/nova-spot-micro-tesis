@@ -364,6 +364,11 @@ ambos paquetes aparecen con código de salida 0. No hay nodos, procesos físicos
 adaptadores I2C ni PWM activos. La siguiente fase será preparar I2C/PCA9685
 con seguridad eléctrica cerrada.
 
+Prueba I²C completada el 20 de agosto de 2026: con servos y `V+` desconectados,
+la Raspberry detectó `0x40` y `0x70` en `i2c-1` mediante `i2cdetect`. El enlace
+lógico con el PCA9685 queda validado; la potencia, OE, PWM y actuadores siguen
+pendientes y no se ejecutó ningún controlador.
+
 Criterio de cierre: referencias articulares convertidas de forma limitada a
 PWM, inicialmente sin actuadores y después con un solo servo.
 

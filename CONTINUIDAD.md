@@ -783,6 +783,19 @@ remota y desplazamiento controlado en lugares peligrosos para reducir la
 exposición de las personas a riesgos físicos. La fuente volvió a compilar en
 una salida de prueba de 30 páginas.
 
+### PCA9685 detectado por I²C sin potencia de servos (20 de agosto de 2026)
+
+Con los servos desconectados, `V+` sin alimentación y sin LM2596 energizado, la
+Raspberry instaló `i2c-tools` y detectó en `i2c-1` las direcciones `0x40` y
+`0x70`. `0x40` confirma la presencia del PCA9685; `0x70` corresponde a su
+dirección general de llamada. No se ejecutaron launch, PWM, controladores ni
+comandos de movimiento.
+
+Este resultado valida el enlace lógico Raspberry--PCA9685, pero no valida aún
+la potencia de servos, el LM2596, OE, PWM instrumental ni ningún actuador.
+Próxima acción: documentar la prueba de salida deshabilitada y revisar la
+fuente, fusible, parada física y tensión medida antes de alimentar `V+`.
+
 ### Diagrama de cableado Raspberry Pi 4–PCA9685–LM2596 (20 de agosto de 2026)
 
 Se creó el diagrama legible en PDF y SVG
