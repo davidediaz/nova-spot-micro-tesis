@@ -766,6 +766,16 @@ Siguiente acción: documentar el estado de reloj y red, y preparar la prueba de
 I2C/PCA9685 solo después de cerrar el esquema eléctrico y las condiciones de
 salida deshabilitada.
 
+### Impacto social incorporado en la tesis (20 de agosto de 2026)
+
+Se añadió en `tesis_overleaf/Chapters/4 Justificación.tex` una formulación
+breve y prudente del fin social: como proyección, el robot cuadrúpedo podrá
+apoyar la inspección remota de zonas peligrosas y reducir la exposición de las
+personas a riesgos físicos. El texto aclara que se trata de una línea futura y
+que esta tesis establece la locomoción y el control necesarios, sin afirmar una
+aplicación desplegada. La fuente compiló en una salida de prueba de 32 páginas;
+no se sobrescribió el PDF histórico de la tesis.
+
 ### Diagrama de cableado Raspberry Pi 4–PCA9685–LM2596 (20 de agosto de 2026)
 
 Se creó el diagrama legible en PDF y SVG
