@@ -779,6 +779,13 @@ El diagrama es una guía de cableado, no una autorización para energizar. Falta
 confirmar con fotografías la variante concreta de la placa PCA9685, el jumper
 VCC–V+ y la fuente de entrada del LM2596 antes de conectar cualquier servo.
 
+La fotografía recibida el 20 de agosto confirmó la serigrafía de la placa
+PCA9685 V1.2.4.6: header superior de izquierda a derecha `V+`, `VCC`, `SDA`,
+`SCL`, `OE`, `GND`; header inferior en orden inverso. El PDF/SVG se actualizó
+para mostrar explícitamente `Pin físico 1 → VCC`, `Pin físico 3 → SDA`,
+`Pin físico 5 → SCL` y `Pin físico 6 → GND`, manteniendo `V+` y servos sin
+conectar durante la fase de prueba.
+
 ### Comunicación ROS 2 por Wi-Fi validada (20 de agosto de 2026)
 
 Con el `talker` ejecutándose en la Raspberry Pi 4, el computador principal

@@ -10,6 +10,11 @@
 | 6 | GND | GND | Tierra lógica común |
 | 11 | GPIO17 | OE | HIGH apaga; LOW habilita PWM |
 
+En la placa fotografiada (V1.2.4.6), el header superior se lee de izquierda a
+derecha: `V+`, `VCC`, `SDA`, `SCL`, `OE`, `GND`. El header inferior está
+invertido: `GND`, `OE`, `SCL`, `SDA`, `VCC`, `V+`. Usar siempre la serigrafía;
+la orientación física puede cambiar al girar la placa.
+
 Se recomienda una resistencia pull-up externa de 10 kΩ entre `OE` y 3,3 V para
 que las salidas permanezcan deshabilitadas durante el arranque.
 

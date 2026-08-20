@@ -7,10 +7,10 @@ digraph G {
   pi [label=<
     <TABLE BORDER="2" COLOR="#236b3c" CELLBORDER="1" CELLSPACING="0" CELLPADDING="8" BGCOLOR="#eaf7ee">
       <TR><TD COLSPAN="2" BGCOLOR="#236b3c"><FONT COLOR="white"><B>RASPBERRY PI 4</B></FONT></TD></TR>
-      <TR><TD ALIGN="LEFT"><B>Pin 1</B></TD><TD ALIGN="LEFT">3V3 logic</TD></TR>
-      <TR><TD ALIGN="LEFT"><B>Pin 3</B></TD><TD ALIGN="LEFT">GPIO2 / SDA</TD></TR>
-      <TR><TD ALIGN="LEFT"><B>Pin 5</B></TD><TD ALIGN="LEFT">GPIO3 / SCL</TD></TR>
-      <TR><TD ALIGN="LEFT"><B>Pin 6</B></TD><TD ALIGN="LEFT">GND común</TD></TR>
+      <TR><TD ALIGN="LEFT"><B>Pin físico 1</B></TD><TD ALIGN="LEFT">3V3 → VCC</TD></TR>
+      <TR><TD ALIGN="LEFT"><B>Pin físico 3</B></TD><TD ALIGN="LEFT">GPIO2/SDA → SDA</TD></TR>
+      <TR><TD ALIGN="LEFT"><B>Pin físico 5</B></TD><TD ALIGN="LEFT">GPIO3/SCL → SCL</TD></TR>
+      <TR><TD ALIGN="LEFT"><B>Pin físico 6</B></TD><TD ALIGN="LEFT">GND → GND</TD></TR>
       <TR><TD ALIGN="LEFT"><B>USB-C</B></TD><TD ALIGN="LEFT">alimentación propia de la Pi</TD></TR>
     </TABLE>>];
 
@@ -22,7 +22,9 @@ digraph G {
       <TR><TD ALIGN="LEFT"><B>SCL</B></TD><TD ALIGN="LEFT">GPIO3 / Pin 5</TD></TR>
       <TR><TD ALIGN="LEFT"><B>GND</B></TD><TD ALIGN="LEFT">tierra común</TD></TR>
       <TR><TD ALIGN="LEFT"><B>V+</B></TD><TD ALIGN="LEFT">potencia externa de servos</TD></TR>
-      <TR><TD ALIGN="LEFT"><B>OE</B></TD><TD ALIGN="LEFT">alto = salidas PWM deshabilitadas</TD></TR>
+      <TR><TD ALIGN="LEFT"><B>OE</B></TD><TD ALIGN="LEFT">alto = PWM deshabilitado; no conectar a GND</TD></TR>
+      <TR><TD COLSPAN="2" ALIGN="LEFT"><B>Header superior (izq.→der.): V+ · VCC · SDA · SCL · OE · GND</B></TD></TR>
+      <TR><TD COLSPAN="2" ALIGN="LEFT"><B>Header inferior (izq.→der.): GND · OE · SCL · SDA · VCC · V+</B></TD></TR>
     </TABLE>>];
 
   buck [label=<
