@@ -29,7 +29,8 @@ el computador de Gazebo sin energizar servos accidentalmente.
 
 Registro actual: Raspberry Pi 4 Model B, Ubuntu 22.04.5 LTS ARM64, Wi-Fi
 `192.168.0.101`, SSH instalado y acceso remoto verificado el 20 de agosto de
-2026. La prueba DDS `talker/listener` todavía está pendiente.
+2026. La prueba DDS `talker/listener` quedó validada el 20 de agosto: el PC
+recibió mensajes consecutivos del `talker` de la Raspberry con dominio 42.
 
 ## Transferencia de código
 

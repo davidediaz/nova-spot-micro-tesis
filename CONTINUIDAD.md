@@ -733,3 +733,15 @@ Próxima acción de hardware/software: instalar o verificar
 `ROS_DOMAIN_ID=42` y `ROS_LOCALHOST_ONLY=0`, y guardar la evidencia. Después se
 clonará y compilará el paquete del proyecto en la Raspberry, todavía sin
 actuadores.
+
+### Comunicación ROS 2 por Wi-Fi validada (20 de agosto de 2026)
+
+Con el `talker` ejecutándose en la Raspberry Pi 4, el computador principal
+ejecutó el `listener` con `ROS_DOMAIN_ID=42` y `ROS_LOCALHOST_ONLY=0`. Se
+recibieron consecutivamente los mensajes `Hello World: 378` a `Hello World:
+385` durante aproximadamente 8 s. La comunicación DDS por Wi-Fi queda
+confirmada; no se conectaron ni energizaron servos.
+
+Siguiente acción: detener los nodos de demostración, clonar el repositorio en
+la Raspberry y compilar los paquetes ROS 2 del proyecto sin ejecutar todavía
+trayectorias ni nodos de hardware.

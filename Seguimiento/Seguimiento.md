@@ -339,6 +339,13 @@ La comunicación ROS 2 por Wi-Fi aún no se marca como validada: falta instalar
 `ros-humble-demo-nodes-cpp` donde sea necesario y demostrar `talker/listener`
 con dominio 42. No se conectaron ni energizaron servos.
 
+Validación completada el 20 de agosto de 2026: con el `talker` en la Raspberry
+Pi 4 y el `listener` en el computador principal se recibieron por Wi-Fi los
+mensajes `Hello World: 378`--`385` durante aproximadamente 8 s, usando
+`ROS_DOMAIN_ID=42` y `ROS_LOCALHOST_ONLY=0`. DDS queda validado para esta red.
+La siguiente tarea es clonar y compilar el workspace en la Raspberry; los
+actuadores permanecen desconectados.
+
 Criterio de cierre: referencias articulares convertidas de forma limitada a
 PWM, inicialmente sin actuadores y después con un solo servo.
 
