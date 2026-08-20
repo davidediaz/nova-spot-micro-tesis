@@ -747,6 +747,16 @@ La corrección debe publicarse y luego actualizarse en la Raspberry con
 `git pull --ff-only`; después se repetirá la compilación de
 `nova_sm3_description` y `nova_gait_controller`.
 
+La verificación quedó completada en la Raspberry el 20 de agosto de 2026:
+actualizó correctamente al commit `d1e3525`, compiló
+`nova_sm3_description` y `nova_gait_controller` sin errores y `ros2 pkg list`
+reconoció ambos paquetes. No se ejecutó ningún launch, controlador,
+trayectoria, nodo de hardware ni componente del PCA9685.
+
+Próxima acción segura: comprobar desde la Raspberry los nodos de diagnóstico
+y parámetros de entorno ROS 2, y preparar el workspace para comunicación con
+el PC. La validación de I2C, PWM deshabilitado y hardware continúa pendiente.
+
 ### Comunicación ROS 2 por Wi-Fi validada (20 de agosto de 2026)
 
 Con el `talker` ejecutándose en la Raspberry Pi 4, el computador principal

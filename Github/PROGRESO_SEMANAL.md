@@ -51,6 +51,9 @@ Gazebo, sin cambiar longitud de paso, altura máxima ni cadencia.
   Wi-Fi `192.168.0.101` y SSH remoto funcionando desde el PC principal.
 - Falta demostrar el descubrimiento DDS mediante `talker/listener` y validar
   reloj e I2C; no se conectaron ni energizaron servos.
+- El workspace de la Raspberry se actualizó al commit `d1e3525`, compiló los
+  paquetes `nova_sm3_description` y `nova_gait_controller`, y los reconoció
+  con ROS 2; no se ejecutó hardware.
 - Se ampliaron y cerraron documentalmente el modelo matemático y sus ejemplos.
 
 ### Pendiente

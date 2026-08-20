@@ -353,6 +353,11 @@ vacía que no se conserva en Git. Se corrigió el instalador para usar solo
 actualizarse en la Raspberry y verificarse allí. No se ejecutaron nodos ni
 hardware.
 
+Verificación completada: la Raspberry actualizó al commit `d1e3525`, compiló
+los dos paquetes y reconoció `nova_gait_controller` y
+`nova_sm3_description`. No se ejecutó ningún launch, controlador, trayectoria
+ni componente del PCA9685.
+
 Criterio de cierre: referencias articulares convertidas de forma limitada a
 PWM, inicialmente sin actuadores y después con un solo servo.
 
