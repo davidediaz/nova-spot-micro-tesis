@@ -52,7 +52,7 @@
 & MsC. Carlos Javier Mojica Casallas\\[4pt]
 \textbf{Programa:} & Ingeniería Electrónica\\
 \textbf{Semestre:} & 2026-2\\
-\textbf{Fecha:} & 18 de agosto de 2026
+\textbf{Fecha de actualización:} & 20 de agosto de 2026
 \end{tabular}
 \vfill
 {Bogotá D. C., Colombia\par}
@@ -60,7 +60,7 @@
 
 \section{Estado real del proyecto al inicio del semestre}
 
-La ruta se actualizó a partir de evidencias existentes, no solo de actividades planeadas. A 18 de agosto de 2026 están implementados el modelo nominal URDF/MJCF, la cinemática directa e inversa, el controlador ROS~2, las marchas de gateo y paso, las métricas de pose, el supervisor provisional y los contactos de los cuatro pies en Gazebo. La línea base de gateo con cadencia corregida y su repetición presentaron diferencias menores al 0,2\,\% en sus medias; la marcha paso completó dos ensayos Gazebo de 12 ciclos y una validación articular de 12 ciclos en MuJoCo.
+La ruta se actualizó a partir de evidencias existentes, no solo de actividades planeadas. A 20 de agosto de 2026 están implementados el modelo nominal URDF/MJCF, la cinemática directa e inversa, el controlador ROS~2, las marchas de gateo y paso, las métricas de pose, el supervisor provisional y los contactos de los cuatro pies en Gazebo. La línea base de gateo con cadencia corregida y su repetición presentaron diferencias menores al 0,2\,\% en sus medias; la marcha paso completó dos ensayos Gazebo de 12 ciclos y una validación articular de 12 ciclos en MuJoCo.
 
 El ensayo cuantitativo de contactos reveló una limitación relevante: el patrón ejecutado no coincide todavía con el plan discreto de apoyo. Las subfases explícitas corrigieron el despegue de las patas traseras, pero el aterrizaje continúa desfasado. El modelo sigue siendo nominal computable y no un gemelo digital identificado. La caracterización física, la seguridad eléctrica, la calibración, la integración en Raspberry Pi/PCA9685, el entrenamiento por refuerzo y la comparación final permanecen pendientes y conservan dependencias estrictas de seguridad.
 
@@ -72,6 +72,24 @@ El ensayo cuantitativo de contactos reveló una limitación relevante: el patró
 \item No se energizarán simultáneamente los doce servos antes de cerrar caracterización, diseño eléctrico, parada física y calibración individual.
 \item Los ensayos finales usarán cinco ejecuciones de 20 ciclos por condición y por marcha. Las semillas de entrenamiento serán 11, 23, 37, 53 y 71; las evaluaciones emparejadas usarán 101, 202, 303, 404 y 505.
 \end{itemize}
+
+\subsection*{Avance verificado al 20 de agosto de 2026}
+
+La Raspberry Pi 4 Model B arrancó con Ubuntu 22.04.5 LTS Desktop ARM64
+(``aarch64'') y quedó conectada por Wi-Fi en `192.168.0.101`. Se instaló y
+habilitó SSH, y el acceso desde el computador principal fue verificado. ROS~2
+Humble se configuró en ambos equipos con \texttt{ROS\_DOMAIN\_ID=42} y
+\texttt{ROS\_LOCALHOST\_ONLY=0}; el computador recibió mensajes `Hello World` de la
+Raspberry mediante DDS por Wi-Fi. El repositorio se clonó y los paquetes
+\texttt{nova\_sm3\_description} y \texttt{nova\_gait\_controller} compilaron en la Raspberry;
+el overlay `install/setup.bash` fue verificado.
+
+La integración física permanece deliberadamente bloqueada: no hay PCA9685,
+I2C, PWM ni servos conectados o energizados. El diagrama de cableado de la
+Raspberry, PCA9685 y LM2596 está documentado en
+\texttt{Raspberry/DIAGRAMA\_CABLEADO\_PI4\_PCA9685\_LM2596.pdf}; faltan seguridad
+eléctrica, medición de corriente, calibración y prueba instrumental antes de
+conectar actuadores.
 
 \textbf{Nota para revisión del director.} La matriz suministrada en \texttt{Tabla\_Objectivos.docx} contiene cuatro objetivos y se transcribe literalmente en este documento. La versión de trabajo de la tesis contiene cinco objetivos reformulados. Antes del aval debe confirmarse cuál redacción corresponde al anteproyecto formalmente aprobado; cualquier sustitución requiere autorización del director.
 
@@ -96,7 +114,7 @@ En las tablas, OE1--OE4 corresponden, en orden, a los cuatro objetivos transcrit
 5 & OE2 & Definir arquitectura ROS~2, métricas, fase de marcha, contactos y supervisor provisional. & Nodos, archivos YAML, diagramas y 37 pruebas automatizadas. & Ambos & 01/04/26 & 18/08/26 & Modelo de simulación funcional. & \finalizada\\
 6 & OE2 & Diseñar seguridad eléctrica: fuente, distribución, fusible, cableado, tierra común, OE y parada física. & Esquema revisado, cálculos, lista de materiales y protocolo de emergencia. & Ambos & 24/08/26 & 04/09/26 & Caracterización de componentes. & \pendiente\\
 7 & OE2 & Medir un MG996R asegurado con fuente limitada y calibrar individualmente los doce canales. & YAML por articulación, curvas PWM--ángulo, corriente, temperatura y límites seguros. & Ambos & 07/09/26 & 18/09/26 & Actividad 6 aprobada. & \pendiente\\
-8 & OE2 & Preparar Raspberry Pi, ROS~2, red, reloj e I2C; verificar PCA9685 sin servos. & Registro de instalación, prueba SSH/I2C y medición instrumental de PWM. & Ambos & 14/09/26 & 25/09/26 & MicroSD, Raspberry Pi y actividad 6. & \pendiente\\
+8 & OE2 & Preparar Raspberry Pi, ROS~2, red, reloj e I2C; verificar PCA9685 sin servos. & Ubuntu 22.04.5 ARM64, Wi-Fi, SSH, DDS, workspace ROS~2 compilado y overlay verificado; I2C/PCA9685 y PWM instrumental aún pendientes. & Ambos & 14/09/26 & 25/09/26 & MicroSD, Raspberry Pi y actividad 6. & \ejecucion\\
 9 & OE2 & Implementar interfaz limitada articulación--PWM y vigilancia de comunicaciones. & Paquete ROS~2, pruebas sin carga, arranque deshabilitado y parada por pérdida de datos. & Ambos & 21/09/26 & 02/10/26 & Actividades 7 y 8. & \pendiente\\
 10 & OE3 & Implementar postura, gateo y paso mediante trayectorias cartesianas e IK propia. & Código, configuración, pruebas y documentación de diseño. & Ambos & 01/05/26 & 14/08/26 & OE1 nominal. & \finalizada\\
 11 & OE3 & Corregir la curva completa de descenso del gateo y sincronizar contacto planificado/medido. & Bolsa exploratoria, CSV de transiciones y prueba de continuidad menor a 0,20 rad. & Ambos & 17/08/26 & 28/08/26 & Contactos Gazebo y subfases publicadas. & \ejecucion\\
