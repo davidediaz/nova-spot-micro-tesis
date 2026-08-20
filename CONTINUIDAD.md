@@ -766,6 +766,19 @@ Siguiente acción: documentar el estado de reloj y red, y preparar la prueba de
 I2C/PCA9685 solo después de cerrar el esquema eléctrico y las condiciones de
 salida deshabilitada.
 
+### Diagrama de cableado Raspberry Pi 4–PCA9685–LM2596 (20 de agosto de 2026)
+
+Se creó el diagrama legible en PDF y SVG
+(`Raspberry/DIAGRAMA_CABLEADO_PI4_PCA9685_LM2596.*`). Separa la lógica de 3,3 V
+de la Raspberry (VCC, SDA, SCL y GND), la potencia externa de servos (V+ y GND
+desde el LM2596) y los canales PWM. Incluye OE en estado deshabilitado,
+advertencia contra alimentar servos desde la Raspberry y ajuste del LM2596 con
+multímetro antes de conectar carga.
+
+El diagrama es una guía de cableado, no una autorización para energizar. Falta
+confirmar con fotografías la variante concreta de la placa PCA9685, el jumper
+VCC–V+ y la fuente de entrada del LM2596 antes de conectar cualquier servo.
+
 ### Comunicación ROS 2 por Wi-Fi validada (20 de agosto de 2026)
 
 Con el `talker` ejecutándose en la Raspberry Pi 4, el computador principal

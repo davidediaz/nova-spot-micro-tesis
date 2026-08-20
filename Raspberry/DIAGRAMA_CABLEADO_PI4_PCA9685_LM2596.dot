@@ -1,0 +1,53 @@
+digraph G {
+  graph [rankdir=LR, bgcolor="#fbfcfe", pad="0.25", nodesep="0.55", ranksep="0.8",
+         fontname="DejaVu Sans", label="Nova Spot Micro — Raspberry Pi 4 + PCA9685 + LM2596\nFASE DE PRUEBA: sin servos conectados ni energizados", labelloc=t, fontsize=20];
+  node [shape=plain, fontname="DejaVu Sans"];
+  edge [fontname="DejaVu Sans", fontsize=10, penwidth=2];
+
+  pi [label=<
+    <TABLE BORDER="2" COLOR="#236b3c" CELLBORDER="1" CELLSPACING="0" CELLPADDING="8" BGCOLOR="#eaf7ee">
+      <TR><TD COLSPAN="2" BGCOLOR="#236b3c"><FONT COLOR="white"><B>RASPBERRY PI 4</B></FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>Pin 1</B></TD><TD ALIGN="LEFT">3V3 logic</TD></TR>
+      <TR><TD ALIGN="LEFT"><B>Pin 3</B></TD><TD ALIGN="LEFT">GPIO2 / SDA</TD></TR>
+      <TR><TD ALIGN="LEFT"><B>Pin 5</B></TD><TD ALIGN="LEFT">GPIO3 / SCL</TD></TR>
+      <TR><TD ALIGN="LEFT"><B>Pin 6</B></TD><TD ALIGN="LEFT">GND común</TD></TR>
+      <TR><TD ALIGN="LEFT"><B>USB-C</B></TD><TD ALIGN="LEFT">alimentación propia de la Pi</TD></TR>
+    </TABLE>>];
+
+  pca [label=<
+    <TABLE BORDER="2" COLOR="#17688c" CELLBORDER="1" CELLSPACING="0" CELLPADDING="8" BGCOLOR="#eaf6fb">
+      <TR><TD COLSPAN="2" BGCOLOR="#17688c"><FONT COLOR="white"><B>PCA9685</B></FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>VCC</B></TD><TD ALIGN="LEFT">3.3 V lógica desde Pin 1</TD></TR>
+      <TR><TD ALIGN="LEFT"><B>SDA</B></TD><TD ALIGN="LEFT">GPIO2 / Pin 3</TD></TR>
+      <TR><TD ALIGN="LEFT"><B>SCL</B></TD><TD ALIGN="LEFT">GPIO3 / Pin 5</TD></TR>
+      <TR><TD ALIGN="LEFT"><B>GND</B></TD><TD ALIGN="LEFT">tierra común</TD></TR>
+      <TR><TD ALIGN="LEFT"><B>V+</B></TD><TD ALIGN="LEFT">potencia externa de servos</TD></TR>
+      <TR><TD ALIGN="LEFT"><B>OE</B></TD><TD ALIGN="LEFT">alto = salidas PWM deshabilitadas</TD></TR>
+    </TABLE>>];
+
+  buck [label=<
+    <TABLE BORDER="2" COLOR="#a65b00" CELLBORDER="1" CELLSPACING="0" CELLPADDING="8" BGCOLOR="#fff5e6">
+      <TR><TD COLSPAN="2" BGCOLOR="#a65b00"><FONT COLOR="white"><B>LM2596 HW-411</B></FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>IN+</B></TD><TD ALIGN="LEFT">fuente DC externa +</TD></TR>
+      <TR><TD ALIGN="LEFT"><B>IN−</B></TD><TD ALIGN="LEFT">fuente DC externa −</TD></TR>
+      <TR><TD ALIGN="LEFT"><B>OUT+</B></TD><TD ALIGN="LEFT">V+ del PCA9685</TD></TR>
+      <TR><TD ALIGN="LEFT"><B>OUT−</B></TD><TD ALIGN="LEFT">GND común</TD></TR>
+      <TR><TD COLSPAN="2" ALIGN="LEFT"><B>AJUSTAR CON MULTÍMETRO ANTES DE CONECTAR CARGA</B></TD></TR>
+    </TABLE>>];
+
+  safety [label=<
+    <TABLE BORDER="2" COLOR="#b51f2b" CELLBORDER="0" CELLSPACING="0" CELLPADDING="8" BGCOLOR="#fff0f1">
+      <TR><TD><FONT COLOR="#b51f2b"><B>NO CONECTAR TODAVÍA</B></FONT></TD></TR>
+      <TR><TD ALIGN="LEFT">• MG996R / servos</TD></TR>
+      <TR><TD ALIGN="LEFT">• V+ al pin 5 V de la Raspberry</TD></TR>
+      <TR><TD ALIGN="LEFT">• jumper VCC–V+ del PCA9685</TD></TR>
+      <TR><TD ALIGN="LEFT">• OE a GND durante esta fase</TD></TR>
+      <TR><TD ALIGN="LEFT">• LM2596 sin medir</TD></TR>
+    </TABLE>>];
+
+  pi -> pca [label=" VCC · SDA · SCL · GND", color="#17688c", penwidth=3];
+  buck -> pca [label=" OUT+ → V+\n OUT− → GND", color="#d97706", penwidth=3];
+  pca -> safety [label="canales CH0–CH11\nsolo después de seguridad", color="#b51f2b", style=dashed];
+  pi -> safety [label="Pi alimentada por USB-C\n(no usarla para servos)", color="#b51f2b", style=dashed];
+  {rank=same; pi; buck}
+}
