@@ -35,7 +35,7 @@ base de contactos.
 
 ### Siguiente objetivo
 
-Rediseñar la curva temporal completa de descenso por eje, validar continuidad y
+Comparar la nueva curva temporal continua de descenso por eje, validar continuidad y
 subfases en pruebas cartesianas y después verificarla exploratoriamente en
 Gazebo, sin cambiar longitud de paso, altura máxima ni cadencia.
 

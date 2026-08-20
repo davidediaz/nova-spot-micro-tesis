@@ -235,6 +235,14 @@ Los despegues corregidos no se degradaron. Pasan 37 pruebas y el paquete
 compila. La siguiente iteración debe modificar la curva completa de descenso,
 no solamente la penúltima referencia.
 
+Iteración del 20 de agosto de 2026: el mismo parámetro observable (altura
+normalizada al 75 % de la oscilación) controla ahora una curva continua de
+potencia desde el ápice hasta `touchdown`, diferenciable por eje. El ascenso
+permanece inalterado. Con 24 muestras y el valor nominal, las referencias son
+numéricamente iguales a las anteriores, por lo que aún no se reclama una
+mejora física ni una nueva línea base. Pasan 39 pruebas y el paquete compila.
+Falta comparar candidatos cartesianos y ensayarlos en Gazebo.
+
 ### 5. Caracterizar físicamente el robot sin energizar
 
 Estado: **no realizado**.
@@ -412,10 +420,11 @@ afirmaciones respaldadas por evidencia experimental.
 Sin modificar la longitud de paso de 18 mm, la elevación máxima de 14 mm ni la
 cadencia de 0,18 s por referencia:
 
-1. ajustar el descenso por eje para adelantar el contacto de FL/FR y retrasar el
-   de RL/RR sin alterar el despegue corregido;
-2. ampliar las pruebas de continuidad, periodicidad, altura y subfases previstas;
-3. compilar y validar nuevamente de forma exploratoria en Gazebo;
+1. comparar una matriz acotada de curvas de descenso delanteras y traseras y
+   descartar las que incumplan continuidad, periodicidad o altura;
+2. validar los candidatos restantes de forma exploratoria en Gazebo sin alterar
+   el despegue corregido;
+3. seleccionar parámetros únicamente a partir de retardos medidos;
 4. congelar la nueva versión y grabar al menos diez ciclos con fase, contactos,
    métricas, órdenes y supervisor;
 5. analizar retardos y coincidencia por pata y repetir el ensayo.

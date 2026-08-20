@@ -81,6 +81,35 @@ def test_crawl_landing_height_can_be_tuned_by_axle_without_changing_liftoff():
     assert front[5] == rear[5] == pytest.approx(0.0, abs=1e-12)
 
 
+def test_crawl_landing_ratio_shapes_the_complete_descent():
+    progress_values = (0.50, 0.625, 0.75, 0.875, 1.0)
+    early = [crawl_swing_height(value, 'flight', 0.2)
+             for value in progress_values]
+    nominal = [crawl_swing_height(value, 'flight', 2 ** -0.5)
+               for value in progress_values]
+    late = [crawl_swing_height(value, 'flight', 0.8)
+            for value in progress_values]
+
+    assert early[0] == nominal[0] == late[0] == pytest.approx(1.0)
+    assert early[-1] == nominal[-1] == late[-1] == pytest.approx(0.0)
+    assert all(early[index] < nominal[index] < late[index]
+               for index in range(1, len(progress_values) - 1))
+    assert early[2] == pytest.approx(0.2)
+    assert late[2] == pytest.approx(0.8)
+    assert all(sequence[index] >= sequence[index + 1]
+               for sequence in (early, nominal, late)
+               for index in range(len(sequence) - 1))
+
+
+def test_crawl_descent_tuning_does_not_change_ascent():
+    progress_values = (0.0, 0.125, 0.25, 0.375, 0.5)
+    early = [crawl_swing_height(value, 'liftoff', 0.2)
+             for value in progress_values]
+    late = [crawl_swing_height(value, 'liftoff', 0.8)
+            for value in progress_values]
+    assert early == pytest.approx(late)
+
+
 def test_cartesian_step_walk_is_reachable_smooth_and_periodic():
     poses = cartesian_step_walk((0.10, 0.42, -0.84))
     assert len(poses) == 32

@@ -5,7 +5,7 @@ licensed spot_micro_kinematics_python project, adapted to this project's ROS
 axis convention and measured/published NovaSM3 link lengths.
 """
 
-from math import acos, atan2, cos, hypot, isfinite, pi, sin, sqrt
+from math import acos, atan2, cos, hypot, isfinite, log, pi, sin, sqrt
 
 
 COXA_LENGTH = 0.090
@@ -41,14 +41,29 @@ def crawl_sample_profile(local_sample, samples_per_leg):
 
 
 def crawl_swing_height(progress, subphase, landing_height_ratio):
-    """Return normalized lift, with an axle-specific discrete landing target."""
+    """Return normalized lift with an axle-specific continuous descent.
+
+    ``landing_height_ratio`` retains its original, directly observable meaning:
+    it is the normalized height at 75 percent swing progress.  Instead of
+    replacing only the discrete ``landing`` sample, it now determines a power
+    curve from the apex to touchdown.  A smaller ratio advances the descent and
+    a larger ratio sustains lift for longer.  The ascent is left unchanged so
+    that tuning touchdown does not alter the already validated liftoff.
+    """
     if not 0.0 <= progress <= 1.0:
         raise ValueError('progreso de oscilación fuera de [0, 1]')
     if not 0.0 <= landing_height_ratio <= 1.0:
         raise ValueError('landing_height_ratio debe estar entre 0 y 1')
-    if subphase == 'landing':
-        return landing_height_ratio
-    return sin(pi * progress)
+    if progress <= 0.5:
+        return sin(pi * progress)
+    if landing_height_ratio == 0.0:
+        return 0.0
+    if landing_height_ratio == 1.0:
+        return 1.0 if progress < 1.0 else 0.0
+
+    descent_progress = (progress - 0.5) / 0.5
+    exponent = log(landing_height_ratio) / log(0.5)
+    return (1.0 - descent_progress) ** exponent
 
 
 def forward_leg(q_coxa, q_femur, q_tibia, side):

@@ -7,10 +7,11 @@ gait_controller:
     crawl_step_height: 0.014
     crawl_lateral_shift: 0.004
     crawl_fore_aft_shift: 0.008
-    # Altura normalizada en la referencia "landing": descenso delantero
-    # adelantado y elevación trasera sostenida hasta "touchdown".
-    # 0,70710678 reproduce el perfil sinusoidal previo. Ajustar únicamente en
-    # ensayos exploratorios y congelar después de validar contactos.
+    # Altura normalizada al 75 % de la oscilación. El valor parametriza toda la
+    # curva de descenso desde el ápice hasta touchdown: valores menores bajan
+    # antes y valores mayores sostienen la elevación. Con 24 muestras conserva
+    # exactamente la referencia nominal previa. Ajustar únicamente en ensayos
+    # exploratorios y congelar después de validar contactos.
     crawl_front_landing_height_ratio: 0.7071067811865476
     crawl_rear_landing_height_ratio: 0.7071067811865476
     step_phase_duration: 0.18

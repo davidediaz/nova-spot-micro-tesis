@@ -686,3 +686,24 @@ Ethernet + SSH; ROS 2/DDS usará `ROS_DOMAIN_ID=42` y USB-serial de 3,3 V queda
 como respaldo. La instalación de Thonny y la verificación de red, SSH, reloj,
 I2C y arquitectura `aarch64` se realizarán después del primer arranque de la
 Raspberry. No se conectan ni energizan servos en esta fase.
+
+### Curva continua de descenso por eje (20 de agosto de 2026)
+
+Se reemplazó el tratamiento aislado de la referencia `landing` por una ley
+continua de potencia desde el ápice hasta `touchdown`. Los parámetros
+`crawl_front_landing_height_ratio` y `crawl_rear_landing_height_ratio`
+conservan su significado observable: altura normalizada al 75 % de la
+oscilación. Un valor menor adelanta todo el descenso y uno mayor sostiene la
+elevación; el ascenso hasta el ápice no cambia para no degradar los despegues.
+
+Con las 24 referencias vigentes y el valor nominal `0.7071067811865476`, las
+seis alturas discretas por pata son idénticas a las de la versión anterior
+(diferencia máxima numérica de aproximadamente `1.23e-16`). Por tanto, este
+cambio todavía no constituye una nueva línea base ni demuestra una mejora de
+contactos. Se añadieron dos pruebas para la rama descendente completa y la
+independencia del ascenso: pasan 39 pruebas y `nova_gait_controller` compila.
+
+Próxima acción exacta: seleccionar una pequeña matriz de curvas delanteras y
+traseras que respete continuidad articular, compararla primero en coordenadas
+cartesianas y después en Gazebo. Solo tras medir retardos de aterrizaje sin
+degradar los despegues se congelarán parámetros y se grabará una bolsa formal.
