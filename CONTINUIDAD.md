@@ -776,6 +776,13 @@ que esta tesis establece la locomoción y el control necesarios, sin afirmar una
 aplicación desplegada. La fuente compiló en una salida de prueba de 32 páginas;
 no se sobrescribió el PDF histórico de la tesis.
 
+La redacción se integró posteriormente en el párrafo final de la justificación
+para conservar una argumentación más amplia: investigación universitaria,
+formación, avance tecnológico y, como desenlace social futuro, inspección
+remota y desplazamiento controlado en lugares peligrosos para reducir la
+exposición de las personas a riesgos físicos. La fuente volvió a compilar en
+una salida de prueba de 30 páginas.
+
 ### Diagrama de cableado Raspberry Pi 4–PCA9685–LM2596 (20 de agosto de 2026)
 
 Se creó el diagrama legible en PDF y SVG
