@@ -32,7 +32,7 @@ No se parte de cero. Ya están implementados y comprobados:
   corregidas y la guía de complementos: 22 páginas, 37 ecuaciones/gráficos
   preservados y secciones detalladas sobre workspace, singularidades, J̇,
   contacto, estabilidad, identificación, validación y sensibilidad.
-- Scripts preparatorios para Raspberry Pi 3 con Ubuntu Server 22.04 y ROS 2
+- Scripts preparatorios para Raspberry Pi 4 Model B con Ubuntu 22.04 y ROS 2
   Humble.
 
 La referencia `mike4192/spot_micro_kinematics_python` se conserva como apoyo
@@ -250,7 +250,7 @@ Estado: **no realizado**.
 - [ ] Fotografiar estructura, patas, articulaciones, electrónica y cableado.
 - [ ] Confirmar que las doce unidades sean MG996R y registrar fabricante o
   diferencias visibles.
-- [ ] Confirmar Raspberry Pi 3B o 3B+, PCA9685, BNO055 y demás componentes
+- [x] Confirmar Raspberry Pi 4 Model B, PCA9685, BNO055 y demás componentes
   disponibles.
 - [ ] Medir tres veces separaciones de cadera, longitudes de coxa/fémur/tibia y
   dimensiones del cuerpo.
@@ -297,14 +297,14 @@ Estado: **bloqueado hasta completar la seguridad eléctrica**.
 Criterio de cierre: doce calibraciones trazables, sin colisiones ni topes
 mecánicos, revisadas antes de apoyar el robot.
 
-### 8. Preparar Raspberry Pi 3 e interfaz PCA9685
+### 8. Preparar Raspberry Pi 4 e interfaz PCA9685
 
 Estado: **scripts listos; hardware y microSD pendientes**.
 
 - [ ] Conectar e identificar explícitamente una microSD.
 - [ ] Instalar Ubuntu Server 22.04 ARM64 con SSH habilitado.
 - [ ] Ejecutar y verificar los scripts de preparación de ROS 2 Humble.
-- [ ] Confirmar Ethernet/SSH, `ROS_DOMAIN_ID`, DDS, reloj e I2C.
+- [ ] Confirmar Wi-Fi/SSH, `ROS_DOMAIN_ID`, DDS, reloj e I2C.
 - [ ] Probar PCA9685 sin servos y comprobar PWM con instrumento.
 - [ ] Desarrollar la interfaz física `ros2_control` usando las calibraciones
   medidas.
@@ -329,6 +329,15 @@ particiones resultantes fueron `system-boot` y `writable`. Permanecen pendientes
 el primer arranque y la comprobación en la Raspberry de versión, escritorio,
 red, SSH y expansión del sistema de archivos; no marcar todavía como completada
 la instalación de Ubuntu.
+
+Avance del 20 de agosto de 2026: el primer arranque confirmó una Raspberry Pi
+4 Model B con Ubuntu 22.04.5 LTS Desktop ARM64 (`aarch64`). Se conectó por
+Wi-Fi en `192.168.0.101`; se instaló y habilitó `openssh-server`, y el acceso
+desde el computador principal fue verificado. La actualización propuesta a
+Ubuntu 24.04 fue cancelada para conservar compatibilidad con ROS 2 Humble.
+La comunicación ROS 2 por Wi-Fi aún no se marca como validada: falta instalar
+`ros-humble-demo-nodes-cpp` donde sea necesario y demostrar `talker/listener`
+con dominio 42. No se conectaron ni energizaron servos.
 
 Criterio de cierre: referencias articulares convertidas de forma limitada a
 PWM, inicialmente sin actuadores y después con un solo servo.

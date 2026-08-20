@@ -5,9 +5,11 @@
 Definir cómo administrar la Raspberry, transferir código y comunicar ROS 2 con
 el computador de Gazebo sin energizar servos accidentalmente.
 
-## Canal principal: Ethernet + SSH
+## Canal principal: Wi-Fi + SSH
 
-1. Conectar Raspberry y computador a la misma red, preferiblemente Ethernet.
+1. Conectar Raspberry y computador a la misma red Wi-Fi privada. La Raspberry
+   Pi 4 puede usar 2,4 o 5 GHz; mantener desactivado el aislamiento entre
+   clientes del router.
 2. En la Raspberry consultar la dirección:
 
    ```bash
@@ -24,6 +26,10 @@ el computador de Gazebo sin energizar servos accidentalmente.
 
 4. La primera sesión solo verifica Ubuntu, red, reloj, SSH, ROS 2 e I2C sin
    actuadores.
+
+Registro actual: Raspberry Pi 4 Model B, Ubuntu 22.04.5 LTS ARM64, Wi-Fi
+`192.168.0.101`, SSH instalado y acceso remoto verificado el 20 de agosto de
+2026. La prueba DDS `talker/listener` todavía está pendiente.
 
 ## Transferencia de código
 

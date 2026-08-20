@@ -707,3 +707,29 @@ Próxima acción exacta: seleccionar una pequeña matriz de curvas delanteras y
 traseras que respete continuidad articular, compararla primero en coordenadas
 cartesianas y después en Gazebo. Solo tras medir retardos de aterrizaje sin
 degradar los despegues se congelarán parámetros y se grabará una bolsa formal.
+
+### Primer arranque y acceso remoto de la Raspberry Pi 4 (20 de agosto de 2026)
+
+Se confirmó que la placa es una Raspberry Pi 4 Model B, no una Pi 3. Arrancó
+correctamente con Ubuntu 22.04.5 LTS Desktop ARM64 (`aarch64`). La dirección
+actual por Wi-Fi es `192.168.0.101`; el computador principal y la Raspberry
+quedaron en la misma red privada.
+
+El servidor SSH no estaba instalado inicialmente. Se instaló
+`openssh-server`, se habilitó con `systemctl enable --now ssh` y se verificó
+el acceso remoto desde el computador principal mediante
+`ssh pavilion@192.168.0.101`. No se conectaron ni energizaron servos.
+
+La ventana de actualización a Ubuntu 24.04 se canceló deliberadamente para
+conservar Jammy y compatibilidad con ROS 2 Humble. El repositorio ROS 2 se
+agregó después de corregir un comando de terminal partido; queda pendiente
+confirmar con una prueba completa `talker/listener` que DDS se descubre por
+Wi-Fi. La salida de `ros2 run demo_nodes_cpp talker` inicialmente indicó que
+faltaba `ros-humble-demo-nodes-cpp`, por lo que ese paquete debe instalarse en
+la Raspberry y en el computador antes de la prueba final.
+
+Próxima acción de hardware/software: instalar o verificar
+`ros-humble-demo-nodes-cpp` en ambos equipos, ejecutar `talker/listener` con
+`ROS_DOMAIN_ID=42` y `ROS_LOCALHOST_ONLY=0`, y guardar la evidencia. Después se
+clonará y compilará el paquete del proyecto en la Raspberry, todavía sin
+actuadores.

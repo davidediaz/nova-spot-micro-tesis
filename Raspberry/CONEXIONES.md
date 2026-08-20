@@ -1,6 +1,6 @@
-# Conexiones Raspberry Pi 3, PCA9685 y MG996R
+# Conexiones Raspberry Pi 4, PCA9685 y MG996R
 
-## Raspberry Pi 3 hacia PCA9685
+## Raspberry Pi 4 hacia PCA9685
 
 | Raspberry (pin físico) | Señal BCM | PCA9685 | Función |
 |---:|---|---|---|

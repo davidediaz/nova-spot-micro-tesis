@@ -47,15 +47,17 @@ Gazebo, sin cambiar longitud de paso, altura máxima ni cadencia.
   detrás), pero la mejora fue insuficiente y se descartó.
 - Se restauraron los parámetros nominales anteriores para no contaminar la
   evidencia histórica.
-- Se preparó una Raspberry Pi con Ubuntu 22.04.5 Desktop ARM64; falta validar
-  el primer arranque, red, SSH y expansión del sistema de archivos.
+- Se confirmó una Raspberry Pi 4 Model B con Ubuntu 22.04.5 Desktop ARM64,
+  Wi-Fi `192.168.0.101` y SSH remoto funcionando desde el PC principal.
+- Falta demostrar el descubrimiento DDS mediante `talker/listener` y validar
+  reloj e I2C; no se conectaron ni energizaron servos.
 - Se ampliaron y cerraron documentalmente el modelo matemático y sus ejemplos.
 
 ### Pendiente
 
 - Ajustar y validar la nueva curva de descenso del gateo.
 - Grabar y repetir una bolsa formal de contactos con la nueva versión.
-- Completar la validación de la Raspberry Pi.
+- Completar la validación ROS 2/DDS de la Raspberry Pi.
 - Mantener bloqueados la energización del robot y el entrenamiento PPO hasta
   completar seguridad, caracterización y calibración.
 
