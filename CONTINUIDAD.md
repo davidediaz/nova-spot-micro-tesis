@@ -734,6 +734,19 @@ Próxima acción de hardware/software: instalar o verificar
 clonará y compilará el paquete del proyecto en la Raspberry, todavía sin
 actuadores.
 
+### Corrección de compilación en workspace clonado de Raspberry (20 de agosto de 2026)
+
+La primera compilación en la Raspberry falló porque `nova_sm3_description` tenía
+`worlds` en `install(DIRECTORY ...)`, pero era una carpeta vacía que Git no
+conserva al clonar. El lanzamiento vigente usa el mundo integrado
+`empty.sdf`, por lo que se eliminó `worlds` de la lista de instalación. No se
+instalaron dependencias adicionales ni se ejecutó ningún launch, controlador o
+componente del PCA9685.
+
+La corrección debe publicarse y luego actualizarse en la Raspberry con
+`git pull --ff-only`; después se repetirá la compilación de
+`nova_sm3_description` y `nova_gait_controller`.
+
 ### Comunicación ROS 2 por Wi-Fi validada (20 de agosto de 2026)
 
 Con el `talker` ejecutándose en la Raspberry Pi 4, el computador principal

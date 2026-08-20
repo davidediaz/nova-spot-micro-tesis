@@ -346,6 +346,13 @@ mensajes `Hello World: 378`--`385` durante aproximadamente 8 s, usando
 La siguiente tarea es clonar y compilar el workspace en la Raspberry; los
 actuadores permanecen desconectados.
 
+La primera compilación del workspace en la Raspberry reveló que
+`nova_sm3_description/CMakeLists.txt` intentaba instalar una carpeta `worlds`
+vacía que no se conserva en Git. Se corrigió el instalador para usar solo
+`config`, `launch`, `mujoco`, `rviz` y `urdf`; la corrección está pendiente de
+actualizarse en la Raspberry y verificarse allí. No se ejecutaron nodos ni
+hardware.
+
 Criterio de cierre: referencias articulares convertidas de forma limitada a
 PWM, inicialmente sin actuadores y después con un solo servo.
 
