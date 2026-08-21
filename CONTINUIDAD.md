@@ -796,6 +796,20 @@ la potencia de servos, el LM2596, OE, PWM instrumental ni ningún actuador.
 Próxima acción: documentar la prueba de salida deshabilitada y revisar la
 fuente, fusible, parada física y tensión medida antes de alimentar `V+`.
 
+### Cierre de sesión: preparación de primera prueba de un servo (20 de agosto de 2026)
+
+La Raspberry Pi 4 y el PCA9685 permanecen comunicados por I²C en `0x40`. La
+fuente externa entrega 8 V al LM2596 y el LM2596 entrega aproximadamente 5 V al
+rail `V+` del PCA9685. Los servos todavía no están conectados y no se ha
+ejecutado PWM, launch, controlador ni trayectoria.
+
+La primera prueba física queda programada para la siguiente sesión con un solo
+MG996R en `CH0`, sin carga mecánica y con los demás canales vacíos. Antes de
+habilitar `OE` se deben confirmar con multímetro `VCC` de 3,3 V, `V+` de 5,0 V,
+`OE` alto, tierra común, fusible/limitación de corriente y parada física
+accesible. No se autoriza todavía la prueba de los doce servos ni la ejecución
+de marchas.
+
 ### Diagrama de cableado Raspberry Pi 4–PCA9685–LM2596 (20 de agosto de 2026)
 
 Se creó el diagrama legible en PDF y SVG

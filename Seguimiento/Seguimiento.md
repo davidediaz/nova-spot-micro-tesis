@@ -369,6 +369,13 @@ la Raspberry detectó `0x40` y `0x70` en `i2c-1` mediante `i2cdetect`. El enlace
 lógico con el PCA9685 queda validado; la potencia, OE, PWM y actuadores siguen
 pendientes y no se ejecutó ningún controlador.
 
+Estado al cierre de sesión: el LM2596 recibe 8 V y entrega aproximadamente 5 V
+al rail `V+` del PCA9685; no hay servos conectados ni PWM habilitado. La próxima
+sesión comenzará con las mediciones de `VCC`, `V+`, `OE`, tierra común y
+protecciones, seguida de una prueba individual con un MG996R en `CH0`, sin
+carga mecánica. La marcha del robot y la conexión de los doce servos siguen
+bloqueadas.
+
 Criterio de cierre: referencias articulares convertidas de forma limitada a
 PWM, inicialmente sin actuadores y después con un solo servo.
 
