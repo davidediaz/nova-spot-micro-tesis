@@ -841,3 +841,24 @@ confirmada; no se conectaron ni energizaron servos.
 Siguiente acción: detener los nodos de demostración, clonar el repositorio en
 la Raspberry y compilar los paquetes ROS 2 del proyecto sin ejecutar todavía
 trayectorias ni nodos de hardware.
+
+### Prueba progresiva Arduino Mega 2560–PCA9685 (24 de agosto de 2026)
+
+En la Raspberry Pi 4 se instaló Arduino IDE 1.8.19 ARM64 y las librerías
+`Adafruit PWM Servo Driver Library` y `Adafruit BusIO`. El Arduino Mega 2560 R3
+quedó reconocido en `/dev/ttyACM0`, con acceso serial del usuario `pavilion`
+mediante `dialout`. El escáner del Mega detectó correctamente el PCA9685 en
+`0x40` después de identificar y corregir la inversión física de SDA y SCL.
+
+Se comprobó el movimiento de servos MG996R de forma individual y progresiva.
+El sketch vigente mueve simultáneamente `CH5`--`CH10` a 60 Hz, con un barrido
+conservador de 1300 a 1700 microsegundos y paso de 5 microsegundos cada 20 ms;
+los demás canales quedan en `FULL_OFF`. Los servos usan alimentación externa de
+5--6 V y comparten tierra con PCA9685 y Mega; no se alimentan desde el pin de
+5 V del Arduino.
+
+La prueba demuestra comunicación I2C y movimiento multicanal, pero todavía no
+autoriza posturas ni marchas. La próxima acción es identificar cada articulación
+y canal, medir centro, mínimos, máximos y sentido de cada servo, verificar la
+fuente bajo carga e instalar parada física por OE con resistencia pull-up. El
+detalle reproducible quedó en `Raspberry/AVANCES_PCA9685_2026-08-24.md`.

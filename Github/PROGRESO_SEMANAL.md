@@ -54,14 +54,25 @@ Gazebo, sin cambiar longitud de paso, altura máxima ni cadencia.
 - El workspace de la Raspberry se actualizó al commit `d1e3525`, compiló los
   paquetes `nova_sm3_description` y `nova_gait_controller`, y los reconoció
   con ROS 2; no se ejecutó hardware.
+- Se instaló Arduino IDE 1.8.19 ARM64 y se verificó el Arduino Mega 2560 por
+  `/dev/ttyACM0`, con permisos mediante `dialout`.
+- El Mega detectó el PCA9685 en `0x40` después de corregir la inversión de SDA
+  y SCL. Se probaron servos MG996R de forma progresiva y el sketch actual mueve
+  simultáneamente `CH5`--`CH10` entre 1300 y 1700 microsegundos; los demás
+  canales permanecen en `FULL_OFF`.
 - Se ampliaron y cerraron documentalmente el modelo matemático y sus ejemplos.
 
 ### Pendiente
 
 - Ajustar y validar la nueva curva de descenso del gateo.
 - Grabar y repetir una bolsa formal de contactos con la nueva versión.
-- Completar la validación ROS 2/DDS de la Raspberry Pi.
-- Mantener bloqueados la energización del robot y el entrenamiento PPO hasta
+- Integrar de forma controlada el enlace ROS 2 con el Mega/PCA9685 después de
+  cerrar la calibración y las protecciones eléctricas.
+- Identificar la articulación física de cada canal y calibrar centro, mínimo,
+  máximo y sentido de cada MG996R.
+- Verificar la fuente bajo carga e implementar parada física por OE con
+  resistencia pull-up antes de ejecutar posturas o marchas.
+- Mantener bloqueadas las marchas completas y el entrenamiento PPO hasta
   completar seguridad, caracterización y calibración.
 
 ## Plantilla para la próxima semana

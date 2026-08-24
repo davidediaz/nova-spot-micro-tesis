@@ -484,3 +484,17 @@ Al finalizar cada sesión, marcar únicamente tareas demostradas con evidencia,
 registrar el archivo o prueba correspondiente y cambiar la próxima acción
 concreta. No marcar como terminado algo que solo se haya propuesto o visto
 funcionar una vez.
+
+## Actualización de hardware del 24 de agosto de 2026
+
+Se verificó en la Raspberry Pi 4 el Arduino Mega 2560 R3 por `/dev/ttyACM0` y
+la detección del PCA9685 en `0x40`, tras corregir SDA y SCL invertidos. Con
+alimentación externa para los MG996R se avanzó desde pruebas individuales hasta
+un barrido simultáneo de `CH5`--`CH10` a 60 Hz entre 1300 y 1700 microsegundos.
+Los canales restantes permanecen en `FULL_OFF`.
+
+Este resultado sustituye el estado anterior de «servos todavía no conectados»,
+pero no cierra la caracterización ni habilita una marcha. Permanecen pendientes
+la correspondencia canal-articulación, calibración independiente, ensayo de la
+fuente bajo carga y parada física segura mediante OE con pull-up. Evidencia:
+`Raspberry/AVANCES_PCA9685_2026-08-24.md`.

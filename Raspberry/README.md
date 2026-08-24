@@ -6,6 +6,8 @@ generan PWM ni controlan directamente el PCA9685 o los MG996R**.
 
 ## Contenido
 
+- `AVANCES_PCA9685_2026-08-24.md`: estado comprobado de la integración entre
+  Arduino Mega 2560, PCA9685 y servos MG996R en la Raspberry Pi 4.
 - `codigo/panel_marchas.py`: ventana con botones para postura, gateo y paso.
 - `codigo/control_marchas_ros2.py`: publica una orden en `/nova/gait_command`.
 - `marchas/tipos_de_marcha.py`: catálogo legible de las marchas disponibles.
@@ -55,10 +57,19 @@ python3 Raspberry/marchas/tipos_de_marcha.py
 
 ## Estado actual del hardware
 
-El planificador `gateo` y `paso` funciona en simulación. La interfaz PWM inicial
-queda incluida, pero arranca deshabilitada y rechaza movimiento hasta que las
-doce calibraciones estén completas y `hardware_ready` sea `true`. Aún debe
-integrarse formalmente como hardware `ros2_control` y validarse progresivamente.
+El planificador `gateo` y `paso` funciona en simulación. En la Raspberry Pi 4 se
+instaló Arduino IDE 1.8.19 ARM64 y se verificó un Arduino Mega 2560 en
+`/dev/ttyACM0`. El Mega detecta el PCA9685 en `0x40`; después de corregir la
+inversión de SDA y SCL se probaron progresivamente servos MG996R y el sketch
+actual mueve `CH5`--`CH10` entre 1300 y 1700 microsegundos. Los demás canales
+se mantienen en `FULL_OFF`.
+
+Esta prueba confirma comunicación y movimiento, pero no completa la puesta en
+marcha. Todavía se deben identificar las articulaciones, calibrar mínimo,
+centro, máximo y sentido por canal, verificar la fuente bajo carga y añadir una
+parada física mediante OE con pull-up. La interfaz PWM de ROS 2 permanece
+bloqueada hasta completar las doce calibraciones y cambiar explícitamente
+`hardware_ready` a `true`; aún debe integrarse como hardware `ros2_control`.
 
 Para lanzar la interfaz en una Raspberry ya preparada:
 
