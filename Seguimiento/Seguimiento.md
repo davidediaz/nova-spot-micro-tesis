@@ -243,6 +243,16 @@ numéricamente iguales a las anteriores, por lo que aún no se reclama una
 mejora física ni una nueva línea base. Pasan 39 pruebas y el paquete compila.
 Falta comparar candidatos cartesianos y ensayarlos en Gazebo.
 
+Criba cartesiana del 24 de agosto de 2026: se compararon nueve contrastes y el
+control nominal con `Experimentos/evaluar_curvas_descenso.py`. Seis contrastes
+con relación delantera 0,20--0,50 y trasera 0,75--0,80 cumplen alcanzabilidad,
+periodicidad y salto articular menor de 0,20 rad; 0,85 detrás se descartó por
+alcanzar 0,203263 rad. Pasan 39 pruebas. El informe está en
+`Experimentos/curvas_descenso_cartesianas_20260824/INFORME_CRIBA_CARTESIANA.md`.
+La siguiente exploración Gazebo usará nominal, 0,20/0,75, 0,20/0,80 y
+0,50/0,75. El protocolo conserva un umbral provisional de 0,05 rad que no
+cumple ni el nominal (0,170014 rad), por lo que requiere acuerdo formal.
+
 ### 5. Caracterizar físicamente el robot sin energizar
 
 Estado: **no realizado**.

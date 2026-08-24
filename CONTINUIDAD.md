@@ -862,3 +862,24 @@ autoriza posturas ni marchas. La próxima acción es identificar cada articulaci
 y canal, medir centro, mínimos, máximos y sentido de cada servo, verificar la
 fuente bajo carga e instalar parada física por OE con resistencia pull-up. El
 detalle reproducible quedó en `Raspberry/AVANCES_PCA9685_2026-08-24.md`.
+
+### Criba cartesiana de curvas de descenso (24 de agosto de 2026)
+
+Se añadió `Experimentos/evaluar_curvas_descenso.py` y se evaluó una matriz de
+nueve contrastes más el control nominal sin ejecutar ROS 2 ni Gazebo. Se
+mantuvieron congelados 24 muestras, paso de 0,018 m, elevación de 0,014 m,
+cadencia de 0,18 s, transferencia lateral de 0,004 m y longitudinal de 0,008 m.
+
+Los seis contrastes que combinan relaciones delanteras 0,20, 0,35 o 0,50 con
+relaciones traseras 0,75 u 0,80 son alcanzables, periódicos y conservan un
+salto articular menor de 0,20 rad. Los tres casos con 0,85 detrás se descartaron
+porque alcanzan 0,203263 rad. La trayectoria nominal mide 0,170014 rad, lo que
+confirma que el umbral provisional de 0,05 rad escrito en el protocolo tampoco
+lo cumple el control y debe revisarse con los directores.
+
+Los resultados están en
+`Experimentos/curvas_descenso_cartesianas_20260824`. Pasan 39 pruebas. La
+próxima exploración en Gazebo comparará el nominal con 0,20/0,75, 0,20/0,80 y
+0,50/0,75 (delantera/trasera), suficientes para separar el efecto de adelantar
+el descenso delantero y sostener el trasero. No se han modificado todavía los
+parámetros nominales ni se reclama una mejora física.
