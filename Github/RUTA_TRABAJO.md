@@ -13,11 +13,11 @@ seguridad y de una marcha nominal estable.
 | 5 | Marcha paso: validación en Gazebo y MuJoCo | Completada | Dos ensayos Gazebo y validación articular MuJoCo |
 | 6 | Protocolo experimental y criterios con el profesor | En curso | Métrica primaria, frecuencia, umbrales y éxito aprobados |
 | 7 | Caracterización física sin energizar | Pendiente | Fotos, componentes, geometría, masas, holguras y diferencias |
-| 8 | Seguridad eléctrica | Pendiente | Fuente, fusible, cableado, tierra, OE y parada física probados |
-| 9 | Calibración de los 12 MG996R | Bloqueada | Solo inicia después de cerrar seguridad eléctrica |
-| 10 | Raspberry Pi, ROS 2, red, I2C y PCA9685 sin servos | Preparación iniciada | Ubuntu 22.04, SSH, I2C y PWM verificados instrumentalmente |
+| 8 | Seguridad eléctrica | En curso | Fuente, fusible, cableado, tierra, OE y parada física probados |
+| 9 | Calibración de los 12 MG996R | Iniciada | Centros, sentidos, límites, corriente y temperatura registrados por articulación |
+| 10 | Raspberry Pi, ROS 2, red, Mega, I2C y PCA9685 | En curso | Ubuntu 22.04, SSH, DDS, I2C y movimiento limitado verificados |
 | 11 | Interfaz articulación–PWM y vigilancia de comunicaciones | Pendiente | Arranque deshabilitado y pérdida de datos lleva a estado seguro |
-| 12 | Transferencia progresiva al robot | Bloqueada | Sin actuadores → un servo → pata → suspendido → suelo |
+| 12 | Transferencia progresiva al robot | En curso controlado | Individual y multicanal → pata → suspendido → suelo; sin marchas antes de cerrar seguridad |
 | 13 | RL correctivo acotado | No iniciar todavía | Marcha nominal física validada y protocolo congelado |
 | 14 | Entrenamiento PPO y validación separada | Pendiente | Cinco semillas, política seleccionada y saturaciones probadas |
 | 15 | Comparación nominal frente a nominal+RL | Pendiente | 400 ciclos programados y fallos contabilizados |
@@ -34,7 +34,7 @@ Protocolo aprobado → caracterización física → seguridad eléctrica
                                       ↓
                                calibración MG996R
                                       ↓
-                  Raspberry/PCA9685 sin servos → interfaz PWM segura
+          Raspberry/Mega/PCA9685 → calibración y parada segura → interfaz PWM
                                       ↓
                          transferencia progresiva al robot
                                       ↓
@@ -47,5 +47,7 @@ Protocolo aprobado → caracterización física → seguridad eléctrica
 
 1. Ajustar la curva completa de descenso del gateo.
 2. Completar la ficha de aprobación del protocolo con el profesor.
-3. Iniciar la caracterización física únicamente sin energizar servos.
-4. Revisar el diseño de seguridad eléctrica antes de calibrar o mover hardware.
+3. Identificar la correspondencia física entre canales y articulaciones.
+4. Calibrar cada MG996R dentro de límites conservadores y registrar resultados.
+5. Verificar la fuente bajo carga e implementar OE con pull-up y parada física
+   antes de ejecutar posturas o marchas.
