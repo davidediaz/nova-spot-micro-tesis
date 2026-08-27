@@ -245,8 +245,11 @@ formal con solo dos ejecuciones.
 
 ## Próxima acción exacta
 
-Cerrar con los directores las definiciones experimentales de paso, ciclo, fallo,
-intervención y métricas.
+Mantener provisionalmente la relación delantera 0,20 y diseñar una modificación
+acotada que retrase el contacto trasero físico; cribarla cartesianamente y
+compararla en Gazebo desde estados iniciales equivalentes frente al nominal y
+0,20/0,75. Las métricas y umbrales finales continúan pendientes de aprobación
+con los directores.
 
 ## Preparación reciente de la Raspberry Pi
 
@@ -883,3 +886,16 @@ próxima exploración en Gazebo comparará el nominal con 0,20/0,75, 0,20/0,80 y
 0,50/0,75 (delantera/trasera), suficientes para separar el efecto de adelantar
 el descenso delantero y sostener el trasero. No se han modificado todavía los
 parámetros nominales ni se reclama una mejora física.
+
+### Exploración Gazebo de curvas de descenso (27 de agosto de 2026)
+
+Se compararon nominal, 0,20/0,75, 0,20/0,80 y 0,50/0,75 durante 10--13 ciclos
+válidos por condición, con fase, contactos, métricas, órdenes y supervisor. No
+hubo activaciones de seguridad. Las coincidencias simultáneas fueron 20,949 %,
+23,855 %, 23,721 % y 21,728 %, respectivamente. Los despegues no se degradaron.
+
+`0,20/0,75` queda como candidato provisional porque redujo los aterrizajes
+delanteros a 0,436/0,460 s tarde, pero los traseros permanecieron unos 0,32 s
+antes. La ventaja sobre 0,20/0,80 fue solo 0,134 puntos porcentuales; por ello
+no se congeló una nueva línea base ni se modificó `gaits.yaml`. Informe y CSV:
+`Experimentos/exploracion_curvas_descenso_gazebo_20260827`.

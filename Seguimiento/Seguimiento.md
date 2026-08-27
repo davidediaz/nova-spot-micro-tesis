@@ -253,6 +253,15 @@ La siguiente exploración Gazebo usará nominal, 0,20/0,75, 0,20/0,80 y
 0,50/0,75. El protocolo conserva un umbral provisional de 0,05 rad que no
 cumple ni el nominal (0,170014 rad), por lo que requiere acuerdo formal.
 
+Exploración Gazebo del 27 de agosto de 2026: se compararon esas cuatro curvas
+en ventanas estrictas de 10--13 ciclos, con cero eventos del supervisor. La
+coincidencia simultánea fue 20,949 % nominal, 23,855 % para 0,20/0,75,
+23,721 % para 0,20/0,80 y 21,728 % para 0,50/0,75. Los despegues se mantuvieron
+entre 0,132 y 0,143 s tarde. `0,20/0,75` redujo los aterrizajes delanteros a
+0,436/0,460 s tarde, pero los traseros continuaron unos 0,32 s antes. Es el
+candidato provisional, no una nueva línea base. Informe en
+`Experimentos/exploracion_curvas_descenso_gazebo_20260827/INFORME_COMPARACION.md`.
+
 ### 5. Caracterizar físicamente el robot sin energizar
 
 Estado: **no realizado**.
@@ -476,14 +485,15 @@ afirmaciones respaldadas por evidencia experimental.
 Sin modificar la longitud de paso de 18 mm, la elevación máxima de 14 mm ni la
 cadencia de 0,18 s por referencia:
 
-1. comparar una matriz acotada de curvas de descenso delanteras y traseras y
-   descartar las que incumplan continuidad, periodicidad o altura;
-2. validar los candidatos restantes de forma exploratoria en Gazebo sin alterar
-   el despegue corregido;
-3. seleccionar parámetros únicamente a partir de retardos medidos;
-4. congelar la nueva versión y grabar al menos diez ciclos con fase, contactos,
-   métricas, órdenes y supervisor;
-5. analizar retardos y coincidencia por pata y repetir el ensayo.
+1. mantener provisionalmente 0,20 delante y diseñar una modificación acotada
+   que retrase el contacto trasero físico, o revisar la correspondencia entre
+   `touchdown` previsto y contacto medido;
+2. cribarla primero en coordenadas cartesianas y continuidad articular;
+3. repetir en Gazebo desde estados iniciales equivalentes frente al nominal y
+   0,20/0,75;
+4. congelar la nueva versión solo si mejora los aterrizajes sin degradar los
+   despegues;
+5. grabar y repetir entonces una línea base formal de al menos diez ciclos.
 
 El supervisor de contactos seguirá informativo durante esta corrección. No se
 debe comenzar PPO ni mover el hardware hasta superar las etapas que lo bloquean.
