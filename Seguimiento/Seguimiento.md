@@ -7,7 +7,7 @@ Spot Micro mediante una marcha nominal convencional y una política de
 aprendizaje por refuerzo que aplique correcciones pequeñas, acotadas y
 supervisadas.
 
-Última actualización documental: 19 de agosto de 2026, America/Bogota.
+Última actualización documental: 27 de agosto de 2026, America/Bogota.
 
 ## Punto de partida confirmado
 
@@ -504,6 +504,14 @@ Al finalizar cada sesión, marcar únicamente tareas demostradas con evidencia,
 registrar el archivo o prueba correspondiente y cambiar la próxima acción
 concreta. No marcar como terminado algo que solo se haya propuesto o visto
 funcionar una vez.
+
+Cada cambio realizado por cualquiera de los integrantes debe quedar notificado
+en GitHub: se debe crear un commit descriptivo y subirlo al repositorio público
+`https://github.com/davidediaz/nova-spot-micro-tesis`. La notificación debe
+resumir fecha, archivos modificados, motivo, pruebas o evidencia, resultado y
+siguiente acción. Para cambios de código o documentación se recomienda trabajar
+en una rama y abrir un Pull Request hacia `main`; no se deben dejar cambios
+locales sin sincronizar ni reescribir silenciosamente el historial experimental.
 
 ## Actualización de hardware del 24 de agosto de 2026
 

@@ -1,6 +1,6 @@
 # Continuidad histórica de la tesis Nova Spot Micro
 
-Última actualización: 19 de agosto de 2026, America/Bogota.
+Última actualización: 27 de agosto de 2026, America/Bogota.
 
 ## Repositorio público de seguimiento
 
@@ -20,6 +20,13 @@ commit descriptivo. La actualización debe indicar fecha, archivos modificados,
 motivo, pruebas o evidencia, resultado y siguiente acción. No se deben
 reescribir silenciosamente resultados históricos ni mezclar bolsas producidas
 con configuraciones diferentes.
+
+Regla de trabajo colaborativo: cada cambio realizado por cualquiera de los
+integrantes debe notificarse en GitHub mediante un commit descriptivo y quedar
+subido al repositorio público. La notificación debe identificar qué se cambió,
+por qué, qué pruebas o evidencia se obtuvieron y cuál es la siguiente acción.
+Los cambios se compartirán preferiblemente mediante ramas y Pull Requests;
+`main` debe conservar únicamente cambios trazables y revisados.
 
 ### Reinstalación de la memoria Raspberry Pi — 19 de agosto de 2026
 
