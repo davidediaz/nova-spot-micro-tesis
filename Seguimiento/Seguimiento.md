@@ -274,7 +274,15 @@ contacto; no seguir aumentando la altura temprana.
 
 ### 5. Caracterizar físicamente el robot sin energizar
 
-Estado: **no realizado**.
+Estado: **bloqueado temporalmente por ensamble incompleto**.
+
+Actualización del 31 de agosto de 2026: falta imprimir y montar la pieza
+`SM3_Cover_LeftFemur.stl` de la pata izquierda. Hasta completar esa pieza no se
+consideran definitivas la inspección, las fotografías ni las mediciones de la
+geometría física. Fuente indicada para impresión:
+`https://github.com/cguweb-com/Arduino-Projects/blob/main/Nova-SM3/STL%20Files/SM3%20Files/SM3_Cover_LeftFemur.stl`.
+La ficha de caracterización está preparada, pero no debe llenarse con valores
+parciales presentados como robot terminado.
 
 - [ ] Fotografiar estructura, patas, articulaciones, electrónica y cableado.
 - [ ] Confirmar que las doce unidades sean MG996R y registrar fabricante o

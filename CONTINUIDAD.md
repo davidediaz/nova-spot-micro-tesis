@@ -928,3 +928,9 @@ permanece nominal. La tentativa previa sin fases está marcada como inválida.
 También se crearon `Documentacion/FICHA_CARACTERIZACION_FISICA.md` y
 `Documentacion/FICHA_APROBACION_PROTOCOLO.md`. Estas tareas vencidas continúan
 abiertas porque requieren mediciones reales y decisiones del profesor.
+
+La caracterización física no puede cerrarse todavía porque el robot está
+incompleto: falta imprimir y montar la tapa izquierda de fémur
+`SM3_Cover_LeftFemur.stl`, tomada del repositorio público de archivos Nova-SM3
+de `cguweb-com/Arduino-Projects`. Hasta entonces se aplazan las mediciones y
+fotografías definitivas; esto no habilita calibración, postura ni marcha física.

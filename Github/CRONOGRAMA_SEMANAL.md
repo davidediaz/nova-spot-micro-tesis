@@ -31,7 +31,7 @@ cuando existe evidencia en el repositorio.
 |---:|---|---|---|---|
 | 1 | Modelo matemático nominal | 01/02–16/08 | Completada | `Documentacion/MODELO_MATEMATICO_LATEX/main.tex` |
 | 2 | Coherencia URDF/MJCF y simuladores | 01/03–14/08 | Completada | `src/` y pruebas de consistencia |
-| 3 | Caracterización física sin energizar | 19/08–28/08 | Vencida / pendiente de medición | Ficha lista; faltan fotos y tres mediciones por dimensión |
+| 3 | Caracterización física sin energizar | 19/08–28/08 | Vencida / bloqueada por impresión | Falta imprimir y montar `SM3_Cover_LeftFemur.stl`; ficha lista |
 | 4 | Actualización de URDF/MJCF medido | 31/08–04/09 | Pendiente | Tabla nominal–medido y regresión |
 | 5 | Arquitectura ROS 2, métricas y supervisor | 01/04–18/08 | Completada | 39 pruebas y nodos ROS 2 |
 | 6 | Seguridad eléctrica | 24/08–04/09 | En ejecución | OE con pull-up, prueba bajo carga y parada física |
