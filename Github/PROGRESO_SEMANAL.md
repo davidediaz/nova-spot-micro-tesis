@@ -113,6 +113,8 @@ Copiar esta estructura al final del archivo:
   protocolo.
 - Se consolidó la matriz de transición del anteproyecto al documento final del
   Taller 2 en un informe reproducible de 14 páginas.
+- Se sustituyeron dos servos por limitaciones físicas y se reforzaron los
+  acoples para reducir holguras; su identificación y validación están pendientes.
 
 ### Evidencia
 
@@ -122,6 +124,7 @@ Copiar esta estructura al final del archivo:
 - `Documentacion/FICHA_CARACTERIZACION_FISICA.md`
 - `Documentacion/FICHA_APROBACION_PROTOCOLO.md`
 - `ProyectoII_Clases/31_08_2026/INFORME_TALLER_2_31_08_2026.pdf`
+- `Raspberry/INTERVENCION_MECANICA_2026-08-31.md`
 
 ### Problemas o decisiones
 
@@ -130,6 +133,10 @@ obtuvo 23,644 % de coincidencia, inferior al 23,855 % de 0,20/0,75. Se rechaza.
 Valores desde 0,85 exceden el límite articular implementado. Las actividades de
 caracterización y aprobación vencieron sin evidencia suficiente y permanecen
 abiertas explícitamente.
+
+El ensamble físico sigue incompleto mientras se imprime la tapa izquierda del
+fémur. Los dos servos sustituidos requieren calibración desde cero y el refuerzo
+de acoples debe verificarse antes de energizar o ejecutar una marcha.
 
 ### Siguiente objetivo
 

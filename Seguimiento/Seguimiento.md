@@ -284,6 +284,14 @@ geometría física. Fuente indicada para impresión:
 La ficha de caracterización está preparada, pero no debe llenarse con valores
 parciales presentados como robot terminado.
 
+Intervención mecánica informada el 31 de agosto de 2026: se sustituyeron dos
+servos por limitaciones físicas y se reforzaron los acoples para reducir el
+juego de las patas. El cambio mejora la preparación del ensamble, pero todavía
+no está cuantificado ni calibrado. Faltan identificar las dos articulaciones y
+canales, documentar los componentes anteriores/nuevos, fotografiar los
+refuerzos y verificar que no introduzcan topes o rozamiento. Registro en
+`Raspberry/INTERVENCION_MECANICA_2026-08-31.md`.
+
 - [ ] Fotografiar estructura, patas, articulaciones, electrónica y cableado.
 - [ ] Confirmar que las doce unidades sean MG996R y registrar fabricante o
   diferencias visibles.
@@ -321,6 +329,10 @@ emergencia probado antes de conectar simultáneamente los servos.
 ### 7. Calibrar los doce MG996R
 
 Estado: **bloqueado hasta completar la seguridad eléctrica**.
+
+Dos servos fueron sustituidos el 31 de agosto. Sus calibraciones deben partir
+de cero y no pueden heredar centro, sentido ni límites de los componentes
+retirados. La correspondencia articulación--canal de ambos sigue pendiente.
 
 - [ ] Calibrar un servo a la vez con el robot asegurado.
 - [ ] Registrar canal, centro PWM, sentido, pulsos mínimo/máximo y límites

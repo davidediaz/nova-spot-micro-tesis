@@ -947,3 +947,17 @@ La guía original, la fuente LaTeX, el README y el PDF final están en
 `ProyectoII_Clases/31_08_2026`. El documento clasifica OE1--OE3 como parciales y
 OE4--OE5 como aún no demostrables; no afirma que RL o el robot físico estén
 terminados.
+
+### Sustitución de dos servos y refuerzo de acoples (31 de agosto de 2026)
+
+Se informó la sustitución de dos servomotores por limitaciones físicas y el
+refuerzo de los acoples del cuadrúpedo para reducir holguras en las patas. Estas
+intervenciones quedan registradas como avance mecánico, no como validación: aún
+faltan identificación de articulaciones/canales, referencias de componentes,
+fotografías, comparación de holgura, calibración individual y pruebas bajo
+carga. Los dos servos nuevos no deben heredar calibraciones anteriores.
+
+La tapa `SM3_Cover_LeftFemur.stl` sigue en impresión. Hasta montar e
+inspeccionar el conjunto continúan bloqueadas las mediciones geométricas
+definitivas, la actualización URDF/MJCF y las marchas físicas. Detalle:
+`Raspberry/INTERVENCION_MECANICA_2026-08-31.md`.
