@@ -1,5 +1,7 @@
-"""Independent provisional pose supervisor for simulation."""
+"""Independent, latched and conservative supervisor for simulation."""
 
+import json
+import time
 from math import degrees, radians
 
 import rclpy
@@ -7,8 +9,9 @@ from rclpy.executors import ExternalShutdownException
 from rclpy.node import Node
 from std_msgs.msg import Bool, String
 from tf2_msgs.msg import TFMessage
+from trajectory_msgs.msg import JointTrajectory
 
-from .safety import quaternion_to_rpy, unsafe_reasons
+from .safety import invalid_trajectory_reasons, quaternion_to_rpy, unsafe_reasons
 
 
 class SafetySupervisor(Node):
@@ -22,15 +25,43 @@ class SafetySupervisor(Node):
         self.declare_parameter('max_tilt_deg', 20.0)
         self.declare_parameter('consecutive_unsafe_samples', 3)
         self.declare_parameter('startup_grace_period', 8.0)
+        self.declare_parameter('trajectory_topic',
+                               '/joint_trajectory_controller/joint_trajectory')
+        self.declare_parameter('contact_diagnostics_topic',
+                               '/nova/contact_diagnostics')
+        self.declare_parameter('stability_topic', '/nova/stability')
+        self.declare_parameter('status_topic', '/nova/safety/status')
+        self.declare_parameter('data_timeout', 0.50)
+        self.declare_parameter('min_stability_margin', -0.005)
+        self.declare_parameter('enable_reference_stop', True)
+        self.declare_parameter('enable_data_timeout_stop', False)
+        self.declare_parameter('enable_contact_stop', False)
+        self.declare_parameter('enable_stability_stop', False)
         self.command = self.create_publisher(
             String, self.get_parameter('command_topic').value, 10)
         self.triggered = self.create_publisher(Bool, '/nova/safety/triggered', 10)
+        self.status = self.create_publisher(
+            String, self.get_parameter('status_topic').value, 10)
         self.subscription = self.create_subscription(
             TFMessage, self.get_parameter('pose_topic').value,
             self.pose_callback, 10)
+        self.create_subscription(
+            JointTrajectory, self.get_parameter('trajectory_topic').value,
+            self.trajectory_callback, 10)
+        self.create_subscription(
+            String, self.get_parameter('contact_diagnostics_topic').value,
+            self.contact_callback, 10)
+        self.create_subscription(
+            String, self.get_parameter('stability_topic').value,
+            self.stability_callback, 10)
         self.started_at = self.get_clock().now()
+        self.started_monotonic = time.monotonic()
+        self.last_received = {'pose': None, 'contacts': None, 'stability': None}
+        self.latest_contact = None
+        self.latest_stability = None
         self.unsafe_count = 0
         self.latched = False
+        self.create_timer(0.10, self.watchdog_callback)
         self.get_logger().info(
             'Supervisor listo (simulación): altura %.3f--%.3f m, inclinación %.1f grados.' % (
                 self.get_parameter('min_height').value,
@@ -38,6 +69,7 @@ class SafetySupervisor(Node):
                 self.get_parameter('max_tilt_deg').value))
 
     def pose_callback(self, message):
+        self.last_received['pose'] = time.monotonic()
         if self.latched or not message.transforms:
             return
         elapsed = (self.get_clock().now() - self.started_at).nanoseconds * 1e-9
@@ -60,12 +92,70 @@ class SafetySupervisor(Node):
         required = int(self.get_parameter('consecutive_unsafe_samples').value)
         if self.unsafe_count < required:
             return
+        self.trigger(','.join(reasons), {
+            'height_m': pose.translation.z, 'roll_deg': degrees(roll),
+            'pitch_deg': degrees(pitch)})
+
+    def trajectory_callback(self, message):
+        if self.latched or not self.get_parameter('enable_reference_stop').value:
+            return
+        reasons = invalid_trajectory_reasons(message.joint_names, message.points)
+        if reasons:
+            self.trigger(','.join(reasons))
+
+    def contact_callback(self, message):
+        self.last_received['contacts'] = time.monotonic()
+        try:
+            self.latest_contact = json.loads(message.data)
+        except (TypeError, ValueError):
+            self.latest_contact = None
+            if self.get_parameter('enable_contact_stop').value:
+                self.trigger('contacto_json_invalido')
+
+    def stability_callback(self, message):
+        self.last_received['stability'] = time.monotonic()
+        try:
+            self.latest_stability = json.loads(message.data)
+        except (TypeError, ValueError):
+            self.latest_stability = None
+
+    def watchdog_callback(self):
+        if self.latched:
+            return
+        now = time.monotonic()
+        if now - self.started_monotonic < float(
+                self.get_parameter('startup_grace_period').value):
+            return
+        timeout = float(self.get_parameter('data_timeout').value)
+        missing = [name for name, stamp in self.last_received.items()
+                   if stamp is None or now - stamp > timeout]
+        if missing and self.get_parameter('enable_data_timeout_stop').value:
+            self.trigger('datos_vencidos:' + ','.join(missing))
+            return
+        if (self.get_parameter('enable_contact_stop').value
+                and self.latest_contact
+                and self.latest_contact.get('comparison_available')
+                and self.latest_contact.get('match') is False):
+            self.trigger('contactos_no_coinciden')
+            return
+        stability = self.latest_stability
+        if (self.get_parameter('enable_stability_stop').value and stability
+                and stability.get('available')
+                and stability.get('margin_m') < float(
+                    self.get_parameter('min_stability_margin').value)):
+            self.trigger('margen_estabilidad', {
+                'margin_m': stability.get('margin_m')})
+
+    def trigger(self, reason, values=None):
+        if self.latched:
+            return
         self.latched = True
+        data = {'latched': True, 'reason': reason, 'values': values or {},
+                'simulation_only': True}
         self.command.publish(String(data='stand'))
         self.triggered.publish(Bool(data=True))
-        self.get_logger().error(
-            'PARADA PREVENTIVA -> stand: %s; z=%.3f m, roll=%.1f°, pitch=%.1f°' % (
-                ','.join(reasons), pose.translation.z, degrees(roll), degrees(pitch)))
+        self.status.publish(String(data=json.dumps(data, separators=(',', ':'))))
+        self.get_logger().error('PARADA PREVENTIVA -> stand: %s' % reason)
 
 
 def main(args=None):

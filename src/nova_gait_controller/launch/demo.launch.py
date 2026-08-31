@@ -25,6 +25,7 @@ def generate_launch_description():
             '/nova/contacts/front_right@ros_gz_interfaces/msg/Contacts[gz.msgs.Contacts',
             '/nova/contacts/rear_left@ros_gz_interfaces/msg/Contacts[gz.msgs.Contacts',
             '/nova/contacts/rear_right@ros_gz_interfaces/msg/Contacts[gz.msgs.Contacts',
+            '/nova/imu@sensor_msgs/msg/Imu[gz.msgs.IMU',
         ])
     metrics = Node(
         package='nova_gait_controller', executable='metrics_node', output='screen',
@@ -38,10 +39,14 @@ def generate_launch_description():
     contact_comparator = Node(
         package='nova_gait_controller', executable='contact_comparator', output='screen',
         parameters=[monitoring_parameters])
+    stability = Node(
+        package='nova_gait_controller', executable='stability_monitor',
+        output='screen', parameters=[monitoring_parameters])
 
     return LaunchDescription([
         simulation,
         pose_bridge,
         TimerAction(period=5.0, actions=[
-            controller, metrics, supervisor, contacts, contact_comparator]),
+            controller, metrics, supervisor, contacts, contact_comparator,
+            stability]),
     ])

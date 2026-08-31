@@ -178,8 +178,8 @@ Estado: **parcial**.
 - [x] Comparar en línea contacto previsto frente a observado, inicialmente sin
   actuación automática.
 - [ ] Añadir contactos equivalentes en MuJoCo.
-- [ ] Añadir o conectar una IMU simulada.
-- [ ] Calcular en línea el polígono de soporte y el margen de estabilidad con
+- [x] Añadir o conectar una IMU simulada.
+- [x] Calcular en línea el polígono de soporte y el margen de estabilidad con
   contactos y centro de masa.
 - [ ] Extender el supervisor con contacto inesperado, pérdida de comunicación,
   límites articulares y referencias inválidas.
@@ -188,6 +188,16 @@ Estado: **parcial**.
 
 Criterio de cierre: métricas y supervisor reaccionan correctamente a pruebas
 provocadas de altura, inclinación, contacto y pérdida de datos.
+
+Integración del 31 de agosto de 2026: la IMU de Gazebo publica a 100 Hz en
+`/nova/imu`; el contacto distingue estado crudo, filtrado y transición
+pendiente; `stability_monitor` publica polígono y margen nominal en
+`/nova/stability`. El supervisor rechaza referencias no finitas o fuera de
+límites y observa timeout, contacto y margen, pero estas tres paradas permanecen
+desactivadas hasta ejecutar pruebas provocadas. Pasan 47 pruebas y tres ciclos
+cortos no produjeron paradas espurias. El punto del supervisor sigue parcial y
+el rearme seguro continúa pendiente. Detalle en
+`Documentacion/ESTABILIDAD_IMU_SUPERVISOR_GAZEBO.md`.
 
 Avance del 14 de agosto de 2026: cuatro sensores de 100 Hz funcionan en Gazebo,
 el nodo `contact_monitor` publica `/nova/foot_contacts` y

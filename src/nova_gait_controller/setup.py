@@ -27,6 +27,7 @@ setup(
             'safety_supervisor = nova_gait_controller.safety_supervisor:main',
             'contact_monitor = nova_gait_controller.contact_monitor:main',
             'contact_comparator = nova_gait_controller.contact_comparator:main',
+            'stability_monitor = nova_gait_controller.stability_monitor:main',
         ],
     },
 )

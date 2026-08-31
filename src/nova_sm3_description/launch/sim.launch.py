@@ -17,7 +17,9 @@ def generate_launch_description():
     gz = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(PathJoinSubstitution(
             [FindPackageShare('ros_gz_sim'), 'launch', 'gz_sim.launch.py'])),
-        launch_arguments={'gz_args': '-r empty.sdf'}.items())
+        launch_arguments={'gz_args': [
+            '-r ', PathJoinSubstitution([share, 'worlds', 'nova_empty.sdf'])
+        ]}.items())
     state_publisher = Node(
         package='robot_state_publisher', executable='robot_state_publisher',
         output='both', parameters=[description, {'use_sim_time': True}])

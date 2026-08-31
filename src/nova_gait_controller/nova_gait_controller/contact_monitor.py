@@ -10,7 +10,7 @@ from rclpy.qos import DurabilityPolicy, HistoryPolicy, QoSProfile, ReliabilityPo
 from ros_gz_interfaces.msg import Contacts
 from std_msgs.msg import String
 
-from .contacts import LEG_NAMES, approximate_contact_force
+from .contacts import LEG_NAMES, approximate_contact_force, debounced_contact
 
 
 CONTACT_INPUTS = {
@@ -26,6 +26,8 @@ class ContactMonitor(Node):
         super().__init__('nova_contact_monitor')
         self.declare_parameter('contacts_topic', '/nova/foot_contacts')
         self.declare_parameter('contact_timeout', 0.10)
+        self.declare_parameter('contact_off_debounce', 0.12)
+        self.declare_parameter('contact_on_debounce', 0.03)
 
         self.samples = {
             leg: {'contact': False, 'approximate_force_n': 0.0,
@@ -34,6 +36,9 @@ class ContactMonitor(Node):
         }
         self.last_publish_at = 0.0
         self.last_contact_processed = {leg: 0.0 for leg in LEG_NAMES}
+        self.filters = {
+            leg: {'initialized': False, 'stable': False, 'candidate': None,
+                  'candidate_since': None} for leg in LEG_NAMES}
         self.contacts_publisher = self.create_publisher(
             String, self.get_parameter('contacts_topic').value, 10)
         contact_qos = QoSProfile(
@@ -79,12 +84,27 @@ class ContactMonitor(Node):
             # become silent after liftoff. Once initialized, silence beyond
             # the timeout therefore means no contact, not a dead sensor.
             valid = age is not None
-            contact = bool(valid and age <= timeout and sample['contact'])
+            raw_contact = bool(valid and age <= timeout and sample['contact'])
+            state = self.filters[leg]
+            if valid and not state['initialized']:
+                state.update(initialized=True, stable=raw_contact,
+                             candidate=None, candidate_since=None)
+            elif valid:
+                stable, candidate, since = debounced_contact(
+                    state['stable'], state['candidate'],
+                    state['candidate_since'], raw_contact, now,
+                    float(self.get_parameter('contact_off_debounce').value),
+                    float(self.get_parameter('contact_on_debounce').value))
+                state.update(stable=stable, candidate=candidate,
+                             candidate_since=since)
+            contact = bool(valid and state['stable'])
             all_valid = all_valid and valid
             if contact:
                 observed.append(leg)
             feet[leg] = {
                 'contact': contact,
+                'raw_contact': raw_contact,
+                'transition_pending': state['candidate_since'] is not None,
                 'valid': valid,
                 'age_s': age,
                 'approximate_force_n': (sample['approximate_force_n']

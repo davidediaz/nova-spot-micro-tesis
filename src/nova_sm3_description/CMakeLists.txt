@@ -3,7 +3,7 @@ project(nova_sm3_description)
 
 find_package(ament_cmake REQUIRED)
 
-install(DIRECTORY config launch mujoco rviz urdf
+install(DIRECTORY config launch mujoco rviz urdf worlds
   DESTINATION share/${PROJECT_NAME})
 
 ament_package()

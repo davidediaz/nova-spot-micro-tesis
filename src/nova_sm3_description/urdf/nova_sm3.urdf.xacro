@@ -116,6 +116,17 @@
 
   <link name="imu_link"/>
   <joint name="imu_joint" type="fixed"><parent link="base_link"/><child link="imu_link"/><origin xyz="0 0 0"/></joint>
+  <xacro:if value="$(arg use_gazebo)">
+    <!-- Sensor on base_link: imu_link is a zero-mass visualization frame and
+         may be lumped by URDF->SDF without losing the measurement. -->
+    <gazebo reference="base_link">
+      <sensor name="nova_imu_sensor" type="imu">
+        <always_on>true</always_on>
+        <update_rate>100</update_rate>
+        <topic>/nova/imu</topic>
+      </sensor>
+    </gazebo>
+  </xacro:if>
 
   <xacro:nova_leg prefix="front_left"  x="${ hip_spacing_x/2}" y="${ hip_spacing_y/2}" side="1"/>
   <xacro:nova_leg prefix="front_right" x="${ hip_spacing_x/2}" y="${-hip_spacing_y/2}" side="-1"/>

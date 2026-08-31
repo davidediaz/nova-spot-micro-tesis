@@ -115,6 +115,8 @@ Copiar esta estructura al final del archivo:
   Taller 2 en un informe reproducible de 14 páginas.
 - Se sustituyeron dos servos por limitaciones físicas y se reforzaron los
   acoples para reducir holguras; su identificación y validación están pendientes.
+- Se integraron contacto con debounce, IMU simulada de 100 Hz, polígono de
+  soporte, margen nominal y entradas adicionales del supervisor.
 
 ### Evidencia
 
@@ -125,6 +127,7 @@ Copiar esta estructura al final del archivo:
 - `Documentacion/FICHA_APROBACION_PROTOCOLO.md`
 - `ProyectoII_Clases/31_08_2026/INFORME_TALLER_2_31_08_2026.pdf`
 - `Raspberry/INTERVENCION_MECANICA_2026-08-31.md`
+- `Documentacion/ESTABILIDAD_IMU_SUPERVISOR_GAZEBO.md`
 
 ### Problemas o decisiones
 

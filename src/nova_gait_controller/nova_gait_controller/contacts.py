@@ -6,6 +6,24 @@ from math import sqrt
 LEG_NAMES = ('fl', 'fr', 'rl', 'rr')
 
 
+def debounced_contact(stable, candidate, candidate_since, raw, now,
+                      off_delay=0.12, on_delay=0.03):
+    """Update a contact state only after the raw state persists.
+
+    Gazebo can briefly stop publishing contact messages while a foot still
+    skims the floor. Symmetric state tracking with a longer off delay prevents
+    classifying a timeout-sized gap as a complete flight.
+    """
+    if raw == stable:
+        return stable, raw, None
+    if candidate != raw or candidate_since is None:
+        return stable, raw, now
+    delay = on_delay if raw else off_delay
+    if now - candidate_since >= delay:
+        return raw, raw, None
+    return stable, candidate, candidate_since
+
+
 def compare_contact_sets(expected, observed):
     """Return deterministic missing and unexpected contact lists."""
     expected_set = set(expected)

@@ -19,6 +19,17 @@ nova_safety_supervisor:
     max_tilt_deg: 20.0
     consecutive_unsafe_samples: 3
     startup_grace_period: 8.0
+    trajectory_topic: /joint_trajectory_controller/joint_trajectory
+    contact_diagnostics_topic: /nova/contact_diagnostics
+    stability_topic: /nova/stability
+    status_topic: /nova/safety/status
+    data_timeout: 0.50
+    min_stability_margin: -0.005
+    enable_reference_stop: true
+    # Permanecen informativos hasta medir falsos positivos en simulación.
+    enable_data_timeout_stop: false
+    enable_contact_stop: false
+    enable_stability_stop: false
 
 nova_contact_monitor:
   ros__parameters:
@@ -27,3 +38,15 @@ nova_contact_monitor:
     contacts_topic: /nova/foot_contacts
     diagnostics_topic: /nova/contact_diagnostics
     contact_timeout: 0.10
+    # La pérdida debe durar más que el timeout para declararse vuelo estable.
+    contact_off_debounce: 0.12
+    contact_on_debounce: 0.03
+
+nova_stability_monitor:
+  ros__parameters:
+    use_sim_time: true
+    pose_topic: /world/empty/dynamic_pose/info
+    model_frame: nova_sm3
+    contacts_topic: /nova/foot_contacts
+    joint_states_topic: /joint_states
+    output_topic: /nova/stability

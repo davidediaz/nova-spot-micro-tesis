@@ -961,3 +961,21 @@ La tapa `SM3_Cover_LeftFemur.stl` sigue en impresión. Hasta montar e
 inspeccionar el conjunto continúan bloqueadas las mediciones geométricas
 definitivas, la actualización URDF/MJCF y las marchas físicas. Detalle:
 `Raspberry/INTERVENCION_MECANICA_2026-08-31.md`.
+
+### IMU, contacto robusto, margen y supervisor ampliado (31 de agosto de 2026)
+
+El contacto de Gazebo publica ahora observación cruda y estado filtrado. Una
+pérdida debe persistir 0,12 s y un recontacto 0,03 s; esto permite estudiar sin
+ocultar las pausas cercanas al timeout de 0,10 s. Se añadió una IMU de 100 Hz en
+`/nova/imu` y un mundo propio que carga el sistema IMU de Gazebo.
+
+`stability_monitor` calcula en línea puntos nominales de pie, polígono de
+soporte y margen estático en `/nova/stability`; declara explícitamente que el
+modelo no está identificado. El supervisor valida trayectorias no finitas o
+fuera de límites y ya recibe timeout, discrepancia de contactos y margen. Estas
+tres últimas paradas continúan desactivadas hasta pruebas provocadas; no existe
+rearme automático.
+
+Pasaron 47 pruebas. Gazebo produjo mensajes reales de IMU, contacto y margen, y
+unos tres ciclos cortos terminaron en `stand` sin eventos del supervisor.
+Documento: `Documentacion/ESTABILIDAD_IMU_SUPERVISOR_GAZEBO.md`.
