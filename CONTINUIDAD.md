@@ -979,3 +979,23 @@ rearme automático.
 Pasaron 47 pruebas. Gazebo produjo mensajes reales de IMU, contacto y margen, y
 unos tres ciclos cortos terminaron en `stand` sin eventos del supervisor.
 Documento: `Documentacion/ESTABILIDAD_IMU_SUPERVISOR_GAZEBO.md`.
+
+### Propuesta de instrumentación física para realimentación (31 de agosto de 2026)
+
+Se definió preliminarmente una arquitectura para observar el comportamiento
+real del cuadrúpedo: doce AS5600, dos multiplexores I2C TCA9548A, la BNO055 ya
+contemplada, cuatro contactos de pie y un monitor de potencia INA228. Los
+sensores ToF y la medición de temperatura quedan para etapas posteriores. Esta
+selección busca medir ángulo y error articular, movimiento corporal, contacto,
+consumo y fallos mecánicos, y después alimentar una capa correctiva de
+aprendizaje por refuerzo con variables físicas sincronizadas.
+
+La arquitectura es una propuesta técnica: no se han confirmado las variantes
+de las tarjetas, comprado componentes, fabricado soportes, conectado el bus ni
+realizado calibraciones. Antes de extenderla a las doce articulaciones se hará
+un prototipo con un solo AS5600 sobre el eje real de salida y luego una pata
+completa. Deben validarse alineación del imán, niveles de 3,3 V, `pull-up`,
+ruido de servos, latencia y frecuencia del barrido secuencial. Las futuras
+acciones aprendidas permanecerán limitadas a correcciones pequeñas de la
+marcha nominal, nunca PWM directo. Documento completo:
+`Documentacion/PROPUESTA_INSTRUMENTACION_FISICA_2026-08-31.md`.

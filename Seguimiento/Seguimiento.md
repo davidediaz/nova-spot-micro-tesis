@@ -368,6 +368,18 @@ Estado: **scripts listos; hardware y microSD pendientes**.
 - [ ] Desarrollar la interfaz física `ros2_control` usando las calibraciones
   medidas.
 - [ ] Integrar BNO055, corriente/tensión, contactos y estado de parada.
+- [x] Documentar una arquitectura preliminar de realimentación física con
+  AS5600, multiplexores I2C, IMU, contactos y medición de potencia.
+- [ ] Confirmar las variantes comerciales y actualizar presupuesto y diagrama
+  eléctrico antes de comprar o conectar la instrumentación.
+- [ ] Prototipar un AS5600 en una articulación y validar alineación, cero,
+  sentido, límites, repetibilidad, holgura, ruido y frecuencia de adquisición.
+- [ ] Probar tres AS5600 en una pata mediante TCA9548A antes de extender el bus
+  a las doce articulaciones.
+- [ ] Seleccionar y validar un sensor de contacto físico por pie; comparar FSR,
+  microswitch y celda de carga según geometría y repetibilidad.
+- [ ] Dimensionar y validar INA228, resistencia shunt, fusible y conectores para
+  la corriente real de los servos.
 - [ ] Añadir vigilancia por pérdida de comunicación y arranque con salidas
   deshabilitadas.
 
@@ -536,9 +548,28 @@ cadencia de 0,18 s por referencia:
    `Documentacion/FICHA_APROBACION_PROTOCOLO.md`;
 5. repetir en Gazebo frente a nominal y 0,20/0,75 solo después de definir una
    hipótesis nueva y verificable.
+6. mientras termina la integración mecánica, confirmar las tarjetas de
+   instrumentación y diseñar el prototipo de un AS5600 para una sola
+   articulación, sin conectar todavía los doce sensores.
 
 El supervisor de contactos seguirá informativo durante esta corrección. No se
 debe comenzar PPO ni mover el hardware hasta superar las etapas que lo bloquean.
+
+## Propuesta de instrumentación física del 31 de agosto de 2026
+
+Se documentó en
+`Documentacion/PROPUESTA_INSTRUMENTACION_FISICA_2026-08-31.md` una arquitectura
+preliminar con doce AS5600, dos TCA9548A, BNO055, cuatro contactos de pie y un
+INA228 global. El objetivo es disponer de ángulos reales, error de seguimiento,
+orientación, contacto y consumo para validar el modelo y definir las futuras
+observaciones de RL. ToF, celdas de carga completas y temperatura se aplazan.
+
+Solo queda cerrada la selección conceptual; compra, montaje, cableado,
+calibración y funcionamiento permanecen pendientes. El siguiente hito es un
+AS5600 en una articulación y después tres en una pata, con medición explícita de
+alineación, repetibilidad, holgura, ruido, latencia y frecuencia. La política
+aprendida, cuando se autorice, actuará únicamente mediante correcciones
+acotadas de referencias nominales y no mediante PWM directo.
 
 ## Regla de actualización
 
