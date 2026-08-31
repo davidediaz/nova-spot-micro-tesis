@@ -1,0 +1,355 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{geometry}
+\usepackage{array,booktabs,longtable,tabularx}
+\usepackage{amssymb}
+\usepackage[table]{xcolor}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{microtype}
+\usepackage{pdflscape}
+\geometry{margin=2cm}
+\hypersetup{colorlinks=true,linkcolor=blue!55!black,urlcolor=blue!55!black}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\renewcommand{\arraystretch}{1.22}
+\pagestyle{fancy}
+\setlength{\headheight}{14pt}
+\fancyhf{}
+\lhead{Taller 2 -- Corte 1}
+\rhead{Nova Spot Micro}
+\cfoot{\thepage}
+\newcommand{\verde}{\cellcolor{green!18}\textbf{Verde}}
+\newcommand{\amarillo}{\cellcolor{yellow!25}\textbf{Amarillo}}
+\newcommand{\rojo}{\cellcolor{red!16}\textbf{Rojo}}
+\newcommand{\estado}[1]{\textbf{#1}}
+
+\begin{document}
+
+\begin{titlepage}
+\centering
+{\Large Universidad Santo Tomás\par}
+\vspace{0.5cm}
+{\large Proyecto de Grado II -- Taller 2, Corte 1\par}
+\vfill
+{\Huge\bfseries Matriz de transición del anteproyecto al documento final\par}
+\vspace{0.8cm}
+{\Large Diseño de un sistema de control para la locomoción y estabilización de un robot cuadrúpedo basado en aprendizaje por refuerzo\par}
+\vfill
+\begin{tabular}{rl}
+\textbf{Estudiantes:} & David Esteban Díaz Castro\\
+& David Felipe Díaz Suesca\\[2mm]
+\textbf{Director:} & MsC. Armando Mateus Rojas\\
+\textbf{Codirectores:} & PhD. Billy Vladimir Toro Tovar\\
+& MsC. Carlos Javier Mojica Casallas\\[2mm]
+\textbf{Fecha de corte:} & 31 de agosto de 2026
+\end{tabular}
+\vfill
+{\small Documento elaborado a partir del anteproyecto, la tesis en curso, el cronograma y la evidencia reproducible disponible en el repositorio del proyecto.}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+\section{Propósito, alcance y estado del proyecto}
+
+Este documento responde al Taller 2 mediante una auditoría entre lo prometido y
+lo ejecutado. El proyecto conserva como objetivo final comparar una marcha
+nominal con la misma marcha asistida por una capa correctiva de aprendizaje por
+refuerzo (RL). A la fecha del corte no se declara cumplido el objetivo general:
+la marcha convencional y el entorno de simulación están avanzados, mientras que
+la caracterización definitiva, la seguridad física, RL y la comparación final
+siguen pendientes.
+
+La evidencia más madura corresponde al modelo matemático, ROS 2, Gazebo,
+MuJoCo y las marchas nominales. El gateo de cadencia corregida fue reproducido
+en dos ensayos de 13 ciclos, con diferencias menores al 0,2\% en las medias. La
+marcha paso fue validada en dos ensayos Gazebo de 12 ciclos y en MuJoCo. El
+análisis de contactos reveló, sin embargo, que caminar visualmente no implica
+cumplir el patrón ideal de apoyos. Este hallazgo motivó iteraciones controladas
+sin ocultar tentativas inválidas ni congelar prematuramente una nueva línea
+base.
+
+La caracterización física está temporalmente bloqueada porque falta imprimir y
+montar \path{SM3_Cover_LeftFemur.stl}. Por ello no se presentan dimensiones,
+masas o calibraciones parciales como propiedades definitivas del robot.
+
+\section{A. Auditoría de secciones heredadas}
+
+\subsection{Hallazgos iniciales}
+
+\begin{tabularx}{\textwidth}{>{\bfseries}p{3.5cm}X}
+\toprule
+Aspecto que ya no representa con precisión el proyecto & El texto heredado sugiere por momentos un modelo dinámico completo o una reactivación física cercana. La evidencia actual sustenta un modelo nominal computable y simulación reproducible, no un gemelo digital identificado ni una plataforma física totalmente validada.\\
+Aspecto para revisión con el director & Métrica primaria de la comparación, umbral de mejora RL, límite de continuidad articular, criterio final de caída, alcance del modelo dinámico y permanencia del requisito HRI.\\
+\bottomrule
+\end{tabularx}
+
+\begin{landscape}
+\small
+\begin{longtable}{p{2.6cm}p{5.0cm}p{6.1cm}p{1.8cm}p{6.0cm}}
+\caption{Auditoría de las secciones del anteproyecto.}\\
+\toprule
+\textbf{Sección} & \textbf{Qué establece} & \textbf{Qué ocurrió durante el desarrollo} & \textbf{Estado} & \textbf{Acción requerida}\\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Sección} & \textbf{Qué establece} & \textbf{Qué ocurrió durante el desarrollo} & \textbf{Estado} & \textbf{Acción requerida}\\
+\midrule
+\endhead
+Problema & Reactivar una plataforma inactiva mediante caracterización, electrónica, modelado y control. & Se construyeron modelos y control nominal reproducible en simulación; la plataforma física continúa incompleta y no se ha ejecutado la comparación RL. & A & Distinguir resultados demostrados, trabajo pendiente y proyección social futura.\\
+Justificación & Recuperación académica de la plataforma y posibles aplicaciones en entornos peligrosos. & La contribución formativa y técnica se sostiene. La inspección peligrosa sigue siendo una aplicación futura, no validada. & F & Fortalecer con resultados reales y mantener explícita la diferencia entre aporte logrado y proyección.\\
+Objetivo general & Combinar marcha nominal y RL correctivo para mejorar estabilidad y repetibilidad. & La marcha nominal existe; RL y comparación final aún no se han ejecutado. & C & Conservar sin afirmar cumplimiento anticipado.\\
+OE1: caracterización y modelos & Caracterizar y desarrollar modelos cinemático y dinámico. & FK, IK, Jacobiano, dinámica nominal, URDF y MJCF implementados. Faltan geometría, masas y parámetros físicos definitivos. & A & Declarar modelo nominal y completar tabla nominal--medido tras el ensamble.\\
+OE2: arquitectura segura & Diseñar electrónica y software con límites eléctricos, mecánicos y articulares. & ROS 2, supervisor provisional, Raspberry, Mega, I2C y PCA9685 verificados; faltan OE con pull-up, parada física, fuente bajo carga y 12 calibraciones. & F & Incorporar evidencias eléctricas, curvas de calibración y pruebas provocadas del supervisor.\\
+OE3: locomoción convencional & Implementar FSM para postura, paso y gateo. & Postura, gateo y marcha paso se ejecutan en Gazebo; paso también fue verificado articularmente en MuJoCo. & F & Corregir contacto trasero, congelar línea base y validar posteriormente en hardware.\\
+OE4: política RL & Entrenar e integrar correcciones pequeñas, sin PWM directo. & Semillas y alcance definidos, pero PPO permanece bloqueado hasta cerrar marcha física y protocolo. & C & Mantener el objetivo y documentar observaciones, acciones, recompensa y saturaciones antes de entrenar.\\
+OE5: comparación & Comparar nominal y nominal+RL en simulación y robot físico. & Existe matriz de cinco ensayos por condición y marcha; todavía no hay políticas ni 400 ciclos finales. & C & Ejecutar solamente después de congelar protocolo, política y línea base.\\
+Alcance & Superficie plana, baja velocidad, paso y gateo; incluye HRI y modelo dinámico, excluye navegación y galope rápido. & Se mantuvo superficie plana y control acotado. El galope fue relegado formalmente. HRI no tiene aún producto verificable. Hay contradicción sobre la complejidad dinámica. & R & Acordar con el director la redacción del modelo nominal y decidir si HRI permanece como entregable.\\
+Marco referencial & Cinemática, dinámica, marchas, control y RL. & Los conceptos se usan en código y simulación; deben conectarse mejor con decisiones, métricas y limitaciones. & F & Eliminar teoría desconectada e incorporar referencias para PPO, sim-to-real, contacto y seguridad.\\
+Metodología & Ocho fases secuenciales con retroalimentación y transferencia progresiva. & La simulación se adelantó a la caracterización física debido al estado incompleto del robot. Se incorporaron rosbag2, hashes, fases y contactos como evidencia. & A & Reescribir como metodología realmente ejecutada y justificar los ciclos de corrección.\\
+\bottomrule
+\end{longtable}
+\end{landscape}
+
+\begin{landscape}
+\section{B. Matriz objetivo--evidencia}
+\scriptsize
+\begin{longtable}{p{1.7cm}p{2.8cm}p{3.5cm}p{4.2cm}p{3.5cm}p{3.5cm}p{1.8cm}}
+\caption{Correspondencia entre objetivos y evidencia al 31 de agosto de 2026.}\\
+\toprule
+\textbf{Objetivo} & \textbf{Qué prometía} & \textbf{Qué se hizo} & \textbf{Evidencia disponible} & \textbf{Evidencia faltante} & \textbf{Métrica o criterio} & \textbf{Clasificación}\\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Objetivo} & \textbf{Qué prometía} & \textbf{Qué se hizo} & \textbf{Evidencia disponible} & \textbf{Evidencia faltante} & \textbf{Métrica o criterio} & \textbf{Clasificación}\\
+\midrule
+\endhead
+OE1 & Caracterización y modelos para simulación y referencias. & Modelo matemático propio, FK/IK, Jacobiano, dinámica nominal, URDF/MJCF y pruebas. & \path{Documentacion/MODELO_MATEMATICO_LATEX}; pruebas de cinemática y coherencia; modelos en \path{src}. & Tres mediciones físicas, masas, holguras, identificación de servos y actualización nominal--medido. & Error FK--IK; alcanzabilidad; límites; coherencia entre modelos; incertidumbre física. & \amarillo\\
+OE2 & Arquitectura electrónica y de software segura. & ROS 2, supervisor, Raspberry Ubuntu 22.04, SSH/DDS, Mega--PCA9685 y movimiento limitado CH5--CH10. & Diagramas, prueba I2C 0x40, compilación ARM64, 41 pruebas del controlador y documentación de seguridad. & OE con pull-up, parada física, fuente bajo carga, corriente/temperatura, mapa de canales y calibración de 12 servos. & Arranque deshabilitado; límites PWM; pérdida de comunicación a estado seguro; corriente y temperatura. & \amarillo\\
+OE3 & Postura, paso y gateo nominales mediante FSM. & Gateo cartesiano, marcha paso, temporizador corregido, fase y contactos previstos/medidos. & Dos líneas base de gateo; dos ensayos paso; validación MuJoCo; bolsas, CSV, gráficas y hashes. & Contacto trasero coherente, línea base final congelada y validación física progresiva. & Ciclos; avance; velocidad; roll/pitch; lateral; cadencia; continuidad; fallos; contactos. & \amarillo\\
+OE4 & PPO correctivo acotado e integración progresiva. & Se fijaron semillas y principio de corrección sobre referencias; no se inició entrenamiento. & Decisión de semillas 11, 23, 37, 53 y 71; supervisor independiente; galope excluido. & MDP, recompensa, saturaciones, currículo, modelos entrenados, validación separada y transferencia. & Recompensa; estabilidad; saturaciones; tasa de fallos; comparación con nominal. & \rojo\\
+OE5 & Comparación experimental nominal frente a nominal+RL. & Se definieron cinco ensayos de 20 ciclos por marcha y condición, con escenarios emparejados. & Protocolo borrador y matriz de 400 ciclos; analizadores reproducibles. & Métrica primaria aprobada, políticas, ensayos finales en simulación y hardware, análisis estadístico. & Unidad: ensayo (n=5); IC; diferencias emparejadas; fallos e intervenciones. & \rojo\\
+\bottomrule
+\end{longtable}
+\end{landscape}
+
+\textbf{Dictamen global: parcialmente demostrable.} Un jurado puede reproducir
+y evaluar OE1 y la parte simulada de OE2--OE3. No puede afirmar aún el
+cumplimiento del objetivo general, OE4 u OE5.
+
+\begin{landscape}
+\section{C. Metodología proyectada frente a metodología ejecutada}
+\small
+\begin{longtable}{p{2.4cm}p{4.2cm}p{5cm}p{5cm}p{4cm}}
+\toprule
+\textbf{Aspecto} & \textbf{Lo planteado} & \textbf{Lo ejecutado} & \textbf{Cambio y justificación} & \textbf{Evidencia para la tesis}\\
+\midrule
+Requisitos & Reactivación, paso, gateo, RL, seguridad y HRI. & Se precisaron baja velocidad, superficie plana, RL correctivo y galope fuera del alcance. & Se redujo ambigüedad y se protegió el hardware. & Tabla de requisitos y trazabilidad.\\
+Arquitectura & Control nominal más RL. & ROS 2 con controlador, métricas, supervisor, fase, contactos y dos simuladores. & Se añadieron observabilidad y procesos separados para evitar pérdida de fases. & Diagrama de nodos, tópicos y flujo de seguridad.\\
+Tecnologías & Plataforma física y simulación. & ROS 2 Humble, Gazebo Sim, MuJoCo, Raspberry Pi 4, Mega y PCA9685. & Ubuntu 24.04 fue descartado para mantener compatibilidad con Humble 22.04. & Matriz de selección y versiones.\\
+Modelado & Cinemática y modelo dinámico. & Modelo nominal computable con contacto simplificado. & No se denomina gemelo digital porque faltan parámetros identificados. & Ecuaciones, supuestos y tabla nominal--medido futura.\\
+Cálculos & Trayectorias y estabilidad. & FK/IK, Jacobiano, masa, Coriolis, gravedad, contacto y margen estático. & Se implementaron pruebas automatizadas y ejemplos reproducibles. & Documento matemático y pruebas.\\
+Simulación & Validación previa al hardware. & Ensayos con rosbag2, repetición, hashes, contactos y análisis por ciclo. & Se corrigió un temporizador que producía ciclos de 4,80 s en vez de 4,32 s. & Bolsas separadas antes/después y validación temporal.\\
+Implementación & FSM para marchas. & Gateo de 24 referencias y marcha paso de 32; galope deshabilitado. & Los contactos mostraron deslizamiento trasero aunque el robot avanzaba. & Código, configuración, pruebas y diagnósticos.\\
+Integración & Progresión segura al robot. & Red, DDS, I2C y servos limitados; no hay marchas físicas. & El ensamble incompleto y la seguridad pendiente impiden avanzar responsablemente. & Checklists, pieza pendiente y pruebas eléctricas.\\
+Procedimiento experimental & Al menos diez ciclos por condición. & Se fijaron cinco ensayos de 20 ciclos; ciclos 2--20 en régimen y ensayo como unidad independiente. & Se evitó pseudorreplicación y selección favorable. & Protocolo y decisión de semillas.\\
+Validación & Simulación y robot físico con/sin RL. & Líneas base nominales reproducibles; comparación final pendiente. & La validación se escalonó por riesgo y madurez. & Matriz objetivo--evidencia y plan inmediato.\\
+\bottomrule
+\end{longtable}
+\end{landscape}
+
+La secuencia documentada puede reconstruirse como
+\textbf{decisión $\rightarrow$ criterio $\rightarrow$ evidencia $\rightarrow$
+consecuencia}. Por ejemplo: se detectó una cadencia observada de 4,80 s;
+se corrigió el avance de la fecha límite del temporizador; seis ciclos midieron
+4,320106573 s; luego se generó y reprodujo una línea base nueva sin mezclarla
+con bolsas históricas.
+
+\section{D. Evidencia crítica de validación}
+
+Se selecciona OE3 porque una marcha nominal reproducible es condición previa
+para hardware, RL y comparación final.
+
+\begin{tabularx}{\textwidth}{>{\bfseries}p{5.2cm}X}
+\toprule
+Elemento & Definición para el proyecto\\
+\midrule
+Objetivo asociado & OE3: implementar postura, marcha paso y gateo nominales mediante FSM.\\
+Variable a evaluar & Cadencia, ciclos completados, pose corporal, continuidad articular, contacto previsto/observado y activaciones del supervisor.\\
+Referencia esperada & Gateo: 24 referencias, 0,18 s por referencia y 4,32 s por ciclo; paso de 18 mm y elevación de 14 mm.\\
+Herramienta & Gazebo Sim, ROS 2 Humble, rosbag2, fase \path{/nova/gait_phase}, contactos y analizadores Python.\\
+Condiciones & Superficie plana, estado inicial equivalente, un nodo por proceso, parámetros congelados, órdenes gateo y stand registradas.\\
+Repeticiones & Desarrollo: dos ensayos independientes de al menos 10 ciclos. Comparación final: cinco ensayos de 20 ciclos por condición.\\
+Métricas & Duración por ciclo, avance, velocidad, excursión lateral, altura, roll/pitch, salto articular, coincidencia de contactos, fallos e intervenciones.\\
+Origen del criterio & Configuración implementada, límites del supervisor y protocolo; umbral articular definitivo requiere aval del director.\\
+Criterio & Todos los ciclos previstos, cero caída/intervención, cadencia dentro de $\pm1\%$, datos esenciales completos y continuidad bajo límite aprobado.\\
+Resultado a reportar & Media y dispersión por ensayo, transitorio separado, fallos conservados, hashes y diferencias entre repeticiones.\\
+Figura/tabla & Series temporales, resumen por ciclo, transición de contactos y tabla comparativa entre ensayos.\\
+\bottomrule
+\end{tabularx}
+
+\subsection{Resultado disponible de la evidencia crítica}
+
+La línea base de cadencia corregida y su repetición completaron 13 ciclos cada
+una, sin activaciones del supervisor. Las diferencias entre medias fueron
+menores al 0,2\%. En ciclos 2--13, la primera ejecución obtuvo 0,023338 m/ciclo,
+0,005402 m/s, 0,015133 m de excursión lateral, roll máximo de 2,233112 grados y
+pitch máximo de 4,365442 grados. Esto demuestra reproducibilidad en simulación
+de la referencia articular, pero no valida todavía la geometría física ni el
+patrón ideal de contacto.
+
+\section{E. Proyección del documento final}
+
+\subsection{Capítulo de desarrollo}
+
+\begin{longtable}{p{6.2cm}p{9.2cm}}
+\toprule
+\textbf{Pregunta de ingeniería} & \textbf{Evidencia o sección requerida}\\
+\midrule
+¿Qué debía cumplir? & Requisitos funcionales, seguridad, superficie plana, modos y corrección RL acotada.\\
+¿Qué restricciones existían? & MG996R, geometría provisional, potencia, sensado, ensamble incompleto y límites de simulación.\\
+¿Qué arquitectura se definió? & Diagramas ROS 2, electrónica, potencia, comunicaciones y supervisor.\\
+¿Qué alternativas se consideraron? & Gazebo/MuJoCo, perfiles de descenso, Raspberry/Mega y exclusión del galope.\\
+¿Cómo se seleccionó? & Criterios de compatibilidad, continuidad, seguridad, reproducibilidad y alcance.\\
+¿Qué cálculos sustentan el diseño? & FK/IK, Jacobianos, dinámica nominal, contacto, estabilidad y conversión articulación--PWM futura.\\
+¿Qué simulaciones se realizaron? & Línea base, repetición, marcha paso, contactos, temporizador y curvas de liberación.\\
+¿Cómo se implementó e integró? & Paquetes, nodos, parámetros, tópicos, Raspberry, DDS, I2C y PCA9685.\\
+¿Qué dificultades aparecieron? & Nodos duplicados, pérdida de marcadores/fases, cadencia tardía, deslizamiento trasero y carpeta vacía en Git.\\
+¿Qué modificaciones fueron necesarias? & Temporizador, QoS, separación de procesos, subfases, curvas por eje y bloqueos de seguridad.\\
+¿Cómo se verificó? & Pytest, colcon, bolsas, hashes, CSV, gráficas, pruebas provocadas y repetición independiente.\\
+¿Cómo se validará el sistema completo? & Comparación emparejada nominal/RL en simulación y hardware bajo protocolo aprobado.\\
+\bottomrule
+\end{longtable}
+
+\subsection{Proyección de resultados y discusión}
+
+\textbf{Objetivo seleccionado:} OE3, marcha nominal.
+
+\textbf{Condiciones:} superficie plana, Gazebo, 24 referencias, paso de 18 mm,
+elevación de 14 mm, 0,18 s por muestra y estados iniciales controlados.
+
+\textbf{Evidencias:} tablas, series temporales, simulación, comparación entre
+ensayos, CSV por ciclo y transiciones de contacto.
+
+\textbf{Métrica principal provisional:} proporción de ensayos que completan
+todos los ciclos sin fallo ni intervención. Métricas descriptivas: avance,
+velocidad, roll/pitch, lateral, continuidad y contactos.
+
+\textbf{Discusión prevista:} la cadencia y el avance fueron altamente
+repetibles, pero el contacto físico simulado no coincidió con el plan. El
+hallazgo muestra que estabilidad visual, avance y sincronía de apoyos son
+dimensiones distintas. La discusión deberá relacionar este comportamiento con
+la dinámica nominal, el timeout del sensor, la transferencia de peso y la forma
+de la trayectoria, sin atribuirlo automáticamente al hardware.
+
+\textbf{Juicio actual:} \estado{cumple parcialmente}. Existe una marcha nominal
+reproducible en simulación, pero faltan contacto corregido, congelación final y
+validación física.
+
+\begin{landscape}
+\section{Conclusiones preliminares sustentables}
+\small
+\begin{longtable}{p{1.6cm}p{4.5cm}p{4.5cm}p{4.7cm}p{3.8cm}}
+\toprule
+\textbf{Objetivo} & \textbf{Resultado principal} & \textbf{Evidencia cuantitativa} & \textbf{Conclusión sustentable hoy} & \textbf{Limitación}\\
+\midrule
+OE1 & Modelo nominal y simuladores construidos. & Pruebas FK/IK, 41 pruebas del paquete y documentos matemáticos. & Es posible generar referencias alcanzables y coherentes para el modelo provisional. & Parámetros físicos no identificados.\\
+OE2 & Arquitectura lógica y comunicación verificadas. & DDS recibió ocho mensajes consecutivos; PCA9685 detectado en 0x40; CH5--CH10 movidos en rango limitado. & La cadena de comunicación funciona por subsistemas. & Seguridad eléctrica y 12 calibraciones incompletas.\\
+OE3 & Gateo y paso repetibles en simulación. & Gateo: diferencias menores al 0,2\%; paso: menores al 0,4\%; cero eventos en ensayos reportados. & La FSM produce locomoción nominal reproducible en simulación bajo condiciones congeladas. & Contactos y hardware pendientes.\\
+OE4 & No hay resultado de política. & Solo semillas y restricciones congeladas. & No puede concluirse mejora por RL. & Falta todo el entrenamiento y validación.\\
+OE5 & Diseño comparativo preparado. & 5 ensayos $\times$ 20 ciclos $\times$ 2 condiciones $\times$ 2 marchas = 400 ciclos. & Existe un protocolo planificado, no evidencia comparativa. & Métrica primaria y ejecución pendientes.\\
+\bottomrule
+\end{longtable}
+\end{landscape}
+
+Conclusión de una frase para OE3: \emph{En Gazebo y con la configuración
+congelada, el controlador convencional ejecutó gateo de 4,32 s por ciclo en dos
+ensayos independientes de 13 ciclos, sin eventos del supervisor y con
+diferencias menores al 0,2\% entre medias, lo que demuestra reproducibilidad de
+la locomoción simulada, aunque no valida todavía los contactos ni el robot
+físico.}
+
+\section{Revisión tipo jurado técnico}
+
+La autoevaluación asigna el dictamen \textbf{PARCIALMENTE DEMOSTRADO}. La
+evidencia tiene ubicación, variables, métricas, condiciones y procedimientos
+reproducibles para la marcha simulada. El criterio articular definitivo no está
+aprobado y faltan caracterización física, seguridad, RL y comparación final.
+La revisión entre pares real debe añadirse después de recibir el nombre y las
+observaciones del grupo revisor; no se inventa en este informe.
+
+\section{Plan inmediato de trabajo}
+
+Prioridades: (1) protocolo y criterios con el director; (2) contacto y línea
+base nominal; (3) completar ensamble, caracterización y seguridad antes de
+marchas físicas.
+
+\small
+\begin{longtable}{p{5.1cm}p{4.4cm}p{1.5cm}p{2.4cm}p{2.2cm}}
+\toprule
+\textbf{Acción} & \textbf{Evidencia esperada} & \textbf{Pri.} & \textbf{Responsable} & \textbf{Fecha prevista}\\
+\midrule
+Aprobar métrica primaria, frecuencia y umbrales. & Ficha firmada y protocolo v2. & Alta & Equipo/director & 07/09/2026\\
+Revisar semántica y debounce de contactos traseros. & Prueba unitaria, criba y ensayo equivalente. & Alta & Estudiantes & 11/09/2026\\
+Imprimir y montar tapa izquierda de fémur. & Pieza instalada y fotografía. & Alta & Estudiantes & Según impresión\\
+Caracterizar geometría, masas y holguras. & Ficha completa, fotos, hashes y tabla nominal--medido. & Alta & Estudiantes & 7 días tras montaje\\
+Cerrar OE, pull-up, parada y fuente bajo carga. & Checklist y mediciones eléctricas. & Alta & Equipo/director & 18/09/2026\\
+Calibrar 12 MG996R individualmente. & YAML/CSV con centro, límites, sentido, corriente y temperatura. & Alta & Estudiantes & 25/09/2026\\
+Fortalecer capítulos de alcance y metodología. & Texto coherente con modelo nominal y ejecución real. & Media & Equipo/director & 18/09/2026\\
+Congelar especificación RL antes de entrenar. & MDP, recompensa, acciones, saturaciones y semillas. & Media & Estudiantes & Después de marcha física\\
+\bottomrule
+\end{longtable}
+\normalsize
+
+\section{Lista de verificación de calidad}
+
+\begin{tabularx}{\textwidth}{Xccc}
+\toprule
+\textbf{Criterio} & \textbf{Sí} & \textbf{Parcial} & \textbf{No}\\
+\midrule
+Problema coherente con el proyecto & $\square$ & $\boxtimes$ & $\square$\\
+Justificación sin promesas no demostradas & $\boxtimes$ & $\square$ & $\square$\\
+Cada objetivo posee evidencia asociada & $\square$ & $\boxtimes$ & $\square$\\
+Las evidencias permiten evaluar & $\square$ & $\boxtimes$ & $\square$\\
+Métricas para resultados principales & $\boxtimes$ & $\square$ & $\square$\\
+Criterios de aceptación definidos & $\square$ & $\boxtimes$ & $\square$\\
+Metodología describe lo ejecutado & $\square$ & $\boxtimes$ & $\square$\\
+Cambios metodológicos justificados & $\boxtimes$ & $\square$ & $\square$\\
+Pruebas reproducibles & $\square$ & $\boxtimes$ & $\square$\\
+Resultados relacionados con objetivos & $\boxtimes$ & $\square$ & $\square$\\
+Proyección clara de resultados/discusión & $\boxtimes$ & $\square$ & $\square$\\
+Conclusiones futuras sustentables & $\square$ & $\boxtimes$ & $\square$\\
+Limitaciones técnicas identificadas & $\boxtimes$ & $\square$ & $\square$\\
+Asuntos para revisión con director & $\boxtimes$ & $\square$ & $\square$\\
+\bottomrule
+\end{tabularx}
+
+\section{Ubicación de la evidencia principal}
+
+\begin{itemize}[leftmargin=*]
+\item Modelo: \path{Documentacion/MODELO_MATEMATICO_LATEX}.
+\item Protocolo: \path{Documentacion/PROTOCOLO_EXPERIMENTAL_BORRADOR.md}.
+\item Gateo corregido: \path{Experimentos/rosbag2/linea_base_cadencia_corregida_20260814_1049}.
+\item Repetición: \path{Experimentos/rosbag2/repeticion_cadencia_corregida_20260814_1100}.
+\item Marcha paso: \path{Documentacion/MARCHA_PASO_VALIDACION.md}.
+\item Contactos: \path{Experimentos/analisis/contactos_gateo_validado_20260814_1410}.
+\item Última exploración: subdirectorio \path{liberacion_trasera_f020_r075_l080_valida_20260831} dentro de \path{Experimentos/analisis}.
+\item Cronograma y ruta: \path{Github/CRONOGRAMA_SEMANAL.md} y \path{Github/RUTA_TRABAJO.md}.
+\item Memoria de continuidad: \path{CONTINUIDAD.md}.
+\end{itemize}
+
+\section*{Cierre}
+
+El proyecto cuenta con una base técnica reproducible y una marcha convencional
+madura en simulación, pero la promesa completa del anteproyecto sigue abierta.
+La prioridad académica es conservar esta distinción: mostrar con cifras lo ya
+demostrado, declarar las limitaciones y ejecutar las fases físicas y RL solo
+cuando sus dependencias estén cerradas.
+
+\end{document}

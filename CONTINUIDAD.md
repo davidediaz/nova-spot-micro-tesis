@@ -934,3 +934,16 @@ incompleto: falta imprimir y montar la tapa izquierda de fémur
 `SM3_Cover_LeftFemur.stl`, tomada del repositorio público de archivos Nova-SM3
 de `cguweb-com/Arduino-Projects`. Hasta entonces se aplazan las mediciones y
 fotografías definitivas; esto no habilita calibración, postura ni marcha física.
+
+### Taller 2: transición al documento final (31 de agosto de 2026)
+
+Se resolvió el Taller 2 de Proyecto de Grado II mediante una matriz de 14
+páginas que audita problema, justificación, cinco objetivos específicos,
+alcance, marco y metodología. Relaciona cada objetivo con evidencia disponible,
+faltantes, métricas y estado; desarrolla una prueba crítica reproducible para
+la marcha nominal y proyecta resultados, conclusiones y acciones inmediatas.
+
+La guía original, la fuente LaTeX, el README y el PDF final están en
+`ProyectoII_Clases/31_08_2026`. El documento clasifica OE1--OE3 como parciales y
+OE4--OE5 como aún no demostrables; no afirma que RL o el robot físico estén
+terminados.

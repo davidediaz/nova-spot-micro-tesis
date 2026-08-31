@@ -111,6 +111,8 @@ Copiar esta estructura al final del archivo:
   siete valores y se ensayó el máximo aceptado, 0,80, durante 15 ciclos.
 - Se prepararon fichas cerrables para caracterización física y aprobación del
   protocolo.
+- Se consolidó la matriz de transición del anteproyecto al documento final del
+  Taller 2 en un informe reproducible de 14 páginas.
 
 ### Evidencia
 
@@ -119,6 +121,7 @@ Copiar esta estructura al final del archivo:
 - `Experimentos/analisis/liberacion_trasera_f020_r075_l080_valida_20260831/`
 - `Documentacion/FICHA_CARACTERIZACION_FISICA.md`
 - `Documentacion/FICHA_APROBACION_PROTOCOLO.md`
+- `ProyectoII_Clases/31_08_2026/INFORME_TALLER_2_31_08_2026.pdf`
 
 ### Problemas o decisiones
 
