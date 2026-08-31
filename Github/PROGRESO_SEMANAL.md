@@ -98,3 +98,38 @@ Copiar esta estructura al final del archivo:
 
 -
 ```
+
+## Semana del 25 al 31 de agosto de 2026
+
+### Realizado
+
+- Se compararon cuatro curvas de descenso en Gazebo; 0,20/0,75 quedó como
+  candidato provisional, sin congelar una línea base.
+- Se comprobó que el contacto trasero reaparece durante el ascenso, por lo que
+  el problema no responde principalmente al parámetro de descenso.
+- Se implementó una relación independiente de liberación trasera, se cribaron
+  siete valores y se ensayó el máximo aceptado, 0,80, durante 15 ciclos.
+- Se prepararon fichas cerrables para caracterización física y aprobación del
+  protocolo.
+
+### Evidencia
+
+- `Experimentos/exploracion_curvas_descenso_gazebo_20260827/`
+- `Experimentos/liberacion_trasera_cartesiana_20260831/`
+- `Experimentos/analisis/liberacion_trasera_f020_r075_l080_valida_20260831/`
+- `Documentacion/FICHA_CARACTERIZACION_FISICA.md`
+- `Documentacion/FICHA_APROBACION_PROTOCOLO.md`
+
+### Problemas o decisiones
+
+El candidato 0,80 redujo el adelanto de contacto trasero solo unos 0,016 s y
+obtuvo 23,644 % de coincidencia, inferior al 23,855 % de 0,20/0,75. Se rechaza.
+Valores desde 0,85 exceden el límite articular implementado. Las actividades de
+caracterización y aprobación vencieron sin evidencia suficiente y permanecen
+abiertas explícitamente.
+
+### Siguiente objetivo
+
+Revisar el criterio temporal de contacto y la liberación mecánica de las patas
+traseras; completar en presencia del robot la ficha física y llevar al profesor
+la ficha de decisiones del protocolo.

@@ -111,6 +111,7 @@ class DiscreteGaitController(Node):
         self.declare_parameter('crawl_fore_aft_shift', 0.008)
         self.declare_parameter('crawl_front_landing_height_ratio', 2 ** -0.5)
         self.declare_parameter('crawl_rear_landing_height_ratio', 2 ** -0.5)
+        self.declare_parameter('crawl_rear_liftoff_height_ratio', 2 ** -0.5)
         self.declare_parameter('step_phase_duration', 0.18)
         self.declare_parameter('step_samples', 32)
         self.declare_parameter('step_length', 0.016)
@@ -194,6 +195,8 @@ class DiscreteGaitController(Node):
             self.get_parameter('crawl_front_landing_height_ratio').value)
         rear_landing = float(
             self.get_parameter('crawl_rear_landing_height_ratio').value)
+        rear_liftoff = float(
+            self.get_parameter('crawl_rear_liftoff_height_ratio').value)
         duration = float(self.get_parameter('crawl_phase_duration').value)
         if samples < 16 or samples > 80 or samples % 4:
             raise ValueError('crawl_samples debe ser múltiplo de 4 entre 16 y 80')
@@ -208,13 +211,15 @@ class DiscreteGaitController(Node):
             step_height=step_height, lateral_shift=lateral_shift,
             fore_aft_shift=fore_aft_shift,
             front_landing_height_ratio=front_landing,
-            rear_landing_height_ratio=rear_landing)
+            rear_landing_height_ratio=rear_landing,
+            rear_liftoff_height_ratio=rear_liftoff)
         self.get_logger().info(
             f'Gateo cartesiano: {samples} muestras, paso={step_length:.3f} m, '
             f'elevación={step_height:.3f} m, transferencia lateral='
             f'{lateral_shift:.3f} m, longitudinal={fore_aft_shift:.3f} m, '
             f'aterrizaje delantero={front_landing:.2f}, '
             f'trasero={rear_landing:.2f}, '
+            f'despegue trasero={rear_liftoff:.2f}, '
             f'ciclo={samples * duration:.2f} s')
         return states
 

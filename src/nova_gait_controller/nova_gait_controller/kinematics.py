@@ -40,21 +40,33 @@ def crawl_sample_profile(local_sample, samples_per_leg):
     return transfer, swing_progress, subphase, False
 
 
-def crawl_swing_height(progress, subphase, landing_height_ratio):
-    """Return normalized lift with an axle-specific continuous descent.
+def crawl_swing_height(progress, subphase, landing_height_ratio,
+                       liftoff_height_ratio=2 ** -0.5):
+    """Return normalized lift with independently tunable ascent and descent.
 
     ``landing_height_ratio`` retains its original, directly observable meaning:
     it is the normalized height at 75 percent swing progress.  Instead of
     replacing only the discrete ``landing`` sample, it now determines a power
-    curve from the apex to touchdown.  A smaller ratio advances the descent and
-    a larger ratio sustains lift for longer.  The ascent is left unchanged so
-    that tuning touchdown does not alter the already validated liftoff.
+    curve from the apex to touchdown. A smaller ratio advances the descent and
+    a larger ratio sustains lift for longer. ``liftoff_height_ratio`` is the
+    normalized height at 25 percent swing progress: values above the nominal
+    sine value accelerate early clearance without changing the zero or apex.
     """
     if not 0.0 <= progress <= 1.0:
         raise ValueError('progreso de oscilación fuera de [0, 1]')
     if not 0.0 <= landing_height_ratio <= 1.0:
         raise ValueError('landing_height_ratio debe estar entre 0 y 1')
+    if not 0.0 <= liftoff_height_ratio <= 1.0:
+        raise ValueError('liftoff_height_ratio debe estar entre 0 y 1')
     if progress <= 0.5:
+        if liftoff_height_ratio == 0.0:
+            return 0.0 if progress < 0.5 else 1.0
+        if liftoff_height_ratio == 1.0:
+            return 0.0 if progress == 0.0 else 1.0
+        if liftoff_height_ratio != 2 ** -0.5:
+            ascent_progress = progress / 0.5
+            exponent = log(liftoff_height_ratio) / log(0.5)
+            return ascent_progress ** exponent
         return sin(pi * progress)
     if landing_height_ratio == 0.0:
         return 0.0
@@ -115,7 +127,8 @@ def inverse_leg(x, y, z, side):
 def cartesian_crawl(stand, samples=24, step_length=0.018, step_height=0.014,
                     lateral_shift=0.004, fore_aft_shift=0.008,
                     front_landing_height_ratio=2 ** -0.5,
-                    rear_landing_height_ratio=2 ** -0.5):
+                    rear_landing_height_ratio=2 ** -0.5,
+                    rear_liftoff_height_ratio=2 ** -0.5):
     """Generate a quasi-static crawl with explicit weight transfer.
 
     The common Cartesian shifts move the trunk away from the leg that is about
@@ -137,6 +150,8 @@ def cartesian_crawl(stand, samples=24, step_length=0.018, step_height=0.014,
         raise ValueError('front_landing_height_ratio debe estar entre 0 y 1')
     if not 0.0 <= rear_landing_height_ratio <= 1.0:
         raise ValueError('rear_landing_height_ratio debe estar entre 0 y 1')
+    if not 0.0 <= rear_liftoff_height_ratio <= 1.0:
+        raise ValueError('rear_liftoff_height_ratio debe estar entre 0 y 1')
 
     neutral = {
         'fl': forward_leg(*stand, side=1),
@@ -179,8 +194,10 @@ def cartesian_crawl(stand, samples=24, step_length=0.018, step_height=0.014,
                 landing_ratio = (front_landing_height_ratio
                                  if name in ('fl', 'fr')
                                  else rear_landing_height_ratio)
+                liftoff_ratio = (2 ** -0.5 if name in ('fl', 'fr')
+                                 else rear_liftoff_height_ratio)
                 z = z0 + step_height * crawl_swing_height(
-                    progress, subphase, landing_ratio)
+                    progress, subphase, landing_ratio, liftoff_ratio)
             legs[name] = inverse_leg(
                 x + common_x, y0 + common_y, z, sides[name])
         poses.append([*legs['fl'], *legs['fr'], *legs['rl'], *legs['rr']])

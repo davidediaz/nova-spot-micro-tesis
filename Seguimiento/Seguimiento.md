@@ -7,7 +7,7 @@ Spot Micro mediante una marcha nominal convencional y una política de
 aprendizaje por refuerzo que aplique correcciones pequeñas, acotadas y
 supervisadas.
 
-Última actualización documental: 27 de agosto de 2026, America/Bogota.
+Última actualización documental: 31 de agosto de 2026, America/Bogota.
 
 ## Punto de partida confirmado
 
@@ -262,6 +262,16 @@ entre 0,132 y 0,143 s tarde. `0,20/0,75` redujo los aterrizajes delanteros a
 candidato provisional, no una nueva línea base. Informe en
 `Experimentos/exploracion_curvas_descenso_gazebo_20260827/INFORME_COMPARACION.md`.
 
+Exploración del 31 de agosto de 2026: las transiciones mostraron que RL y RR
+recuperaban contacto 0,07--0,08 s después del despegue observado, todavía en
+ascenso. Se añadió una relación independiente de altura trasera al 25 % de la
+oscilación. La criba aceptó como máximo 0,80 (salto 0,189604 rad); desde 0,85
+se supera 0,20 rad. En Gazebo, 0,20/0,75 con ascenso 0,80 completó 15 ciclos,
+pero solo desplazó los aterrizajes traseros a -0,305/-0,309 s y obtuvo 23,644 %
+de coincidencia. El candidato fue rechazado y `gaits.yaml` conserva el nominal.
+La próxima iteración debe revisar liberación física y semántica/debounce del
+contacto; no seguir aumentando la altura temprana.
+
 ### 5. Caracterizar físicamente el robot sin energizar
 
 Estado: **no realizado**.
@@ -485,15 +495,17 @@ afirmaciones respaldadas por evidencia experimental.
 Sin modificar la longitud de paso de 18 mm, la elevación máxima de 14 mm ni la
 cadencia de 0,18 s por referencia:
 
-1. mantener provisionalmente 0,20 delante y diseñar una modificación acotada
-   que retrase el contacto trasero físico, o revisar la correspondencia entre
-   `touchdown` previsto y contacto medido;
-2. cribarla primero en coordenadas cartesianas y continuidad articular;
-3. repetir en Gazebo desde estados iniciales equivalentes frente al nominal y
-   0,20/0,75;
-4. congelar la nueva versión solo si mejora los aterrizajes sin degradar los
-   despegues;
-5. grabar y repetir entonces una línea base formal de al menos diez ciclos.
+1. revisar la correspondencia entre ausencia de mensajes, despegue real,
+   recontacto breve y `touchdown`; el falso vuelo dura aproximadamente el mismo
+   orden que el timeout de 0,10 s;
+2. diseñar una corrección de liberación trasera que no aumente la altura
+   temprana por encima de 0,80 ni exceda 0,20 rad;
+3. completar la caracterización física con
+   `Documentacion/FICHA_CARACTERIZACION_FISICA.md`;
+4. obtener las decisiones del profesor mediante
+   `Documentacion/FICHA_APROBACION_PROTOCOLO.md`;
+5. repetir en Gazebo frente a nominal y 0,20/0,75 solo después de definir una
+   hipótesis nueva y verificable.
 
 El supervisor de contactos seguirá informativo durante esta corrección. No se
 debe comenzar PPO ni mover el hardware hasta superar las etapas que lo bloquean.

@@ -31,7 +31,7 @@ cuando existe evidencia en el repositorio.
 |---:|---|---|---|---|
 | 1 | Modelo matemático nominal | 01/02–16/08 | Completada | `Documentacion/MODELO_MATEMATICO_LATEX/main.tex` |
 | 2 | Coherencia URDF/MJCF y simuladores | 01/03–14/08 | Completada | `src/` y pruebas de consistencia |
-| 3 | Caracterización física sin energizar | 19/08–28/08 | Pendiente | Inventario, fotos y tres mediciones por dimensión |
+| 3 | Caracterización física sin energizar | 19/08–28/08 | Vencida / pendiente de medición | Ficha lista; faltan fotos y tres mediciones por dimensión |
 | 4 | Actualización de URDF/MJCF medido | 31/08–04/09 | Pendiente | Tabla nominal–medido y regresión |
 | 5 | Arquitectura ROS 2, métricas y supervisor | 01/04–18/08 | Completada | 39 pruebas y nodos ROS 2 |
 | 6 | Seguridad eléctrica | 24/08–04/09 | En ejecución | OE con pull-up, prueba bajo carga y parada física |
@@ -39,13 +39,13 @@ cuando existe evidencia en el repositorio.
 | 8 | Raspberry Pi, ROS 2, red, Mega e I2C | 20/08–25/09 | En ejecución | SSH y DDS verificados; PCA9685 `0x40`, movimiento `CH5`–`CH10` |
 | 9 | Interfaz limitada articulación–PWM | 21/09–02/10 | Pendiente | Paquete, vigilancia y arranque seguro |
 | 10 | Postura, gateo y paso cartesianos | 01/05–14/08 | Completada | Código, configuración y validaciones |
-| 11 | Curva de descenso y contactos | 17/08–28/08 | En ejecución | Nueva exploración y CSV de transiciones |
+| 11 | Curva de descenso y contactos | 17/08–28/08 | Vencida / en ejecución | Ascenso trasero 0,80 rechazado; revisar liberación/contacto |
 | 12 | Líneas base finales | 31/08–11/09 | Pendiente | Dos ensayos por marcha y hashes |
 | 13 | Transferencia gradual al robot | 05/10–23/10 | Pendiente | Listas de chequeo y registros |
 | 14 | Especificación de RL acotado | 07/09–18/09 | Pendiente | Observaciones, acciones y recompensa congeladas |
 | 15 | PPO con cinco semillas | 21/09–16/10 | Pendiente | Semillas 11, 23, 37, 53 y 71 |
 | 16 | Selección e integración de política | 19/10–30/10 | Pendiente | Validación separada y supervisor |
-| 17 | Protocolo y métricas aprobadas | 18/08–28/08 | En ejecución | Aval del profesor y matriz congelada |
+| 17 | Protocolo y métricas aprobadas | 18/08–28/08 | Vencida / requiere profesor | Ficha de decisión lista; falta aval y umbrales |
 | 18 | Comparación final nominal/RL | 02/11–13/11 | Pendiente | 400 ciclos programados |
 | 19 | Análisis estadístico | 09/11–20/11 | Pendiente | Dataset, IC y tablas |
 | 20 | Integración en la tesis | 16/11–27/11 | Pendiente | PDF completo para revisión |

@@ -110,6 +110,30 @@ def test_crawl_descent_tuning_does_not_change_ascent():
     assert early == pytest.approx(late)
 
 
+def test_crawl_rear_liftoff_ratio_accelerates_clearance_without_changing_apex():
+    nominal = crawl_swing_height(0.25, 'liftoff', 0.75)
+    accelerated = crawl_swing_height(0.25, 'liftoff', 0.75, 0.90)
+    assert nominal == pytest.approx(2 ** -0.5)
+    assert accelerated == pytest.approx(0.90)
+    assert crawl_swing_height(0.0, 'liftoff', 0.75, 0.90) == 0.0
+    assert crawl_swing_height(0.5, 'flight', 0.75, 0.90) == 1.0
+
+
+def test_crawl_rear_liftoff_tuning_does_not_change_front_or_descent():
+    stand = (0.10, 0.42, -0.84)
+    nominal = cartesian_crawl(stand, front_landing_height_ratio=0.20,
+                              rear_landing_height_ratio=0.75)
+    candidate = cartesian_crawl(stand, front_landing_height_ratio=0.20,
+                                rear_landing_height_ratio=0.75,
+                                rear_liftoff_height_ratio=0.90)
+    # FL and FR references remain byte-for-byte equivalent.
+    assert [pose[0:6] for pose in nominal] == [pose[0:6] for pose in candidate]
+    # Rear landing and touchdown samples remain unchanged; only early ascent
+    # samples for RR (quarter 2) and RL (quarter 4) may differ.
+    for sample in (10, 11, 22, 23):
+        assert candidate[sample][6:12] == pytest.approx(nominal[sample][6:12])
+
+
 def test_cartesian_step_walk_is_reachable_smooth_and_periodic():
     poses = cartesian_step_walk((0.10, 0.42, -0.84))
     assert len(poses) == 32

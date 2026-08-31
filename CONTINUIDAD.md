@@ -1,6 +1,6 @@
 # Continuidad histórica de la tesis Nova Spot Micro
 
-Última actualización: 27 de agosto de 2026, America/Bogota.
+Última actualización: 31 de agosto de 2026, America/Bogota.
 
 ## Repositorio público de seguimiento
 
@@ -252,11 +252,13 @@ formal con solo dos ejecuciones.
 
 ## Próxima acción exacta
 
-Mantener provisionalmente la relación delantera 0,20 y diseñar una modificación
-acotada que retrase el contacto trasero físico; cribarla cartesianamente y
-compararla en Gazebo desde estados iniciales equivalentes frente al nominal y
-0,20/0,75. Las métricas y umbrales finales continúan pendientes de aprobación
-con los directores.
+Revisar la semántica temporal de los contactos traseros y distinguir un
+despegue físico sostenido de la ausencia de mensajes durante el timeout de
+0,10 s. El intento acotado de acelerar el ascenso trasero a 0,80 fue rechazado:
+solo mejoró el adelanto unos 0,016 s y redujo la coincidencia global. No aumentar
+este parámetro porque 0,85 ya excede el límite de 0,20 rad. En paralelo, cerrar
+la caracterización física y las decisiones del protocolo con las fichas creadas
+el 31 de agosto.
 
 ## Preparación reciente de la Raspberry Pi
 
@@ -906,3 +908,23 @@ delanteros a 0,436/0,460 s tarde, pero los traseros permanecieron unos 0,32 s
 antes. La ventaja sobre 0,20/0,80 fue solo 0,134 puntos porcentuales; por ello
 no se congeló una nueva línea base ni se modificó `gaits.yaml`. Informe y CSV:
 `Experimentos/exploracion_curvas_descenso_gazebo_20260827`.
+
+### Liberación temprana trasera descartada (31 de agosto de 2026)
+
+Al revisar las transiciones de 0,20/0,75 se observó que RL y RR recuperaban
+contacto apenas 0,07--0,08 s después del despegue medido, todavía durante el
+ascenso. Se añadió `crawl_rear_liftoff_height_ratio`, que controla la altura
+trasera al 25 % de la oscilación sin cambiar el cero ni los 14 mm máximos. El
+valor nominal mantiene exactamente el perfil anterior.
+
+La criba `Experimentos/liberacion_trasera_cartesiana_20260831` aceptó hasta
+0,80 con salto máximo de 0,189604 rad; 0,85 y superiores excedieron 0,20 rad.
+El ensayo válido con 0,20/0,75/0,80 completó 15 ciclos, ciclo medio de 4,32 s,
+cero eventos del supervisor y 23,644 % de coincidencia. Los aterrizajes RL/RR
+fueron -0,305/-0,309 s: una mejora de solo unos 0,016 s, con coincidencia menor
+que el 23,855 % de 0,20/0,75. El candidato queda rechazado y `gaits.yaml`
+permanece nominal. La tentativa previa sin fases está marcada como inválida.
+
+También se crearon `Documentacion/FICHA_CARACTERIZACION_FISICA.md` y
+`Documentacion/FICHA_APROBACION_PROTOCOLO.md`. Estas tareas vencidas continúan
+abiertas porque requieren mediciones reales y decisiones del profesor.
