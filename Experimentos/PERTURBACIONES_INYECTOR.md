@@ -12,7 +12,10 @@ ros2 launch nova_gait_controller perturbation_injector.launch.py \
   contact_dropout_probability:=0.05 noise_seed:=20260901
 ```
 
-El mismo `noise_seed` produce la misma secuencia. El retardo se mide con reloj
+El mismo `noise_seed` produce la misma secuencia. Para los contactos se ejecuta
+una instancia por cada pata (`front_left`, `front_right`, `rear_left` y
+`rear_right`), cambiando `input_contact_topic` y `output_contact_topic`. El
+retardo se mide con reloj
 monotónico y no depende de pausas del simulador. Para usar los datos en un
 ensayo, se remapean los consumidores, por ejemplo:
 
