@@ -13,5 +13,7 @@ Fecha: 1 de septiembre de 2026. Instancia única y suscriptores verificados.
 La bolsa contiene 101.648 mensajes. SHA-256 del SQLite3:
 `78c6d7f535415fccc6b1e0bf08b26695f141963d57a07409fc058c28de01a39c`.
 El análisis de movimiento quedó en `Experimentos/analisis_movimiento`.
-El analizador de contactos actual solo acepta marcadores `gateo/crawl`; se
-adaptará antes de reportar contactos de marcha paso.
+El análisis de contactos quedó en `Experimentos/analisis/cierre_paso_r1_20260901`:
+21 ciclos, coincidencia simultánea cruda 39,067 % y filtrada 34,787 %. La
+adaptación del analizador reconoce ahora `paso/step` y conserva compatibilidad
+con `gateo/crawl`.

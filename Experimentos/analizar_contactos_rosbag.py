@@ -34,18 +34,19 @@ def read_window(path, allow_open_window=False):
         if topic == '/nova/gait_command':
             msg = deserialize_message(raw, get_message(types[topic]))
             commands.append((stamp, msg.data))
-    starts = [stamp for stamp, command in commands
-              if command in ('gateo', 'crawl')]
+    starts = [(stamp, command) for stamp, command in commands
+              if command in ('gateo', 'crawl', 'paso', 'step')]
     if not starts:
-        raise RuntimeError('No hay marcador gateo/crawl')
-    start = max(starts)
+        raise RuntimeError('No hay marcador gateo/crawl/paso/step')
+    start, start_command = max(starts)
     stop = next((stamp for stamp, command in commands
                  if stamp > start and command in ('stand', 'stop')), None)
     if stop is None:
         if not allow_open_window or final_stamp is None:
             raise RuntimeError('No hay marcador stand/stop posterior')
         stop = final_stamp + 1
-    return start, stop, commands
+    mode = 'crawl' if start_command in ('gateo', 'crawl') else 'step'
+    return start, stop, commands, mode
 
 
 def diagnostic_state(data):
@@ -65,7 +66,7 @@ def diagnostic_state(data):
     return expected, filtered, raw
 
 
-def read_states(path, start, stop):
+def read_states(path, start, stop, mode):
     reader, types = open_reader(path)
     states = []
     phases = []
@@ -78,10 +79,10 @@ def read_states(path, start, stop):
         msg = deserialize_message(raw, get_message(types[topic]))
         data = json.loads(msg.data)
         if topic == '/nova/gait_phase':
-            if data.get('mode') == 'crawl':
+            if data.get('mode') == mode:
                 phases.append((stamp, data))
             continue
-        if (data.get('mode') != 'crawl'
+        if (data.get('mode') != mode
                 or not data.get('contact_plan_available', False)):
             continue
         state = diagnostic_state(data)
@@ -90,13 +91,13 @@ def read_states(path, start, stop):
     return states, phases
 
 
-def complete_cycles(phases):
+def complete_cycles(phases, samples_per_cycle):
     samples = {}
     for _, phase in phases:
         samples.setdefault(int(phase['cycle_index']), set()).add(
             int(phase['sample_index']))
     return sorted(cycle for cycle, indexes in samples.items()
-                  if indexes == set(range(24)))
+                  if indexes == set(range(samples_per_cycle)))
 
 
 def transition_events(states, component):
@@ -219,11 +220,12 @@ def main():
         help='persistencia cruda exigida para declarar pérdida estable')
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=True)
-    start, stop, commands = read_window(args.bag, args.allow_open_window)
-    states, phases = read_states(args.bag, start, stop)
+    start, stop, commands, mode = read_window(args.bag, args.allow_open_window)
+    samples_per_cycle = 24 if mode == 'crawl' else 32
+    states, phases = read_states(args.bag, start, stop, mode)
     if not states:
         raise RuntimeError('No hay diagnósticos válidos en la ventana')
-    cycles = complete_cycles(phases)
+    cycles = complete_cycles(phases, samples_per_cycle)
     filtered_states = states_with_component(states, 1)
     raw_states = states_with_component(states, 2)
     transition_rows, delay_summary = transition_analysis(filtered_states, start)
@@ -282,9 +284,9 @@ def main():
         writer.writerows(summary_rows)
 
     lines = [
-        '# Análisis de contactos medidos durante gateo', '',
+        f'# Análisis de contactos medidos durante {"gateo" if mode == "crawl" else "marcha paso"}', '',
         f'- Bolsa: `{args.bag}`.',
-        f'- Ventana gateo--stand: {(stop - start) / 1e9:.6f} s.',
+        f'- Ventana {"gateo" if mode == "crawl" else "paso"}--stand: {(stop - start) / 1e9:.6f} s.',
         f'- Ciclos completos según `/nova/gait_phase`: {len(cycles)}.',
         f'- Índices de ciclo completos: {cycles}.',
         f'- Estados comprimidos analizados: {len(states)}.',

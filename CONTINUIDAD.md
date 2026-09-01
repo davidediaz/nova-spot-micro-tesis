@@ -1189,3 +1189,10 @@ m/ciclo, 101.648 mensajes, tres `paso`, dos `stand` y cero activaciones. Roll y
 pitch máximos medios: 1,280799° y 2,485997°. El analizador de contactos aún
 requiere aceptar marcadores `paso`; no se reportan contactos de esta marcha
 hasta adaptar esa herramienta.
+
+Se adaptó `Experimentos/analizar_contactos_rosbag.py` para reconocer los modos
+`paso/step` y usar 32 muestras por ciclo, manteniendo `gateo/crawl` con 24. La
+regresión sobre gateo r7 pasó y la bolsa `cierre_paso_r1_20260901` produjo 21
+ciclos con coincidencia simultánea cruda/filtrada de 39,067/34,787 %. El
+análisis de contactos de paso quedó versionado y ya puede utilizarse en las
+siguientes repeticiones.
