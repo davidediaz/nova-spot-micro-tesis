@@ -1241,3 +1241,9 @@ simultánea filtrada fue 31,999 %. Sus análisis están en
 `Experimentos/resultados_paso_125_20260901`. La postura se conserva, pero la
 coordinación disminuye moderadamente frente a nominal; queda pendiente
 contrastar con 1,5×.
+Se completó el escalón de marcha paso a 1,5× (`velocidad_paso_150_20260901`):
+26 ciclos válidos, 3,840720 s/ciclo, 0,020921 m/ciclo, 0,005448 m/s, roll
+máximo 1,233465°, pitch máximo 2,416679°, salto articular máximo medio
+0,010987 rad y cero activaciones. La coincidencia filtrada fue 29,110 %. Los
+informes están en `Experimentos/resultados_paso_150_20260901`; 1,25× conserva
+mejor compromiso entre rapidez y coordinación.
