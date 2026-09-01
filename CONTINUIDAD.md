@@ -1182,3 +1182,10 @@ máximo 4,099865°. La línea base nominal de gateo queda cerrada en simulación
 las pérdidas traseras continúan sin demostrar vuelo y la validación física
 permanece pendiente. El PDF quedó en 57 páginas con SHA-256
 `6f80671deb2f7b67e7d8f8c3cef1f3479f58591b78f92f82b27365b27252a648`.
+
+Se inició la línea base de marcha paso con `cierre_paso_r1_20260901`. La
+repetición fue válida para movimiento: 21 ciclos, 5,760859 s/ciclo, 0,021663
+m/ciclo, 101.648 mensajes, tres `paso`, dos `stand` y cero activaciones. Roll y
+pitch máximos medios: 1,280799° y 2,485997°. El analizador de contactos aún
+requiere aceptar marcadores `paso`; no se reportan contactos de esta marcha
+hasta adaptar esa herramienta.
