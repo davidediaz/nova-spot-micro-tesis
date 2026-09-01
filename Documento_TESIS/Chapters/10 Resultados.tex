@@ -245,3 +245,12 @@ Aunque el supervisor no se activó, la pérdida de coordinación y el aumento de
 salto a 2,00$\times$ indican proximidad al umbral operativo. Se propone
 1,25$\times$ como operación rápida conservadora; 1,50$\times$ requiere
 validación adicional y 2,00$\times$ se conserva como condición de estrés.
+
+También se ejecutó una prueba provocada de seguridad integrada. Una referencia
+\texttt{JointTrajectory} con una articulación inexistente fue rechazada por el
+controlador y detectada por el supervisor, que registró
+\texttt{nombres\_articulares\_invalidos,articulacion\_desconocida} y ordenó la transición
+a \texttt{stand}. La evidencia se conserva en
+\texttt{Experimentos/prueba\_supervisor\_referencia\_invalida\_20260901}. Este resultado
+demuestra la parada preventiva por referencia inválida; las paradas de datos
+vencidos, contacto y margen siguen pendientes.

@@ -1247,3 +1247,10 @@ máximo 1,233465°, pitch máximo 2,416679°, salto articular máximo medio
 0,010987 rad y cero activaciones. La coincidencia filtrada fue 29,110 %. Los
 informes están en `Experimentos/resultados_paso_150_20260901`; 1,25× conserva
 mejor compromiso entre rapidez y coordinación.
+Se demostró en integración la parada preventiva del supervisor ante una
+trayectoria inválida. Tres mensajes con `bad_joint` fueron rechazados por el
+controlador; el supervisor registró `nombres_articulares_invalidos` y
+`articulacion_desconocida`, publicó la parada y el controlador pasó a `stand`.
+El informe reproducible quedó en
+`Experimentos/prueba_supervisor_referencia_invalida_20260901`. Las paradas por
+datos vencidos, contacto y margen continúan pendientes.
