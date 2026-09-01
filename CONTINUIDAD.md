@@ -1,6 +1,6 @@
 # Continuidad histórica de la tesis Nova Spot Micro
 
-Última actualización: 31 de agosto de 2026, America/Bogota.
+Última actualización: 1 de septiembre de 2026, America/Bogota.
 
 ## Repositorio público de seguimiento
 
@@ -259,6 +259,16 @@ solo mejoró el adelanto unos 0,016 s y redujo la coincidencia global. No aument
 este parámetro porque 0,85 ya excede el límite de 0,20 rad. En paralelo, cerrar
 la caracterización física y las decisiones del protocolo con las fichas creadas
 el 31 de agosto.
+
+Preparación del 1 de septiembre de 2026: el diagnóstico sincronizado incorpora
+ahora `raw_observed_contacts` y `filtered_observed_contacts`, conservando
+`observed_contacts` como alias compatible del estado filtrado. El analizador de
+bolsas distingue ambos estados, informa su coincidencia por separado y sigue
+aceptando las bolsas históricas que no contienen el campo crudo. Pasaron 49
+pruebas y se reprodujo sin cambio numérico el resultado histórico de la bolsa
+del 31 de agosto (23,643955 %). La próxima acción sigue siendo grabar una bolsa
+nueva de al menos diez ciclos para cuantificar el efecto real del timeout y el
+debounce; esta preparación no valida todavía sus valores provisionales.
 
 ## Preparación reciente de la Raspberry Pi
 

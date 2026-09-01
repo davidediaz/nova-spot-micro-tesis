@@ -55,6 +55,11 @@ class ContactComparator(Node):
             self.phase and self.phase.get('contact_plan_available', False))
         expected = self.phase.get('expected_contacts', []) if plan_available else []
         observed = measured.get('observed_contacts', [])
+        feet = measured.get('feet', {})
+        raw_observed = [
+            leg for leg in ('fl', 'fr', 'rl', 'rr')
+            if bool(feet.get(leg, {}).get('raw_contact', False))
+        ]
         sensors_valid = bool(measured.get('all_sensors_valid', False))
         diagnostic = {
             'stamp_sec': measured.get('stamp_sec'),
@@ -65,6 +70,8 @@ class ContactComparator(Node):
             'cycle_index': self.phase.get('cycle_index') if self.phase else None,
             'sample_index': self.phase.get('sample_index') if self.phase else None,
             'expected_contacts': expected,
+            'raw_observed_contacts': raw_observed,
+            'filtered_observed_contacts': observed,
             'observed_contacts': observed,
             **compare_contact_sets(expected, observed),
         }

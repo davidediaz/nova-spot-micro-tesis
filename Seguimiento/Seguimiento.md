@@ -7,7 +7,7 @@ Spot Micro mediante una marcha nominal convencional y una política de
 aprendizaje por refuerzo que aplique correcciones pequeñas, acotadas y
 supervisadas.
 
-Última actualización documental: 31 de agosto de 2026, America/Bogota.
+Última actualización documental: 1 de septiembre de 2026, America/Bogota.
 
 ## Punto de partida confirmado
 
@@ -281,6 +281,15 @@ pero solo desplazó los aterrizajes traseros a -0,305/-0,309 s y obtuvo 23,644 %
 de coincidencia. El candidato fue rechazado y `gaits.yaml` conserva el nominal.
 La próxima iteración debe revisar liberación física y semántica/debounce del
 contacto; no seguir aumentando la altura temprana.
+
+Preparación del 1 de septiembre de 2026: `/nova/contact_diagnostics` conserva
+el estado observado compatible y añade explícitamente los conjuntos crudo y
+filtrado. `Experimentos/analizar_contactos_rosbag.py` calcula ahora la
+coincidencia de ambos sin dejar de aceptar bolsas históricas. Pasaron 49 pruebas
+y la regresión sobre la bolsa válida del 31 de agosto reprodujo 23,643955 % de
+coincidencia. Falta la bolsa nueva de al menos diez ciclos: sin ella todavía no
+se consideran caracterizados el timeout de 0,10 s ni los debounce de 0,12/0,03
+s.
 
 ### 5. Caracterizar físicamente el robot sin energizar
 

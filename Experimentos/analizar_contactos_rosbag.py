@@ -48,6 +48,23 @@ def read_window(path, allow_open_window=False):
     return start, stop, commands
 
 
+def diagnostic_state(data):
+    """Return expected, filtered and raw contact tuples.
+
+    Bags recorded before raw contact was added remain analyzable: their raw
+    tuple is ``None`` and only the historical filtered/observed result is
+    reported.
+    """
+    expected = tuple(leg in data.get('expected_contacts', []) for leg in LEGS)
+    filtered_names = data.get(
+        'filtered_observed_contacts', data.get('observed_contacts', []))
+    filtered = tuple(leg in filtered_names for leg in LEGS)
+    raw_names = data.get('raw_observed_contacts')
+    raw = (tuple(leg in raw_names for leg in LEGS)
+           if raw_names is not None else None)
+    return expected, filtered, raw
+
+
 def read_states(path, start, stop):
     reader, types = open_reader(path)
     states = []
@@ -67,9 +84,7 @@ def read_states(path, start, stop):
         if (data.get('mode') != 'crawl'
                 or not data.get('contact_plan_available', False)):
             continue
-        expected = tuple(leg in data.get('expected_contacts', []) for leg in LEGS)
-        observed = tuple(leg in data.get('observed_contacts', []) for leg in LEGS)
-        state = (expected, observed)
+        state = diagnostic_state(data)
         if not states or state != states[-1][1]:
             states.append((stamp, state))
     return states, phases
@@ -96,6 +111,12 @@ def transition_events(states, component):
                 events[leg].append((stamp, current[index]))
         previous = current
     return events
+
+
+def states_with_component(states, component):
+    """Drop samples where an optional contact representation is unavailable."""
+    return [(stamp, (state[0], state[component])) for stamp, state in states
+            if state[component] is not None]
 
 
 def pair_transitions(expected_events, observed_events, max_delta_ns=1_800_000_000):
@@ -157,8 +178,10 @@ def main():
     if not states:
         raise RuntimeError('No hay diagnósticos válidos en la ventana')
     cycles = complete_cycles(phases)
-    expected_events = transition_events(states, 0)
-    observed_events = transition_events(states, 1)
+    filtered_states = states_with_component(states, 1)
+    raw_states = states_with_component(states, 2)
+    expected_events = transition_events(filtered_states, 0)
+    observed_events = transition_events(filtered_states, 1)
     transition_rows = []
     delay_summary = {}
     for leg in LEGS:
@@ -179,7 +202,12 @@ def main():
             delay_summary[(leg, name)] = values
     write_csv(args.output / 'transiciones_contacto.csv', transition_rows)
 
-    total, all_match, totals, matches = agreement(states, start, stop)
+    total, all_match, totals, matches = agreement(filtered_states, start, stop)
+    raw_total = raw_all_match = 0.0
+    raw_totals = raw_matches = None
+    if raw_states:
+        raw_total, raw_all_match, raw_totals, raw_matches = agreement(
+            raw_states, start, stop)
     summary_rows = []
     for leg in LEGS:
         for transition in ('liftoff', 'landing'):
@@ -207,7 +235,7 @@ def main():
         f'- Ciclos completos según `/nova/gait_phase`: {len(cycles)}.',
         f'- Índices de ciclo completos: {cycles}.',
         f'- Estados comprimidos analizados: {len(states)}.',
-        f'- Coincidencia simultánea de las cuatro patas: '
+        f'- Coincidencia simultánea filtrada de las cuatro patas: '
         f'{100.0 * all_match / total:.3f} %.', '',
         '## Resultado por pata', '',
         '| Pata | Coincidencia | Retardo despegue medio | Retardo aterrizaje medio |',
@@ -221,6 +249,22 @@ def main():
         lines.append(
             f'| {leg} | {100.0 * matches[leg] / totals[leg]:.3f} % '
             f'| {lift_text} | {land_text} |')
+    if raw_states:
+        lines.extend(['', '## Comparación crudo frente a filtrado', '',
+            f'- Coincidencia simultánea cruda: '
+            f'{100.0 * raw_all_match / raw_total:.3f} %.',
+            f'- Coincidencia simultánea filtrada: '
+            f'{100.0 * all_match / total:.3f} %.', '',
+            '| Pata | Coincidencia cruda | Coincidencia filtrada |',
+            '|---|---:|---:|'])
+        for leg in LEGS:
+            lines.append(
+                f'| {leg} | {100.0 * raw_matches[leg] / raw_totals[leg]:.3f} % '
+                f'| {100.0 * matches[leg] / totals[leg]:.3f} % |')
+    else:
+        lines.extend(['',
+            'Esta bolsa no contiene `raw_observed_contacts`; corresponde al '
+            'formato histórico y solo permite analizar el estado observado.'])
     lines.extend(['',
         'Un retardo positivo indica que la transición medida ocurrió después '
         'de la prevista; uno negativo indica que ocurrió antes. Los pares se '
@@ -234,6 +278,8 @@ def main():
         'duration_s': (stop - start) / 1e9,
         'complete_cycles': len(cycles),
         'all_feet_agreement_percent': 100.0 * all_match / total,
+        'raw_all_feet_agreement_percent': (
+            100.0 * raw_all_match / raw_total if raw_states else None),
         'output': str(args.output),
         'commands': commands,
     }, indent=2))
