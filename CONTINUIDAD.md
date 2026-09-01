@@ -1284,3 +1284,9 @@ ciclos, 4,319997 s/ciclo, 0,023685 m/ciclo, 0,005483 m/s, salto articular
 máximo medio 0,019653 rad, cero activaciones y coincidencia filtrada 13,404 %.
 El resultado es prácticamente igual a 0,80 (13,458 %); se conserva 0,80 por
 su mayor margen cinemático y no se demuestra vuelo trasero sostenido.
+Se generó `Experimentos/comparacion_contactos_liberacion_20260901.md`, que
+compara nominal r7, 0,75 y 0,80 con la misma herramienta. Los retardos
+delanteros permanecen alrededor de 0,26 s/0,54 s y las traseras no aportan
+pares de despegue válidos; la limitación de contacto trasero sigue abierta.
+También se fijó `Experimentos/PROTOCOLO_PPO_RESIDUAL.md`; no existe todavía una
+política PPO entrenada ni comparación nominal--PPO.
