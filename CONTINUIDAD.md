@@ -1335,3 +1335,10 @@ confirmó el candidato: 18 ciclos, 4,320014 s/ciclo, 0,021639 m/ciclo,
 episodios (máximos RL/RR 0,311/0,348 s), roll 2,153787°, pitch 4,261194°,
 salto 0,019684 rad y cero activaciones. La configuración queda confirmada en
 simulación; la validación física se mantiene pendiente.
+Se ejecutó la criba de perturbaciones deterministas de masa, amortiguamiento y
+fricción articular (`Experimentos/perturbaciones_nominales_20260902`). Cubrió
+14 escenarios; la mayor variación del par máximo fue -8,997 % en paso con masa
+-10 %. Se dejó además el protocolo `PROTOCOLO_PERTURBACIONES_GAZEBO.md` para
+fricción de suelo, empujes, ruido y retardos. Estas últimas perturbaciones aún
+no se ejecutan porque falta un inyector Gazebo reproducible; no se presentan
+como estabilidad demostrada.
