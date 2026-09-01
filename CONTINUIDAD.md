@@ -1267,3 +1267,9 @@ observable del watchdog; se conserva como intento no concluyente y no como
 resultado. La parada por referencia inválida sigue siendo la única parada
 integrada demostrada. El siguiente diagnóstico deberá instrumentar directamente
 el callback o usar un nodo de prueba dedicado con reloj controlado.
+Se cerró la criba cartesiana de liberación trasera en
+`Experimentos/liberacion_trasera_cartesiana_20260901`. Las relaciones 0,707,
+0,75 y 0,80 cumplieron el límite de salto articular (<0,20 rad), mientras
+0,85--1,00 lo excedieron y fueron descartadas. Es una selección cinemática,
+no una demostración de despegue; los tres candidatos deben compararse en
+Gazebo contra la configuración nominal.
