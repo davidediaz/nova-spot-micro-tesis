@@ -1148,3 +1148,9 @@ hubo activaciones del supervisor. La prueba reprodujo la limitación conocida:
 RL y RR solo perdieron contacto hasta 0,080615/0,088292 s, por debajo de 0,12 s.
 La bolsa local contiene 101.370 mensajes; informe, CSV, gráficas y registro están
 en las carpetas `cierre_gateo_r1_20260901`. Cuenta como repetición 1 de 5.
+
+La repetición 2 se intentó el mismo día, pero quedó inválida: el comando se
+publicó antes de la activación completa del controlador, la bolsa registró cero
+fases y una sola trayectoria. Se conserva con `ENSAYO_INVALIDO.md` y no se
+incorpora a métricas. El procedimiento se ajustó para verificar nodos y
+suscriptores antes de iniciar cada repetición.
