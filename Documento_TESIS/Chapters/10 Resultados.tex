@@ -14,6 +14,20 @@ por Gazebo o MuJoCo.
 
 \section{Línea base de gateo con cadencia corregida}
 
+\section{Consolidación de cinco repeticiones de gateo}
+
+Se consolidaron los ciclos posteriores al transitorio de cinco ejecuciones
+válidas en Gazebo (`r1`, `r3`, `r4`, `r6` y `r7`), para un total de 191 ciclos.
+El avance medio fue $0{,}023955$ m/ciclo (desviación estándar $0{,}000621$),
+la velocidad media $0{,}005545$ m/s y los máximos medios de roll y pitch fueron
+$2{,}074196$ y $4{,}099865$ grados, respectivamente. Ninguna ejecución activó
+el supervisor. Los intentos inválidos se excluyeron y conservaron sus causas
+en los registros de las bolsas.
+
+La consolidación demuestra repetibilidad de la línea base nominal en Gazebo,
+pero no equivale a validación física. Además, las pérdidas de contacto traseras
+continuaron por debajo de $0{,}12$ s y no demuestran vuelo sostenido.
+
 La nueva línea base de Gazebo completó 13 ciclos y su repetición independiente
 otros 13, sin activaciones del supervisor. El ciclo medio de la primera
 ejecución fue 4,320013~s. Al comparar los ciclos 2--13 de ambas ejecuciones, las

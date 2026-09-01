@@ -1172,3 +1172,13 @@ La repetición `cierre_gateo_r6_20260901` fue válida: se capturaron tres
 avance 0,023850 m/ciclo, 129.717 mensajes y cero activaciones del supervisor.
 Cuenta como repetición 4 válida de 5; los análisis y el registro quedaron
 versionados y las pérdidas traseras siguieron por debajo de 0,12 s.
+
+Con `cierre_gateo_r7_20260901` se completó la quinta repetición válida: 29
+ciclos, 4,320002 s/ciclo, 0,023824 m/ciclo, 101.130 mensajes, cuatro órdenes
+capturadas y cero activaciones. La campaña consolidó 191 ciclos de régimen
+permanente de `r1`, `r3`, `r4`, `r6` y `r7`: avance medio 0,023955 m/ciclo,
+desviación 0,000621 m, velocidad 0,005545 m/s, roll máximo 2,074196° y pitch
+máximo 4,099865°. La línea base nominal de gateo queda cerrada en simulación;
+las pérdidas traseras continúan sin demostrar vuelo y la validación física
+permanece pendiente. El PDF quedó en 57 páginas con SHA-256
+`6f80671deb2f7b67e7d8f8c3cef1f3479f58591b78f92f82b27365b27252a648`.
