@@ -1290,3 +1290,8 @@ delanteros permanecen alrededor de 0,26 s/0,54 s y las traseras no aportan
 pares de despegue válidos; la limitación de contacto trasero sigue abierta.
 También se fijó `Experimentos/PROTOCOLO_PPO_RESIDUAL.md`; no existe todavía una
 política PPO entrenada ni comparación nominal--PPO.
+Se consolidó la matriz de estado de los cinco puntos de la ruta en
+`Experimentos/CIERRE_RUTA_5_PUNTOS_20260901.md`. La comparación de contactos y
+la selección provisional de 0,80 están completadas; el supervisor aún requiere
+un nodo de prueba aislado para margen/contacto/datos, PPO está preparado pero no
+entrenado y la caracterización física depende de acceso y mediciones del robot.
