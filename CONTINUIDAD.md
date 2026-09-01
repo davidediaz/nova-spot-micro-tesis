@@ -1307,3 +1307,7 @@ pruebas automáticas. El primer ensayo Gazebo de esa trayectoria quedó inválid
 porque la bolsa no capturó órdenes `gateo`; se conserva con
 `ENSAYO_INVALIDO.md` y no se incorporan métricas. Debe repetirse verificando
 suscriptores antes de publicar.
+El segundo intento de la trayectoria 0,80/1,25 también quedó inválido: aunque
+el controlador ejecutó tres órdenes `gateo` y pasó a `stand`, la bolsa no
+conservó el marcador `stand` posterior. Se mantiene sin métricas y se ajustará
+el protocolo de cierre verificando el suscriptor del grabador antes de publicar.
