@@ -125,6 +125,19 @@ no fue singular, aunque presentó una dirección de menor manipulabilidad. El
 jacobiano analítico se contrastó con diferencias centrales y la conversión
 fuerza--par conservó potencia virtual dentro de la tolerancia numérica.
 
+La Figura~\ref{fig:workspace-singularidades} resume una exploración uniforme
+de los límites articulares de una pata. El color representa el menor valor
+singular del jacobiano; las configuraciones próximas a cero son las más
+cercanas a una pérdida de manipulabilidad.
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=0.98\textwidth]{Resultados/workspace_singularidades.png}
+\caption{Workspace cinemático y distribución del número de condición del
+Jacobiano para una pata izquierda. Fuente: elaboración propia.}
+\label{fig:workspace-singularidades}
+\end{figure}
+
 \section{Dinámica nominal}
 
 El modelo de base flotante se escribió como
@@ -169,6 +182,20 @@ propiedades internas del modelo, no la exactitud de los pares físicos.
 \section{Actuador, contacto y estabilidad}
 
 El MG996R se representó mediante una envolvente nominal lineal de par--velocidad:
+
+Las velocidades de las referencias nominales se obtuvieron por diferencias
+finitas entre muestras consecutivas. La Figura~\ref{fig:velocidades-articulares}
+indica que la velocidad máxima permanece por debajo del límite provisional del
+URDF (6,981~rad/s); es una verificación de referencias en simulación, no una
+caracterización del servo bajo carga.
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=0.95\textwidth]{Resultados/velocidades_articulares.png}
+\caption{Velocidad articular máxima y media de las referencias nominales de
+gateo y paso. La línea discontinua indica el límite de velocidad del URDF.}
+\label{fig:velocidades-articulares}
+\end{figure}
 
 \begin{equation}
 |\tau_{\max}(\omega,V)|=\tau_{\mathrm{stall}}(V)
