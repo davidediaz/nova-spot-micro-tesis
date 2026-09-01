@@ -146,3 +146,35 @@ de acoples debe verificarse antes de energizar o ejecutar una marcha.
 Revisar el criterio temporal de contacto y la liberación mecánica de las patas
 traseras; completar en presencia del robot la ficha física y llevar al profesor
 la ficha de decisiones del protocolo.
+
+## Semana del 1 al 6 de septiembre de 2026
+
+### Realizado
+
+- Se grabó un ensayo nominal válido de 24 ciclos con contacto crudo y filtrado,
+  fase, IMU, estabilidad, movimiento y seguridad.
+- Se amplió el analizador para medir retardos y duración de cada episodio crudo
+  sin contacto, manteniendo compatibilidad con bolsas históricas.
+- Se preparó una sección de resultados utilizable en la tesis, con método,
+  tabla, interpretación y limitaciones.
+
+### Evidencia
+
+- `Experimentos/rosbag2/contactos_debounce_nominal_valido_20260901_0828/REGISTRO_ENSAYO.md`
+- `Experimentos/analisis/contactos_debounce_nominal_valido_20260901_0828/`
+- `Experimentos/analisis_movimiento/contactos_debounce_nominal_valido_20260901_0828/`
+- `Documentacion/RESULTADOS_CONTACTO_CRUDO_FILTRADO_2026-09-01.md`
+
+### Problemas o decisiones
+
+La primera tentativa almacenó órdenes pero cero fases y quedó marcada como
+inválida. En el ensayo aceptado, ninguna interrupción trasera superó 0,09 s ni
+el debounce de 0,12 s. Se concluye que RL/RR no ejecutan vuelo sostenido; el
+menor porcentaje filtrado representa una clasificación conservadora, no un
+empeoramiento mecánico.
+
+### Siguiente objetivo
+
+Diseñar una hipótesis de liberación trasera distinta de aumentar la altura
+temprana y exigir como criterio observable una pérdida filtrada sostenida, sin
+exceder el salto articular de 0,20 rad.

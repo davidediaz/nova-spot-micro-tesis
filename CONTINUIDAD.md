@@ -270,6 +270,23 @@ del 31 de agosto (23,643955 %). La próxima acción sigue siendo grabar una bols
 nueva de al menos diez ciclos para cuantificar el efecto real del timeout y el
 debounce; esta preparación no valida todavía sus valores provisionales.
 
+Ensayo completado el 1 de septiembre de 2026: la bolsa válida
+`contactos_debounce_nominal_valido_20260901_0828` contiene 24 ciclos completos,
+105,522328 s entre marcadores, 79.790 mensajes y cero eventos del supervisor.
+La coincidencia simultánea fue 20,638810 % para el estado crudo y 13,621271 %
+para el filtrado. FL/FR presentaron pérdidas crudas cercanas a 0,94 s; RL/RR
+solo interrupciones de 0,074645/0,073803 s de media y máximos menores de 0,09 s.
+Ningún episodio trasero superó los 0,12 s exigidos para confirmar vuelo.
+
+Conclusión vigente: las transiciones traseras observadas anteriormente eran
+interrupciones breves asociadas a la semántica timeout/recontacto y no evidencia
+de despegue físico sostenido. El gateo avanzó 0,023558 m/ciclo a 0,005453 m/s,
+pero el patrón físico todavía no coincide con el plan FL--RR--FR--RL. La
+redacción preparada para la tesis está en
+`Documentacion/RESULTADOS_CONTACTO_CRUDO_FILTRADO_2026-09-01.md`. La tentativa
+`contactos_debounce_nominal_20260901_0823` es inválida por no contener fases y
+se conserva únicamente para trazabilidad.
+
 ## Preparación reciente de la Raspberry Pi
 
 El 18 de agosto de 2026 se verificó una Raspberry Pi con arquitectura `arm64`,

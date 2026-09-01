@@ -164,30 +164,15 @@ def write_csv(path, rows):
         writer.writerows(rows)
 
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('bag', type=Path)
-    parser.add_argument('output', type=Path)
-    parser.add_argument(
-        '--allow-open-window', action='store_true',
-        help='usar el final de la bolsa si falta stand/stop (solo exploración)')
-    args = parser.parse_args()
-    args.output.mkdir(parents=True, exist_ok=True)
-    start, stop, commands = read_window(args.bag, args.allow_open_window)
-    states, phases = read_states(args.bag, start, stop)
-    if not states:
-        raise RuntimeError('No hay diagnósticos válidos en la ventana')
-    cycles = complete_cycles(phases)
-    filtered_states = states_with_component(states, 1)
-    raw_states = states_with_component(states, 2)
-    expected_events = transition_events(filtered_states, 0)
-    observed_events = transition_events(filtered_states, 1)
-    transition_rows = []
-    delay_summary = {}
+def transition_analysis(states, start):
+    expected_events = transition_events(states, 0)
+    observed_events = transition_events(states, 1)
+    rows = []
+    summary = {}
     for leg in LEGS:
         pairs = pair_transitions(expected_events[leg], observed_events[leg])
         for expected_stamp, target, observed_stamp, delay in pairs:
-            transition_rows.append({
+            rows.append({
                 'leg': leg,
                 'transition': 'landing' if target else 'liftoff',
                 'expected_time_s': (expected_stamp - start) / 1e9,
@@ -197,10 +182,78 @@ def main():
                 'paired': observed_stamp is not None,
             })
         for name, target in (('liftoff', False), ('landing', True)):
-            values = [delay for _, paired_target, _, delay in pairs
-                      if paired_target == target and delay is not None]
-            delay_summary[(leg, name)] = values
+            summary[(leg, name)] = [
+                delay for _, paired_target, _, delay in pairs
+                if paired_target == target and delay is not None]
+    return rows, summary
+
+
+def contact_loss_episodes(states, stop):
+    """Measure bounded false intervals for each observed contact tuple."""
+    episodes = {leg: [] for leg in LEGS}
+    starts = {leg: None for leg in LEGS}
+    for stamp, (_, observed) in states:
+        for index, leg in enumerate(LEGS):
+            if not observed[index] and starts[leg] is None:
+                starts[leg] = stamp
+            elif observed[index] and starts[leg] is not None:
+                episodes[leg].append((starts[leg], stamp))
+                starts[leg] = None
+    # An interval still open at stand is not a demonstrated recontact and is
+    # kept explicitly as unbounded instead of inventing a landing transition.
+    for leg in LEGS:
+        if starts[leg] is not None:
+            episodes[leg].append((starts[leg], None))
+    return episodes
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('bag', type=Path)
+    parser.add_argument('output', type=Path)
+    parser.add_argument(
+        '--allow-open-window', action='store_true',
+        help='usar el final de la bolsa si falta stand/stop (solo exploración)')
+    parser.add_argument(
+        '--off-debounce', type=float, default=0.12,
+        help='persistencia cruda exigida para declarar pérdida estable')
+    args = parser.parse_args()
+    args.output.mkdir(parents=True, exist_ok=True)
+    start, stop, commands = read_window(args.bag, args.allow_open_window)
+    states, phases = read_states(args.bag, start, stop)
+    if not states:
+        raise RuntimeError('No hay diagnósticos válidos en la ventana')
+    cycles = complete_cycles(phases)
+    filtered_states = states_with_component(states, 1)
+    raw_states = states_with_component(states, 2)
+    transition_rows, delay_summary = transition_analysis(filtered_states, start)
     write_csv(args.output / 'transiciones_contacto.csv', transition_rows)
+    raw_delay_summary = None
+    if raw_states:
+        raw_rows, raw_delay_summary = transition_analysis(raw_states, start)
+        write_csv(args.output / 'transiciones_contacto_crudo.csv', raw_rows)
+        raw_episodes = contact_loss_episodes(raw_states, stop)
+        episode_rows = []
+        for leg in LEGS:
+            for episode_start, episode_stop in raw_episodes[leg]:
+                duration = ((episode_stop - episode_start) / 1e9
+                            if episode_stop is not None else None)
+                episode_rows.append({
+                    'leg': leg,
+                    'start_time_s': (episode_start - start) / 1e9,
+                    'end_time_s': ((episode_stop - start) / 1e9
+                                   if episode_stop is not None else ''),
+                    'duration_s': duration if duration is not None else '',
+                    'exceeds_off_debounce': (
+                        duration >= args.off_debounce
+                        if duration is not None else ''),
+                    'bounded_by_recontact': episode_stop is not None,
+                })
+        with (args.output / 'episodios_sin_contacto_crudo.csv').open(
+                'w', newline='', encoding='utf-8') as handle:
+            writer = csv.DictWriter(handle, fieldnames=list(episode_rows[0]))
+            writer.writeheader()
+            writer.writerows(episode_rows)
 
     total, all_match, totals, matches = agreement(filtered_states, start, stop)
     raw_total = raw_all_match = 0.0
@@ -261,6 +314,37 @@ def main():
             lines.append(
                 f'| {leg} | {100.0 * raw_matches[leg] / raw_totals[leg]:.3f} % '
                 f'| {100.0 * matches[leg] / totals[leg]:.3f} % |')
+        lines.extend(['',
+            '| Pata | Transición | Retardo crudo medio | Retardo filtrado medio |',
+            '|---|---|---:|---:|'])
+        for leg in LEGS:
+            for transition in ('liftoff', 'landing'):
+                raw_values = raw_delay_summary[(leg, transition)]
+                filtered_values = delay_summary[(leg, transition)]
+                raw_text = (f'{sum(raw_values) / len(raw_values):.6f} s'
+                            if raw_values else 'sin pares')
+                filtered_text = (
+                    f'{sum(filtered_values) / len(filtered_values):.6f} s'
+                    if filtered_values else 'sin pares')
+                lines.append(
+                    f'| {leg} | {transition} | {raw_text} | {filtered_text} |')
+        lines.extend(['',
+            f'Persistencia cruda exigida para declarar vuelo filtrado: '
+            f'{args.off_debounce:.3f} s.', '',
+            '| Pata | Episodios acotados | Duración media | Duración máxima '
+            '| Episodios que superan el umbral |',
+            '|---|---:|---:|---:|---:|'])
+        for leg in LEGS:
+            durations = [(end - begin) / 1e9 for begin, end in raw_episodes[leg]
+                         if end is not None]
+            exceeds = sum(value >= args.off_debounce for value in durations)
+            mean_text = (f'{sum(durations) / len(durations):.6f} s'
+                         if durations else 'sin episodios')
+            max_text = (f'{max(durations):.6f} s'
+                        if durations else 'sin episodios')
+            lines.append(
+                f'| {leg} | {len(durations)} | {mean_text} | {max_text} '
+                f'| {exceeds} |')
     else:
         lines.extend(['',
             'Esta bolsa no contiene `raw_observed_contacts`; corresponde al '

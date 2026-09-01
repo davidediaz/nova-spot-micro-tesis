@@ -291,6 +291,17 @@ coincidencia. Falta la bolsa nueva de al menos diez ciclos: sin ella todavía no
 se consideran caracterizados el timeout de 0,10 s ni los debounce de 0,12/0,03
 s.
 
+Ensayo formal completado el 1 de septiembre de 2026: 24 ciclos nominales y cero
+eventos del supervisor. La coincidencia cruda/filtrada fue 20,639/13,621 %. Las
+pérdidas crudas RL/RR duraron en promedio 0,074645/0,073803 s, con máximos
+menores de 0,09 s y ningún episodio por encima del debounce de 0,12 s. El vuelo
+trasero aparente queda reclasificado como interrupción breve, no como despegue
+sostenido. Evidencia en
+`Documentacion/RESULTADOS_CONTACTO_CRUDO_FILTRADO_2026-09-01.md` y en la bolsa
+`contactos_debounce_nominal_valido_20260901_0828`. La trayectoria nominal sigue
+sin producir despegue trasero confirmado; no habilitar aún las paradas del
+supervisor basadas en contacto.
+
 ### 5. Caracterizar físicamente el robot sin energizar
 
 Estado: **bloqueado temporalmente por ensamble incompleto**.
@@ -547,9 +558,11 @@ Sin modificar la longitud de paso de 18 mm, la elevación máxima de 14 mm ni la
 cadencia de 0,18 s por referencia:
 
 1. revisar la correspondencia entre ausencia de mensajes, despegue real,
-   recontacto breve y `touchdown`; el falso vuelo dura aproximadamente el mismo
-   orden que el timeout de 0,10 s;
-2. diseñar una corrección de liberación trasera que no aumente la altura
+   recontacto breve y `touchdown`; **completado el 1 de septiembre**: los
+   episodios traseros crudos duran menos de 0,09 s y no constituyen vuelo
+   sostenido;
+2. diseñar una corrección nueva de liberación trasera que produzca una pérdida
+   filtrada sostenida sin aumentar la altura
    temprana por encima de 0,80 ni exceda 0,20 rad;
 3. completar la caracterización física con
    `Documentacion/FICHA_CARACTERIZACION_FISICA.md`;
