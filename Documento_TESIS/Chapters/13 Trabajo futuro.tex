@@ -1,0 +1,22 @@
+\chapter{Trabajo pendiente y futuro}
+
+El trabajo inmediato consiste en completar el ensamble y la caracterización
+física, medir geometría y masas, identificar los servos sustituidos y verificar
+holguras y topes. Después se debe cerrar el diseño eléctrico, implementar una
+parada física mediante OE, calibrar cada MG996R y validar progresivamente un
+servo, una pata y el robot suspendido.
+
+La marcha nominal física se transferirá solo cuando se cumplan esas condiciones.
+Las pruebas avanzarán desde postura con soporte hasta un paso, un ciclo de
+gateo y marcha continua, registrando orientación, potencia, intervenciones y
+desplazamiento.
+
+En simulación se investigará una liberación trasera que produzca una pérdida
+filtrada sostenida sin aumentar la altura temprana por encima de 0,80 ni superar
+un salto articular de 0,20~rad. El supervisor deberá someterse a pruebas
+provocadas de pérdida de datos, contacto inconsistente y margen negativo antes
+de habilitar estas paradas.
+
+Finalmente se formulará y entrenará la política PPO como una capa de
+correcciones acotadas. La comparación final conservará las semillas y tamaños
+de muestra definidos y evaluará la misma marcha con y sin corrección aprendida.

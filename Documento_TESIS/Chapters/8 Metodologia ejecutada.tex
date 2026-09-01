@@ -1,0 +1,76 @@
+\chapter{Metodología ejecutada}
+
+El proyecto se desarrolló como una investigación aplicada, cuantitativa y
+experimental, acompañada por actividades de desarrollo tecnológico. Se empleó
+una ruta combinada de diseño de prototipo, modelado y simulación, y preparación
+de una comparación de aprendizaje por refuerzo. Cada etapa produjo artefactos
+verificables: código versionado, configuraciones, pruebas, bolsas de datos,
+tablas, gráficas, decisiones técnicas e informes.
+
+\section{Trazabilidad y control de versiones}
+
+El código y la documentación se mantuvieron en un repositorio Git. Para cada
+ensayo se registraron la fecha, la configuración de marcha, la versión del
+código, los tópicos almacenados y los hashes SHA-256 de los archivos críticos.
+Las tentativas con nodos duplicados, ausencia de marcadores o pérdida de fases
+se conservaron como evidencia inválida y no se mezclaron con los resultados
+aceptados.
+
+\section{Modelado y verificación de software}
+
+Se implementaron la cinemática directa e inversa de cada pata, transformaciones
+homogéneas, jacobianos y componentes de un modelo dinámico nominal. La geometría
+se integró en descripciones URDF/SDF para Gazebo y MJCF para MuJoCo. La
+verificación incluyó alcanzabilidad, límites articulares, continuidad de las
+referencias, compilación de los paquetes ROS~2 y pruebas automatizadas.
+
+El modelo se trató como nominal computable y no como gemelo digital, debido a
+que las masas, geometría definitiva, fricción, holgura y parámetros de los
+actuadores físicos todavía no se han identificado por completo.
+
+\section{Diseño y evaluación de las marchas nominales}
+
+Se generaron trayectorias de los pies en espacio cartesiano y se transformaron
+a referencias articulares mediante la cinemática inversa propia. El gateo usó
+24 referencias por ciclo, paso de 0,018~m, elevación de 0,014~m y 0,18~s por
+referencia. La marcha paso usó 32 referencias, paso de 0,016~m, elevación de
+0,008~m y la misma duración por referencia.
+
+Cada ensayo comenzó con una orden explícita de marcha y terminó con una orden
+\texttt{stand}. Los ciclos se delimitaron mediante las referencias y fases
+registradas, no únicamente dividiendo el tiempo total por una duración nominal.
+El primer ciclo se conservó como transitorio. Las métricas incluyeron avance,
+velocidad, excursión lateral, altura, inclinación y continuidad articular.
+
+\section{Contacto, IMU y estabilidad}
+
+Se incorporaron cuatro sensores de contacto de Gazebo a 100~Hz. El monitor
+consolidó el estado observado y el comparador lo contrastó con el plan publicado
+por el controlador. Posteriormente se separó el estado crudo, derivado de los
+mensajes y un timeout de 0,10~s, del estado filtrado. La pérdida debía persistir
+0,12~s y el recontacto 0,03~s antes de modificar el estado estable.
+
+También se integró una IMU simulada de 100~Hz. Un monitor calculó el polígono de
+soporte mediante las posiciones nominales de los pies en contacto y publicó un
+margen estático firmado. Debido a que el centro de masa y la geometría física
+no están identificados, esta magnitud se reportó explícitamente como nominal.
+
+\section{Seguridad}
+
+El supervisor verificó altura, inclinación, finitud y límites de las referencias
+articulares. Se prepararon observadores de timeout, discrepancias de contacto y
+margen negativo; estos últimos permanecieron desactivados mientras se
+caracterizaban sus falsos positivos. No se implementó un rearme automático del
+estado enclavado.
+
+\section{Preparación experimental final}
+
+La comparación prevista incluye, para gateo y marcha paso, cinco ensayos de 20
+ciclos con control nominal y cinco con la misma marcha más corrección aprendida.
+El ensayo es la unidad independiente; los ciclos no se tratarán como réplicas.
+Las semillas de entrenamiento se fijaron en 11, 23, 37, 53 y 71, y los
+escenarios de evaluación emparejada en 101, 202, 303, 404 y 505.
+
+Esta comparación no se ejecutó aún. Antes deben cerrarse la caracterización
+física, la seguridad eléctrica, la calibración de los doce servos, la marcha
+nominal física y el entrenamiento reproducible de las políticas.

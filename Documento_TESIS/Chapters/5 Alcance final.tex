@@ -1,0 +1,51 @@
+\chapter{Alcance y delimitaciones}
+
+El proyecto abordó la reactivación progresiva del robot cuadrúpedo Nova Spot
+Micro mediante modelado, simulación, control de locomoción, preparación
+electrónica y diseño de una futura capa correctiva de aprendizaje por refuerzo.
+El sistema se limitó a postura y locomoción de baja velocidad tipo paso y gateo
+sobre una superficie plana y bajo condiciones controladas.
+
+\section{Componentes desarrollados}
+
+\begin{itemize}
+\item Se formularon e implementaron modelos cinemáticos y dinámicos nominales,
+jacobianos y descripciones URDF/SDF y MJCF.
+\item Se integró una arquitectura ROS~2 con control articular, métricas,
+supervisor, fase de marcha, contacto, IMU y margen de estabilidad nominal.
+\item Se implementaron y evaluaron en simulación postura, marcha paso y gateo.
+El galope se conservó únicamente como experimento opcional, deshabilitado por
+defecto y excluido de los criterios principales.
+\item Se preparó la Raspberry Pi, se verificó comunicación DDS e I$^2$C y se
+realizaron pruebas progresivas del PCA9685 sin autorizar una marcha física.
+\item Se definieron el protocolo, las métricas, las cantidades experimentales y
+las semillas para la comparación final.
+\end{itemize}
+
+\section{Delimitaciones}
+
+No se abordaron navegación autónoma, conectividad en la nube, percepción del
+entorno ni locomoción rápida sobre terreno irregular. La política aprendida no
+comandará directamente PWM ni sustituirá límites articulares, saturaciones o el
+supervisor independiente.
+
+El modelo actual se consideró nominal computable porque no se completó la
+identificación física de geometría, masas, fricción, holgura y actuadores. El
+margen de estabilidad calculado en simulación no se presentó como medición
+física. Tampoco se reportó seguimiento articular real, ya que el PCA9685 no
+proporciona realimentación de posición.
+
+La seguridad eléctrica, calibración de doce servos, marcha física, entrenamiento
+PPO y comparación nominal frente a nominal más RL permanecieron fuera de los
+resultados cerrados de esta versión. Se mantuvieron como trabajo requerido para
+cumplir integralmente los objetivos cuarto y quinto.
+
+\section{Productos obtenidos y productos abiertos}
+
+Se obtuvieron código versionado, modelos de simulación, documentación
+matemática, controladores nominales, pruebas automatizadas, bolsas de datos,
+analizadores, informes y un protocolo experimental. La entrega final deberá
+añadir la caracterización física completa, diagramas y validación de seguridad,
+calibraciones, políticas entrenadas, conjuntos de datos físicos y comparación
+estadística final. La separación evita presentar productos esperados como si
+hubieran sido obtenidos.

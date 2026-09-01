@@ -44,6 +44,21 @@ para adoptar la cadena problema--objetivo--método--evidencia--resultado--
 conclusión. SHA-256 de la presentación:
 `200ed2f5ada680325b5bbbd9efd83e2e906b9bdb65c609715d209c7a88cdc160`.
 
+La primera versión compilable quedó en
+`Documento_TESIS/Documento_TESIS_PRELIMINAR.pdf`: 41 páginas en formato A4 y
+SHA-256
+`71ab44fc869fbb04f8460258a794f24d0e715714607c3aa72acf867bacb84f01`.
+La fuente LaTeX reutiliza la plantilla y el contenido válido del anteproyecto,
+pero usa `Proyecto de Grado II` e incorpora resumen, abstract, metodología
+ejecutada, desarrollo, resultados verificados, discusión, conclusiones
+provisionales y trabajo pendiente. Compiló sin citas ni referencias
+indefinidas.
+
+Esta versión no es la entrega definitiva: declara explícitamente que la
+caracterización física, seguridad eléctrica, calibración, validación en el
+robot, entrenamiento RL y comparación final permanecen abiertas. Es la base
+documental que se actualizará a medida que se produzca evidencia.
+
 ### Reinstalación de la memoria Raspberry Pi — 19 de agosto de 2026
 
 Se borró y reinstaló la memoria USB/microSD de 32 GB identificada de forma

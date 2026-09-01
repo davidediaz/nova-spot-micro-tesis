@@ -1,0 +1,36 @@
+\chapter{Conclusiones provisionales}
+
+\begin{enumerate}
+\item Se implementó una arquitectura reproducible en ROS~2 para generar y
+supervisar postura, marcha paso y gateo del Nova Spot Micro en Gazebo y MuJoCo.
+El resultado aporta evidencia parcial a los tres primeros objetivos, pero no
+cierra la caracterización ni la integración física.
+
+\item La corrección del planificador temporal alineó la cadencia ejecutada con
+los 4,32~s configurados por ciclo. Dos ensayos de la nueva versión presentaron
+diferencias menores al 0,2~\% en las métricas medias seleccionadas, lo que
+respaldó una línea base repetible en simulación.
+
+\item La marcha paso fue reproducible en Gazebo y mantuvo continuidad articular
+en MuJoCo. La ausencia de pose corporal equivalente en el adaptador de MuJoCo
+limitó el contraste a cadencia y articulaciones.
+
+\item El ensayo de contacto crudo y filtrado mostró que las interrupciones de
+RL y RR tuvieron máximos inferiores a 0,09~s y nunca superaron la persistencia
+de 0,12~s. Por tanto, no se demostró un vuelo trasero sostenido. El avance del
+robot no fue evidencia suficiente del cumplimiento de la secuencia ideal de
+contactos.
+
+\item El modelo actual permitió calcular referencias, pose de pies y margen de
+estabilidad, pero continuó siendo nominal y no identificado. No corresponde
+denominarlo gemelo digital ni extrapolar directamente sus métricas al hardware.
+
+\item No existe todavía evidencia para concluir que una política de aprendizaje
+por refuerzo mejore la estabilidad o repetibilidad del robot. Los objetivos
+cuarto y quinto permanecen abiertos hasta entrenar las políticas, validar la
+marcha física y ejecutar la comparación emparejada prevista.
+\end{enumerate}
+
+Estas conclusiones son provisionales y se actualizarán únicamente después de
+incorporar resultados físicos y la comparación nominal frente a nominal más
+aprendizaje por refuerzo.

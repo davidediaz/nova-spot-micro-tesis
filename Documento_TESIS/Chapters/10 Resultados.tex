@@ -1,0 +1,74 @@
+\chapter{Resultados verificados}
+
+\section{Línea base de gateo con cadencia corregida}
+
+La nueva línea base de Gazebo completó 13 ciclos y su repetición independiente
+otros 13, sin activaciones del supervisor. El ciclo medio de la primera
+ejecución fue 4,320013~s. Al comparar los ciclos 2--13 de ambas ejecuciones, las
+diferencias relativas de duración, avance, velocidad, excursión lateral,
+altura, roll, pitch y salto articular permanecieron por debajo del 0,2~\%.
+
+En régimen permanente, el primer ensayo obtuvo un avance medio de
+0,023338~m/ciclo, velocidad de 0,005402~m/s, excursión lateral de 0,015133~m,
+roll máximo de 2,233112 grados y pitch máximo de 4,365442 grados. Estos datos
+demostraron repetibilidad numérica en simulación, no equivalencia estadística
+con el robot físico.
+
+\section{Validación de la marcha paso}
+
+Dos ensayos independientes en Gazebo completaron 12 ciclos cada uno, con cero
+eventos del supervisor y diferencias de medias inferiores al 0,4~\%. En los
+ciclos 2--12, el avance medio fue 0,022031~m/ciclo, la velocidad
+0,003825~m/s, el roll máximo 1,281777 grados y el pitch máximo 2,483731 grados.
+
+MuJoCo ejecutó 12 ciclos con duración media de 5,759999~s, error RMS articular
+de 0,026232~rad y error máximo de 0,054983~rad. El adaptador utilizado no
+publicó una pose corporal equivalente a la de Gazebo; por tanto, esta prueba
+solo respaldó cadencia y seguimiento articular simulado.
+
+\section{Contacto previsto frente a contacto observado}
+
+La primera caracterización extensa de contacto incluyó 76 ciclos. La
+coincidencia simultánea fue 32,550~\%. Las patas delanteras despegaron unos
+0,38~s tarde y aterrizaron cerca de 1,364~s tarde; las patas traseras no
+mostraron despegue y deslizaron. La incorporación posterior de subfases redujo
+el retardo crudo de despegue, pero generó recontactos traseros breves durante el
+ascenso.
+
+Para distinguir esos eventos, el ensayo nominal del 1 de septiembre de 2026
+registró 24 ciclos completos, 105,522328~s entre marcadores y 79.790 mensajes.
+La Tabla~\ref{tab:contacto-crudo-filtrado} resume los episodios sin contacto.
+
+\begin{table}[H]
+\centering
+\caption{Comparación entre contacto crudo y filtrado durante 24 ciclos de gateo nominal.}
+\label{tab:contacto-crudo-filtrado}
+\begin{tabular}{lrrrrr}
+\toprule
+Pata & Cruda (\%) & Filtrada (\%) & Media (s) & Máxima (s) & $\geq 0,12$ s \\
+\midrule
+FL & 62,304 & 60,747 & 0,944766 & 0,999304 & 49/49 \\
+FR & 62,731 & 61,290 & 0,935656 & 0,994892 & 48/49 \\
+RL & 89,414 & 87,717 & 0,074645 & 0,089805 & 0/24 \\
+RR & 89,088 & 87,339 & 0,073803 & 0,089396 & 0/25 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+La coincidencia simultánea fue 20,638810~\% para el estado crudo y
+13,621271~\% para el filtrado. Ninguna pérdida trasera persistió los 0,12~s
+exigidos después de la declaración cruda. En consecuencia, no se obtuvieron
+pares filtrados de despegue y aterrizaje para RL o RR.
+
+Durante esta ventana no hubo activaciones del supervisor. El ciclo medio duró
+4,319990~s, el avance fue 0,023558~m/ciclo y la velocidad 0,005453~m/s. Los
+máximos medios de roll y pitch fueron 2,074511 y 4,102216 grados.
+
+\section{Calidad y reproducibilidad de los datos}
+
+Antes de cada ensayo se auditó el grafo ROS~2 para evitar nodos duplicados. Las
+bolsas sin orden inicial, sin fases o con diagnósticos saturados se marcaron
+como inválidas. Los analizadores produjeron CSV por ciclo, transiciones y
+episodios, además de informes regenerables. El SHA-256 completo se conservó en
+el registro de ensayo; su forma abreviada fue
+\texttt{80cf3361...864f82}.

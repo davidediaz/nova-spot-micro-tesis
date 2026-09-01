@@ -47,6 +47,23 @@ revise cada sección. Los datos pesados de rosbag2 permanecen en
 `Experimentos/rosbag2`; dentro de esta carpeta se citarán sus registros, hashes,
 tablas y gráficas reproducibles sin duplicar las bases de datos.
 
+## Primera versión compilable
+
+La fuente principal es `Thesis.tex` y el PDF generado se publica como
+`Documento_TESIS_PRELIMINAR.pdf`. Esta versión integra el contenido reutilizable
+del anteproyecto con capítulos nuevos de metodología ejecutada, desarrollo,
+resultados, discusión, conclusiones provisionales y trabajo pendiente.
+
+Para compilar desde esta carpeta:
+
+```bash
+latexmk -pdf -interaction=nonstopmode -halt-on-error -outdir=build Thesis.tex
+```
+
+El PDF es preliminar porque todavía faltan la caracterización y validación
+física, el entrenamiento RL y la comparación experimental final. La palabra
+«preliminar» no autoriza a completar esos apartados con resultados esperados.
+
 ## Fuente recibida
 
 La presentación fue copiada desde
