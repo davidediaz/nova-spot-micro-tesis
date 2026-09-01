@@ -28,6 +28,31 @@ El modelo se trató como nominal computable y no como gemelo digital, debido a
 que las masas, geometría definitiva, fricción, holgura y parámetros de los
 actuadores físicos todavía no se han identificado por completo.
 
+\section{Protocolo de caracterización física}
+
+Se preparó un protocolo trazable para contrastar el modelo con el ejemplar
+construido. El procedimiento separó dos actividades por seguridad. La primera,
+sin energizar el robot, comprendió inventario fotográfico, inspección mecánica,
+confirmación del cableado, tres repeticiones por dimensión y tres repeticiones
+de cada masa disponible. Las longitudes de los eslabones se definieron entre
+ejes de rotación para evitar depender de los bordes externos de las piezas.
+
+La segunda actividad quedó condicionada a la aprobación de la alimentación y
+la parada física por OE. Esta medirá individualmente el centro PWM, los límites
+mecánicos conservadores, el sentido y la velocidad de cada uno de los doce
+servos. No se permitirá copiar valores entre articulaciones ni habilitar el
+hardware mientras existan campos sin medir.
+
+Para una magnitud $x$ se definieron la media y la diferencia respecto del
+modelo nominal $x_0$ como
+\begin{equation}
+  \bar{x}=\frac{x_1+x_2+x_3}{3}, \qquad \Delta x=\bar{x}-x_0.
+\end{equation}
+Si el intervalo entre la mayor y la menor repetición supera dos veces la
+resolución del instrumento, la medición debe repetirse. El protocolo, las
+fichas y los CSV se dejaron versionados antes de capturar datos. En esta etapa
+se preparó el método, pero no se reportaron valores físicos como resultados.
+
 \section{Diseño y evaluación de las marchas nominales}
 
 Se generaron trayectorias de los pies en espacio cartesiano y se transformaron

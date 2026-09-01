@@ -2,6 +2,9 @@
 
 Fecha de ejecución: ____ / ____ / 2026  Responsable: ____________________
 
+Instrumento geométrico: ____________________  Resolución: ______ mm
+Balanza: ____________________  Resolución: ______ g
+
 Esta ficha cierra la actividad vencida únicamente cuando todos los campos
 tienen medición o evidencia. El robot debe permanecer desenergizado, sin PWM y
 sin ejecutar posturas o marchas.
@@ -72,6 +75,26 @@ puede dañar cableado o perder calibración.
 | Pie deteriorado o desigual | | | | | |
 | Cable rozando o tensionado | | | | | |
 | Diferencia de montaje | | | | | |
+
+## Confirmación física de canales (sin energizar)
+
+Seguir cada cable desde el PCA9685. No completar por inferencia a partir del
+mapa propuesto.
+
+| Canal | Articulación propuesta | Articulación observada | Servo sustituido | Evidencia | Confirmado |
+|---:|---|---|:---:|---|:---:|
+| 0 | FL coxa | | | | [ ] |
+| 1 | FL fémur | | | | [ ] |
+| 2 | FL tibia | | | | [ ] |
+| 3 | FR coxa | | | | [ ] |
+| 4 | FR fémur | | | | [ ] |
+| 5 | FR tibia | | | | [ ] |
+| 6 | RL coxa | | | | [ ] |
+| 7 | RL fémur | | | | [ ] |
+| 8 | RL tibia | | | | [ ] |
+| 9 | RR coxa | | | | [ ] |
+| 10 | RR fémur | | | | [ ] |
+| 11 | RR tibia | | | | [ ] |
 
 ## Criterio de cierre
 

@@ -41,6 +41,9 @@ limitaciones.
   resultados y secciones finales.
 - `PLAN_DOCUMENTO_FINAL.md`: estructura y reglas para migrar contenido del
   anteproyecto sin afirmar resultados todavía inexistentes.
+- `../Documentacion/PROTOCOLO_CARACTERIZACION_FISICA.md`: procedimiento y
+  criterios para obtener geometría, masas, mapa de canales y calibraciones sin
+  confundir valores nominales con mediciones.
 
 Los capítulos editables en LaTeX se incorporarán progresivamente cuando se
 revise cada sección. Los datos pesados de rosbag2 permanecen en

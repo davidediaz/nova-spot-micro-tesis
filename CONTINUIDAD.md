@@ -1100,3 +1100,25 @@ Este avance eleva OE1 a parcial avanzado en modelado y verificación
 computacional. No lo cierra: el modelo permanece nominal hasta medir geometría,
 masas, límites, holguras y respuesta de los actuadores del ejemplar físico, y
 contrastar esas mediciones con URDF, MJCF y ecuaciones.
+
+### Paquete de caracterización física preparado (1 de septiembre de 2026)
+
+Se preparó `Documentacion/PROTOCOLO_CARACTERIZACION_FISICA.md` para medir el
+ejemplar de forma trazable y segura. El procedimiento separa la inspección sin
+energizar de la calibración posterior, condicionada a aprobar alimentación y
+parada física por OE. Define mediciones entre ejes, tres repeticiones, control
+por resolución instrumental, evidencia fotográfica y criterio de aceptación.
+
+Se crearon `Documentacion/caracterizacion_fisica_geometria.csv` con 21
+magnitudes y `Documentacion/caracterizacion_fisica_masas.csv` con seis
+conjuntos. Sus referencias nominales provienen del URDF y del modelo vigente;
+las columnas medidas permanecen vacías deliberadamente. La ficha física añadió
+la confirmación por trazado de CH0--CH11 y la identificación de los dos servos
+sustituidos. Los CSV se comprobaron estructuralmente junto con la hoja existente
+de doce servos. La suite actual completa terminó con 68 pruebas aprobadas.
+
+La metodología de caracterización quedó incorporada en el capítulo 9 de la
+tesis. El PDF conserva 54 páginas, fue revisado visualmente y tiene SHA-256
+`0ec8efe9f18d3a4fcfd8837118f6c1d349a6940adb75c489d512a494a7a4b59e`.
+Este avance prepara la medición, pero no genera resultados físicos ni cierra
+OE1.

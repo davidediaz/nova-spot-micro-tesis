@@ -1,0 +1,7 @@
+id,conjunto,unidad,modelo_nominal,m1,m2,m3,media,diferencia_modelo,instrumento,resolucion,fecha,evidencia,estado
+M01,robot_completo,g,2720,,,,,,,,,,pendiente
+M02,cuerpo_y_electronica,g,1200,,,,,,,,,,pendiente
+M03,pata_FL_completa,g,380,,,,,,,,,,pendiente
+M04,pata_FR_completa,g,380,,,,,,,,,,pendiente
+M05,pata_RL_completa,g,380,,,,,,,,,,pendiente
+M06,pata_RR_completa,g,380,,,,,,,,,,pendiente
