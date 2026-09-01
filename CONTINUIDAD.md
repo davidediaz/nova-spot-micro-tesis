@@ -59,6 +59,16 @@ caracterización física, seguridad eléctrica, calibración, validación en el
 robot, entrenamiento RL y comparación final permanecen abiertas. Es la base
 documental que se actualizará a medida que se produzca evidencia.
 
+Actualización visual del 1 de septiembre: el PDF preliminar pasó a 48 páginas e
+incorporó un diagrama de arquitectura y seis gráficas de ensayos aceptados:
+series y reproducibilidad de gateo, series y reproducibilidad de marcha paso,
+seguimiento/cadencia de MuJoCo y persistencia del contacto crudo. El nuevo
+SHA-256 del PDF es
+`66cf64e55d588e827d3546c263ea2f94c34ddf90fbf991e3f47ff2217b2aaa6d`.
+`Documento_TESIS/INDICE_EVIDENCIAS_VISUALES.md` relaciona cada figura con sus
+datos, significado y limitación. Las figuras nuevas de contacto y MuJoCo son
+regenerables mediante `Documento_TESIS/generar_figuras_resultados.py`.
+
 ### Reinstalación de la memoria Raspberry Pi — 19 de agosto de 2026
 
 Se borró y reinstaló la memoria USB/microSD de 32 GB identificada de forma

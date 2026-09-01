@@ -14,6 +14,30 @@ roll máximo de 2,233112 grados y pitch máximo de 4,365442 grados. Estos datos
 demostraron repetibilidad numérica en simulación, no equivalencia estadística
 con el robot físico.
 
+La Figura~\ref{fig:gateo-series} presenta las series temporales de la primera
+línea base corregida. El crecimiento de $x$ evidencia avance, mientras que las
+oscilaciones periódicas de $y$, roll y pitch muestran la respuesta asociada a
+las transferencias de peso. La Figura~\ref{fig:gateo-repro} contrasta los dos
+ensayos ciclo a ciclo; el ciclo 1 se conserva y exhibe el transitorio de inicio.
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=0.94\textwidth]{Resultados/gateo_series_temporales.png}
+\caption{Series temporales de la línea base de gateo con cadencia corregida.
+Las líneas verticales delimitan ciclos completos. Fuente: elaboración propia a
+partir de la bolsa \texttt{linea\_base\_cadencia\_corregida\_20260814\_1049}.}
+\label{fig:gateo-series}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=0.96\textwidth]{Resultados/gateo_reproducibilidad.png}
+\caption{Comparación ciclo a ciclo de dos ensayos independientes de gateo con
+cadencia corregida. La similitud corresponde a simulación bajo configuraciones
+equivalentes y no implica validación física. Fuente: elaboración propia.}
+\label{fig:gateo-repro}
+\end{figure}
+
 \section{Validación de la marcha paso}
 
 Dos ensayos independientes en Gazebo completaron 12 ciclos cada uno, con cero
@@ -25,6 +49,38 @@ MuJoCo ejecutó 12 ciclos con duración media de 5,759999~s, error RMS articular
 de 0,026232~rad y error máximo de 0,054983~rad. El adaptador utilizado no
 publicó una pose corporal equivalente a la de Gazebo; por tanto, esta prueba
 solo respaldó cadencia y seguimiento articular simulado.
+
+Las series de la Figura~\ref{fig:paso-series} muestran el avance y la respuesta
+periódica del cuerpo durante la marcha paso. La comparación de la
+Figura~\ref{fig:paso-repro} permite observar el transitorio del primer ciclo y
+la proximidad de los dos ensayos posteriores. La Figura~\ref{fig:paso-mujoco}
+resume el error articular y el error de duración respecto de 5,76~s en MuJoCo.
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=0.94\textwidth]{Resultados/paso_series_temporales.png}
+\caption{Series temporales de la línea base de marcha paso en Gazebo. Fuente:
+elaboración propia a partir de la bolsa \texttt{paso\_linea\_base\_20260814}.}
+\label{fig:paso-series}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=0.96\textwidth]{Resultados/paso_reproducibilidad.png}
+\caption{Reproducibilidad de la marcha paso sobre 12 ciclos equivalentes en
+Gazebo. Cada curva corresponde a un ensayo independiente. Fuente: elaboración
+propia.}
+\label{fig:paso-repro}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=0.94\textwidth]{Resultados/paso_mujoco_seguimiento.png}
+\caption{Seguimiento articular y error de cadencia de la marcha paso durante 12
+ciclos en MuJoCo. Esta figura no contiene pose ni estabilidad corporal. Fuente:
+elaboración propia a partir de \texttt{metricas\_mujoco\_por\_ciclo.csv}.}
+\label{fig:paso-mujoco}
+\end{figure}
 
 \section{Contacto previsto frente a contacto observado}
 
@@ -59,6 +115,21 @@ La coincidencia simultánea fue 20,638810~\% para el estado crudo y
 13,621271~\% para el filtrado. Ninguna pérdida trasera persistió los 0,12~s
 exigidos después de la declaración cruda. En consecuencia, no se obtuvieron
 pares filtrados de despegue y aterrizaje para RL o RR.
+
+La Figura~\ref{fig:contacto-persistencia} hace visible la diferencia entre las
+patas delanteras y traseras. FL y FR superaron ampliamente el umbral de
+persistencia, mientras que los máximos de RL y RR permanecieron debajo de la
+línea de 0,12~s.
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=0.96\textwidth]{Resultados/contacto_persistencia_cruda.png}
+\caption{Duración media y máxima de los episodios crudos sin contacto. La línea
+discontinua representa la persistencia adicional exigida para confirmar una
+pérdida filtrada. Fuente: elaboración propia a partir de 24 ciclos del ensayo
+\texttt{contactos\_debounce\_nominal\_valido\_20260901\_0828}.}
+\label{fig:contacto-persistencia}
+\end{figure}
 
 Durante esta ventana no hubo activaciones del supervisor. El ciclo medio duró
 4,319990~s, el avance fue 0,023558~m/ciclo y la velocidad 0,005453~m/s. Los

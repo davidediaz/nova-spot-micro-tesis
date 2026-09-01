@@ -16,6 +16,46 @@ acompañó con un mensaje de fase que identificó marcha, muestra, ciclo, pata e
 oscilación, subfase y contactos previstos. Esta sincronización permitió
 segmentar los ensayos y comparar el plan con la respuesta simulada.
 
+La Figura~\ref{fig:arquitectura-software} resume el flujo implementado. Las
+órdenes de alto nivel generaron referencias y fase; el simulador produjo pose,
+estados articulares, IMU y contactos; los nodos de observación calcularon
+métricas y diagnósticos que fueron registrados y puestos a disposición del
+supervisor.
+
+\begin{figure}[H]
+\centering
+\resizebox{0.98\textwidth}{!}{%
+\begin{tikzpicture}[
+node distance=1.1cm and 1.35cm,
+block/.style={rectangle,draw,rounded corners,fill=blue!12,
+text width=3.0cm,minimum height=1.1cm,align=center},
+data/.style={rectangle,draw,rounded corners,fill=green!12,
+text width=3.0cm,minimum height=1.1cm,align=center},
+arrow/.style={-latex,thick}]
+\node[block] (cmd) {Orden de marcha};
+\node[block,right=of cmd] (gait) {Controlador de marcha e IK};
+\node[block,right=of gait] (sim) {Gazebo / MuJoCo};
+\node[data,below=of gait] (phase) {Fase y contactos previstos};
+\node[data,below=of sim] (sensors) {Pose, articulaciones, IMU y contactos};
+\node[block,below=of phase] (analysis) {Métricas, estabilidad y comparación};
+\node[block,left=of analysis] (safety) {Supervisor de seguridad};
+\node[data,right=of analysis] (bag) {rosbag2, CSV, gráficas e informes};
+\draw[arrow] (cmd) -- (gait);
+\draw[arrow] (gait) -- node[above]{referencias} (sim);
+\draw[arrow] (gait) -- (phase);
+\draw[arrow] (sim) -- (sensors);
+\draw[arrow] (phase) -- (analysis);
+\draw[arrow] (sensors) -- (analysis);
+\draw[arrow] (analysis) -- (safety);
+\draw[arrow] (analysis) -- (bag);
+\draw[arrow] (safety) |- (cmd);
+\end{tikzpicture}%
+}
+\caption{Arquitectura funcional implementada para generación, simulación,
+monitoreo, seguridad y registro de evidencia. Fuente: elaboración propia.}
+\label{fig:arquitectura-software}
+\end{figure}
+
 \section{Temporización reproducible}
 
 La implementación inicial avanzaba cada fase desde el instante tardío del

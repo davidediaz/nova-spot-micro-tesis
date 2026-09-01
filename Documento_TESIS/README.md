@@ -64,6 +64,23 @@ El PDF es preliminar porque todavía faltan la caracterización y validación
 física, el entrenamiento RL y la comparación experimental final. La palabra
 «preliminar» no autoriza a completar esos apartados con resultados esperados.
 
+## Evidencia visual
+
+El PDF incorpora gráficas procedentes exclusivamente de ensayos aceptados y un
+diagrama de la arquitectura implementada. La trazabilidad entre figura, datos,
+conclusión y limitación se mantiene en `INDICE_EVIDENCIAS_VISUALES.md`.
+
+Las figuras específicas de contacto y MuJoCo se regeneran desde los CSV con:
+
+```bash
+python3 generar_figuras_resultados.py
+./compilar.sh
+```
+
+No se incorporarán capturas de una simulación como sustituto de datos. Las
+capturas futuras podrán documentar montaje o contexto, mientras que las
+afirmaciones cuantitativas deberán apoyarse en tablas y gráficas reproducibles.
+
 ## Fuente recibida
 
 La presentación fue copiada desde
