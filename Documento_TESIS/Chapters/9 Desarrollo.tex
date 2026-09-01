@@ -107,3 +107,14 @@ física.
 Dos servomotores fueron sustituidos y se reforzaron acoples mecánicos. Debido a
 que faltaba completar e inspeccionar el ensamble, no se presentaron mediciones
 geométricas parciales como caracterización definitiva.
+
+\section{Contrato de corrección residual aprendida}
+
+Se implementó una interfaz independiente del simulador para limitar una futura
+política de aprendizaje por refuerzo. La acción consta de doce correcciones
+articulares acotadas a $\pm0{,}08$ rad, con variación máxima de $0{,}02$ rad por
+paso. La corrección se suma a la marcha nominal y vuelve a limitarse con la
+envolvente articular; no produce PWM ni puede anular el supervisor. La función
+de recompensa penaliza inclinación, error de altura, error articular, magnitud
+de acción y activaciones de seguridad. Esta interfaz fue probada, pero aún no
+es una política entrenada ni un entorno dinámico completo.

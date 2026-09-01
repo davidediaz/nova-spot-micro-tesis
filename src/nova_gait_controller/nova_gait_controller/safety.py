@@ -24,6 +24,8 @@ def quaternion_to_rpy(x, y, z, w):
 def unsafe_reasons(height, roll, pitch, min_height, max_height, max_tilt):
     """Describe every violated body-pose limit."""
     reasons = []
+    if not all(isfinite(value) for value in (height, roll, pitch)):
+        return ['pose_no_finita']
     if height < min_height:
         reasons.append('altura_baja')
     if height > max_height:
@@ -32,6 +34,28 @@ def unsafe_reasons(height, roll, pitch, min_height, max_height, max_tilt):
         reasons.append('roll')
     if abs(pitch) > max_tilt:
         reasons.append('pitch')
+    return reasons
+
+
+def stale_sources(last_received, now, timeout):
+    """Return required telemetry sources that are absent or older than timeout."""
+    if not isfinite(now) or not isfinite(timeout) or timeout <= 0.0:
+        raise ValueError('tiempo o timeout invalido')
+    return [name for name, stamp in last_received.items()
+            if stamp is None or not isfinite(stamp) or now - stamp > timeout]
+
+
+def diagnostic_reasons(contact, stability, min_stability_margin):
+    """Validate parsed contact and stability diagnostics without ROS dependencies."""
+    reasons = []
+    if contact and contact.get('comparison_available') and contact.get('match') is False:
+        reasons.append('contactos_no_coinciden')
+    if stability and stability.get('available'):
+        margin = stability.get('margin_m')
+        if not isinstance(margin, (int, float)) or not isfinite(margin):
+            reasons.append('margen_no_finito')
+        elif margin < min_stability_margin:
+            reasons.append('margen_estabilidad')
     return reasons
 
 

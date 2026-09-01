@@ -11,7 +11,10 @@ from std_msgs.msg import Bool, String
 from tf2_msgs.msg import TFMessage
 from trajectory_msgs.msg import JointTrajectory
 
-from .safety import invalid_trajectory_reasons, quaternion_to_rpy, unsafe_reasons
+from .safety import (
+    diagnostic_reasons, invalid_trajectory_reasons, quaternion_to_rpy,
+    stale_sources, unsafe_reasons,
+)
 
 
 class SafetySupervisor(Node):
@@ -127,24 +130,17 @@ class SafetySupervisor(Node):
                 self.get_parameter('startup_grace_period').value):
             return
         timeout = float(self.get_parameter('data_timeout').value)
-        missing = [name for name, stamp in self.last_received.items()
-                   if stamp is None or now - stamp > timeout]
+        missing = stale_sources(self.last_received, now, timeout)
         if missing and self.get_parameter('enable_data_timeout_stop').value:
             self.trigger('datos_vencidos:' + ','.join(missing))
             return
-        if (self.get_parameter('enable_contact_stop').value
-                and self.latest_contact
-                and self.latest_contact.get('comparison_available')
-                and self.latest_contact.get('match') is False):
-            self.trigger('contactos_no_coinciden')
-            return
-        stability = self.latest_stability
-        if (self.get_parameter('enable_stability_stop').value and stability
-                and stability.get('available')
-                and stability.get('margin_m') < float(
-                    self.get_parameter('min_stability_margin').value)):
-            self.trigger('margen_estabilidad', {
-                'margin_m': stability.get('margin_m')})
+        diagnostic = diagnostic_reasons(
+            self.latest_contact if self.get_parameter('enable_contact_stop').value else None,
+            self.latest_stability if self.get_parameter('enable_stability_stop').value else None,
+            float(self.get_parameter('min_stability_margin').value))
+        if diagnostic:
+            self.trigger(','.join(diagnostic), {
+                'margin_m': (self.latest_stability or {}).get('margin_m')})
 
     def trigger(self, reason, values=None):
         if self.latched:

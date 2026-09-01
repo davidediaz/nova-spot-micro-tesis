@@ -1122,3 +1122,20 @@ tesis. El PDF conserva 54 páginas, fue revisado visualmente y tiene SHA-256
 `0ec8efe9f18d3a4fcfd8837118f6c1d349a6940adb75c489d512a494a7a4b59e`.
 Este avance prepara la medición, pero no genera resultados físicos ni cierra
 OE1.
+
+### Seguridad, sensibilidad y contrato RL sin hardware (1 de septiembre de 2026)
+
+El supervisor pasó a rechazar poses no finitas y se extrajeron funciones puras
+para comprobar datos vencidos, discrepancias de contacto y márgenes negativos o
+no finitos. Las pruebas provocadas unitarias quedaron documentadas; las tres
+paradas informativas siguen desactivadas hasta ensayos integrados en Gazebo.
+
+La criba reproducible `Experimentos/analizar_sensibilidad_nominal.py` evaluó 14
+combinaciones. Cambiar las masas ±10 % modificó el par máximo cerca de ±9 % y
+cambiar la fricción articular ±50 % lo modificó cerca de ±4,7 %. También se
+implementó el contrato de una corrección RL residual: ±0,08 rad, cambio máximo
+de 0,02 rad por paso, límites articulares y terminaciones seguras. La suite
+completa alcanzó 82 pruebas. No existe todavía una política entrenada y, por
+tanto, no procede la comparación nominal--RL. El PDF actualizado quedó en 56
+páginas con SHA-256
+`e86068c2d10b61bc964c20b514c8eabfd16004ba5a177373597c3af8799cf8a5`.
