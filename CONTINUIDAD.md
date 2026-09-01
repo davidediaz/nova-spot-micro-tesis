@@ -1260,3 +1260,10 @@ intento quedó no concluyente: el monitor nominal publica continuamente en el
 mismo tópico y sobrescribe el estímulo antes de que pueda atribuirse una
 activación al mensaje provocado. No se incorpora como resultado; el siguiente
 protocolo deberá aislar el diagnóstico o usar un tópico de prueba dedicado.
+Se aisló el tópico de estabilidad mediante `stability_topic` y se añadió
+`startup_grace_period` configurable para repetir la prueba provocada. Aun con
+el tópico aislado y gracia cero, el estímulo publicado no generó una activación
+observable del watchdog; se conserva como intento no concluyente y no como
+resultado. La parada por referencia inválida sigue siendo la única parada
+integrada demostrada. El siguiente diagnóstico deberá instrumentar directamente
+el callback o usar un nodo de prueba dedicado con reloj controlado.

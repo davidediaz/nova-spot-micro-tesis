@@ -13,6 +13,8 @@ def generate_launch_description():
     nova_share = get_package_share_directory('nova_sm3_description')
     speed_factor = LaunchConfiguration('speed_factor')
     enable_stability_stop = LaunchConfiguration('enable_stability_stop')
+    stability_topic = LaunchConfiguration('stability_topic')
+    startup_grace_period = LaunchConfiguration('startup_grace_period')
 
     simulation = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(os.path.join(nova_share, 'launch', 'sim.launch.py')))
@@ -37,7 +39,9 @@ def generate_launch_description():
     supervisor = Node(
         package='nova_gait_controller', executable='safety_supervisor', output='screen',
         parameters=[monitoring_parameters,
-                    {'enable_stability_stop': enable_stability_stop}])
+                    {'enable_stability_stop': enable_stability_stop,
+                     'stability_topic': stability_topic,
+                     'startup_grace_period': startup_grace_period}])
     contacts = Node(
         package='nova_gait_controller', executable='contact_monitor', output='screen',
         parameters=[monitoring_parameters])
@@ -55,6 +59,12 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'enable_stability_stop', default_value='false',
             description='Habilita parada provocada por margen de estabilidad'),
+        DeclareLaunchArgument(
+            'stability_topic', default_value='/nova/stability',
+            description='Tópico de estabilidad escuchado por el supervisor'),
+        DeclareLaunchArgument(
+            'startup_grace_period', default_value='8.0',
+            description='Gracia de arranque del supervisor en segundos'),
         simulation,
         pose_bridge,
         TimerAction(period=5.0, actions=[
