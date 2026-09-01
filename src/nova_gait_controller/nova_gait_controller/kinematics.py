@@ -129,7 +129,8 @@ def cartesian_crawl(stand, samples=24, step_length=0.018, step_height=0.014,
                     front_landing_height_ratio=2 ** -0.5,
                     rear_landing_height_ratio=2 ** -0.5,
                     rear_liftoff_height_ratio=2 ** -0.5,
-                    rear_swing_height_scale=1.0):
+                    rear_swing_height_scale=1.0,
+                    preload_shift_scale=1.0):
     """Generate a quasi-static crawl with explicit weight transfer.
 
     The common Cartesian shifts move the trunk away from the leg that is about
@@ -155,6 +156,8 @@ def cartesian_crawl(stand, samples=24, step_length=0.018, step_height=0.014,
         raise ValueError('rear_liftoff_height_ratio debe estar entre 0 y 1')
     if not 0.5 <= rear_swing_height_scale <= 1.5:
         raise ValueError('rear_swing_height_scale debe estar entre 0,5 y 1,5')
+    if not 1.0 <= preload_shift_scale <= 2.0:
+        raise ValueError('preload_shift_scale debe estar entre 1 y 2')
 
     neutral = {
         'fl': forward_leg(*stand, side=1),
@@ -176,6 +179,8 @@ def cartesian_crawl(stand, samples=24, step_length=0.018, step_height=0.014,
         swing_leg = order[quarter]
         transfer_profile, _, _, _ = crawl_sample_profile(
             local_sample, samples_per_leg)
+        if local_sample in (1, 2):
+            transfer_profile *= preload_shift_scale
         common_y = (1.0 if swing_leg in ('fl', 'rl') else -1.0) \
             * lateral_shift * transfer_profile
         # A negative foot-frame shift corresponds to moving the trunk forward.

@@ -1316,3 +1316,9 @@ La repetición válida `liberacion_gateo_080_altura125_r3_20260901` capturó tre
 0,005246 m/s, coincidencia filtrada 13,639 %, roll 2,627563°, pitch 5,216466°
 y salto articular 0,025376 rad. La escala trasera 1,25 no logró separación
 concluyente y empeoró la postura; se descarta como configuración recomendada.
+Se implementó `crawl_preload_shift_scale` y se ensayó 0,80/1,5 en Gazebo
+(`preload_gateo_150_20260901`). Fue válido: 18 ciclos, 4,319985 s/ciclo,
+0,023192 m/ciclo, 0,005369 m/s, coincidencia filtrada 14,527 %, roll 2,096164°,
+pitch 4,167473° y salto articular 0,019615 rad. La precarga mejoró la
+coordinación sin degradar la postura frente a elevar la pata; queda como mejor
+candidato de trabajo, sin demostrar aún vuelo trasero sostenido.

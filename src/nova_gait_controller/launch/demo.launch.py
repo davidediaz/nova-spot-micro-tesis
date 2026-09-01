@@ -17,6 +17,7 @@ def generate_launch_description():
     startup_grace_period = LaunchConfiguration('startup_grace_period')
     rear_liftoff_ratio = LaunchConfiguration('rear_liftoff_ratio')
     rear_swing_height_scale = LaunchConfiguration('rear_swing_height_scale')
+    preload_shift_scale = LaunchConfiguration('preload_shift_scale')
 
     simulation = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(os.path.join(nova_share, 'launch', 'sim.launch.py')))
@@ -25,7 +26,8 @@ def generate_launch_description():
         parameters=[os.path.join(gait_share, 'config', 'gaits.yaml'),
                     {'speed_factor': speed_factor,
                      'crawl_rear_liftoff_height_ratio': rear_liftoff_ratio,
-                     'crawl_rear_swing_height_scale': rear_swing_height_scale}])
+                     'crawl_rear_swing_height_scale': rear_swing_height_scale,
+                     'crawl_preload_shift_scale': preload_shift_scale}])
     monitoring_parameters = os.path.join(gait_share, 'config', 'monitoring.yaml')
     pose_bridge = Node(
         package='ros_gz_bridge', executable='parameter_bridge', output='screen',
@@ -75,6 +77,9 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'rear_swing_height_scale', default_value='1.0',
             description='Escala de altura de oscilación de patas traseras'),
+        DeclareLaunchArgument(
+            'preload_shift_scale', default_value='1.0',
+            description='Escala de transferencia durante precarga y liftoff'),
         simulation,
         pose_bridge,
         TimerAction(period=5.0, actions=[

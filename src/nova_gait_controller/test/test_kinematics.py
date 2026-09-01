@@ -77,6 +77,13 @@ def test_rear_height_scale_candidate_is_reachable():
     assert len(poses) == 24
 
 
+def test_preload_transfer_scale_candidate_is_reachable():
+    poses = cartesian_crawl(
+        (0.10, 0.42, -0.84), rear_liftoff_height_ratio=0.80,
+        preload_shift_scale=1.5)
+    assert len(poses) == 24
+
+
 def test_crawl_landing_height_can_be_tuned_by_axle_without_changing_liftoff():
     profiles = [crawl_sample_profile(index, 6) for index in range(6)]
     front = [crawl_swing_height(item[1], item[2], 0.2) for item in profiles]
