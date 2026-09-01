@@ -1222,3 +1222,14 @@ articular máximo medio fue 0,021762, 0,023257 y 0,025527 rad, respectivamente.
 La evidencia sugiere 1,25× como candidato rápido conservador; 1,5× queda para
 validación adicional y 2,0× como condición de estrés, no recomendada para
 operación nominal. Los informes no constituyen validación física.
+
+### Segunda repetición nominal de marcha paso (1 de septiembre de 2026)
+
+Se cerró la segunda repetición independiente de `paso` en Gazebo. La bolsa
+`Experimentos/rosbag2/cierre_paso_r2_20260901` contiene 22 ciclos válidos, con
+período medio 5,760001 s, avance 0,021670 m/ciclo, velocidad 0,003762 m/s,
+roll máximo 1,280899°, pitch máximo 2,486195°, salto articular máximo medio
+0,008411 rad y cero activaciones del supervisor. La coincidencia simultánea
+filtrada fue 34,631 %. Los CSV, gráficas e informes están en
+`Experimentos/resultados_paso_r2_20260901`; junto con `cierre_paso_r1` permite
+comparar dos repeticiones, sin confundir ciclos con réplicas independientes.
