@@ -54,6 +54,11 @@ La fuente principal es `Thesis.tex` y el PDF generado se publica como
 del anteproyecto con capítulos nuevos de metodología ejecutada, desarrollo,
 resultados, discusión, conclusiones provisionales y trabajo pendiente.
 
+El capítulo 7 documenta el modelo matemático efectivamente implementado:
+cinemática directa e inversa, jacobiano, dinámica nominal, actuadores,
+contacto y estabilidad. Sus verificaciones computacionales son reproducibles,
+pero se distinguen expresamente de la validación física aún pendiente.
+
 Para compilar desde esta carpeta:
 
 ```bash

@@ -1081,3 +1081,22 @@ ruido de servos, latencia y frecuencia del barrido secuencial. Las futuras
 acciones aprendidas permanecerán limitadas a correcciones pequeñas de la
 marcha nominal, nunca PWM directo. Documento completo:
 `Documentacion/PROPUESTA_INSTRUMENTACION_FISICA_2026-08-31.md`.
+
+### Modelo matemático incorporado al documento final (1 de septiembre de 2026)
+
+Se migró al documento de tesis el modelo matemático que ya estaba implementado
+y verificado en el proyecto. El nuevo capítulo 7 presenta las hipótesis y la
+convención REP-103, transformaciones homogéneas, cinemática directa e inversa,
+jacobiano, singularidades, dinámica nominal, envolvente del MG996R, contacto
+unilateral, fricción, centro de masa y margen estático. También relaciona cada
+componente con su implementación y evidencia de verificación.
+
+La suite completa conserva 50 pruebas aprobadas. La revisión visual confirmó
+que las siete páginas nuevas, sus ecuaciones y la tabla de trazabilidad no se
+salen de los márgenes. El PDF preliminar quedó en 54 páginas, con SHA-256
+`439b23c88dfb47395971494e6d05746e3a2218edcc68db397e79174ebaa89d94`.
+
+Este avance eleva OE1 a parcial avanzado en modelado y verificación
+computacional. No lo cierra: el modelo permanece nominal hasta medir geometría,
+masas, límites, holguras y respuesta de los actuadores del ejemplar físico, y
+contrastar esas mediciones con URDF, MJCF y ecuaciones.
