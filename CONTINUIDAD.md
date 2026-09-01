@@ -1279,3 +1279,8 @@ m/ciclo, 0,005462 m/s, salto articular máximo medio 0,020331 rad y cero
 activaciones. La coincidencia filtrada fue 13,458 %, superior a la referencia
 nominal comparable, pero no demuestra vuelo trasero sostenido. El candidato
 0,75 queda pendiente.
+Se validó el candidato 0,75 en Gazebo (`liberacion_gateo_075_20260901`): 18
+ciclos, 4,319997 s/ciclo, 0,023685 m/ciclo, 0,005483 m/s, salto articular
+máximo medio 0,019653 rad, cero activaciones y coincidencia filtrada 13,404 %.
+El resultado es prácticamente igual a 0,80 (13,458 %); se conserva 0,80 por
+su mayor margen cinemático y no se demuestra vuelo trasero sostenido.
