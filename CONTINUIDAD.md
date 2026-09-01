@@ -1311,3 +1311,8 @@ El segundo intento de la trayectoria 0,80/1,25 también quedó inválido: aunque
 el controlador ejecutó tres órdenes `gateo` y pasó a `stand`, la bolsa no
 conservó el marcador `stand` posterior. Se mantiene sin métricas y se ajustará
 el protocolo de cierre verificando el suscriptor del grabador antes de publicar.
+La repetición válida `liberacion_gateo_080_altura125_r3_20260901` capturó tres
+`gateo` y cinco `stand`: 18 ciclos, 4,319999 s/ciclo, 0,022662 m/ciclo,
+0,005246 m/s, coincidencia filtrada 13,639 %, roll 2,627563°, pitch 5,216466°
+y salto articular 0,025376 rad. La escala trasera 1,25 no logró separación
+concluyente y empeoró la postura; se descarta como configuración recomendada.
