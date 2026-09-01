@@ -1166,3 +1166,9 @@ ciclos de gateo, 4,319977 s/ciclo, 0,023899 m/ciclo, cero activaciones y
 141.531 mensajes. Se capturaron tres `gateo` y una `stand`; la bolsa y sus
 análisis están en `cierre_gateo_r3_20260901`. Cuenta como repetición 2 válida de
 5. Las pérdidas traseras siguieron por debajo de 0,12 s.
+
+La repetición `cierre_gateo_r6_20260901` fue válida: se capturaron tres
+`gateo` y dos `stand`, con 36 ciclos completos, cadencia 4,320000 s/ciclo,
+avance 0,023850 m/ciclo, 129.717 mensajes y cero activaciones del supervisor.
+Cuenta como repetición 4 válida de 5; los análisis y el registro quedaron
+versionados y las pérdidas traseras siguieron por debajo de 0,12 s.
