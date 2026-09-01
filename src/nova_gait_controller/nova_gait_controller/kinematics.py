@@ -128,7 +128,8 @@ def cartesian_crawl(stand, samples=24, step_length=0.018, step_height=0.014,
                     lateral_shift=0.004, fore_aft_shift=0.008,
                     front_landing_height_ratio=2 ** -0.5,
                     rear_landing_height_ratio=2 ** -0.5,
-                    rear_liftoff_height_ratio=2 ** -0.5):
+                    rear_liftoff_height_ratio=2 ** -0.5,
+                    rear_swing_height_scale=1.0):
     """Generate a quasi-static crawl with explicit weight transfer.
 
     The common Cartesian shifts move the trunk away from the leg that is about
@@ -152,6 +153,8 @@ def cartesian_crawl(stand, samples=24, step_length=0.018, step_height=0.014,
         raise ValueError('rear_landing_height_ratio debe estar entre 0 y 1')
     if not 0.0 <= rear_liftoff_height_ratio <= 1.0:
         raise ValueError('rear_liftoff_height_ratio debe estar entre 0 y 1')
+    if not 0.5 <= rear_swing_height_scale <= 1.5:
+        raise ValueError('rear_swing_height_scale debe estar entre 0,5 y 1,5')
 
     neutral = {
         'fl': forward_leg(*stand, side=1),
@@ -196,7 +199,9 @@ def cartesian_crawl(stand, samples=24, step_length=0.018, step_height=0.014,
                                  else rear_landing_height_ratio)
                 liftoff_ratio = (2 ** -0.5 if name in ('fl', 'fr')
                                  else rear_liftoff_height_ratio)
-                z = z0 + step_height * crawl_swing_height(
+                height_scale = (rear_swing_height_scale
+                                if name in ('rl', 'rr') else 1.0)
+                z = z0 + step_height * height_scale * crawl_swing_height(
                     progress, subphase, landing_ratio, liftoff_ratio)
             legs[name] = inverse_leg(
                 x + common_x, y0 + common_y, z, sides[name])

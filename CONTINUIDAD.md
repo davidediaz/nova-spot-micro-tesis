@@ -1301,3 +1301,9 @@ El protocolo y comandos reproducibles quedaron en
 `Experimentos/PROTOCOLO_NODO_PRUEBAS_SEGURIDAD.md`. La compilación y las 84
 pruebas automáticas pasan; todavía falta ejecutar cada escenario con el
 supervisor y conservar sus JSON como evidencia integrada.
+Se añadió al generador la escala `crawl_rear_swing_height_scale` (nominal 1,0)
+para buscar despegue trasero y se validó la configuración 0,80/1,25 con 85
+pruebas automáticas. El primer ensayo Gazebo de esa trayectoria quedó inválido
+porque la bolsa no capturó órdenes `gateo`; se conserva con
+`ENSAYO_INVALIDO.md` y no se incorporan métricas. Debe repetirse verificando
+suscriptores antes de publicar.
