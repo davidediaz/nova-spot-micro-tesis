@@ -1154,3 +1154,8 @@ publicó antes de la activación completa del controlador, la bolsa registró ce
 fases y una sola trayectoria. Se conserva con `ENSAYO_INVALIDO.md` y no se
 incorpora a métricas. El procedimiento se ajustó para verificar nodos y
 suscriptores antes de iniciar cada repetición.
+
+Se repitió el intento como `cierre_gateo_r2b_20260901`; aunque hubo fases y
+trayectorias, la bolsa registró cero órdenes `/nova/gait_command`, por lo que
+no pudo delimitarse la ventana y se marcó inválido. El procedimiento se ajustó
+para verificar explícitamente los suscriptores del grabador antes de publicar.
