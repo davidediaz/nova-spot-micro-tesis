@@ -1329,3 +1329,9 @@ en los 18 episodios, con duraciones máximas RL/RR de 0,312/0,320 s (umbral
 0,12 s). Roll y pitch (2,156779°/4,261714°) aumentaron menos del 10 % frente a
 la línea base. La precarga 2,0 queda como candidato satisfactorio en
 simulación, pendiente de repetición independiente y validación física.
+La repetición independiente `preload_gateo_200_r2_20260901` fue válida y
+confirmó el candidato: 18 ciclos, 4,320014 s/ciclo, 0,021639 m/ciclo,
+0,005009 m/s, coincidencia filtrada 19,738 %, vuelos traseros en 18/18
+episodios (máximos RL/RR 0,311/0,348 s), roll 2,153787°, pitch 4,261194°,
+salto 0,019684 rad y cero activaciones. La configuración queda confirmada en
+simulación; la validación física se mantiene pendiente.
