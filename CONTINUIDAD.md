@@ -1322,3 +1322,10 @@ Se implementó `crawl_preload_shift_scale` y se ensayó 0,80/1,5 en Gazebo
 pitch 4,167473° y salto articular 0,019615 rad. La precarga mejoró la
 coordinación sin degradar la postura frente a elevar la pata; queda como mejor
 candidato de trabajo, sin demostrar aún vuelo trasero sostenido.
+El ensayo `preload_gateo_200_20260901` cumplió los criterios de aceptación
+definidos: 18 ciclos, 4,320007 s/ciclo, 0,021662 m/ciclo, 0,005014 m/s,
+coincidencia filtrada 19,356 %, cero activaciones y vuelos traseros filtrados
+en los 18 episodios, con duraciones máximas RL/RR de 0,312/0,320 s (umbral
+0,12 s). Roll y pitch (2,156779°/4,261714°) aumentaron menos del 10 % frente a
+la línea base. La precarga 2,0 queda como candidato satisfactorio en
+simulación, pendiente de repetición independiente y validación física.
