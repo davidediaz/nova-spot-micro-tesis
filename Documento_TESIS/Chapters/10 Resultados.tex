@@ -194,3 +194,27 @@ de $0{,}406$ a $0{,}609$ rad/s. El salto articular permaneció constante
 ($0{,}183$ rad en gateo y $0{,}073$ rad en paso). Esta criba no resuelve
 dinámica ni contacto: los factores mayores quedan seleccionados para ensayos
 posteriores en Gazebo, no como resultados de estabilidad.
+
+\subsection{Ensayos de velocidad incrementada en Gazebo}
+
+Se añadió el parámetro reproducible \texttt{speed\_factor} al lanzamiento. La
+geometría se mantuvo fija y solo se redujo el periodo de cada fase. En gateo:
+
+\begin{center}
+\begin{tabular}{lrrrrr}
+Factor & Ciclos & $T_c$ (s) & Avance (m/ciclo) & Velocidad (m/s) & Supervisor \\
+\hline
+1,00$\times$ & 191 & 4,320 & 0,023955 & 0,005545 & 0 \\
+1,25$\times$ & 26 & 3,456 & 0,023286 & 0,006738 & 0 \\
+1,50$\times$ & 28 & 2,880 & 0,022174 & 0,007699 & 0 \\
+2,00$\times$ & 34 & 2,158 & 0,022160 & 0,010266 & 0 \\
+\end{tabular}
+\end{center}
+
+El acuerdo simultáneo filtrado de las cuatro patas fue 9,91\%, 6,75\% y
+1,10\% para 1,25$\times$, 1,50$\times$ y 2,00$\times$, respectivamente. El
+salto articular máximo medio aumentó de 0,021762 a 0,023257 y 0,025527 rad.
+Aunque el supervisor no se activó, la pérdida de coordinación y el aumento del
+salto a 2,00$\times$ indican proximidad al umbral operativo. Se propone
+1,25$\times$ como operación rápida conservadora; 1,50$\times$ requiere
+validación adicional y 2,00$\times$ se conserva como condición de estrés.

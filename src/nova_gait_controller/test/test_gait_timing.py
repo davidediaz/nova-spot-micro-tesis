@@ -3,6 +3,7 @@ from rclpy.time import Time
 
 from nova_gait_controller.gait_controller import (
     advance_phase_deadline, expected_contact_state, gait_mode_allowed,
+    scaled_phase_duration,
 )
 
 
@@ -19,6 +20,17 @@ def test_phase_deadline_does_not_accumulate_callback_delay():
 
     assert deadline.nanoseconds - 1_000_000_000 == pytest.approx(
         4_320_000_000, abs=1)
+
+
+def test_speed_factor_scales_phase_duration_without_changing_geometry():
+    assert scaled_phase_duration(0.18, 1.25) == pytest.approx(0.144)
+    assert scaled_phase_duration(0.18, 1.5) == pytest.approx(0.12)
+
+
+def test_speed_factor_must_be_positive_and_finite():
+    for value in (0.0, -1.0, float('inf')):
+        with pytest.raises(ValueError):
+            scaled_phase_duration(0.18, value)
 
 
 def test_crawl_contact_plan_exposes_preload_and_swing_subphases():

@@ -1204,3 +1204,21 @@ cambiar el salto articular. La criba es cinemática y no demuestra estabilidad
 dinámica; los factores mayores quedan preparados para pruebas posteriores en
 Gazebo. La explicación del alcance de la velocidad nominal se incorporó al
 capítulo de resultados de la tesis.
+
+### Ensayos de umbral de velocidad en Gazebo (1,25×, 1,5× y 2,0×)
+
+Se implementó el parámetro reproducible `speed_factor` en el controlador y en
+`demo.launch.py`; la geometría permaneció fija y solo se escaló el periodo de
+fase. Los tres ensayos de gateo fueron válidos y quedaron en
+`Experimentos/rosbag2/velocidad_gateo_{125,150,200}_20260901`, con sus CSV,
+gráficas e informes en `Experimentos/resultados_gateo_*`.
+
+Resultados: 1,25× produjo 26 ciclos, 3,456 s/ciclo, 0,023286 m/ciclo y
+0,006738 m/s; 1,5× produjo 28 ciclos, 2,880 s/ciclo, 0,022174 m/ciclo y
+0,007699 m/s; 2,0× produjo 34 ciclos, 2,158 s/ciclo, 0,022160 m/ciclo y
+0,010266 m/s. No hubo activaciones del supervisor. La coincidencia simultánea
+filtrada de las cuatro patas cayó a 9,91 %, 6,75 % y 1,10 %, y el salto
+articular máximo medio fue 0,021762, 0,023257 y 0,025527 rad, respectivamente.
+La evidencia sugiere 1,25× como candidato rápido conservador; 1,5× queda para
+validación adicional y 2,0× como condición de estrés, no recomendada para
+operación nominal. Los informes no constituyen validación física.

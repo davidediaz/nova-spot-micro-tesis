@@ -2,7 +2,8 @@ import os
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, TimerAction
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, TimerAction
+from launch.substitutions import LaunchConfiguration
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 
@@ -10,12 +11,14 @@ from launch_ros.actions import Node
 def generate_launch_description():
     gait_share = get_package_share_directory('nova_gait_controller')
     nova_share = get_package_share_directory('nova_sm3_description')
+    speed_factor = LaunchConfiguration('speed_factor')
 
     simulation = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(os.path.join(nova_share, 'launch', 'sim.launch.py')))
     controller = Node(
         package='nova_gait_controller', executable='gait_controller', output='screen',
-        parameters=[os.path.join(gait_share, 'config', 'gaits.yaml')])
+        parameters=[os.path.join(gait_share, 'config', 'gaits.yaml'),
+                    {'speed_factor': speed_factor}])
     monitoring_parameters = os.path.join(gait_share, 'config', 'monitoring.yaml')
     pose_bridge = Node(
         package='ros_gz_bridge', executable='parameter_bridge', output='screen',
@@ -44,6 +47,9 @@ def generate_launch_description():
         output='screen', parameters=[monitoring_parameters])
 
     return LaunchDescription([
+        DeclareLaunchArgument(
+            'speed_factor', default_value='1.0',
+            description='Factor multiplicativo de velocidad de las fases'),
         simulation,
         pose_bridge,
         TimerAction(period=5.0, actions=[

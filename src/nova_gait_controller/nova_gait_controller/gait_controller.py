@@ -1,5 +1,6 @@
 from copy import deepcopy
 import json
+import math
 
 import rclpy
 from builtin_interfaces.msg import Duration
@@ -60,6 +61,15 @@ def advance_phase_deadline(previous_deadline, duration):
     return previous_deadline + rclpy.duration.Duration(seconds=duration)
 
 
+def scaled_phase_duration(duration, speed_factor):
+    """Return the phase duration after applying a positive speed factor."""
+    duration = float(duration)
+    speed_factor = float(speed_factor)
+    if not math.isfinite(speed_factor) or speed_factor <= 0.0:
+        raise ValueError('speed_factor debe ser finito y mayor que cero')
+    return duration / speed_factor
+
+
 def gait_mode_allowed(mode, enable_experimental_gallop=False):
     """Keep gallop behind an explicit simulation-only opt-in."""
     return mode != 'gallop' or bool(enable_experimental_gallop)
@@ -118,6 +128,7 @@ class DiscreteGaitController(Node):
         self.declare_parameter('step_height', 0.008)
         self.declare_parameter('step_weight_shift', 0.004)
         self.declare_parameter('gallop_phase_duration', 0.20)
+        self.declare_parameter('speed_factor', 1.0)
         self.declare_parameter('enable_experimental_gallop', False)
         self.declare_parameter('transition_ratio', 0.80)
         self.declare_parameter('command_topic', '/nova/gait_command')
@@ -143,7 +154,8 @@ class DiscreteGaitController(Node):
         self.set_mode(str(self.get_parameter('initial_gait').value).lower())
         self.get_logger().info(
             'Control discreto listo. Comandos: stand, gateo/crawl, paso/step, '
-            'galope/gallop, stop.')
+            f'galope/gallop, stop. Factor de velocidad: '
+            f'{float(self.get_parameter("speed_factor").value):.2f}x.')
 
     def command_callback(self, msg):
         aliases = {'gateo': 'crawl', 'paso': 'step', 'galope': 'gallop', 'parar': 'stop'}
@@ -220,7 +232,7 @@ class DiscreteGaitController(Node):
             f'aterrizaje delantero={front_landing:.2f}, '
             f'trasero={rear_landing:.2f}, '
             f'despegue trasero={rear_liftoff:.2f}, '
-            f'ciclo={samples * duration:.2f} s')
+            f'ciclo={samples * scaled_phase_duration(duration, self.get_parameter("speed_factor").value):.2f} s')
         return states
 
     def build_step_walk(self):
@@ -237,7 +249,7 @@ class DiscreteGaitController(Node):
         self.get_logger().info(
             f'Marcha paso cartesiana: {samples} muestras, paso={step_length:.3f} m, '
             f'elevación={step_height:.3f} m, transferencia={weight_shift:.3f} m, '
-            f'ciclo={samples * duration:.2f} s')
+            f'ciclo={samples * scaled_phase_duration(duration, self.get_parameter("speed_factor").value):.2f} s')
         return states
 
     def update(self):
@@ -246,13 +258,19 @@ class DiscreteGaitController(Node):
 
         if self.mode == 'crawl':
             states = self.crawl_states
-            duration = float(self.get_parameter('crawl_phase_duration').value)
+            duration = scaled_phase_duration(
+                self.get_parameter('crawl_phase_duration').value,
+                self.get_parameter('speed_factor').value)
         elif self.mode == 'step':
             states = self.step_states
-            duration = float(self.get_parameter('step_phase_duration').value)
+            duration = scaled_phase_duration(
+                self.get_parameter('step_phase_duration').value,
+                self.get_parameter('speed_factor').value)
         else:
             states = GALLOP
-            duration = float(self.get_parameter('gallop_phase_duration').value)
+            duration = scaled_phase_duration(
+                self.get_parameter('gallop_phase_duration').value,
+                self.get_parameter('speed_factor').value)
 
         current_phase = self.phase
         self.publish_target(states[current_phase], duration)
