@@ -1254,3 +1254,9 @@ controlador; el supervisor registró `nombres_articulares_invalidos` y
 El informe reproducible quedó en
 `Experimentos/prueba_supervisor_referencia_invalida_20260901`. Las paradas por
 datos vencidos, contacto y margen continúan pendientes.
+Se intentó provocar una parada por margen de estabilidad habilitando
+`enable_stability_stop` en el lanzamiento y publicando un margen negativo. El
+intento quedó no concluyente: el monitor nominal publica continuamente en el
+mismo tópico y sobrescribe el estímulo antes de que pueda atribuirse una
+activación al mensaje provocado. No se incorpora como resultado; el siguiente
+protocolo deberá aislar el diagnóstico o usar un tópico de prueba dedicado.

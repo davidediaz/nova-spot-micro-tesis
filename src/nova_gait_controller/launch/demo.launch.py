@@ -12,6 +12,7 @@ def generate_launch_description():
     gait_share = get_package_share_directory('nova_gait_controller')
     nova_share = get_package_share_directory('nova_sm3_description')
     speed_factor = LaunchConfiguration('speed_factor')
+    enable_stability_stop = LaunchConfiguration('enable_stability_stop')
 
     simulation = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(os.path.join(nova_share, 'launch', 'sim.launch.py')))
@@ -35,7 +36,8 @@ def generate_launch_description():
         parameters=[monitoring_parameters])
     supervisor = Node(
         package='nova_gait_controller', executable='safety_supervisor', output='screen',
-        parameters=[monitoring_parameters])
+        parameters=[monitoring_parameters,
+                    {'enable_stability_stop': enable_stability_stop}])
     contacts = Node(
         package='nova_gait_controller', executable='contact_monitor', output='screen',
         parameters=[monitoring_parameters])
@@ -50,6 +52,9 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'speed_factor', default_value='1.0',
             description='Factor multiplicativo de velocidad de las fases'),
+        DeclareLaunchArgument(
+            'enable_stability_stop', default_value='false',
+            description='Habilita parada provocada por margen de estabilidad'),
         simulation,
         pose_bridge,
         TimerAction(period=5.0, actions=[
