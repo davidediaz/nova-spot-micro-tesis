@@ -28,6 +28,7 @@ setup(
             'contact_monitor = nova_gait_controller.contact_monitor:main',
             'contact_comparator = nova_gait_controller.contact_comparator:main',
             'stability_monitor = nova_gait_controller.stability_monitor:main',
+            'safety_test_node = nova_gait_controller.safety_test_node:main',
         ],
     },
 )

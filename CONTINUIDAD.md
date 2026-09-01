@@ -1295,3 +1295,9 @@ Se consolidó la matriz de estado de los cinco puntos de la ruta en
 la selección provisional de 0,80 están completadas; el supervisor aún requiere
 un nodo de prueba aislado para margen/contacto/datos, PPO está preparado pero no
 entrenado y la caracterización física depende de acceso y mediciones del robot.
+Se construyó `safety_test_node`, un nodo ROS 2 aislado para probar margen,
+contacto y vencimiento de datos sin competir con los publicadores nominales.
+El protocolo y comandos reproducibles quedaron en
+`Experimentos/PROTOCOLO_NODO_PRUEBAS_SEGURIDAD.md`. La compilación y las 84
+pruebas automáticas pasan; todavía falta ejecutar cada escenario con el
+supervisor y conservar sus JSON como evidencia integrada.
