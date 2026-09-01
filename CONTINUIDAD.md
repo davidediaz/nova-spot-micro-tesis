@@ -1273,3 +1273,9 @@ Se cerró la criba cartesiana de liberación trasera en
 0,85--1,00 lo excedieron y fueron descartadas. Es una selección cinemática,
 no una demostración de despegue; los tres candidatos deben compararse en
 Gazebo contra la configuración nominal.
+Se validó en Gazebo el candidato de liberación trasera 0,80
+(`liberacion_gateo_080_20260901`): 18 ciclos, 4,320025 s/ciclo, 0,023597
+m/ciclo, 0,005462 m/s, salto articular máximo medio 0,020331 rad y cero
+activaciones. La coincidencia filtrada fue 13,458 %, superior a la referencia
+nominal comparable, pero no demuestra vuelo trasero sostenido. El candidato
+0,75 queda pendiente.

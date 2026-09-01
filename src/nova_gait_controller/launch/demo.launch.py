@@ -15,13 +15,15 @@ def generate_launch_description():
     enable_stability_stop = LaunchConfiguration('enable_stability_stop')
     stability_topic = LaunchConfiguration('stability_topic')
     startup_grace_period = LaunchConfiguration('startup_grace_period')
+    rear_liftoff_ratio = LaunchConfiguration('rear_liftoff_ratio')
 
     simulation = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(os.path.join(nova_share, 'launch', 'sim.launch.py')))
     controller = Node(
         package='nova_gait_controller', executable='gait_controller', output='screen',
         parameters=[os.path.join(gait_share, 'config', 'gaits.yaml'),
-                    {'speed_factor': speed_factor}])
+                    {'speed_factor': speed_factor,
+                     'crawl_rear_liftoff_height_ratio': rear_liftoff_ratio}])
     monitoring_parameters = os.path.join(gait_share, 'config', 'monitoring.yaml')
     pose_bridge = Node(
         package='ros_gz_bridge', executable='parameter_bridge', output='screen',
@@ -65,6 +67,9 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'startup_grace_period', default_value='8.0',
             description='Gracia de arranque del supervisor en segundos'),
+        DeclareLaunchArgument(
+            'rear_liftoff_ratio', default_value='0.70710678',
+            description='Relación de altura trasera durante despegue de gateo'),
         simulation,
         pose_bridge,
         TimerAction(period=5.0, actions=[
