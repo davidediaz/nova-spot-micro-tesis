@@ -1139,3 +1139,12 @@ completa alcanzó 82 pruebas. No existe todavía una política entrenada y, por
 tanto, no procede la comparación nominal--RL. El PDF actualizado quedó en 56
 páginas con SHA-256
 `e86068c2d10b61bc964c20b514c8eabfd16004ba5a177373597c3af8799cf8a5`.
+
+### Cierre de gateo, repetición 1 de 5 (1 de septiembre de 2026)
+
+Se ejecutó una instancia nueva de Gazebo y se grabaron 29 ciclos completos de
+gateo nominal. La cadencia media fue 4,319985 s, el avance 0,023658 m/ciclo y no
+hubo activaciones del supervisor. La prueba reprodujo la limitación conocida:
+RL y RR solo perdieron contacto hasta 0,080615/0,088292 s, por debajo de 0,12 s.
+La bolsa local contiene 101.370 mensajes; informe, CSV, gráficas y registro están
+en las carpetas `cierre_gateo_r1_20260901`. Cuenta como repetición 1 de 5.
