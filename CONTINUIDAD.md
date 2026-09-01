@@ -1159,3 +1159,10 @@ Se repitió el intento como `cierre_gateo_r2b_20260901`; aunque hubo fases y
 trayectorias, la bolsa registró cero órdenes `/nova/gait_command`, por lo que
 no pudo delimitarse la ventana y se marcó inválido. El procedimiento se ajustó
 para verificar explícitamente los suscriptores del grabador antes de publicar.
+
+El tercer intento se ejecutó con una instancia única y dos suscriptores
+confirmados en `/nova/gait_command` (grabador y controlador). Fue válido: 50
+ciclos de gateo, 4,319977 s/ciclo, 0,023899 m/ciclo, cero activaciones y
+141.531 mensajes. Se capturaron tres `gateo` y una `stand`; la bolsa y sus
+análisis están en `cierre_gateo_r3_20260901`. Cuenta como repetición 2 válida de
+5. Las pérdidas traseras siguieron por debajo de 0,12 s.
