@@ -143,6 +143,23 @@ elaboración propia a partir de \texttt{metricas\_mujoco\_por\_ciclo.csv}.}
 \label{fig:paso-mujoco}
 \end{figure}
 
+Se añadió al modelo MuJoCo un acelerómetro en la base y sensores táctiles en
+las cuatro esferas de los pies. Estos sensores son equivalentes conceptuales a
+la IMU y a los contactos publicados por Gazebo. La bolsa histórica de MuJoCo
+fue registrada antes de esta ampliación y por ello no contiene todavía esos
+tópicos; no se imputaron contactos ni señales IMU inexistentes. La comparación
+de las variables comunes sí mostró una duración media de $5{,}760011$~s en
+Gazebo y $5{,}760003$~s en MuJoCo, con diferencia relativa de $-0{,}0001$~%.
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=0.95\textwidth]{Resultados/comparacion_gazebo_mujoco.png}
+\caption{Comparación ciclo a ciclo de las magnitudes registradas en Gazebo y
+MuJoCo para la marcha paso. La equivalencia de contactos e IMU queda pendiente
+de una nueva bolsa MuJoCo con los sensores expuestos en ROS~2.}
+\label{fig:comparacion-gazebo-mujoco}
+\end{figure}
+
 \section{Contacto previsto frente a contacto observado}
 
 La primera caracterización extensa de contacto incluyó 76 ciclos. La

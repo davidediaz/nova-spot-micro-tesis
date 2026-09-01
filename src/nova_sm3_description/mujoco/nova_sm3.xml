@@ -108,5 +108,10 @@
   <sensor>
     <framequat name="imu_orientation" objtype="body" objname="base_link"/>
     <gyro name="imu_gyro" site="imu_site"/>
+    <accelerometer name="imu_accel" site="imu_site"/>
+    <touch name="front_left_contact" geom="front_left_foot"/>
+    <touch name="front_right_contact" geom="front_right_foot"/>
+    <touch name="rear_left_contact" geom="rear_left_foot"/>
+    <touch name="rear_right_contact" geom="rear_right_foot"/>
   </sensor>
 </mujoco>
