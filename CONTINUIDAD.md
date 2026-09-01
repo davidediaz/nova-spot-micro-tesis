@@ -21,6 +21,15 @@ motivo, pruebas o evidencia, resultado y siguiente acción. No se deben
 reescribir silenciosamente resultados históricos ni mezclar bolsas producidas
 con configuraciones diferentes.
 
+Regla permanente de integración con la tesis, acordada el 1 de septiembre de
+2026: después de cada avance se debe comprobar qué objetivo atiende, qué prueba
+se ejecutó, cuál fue el criterio de aceptación y si realmente se cumplió. Los
+resultados válidos se incorporarán también a `Documento_TESIS` con método,
+configuración, datos, gráfica o tabla, interpretación y limitaciones; después se
+recompilará y revisará el PDF. Los ensayos fallidos o inconclusos conservarán su
+trazabilidad, pero no se presentarán como cumplimiento. Un resultado negativo
+podrá incluirse cuando sustente una decisión técnica o una limitación.
+
 Regla de trabajo colaborativo: cada cambio realizado por cualquiera de los
 integrantes debe notificarse en GitHub mediante un commit descriptivo y quedar
 subido al repositorio público. La notificación debe identificar qué se cambió,

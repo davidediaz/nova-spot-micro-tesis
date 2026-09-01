@@ -81,6 +81,24 @@ No se incorporarán capturas de una simulación como sustituto de datos. Las
 capturas futuras podrán documentar montaje o contexto, mientras que las
 afirmaciones cuantitativas deberán apoyarse en tablas y gráficas reproducibles.
 
+## Regla permanente para cada avance
+
+Después de cada avance técnico se aplicará este flujo:
+
+1. identificar qué objetivo y requisito atiende;
+2. ejecutar una verificación proporcional al cambio;
+3. conservar configuración, versión, datos, pruebas y posibles fallos;
+4. decidir explícitamente si el criterio de aceptación se cumplió;
+5. actualizar `CONTINUIDAD.md`, el seguimiento y GitHub;
+6. incorporar al documento de tesis únicamente los métodos y resultados
+   respaldados, junto con sus gráficas, limitaciones y conclusión permitida;
+7. recompilar y revisar visualmente el PDF cuando cambie su contenido.
+
+Si un ensayo falla o el resultado es inconcluso, se documentará como tal para
+la trazabilidad, pero no se presentará en la tesis como cumplimiento. Si aporta
+una decisión técnica o una limitación relevante, podrá aparecer en metodología
+o discusión con esa clasificación explícita.
+
 ## Fuente recibida
 
 La presentación fue copiada desde
