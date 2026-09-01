@@ -28,6 +28,22 @@ por qué, qué pruebas o evidencia se obtuvieron y cuál es la siguiente acción
 Los cambios se compartirán preferiblemente mediante ramas y Pull Requests;
 `main` debe conservar únicamente cambios trazables y revisados.
 
+### Inicio del documento final de tesis — 1 de septiembre de 2026
+
+Se creó `Documento_TESIS` como espacio independiente para construir la entrega
+final sin sobrescribir ni presentar `tesis_overleaf` como si ya fuera el
+resultado definitivo. La nueva redacción describirá trabajo efectivamente
+ejecutado mediante expresiones como «se diseñó», «se implementó» o «se
+analizó», pero solo cuando exista evidencia; no se cambiará mecánicamente el
+futuro del anteproyecto por pasado.
+
+La carpeta contiene una guía inicial, el plan del documento final y la matriz
+objetivo--método--evidencia con el estado real de los cinco objetivos. También
+se copió `Presentacion_PartiendoCronograma.pdf`, fuente de 31 diapositivas usada
+para adoptar la cadena problema--objetivo--método--evidencia--resultado--
+conclusión. SHA-256 de la presentación:
+`200ed2f5ada680325b5bbbd9efd83e2e906b9bdb65c609715d209c7a88cdc160`.
+
 ### Reinstalación de la memoria Raspberry Pi — 19 de agosto de 2026
 
 Se borró y reinstaló la memoria USB/microSD de 32 GB identificada de forma
