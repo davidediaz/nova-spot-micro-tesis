@@ -64,10 +64,15 @@ incorporó un diagrama de arquitectura y seis gráficas de ensayos aceptados:
 series y reproducibilidad de gateo, series y reproducibilidad de marcha paso,
 seguimiento/cadencia de MuJoCo y persistencia del contacto crudo. El nuevo
 SHA-256 del PDF es
-`66cf64e55d588e827d3546c263ea2f94c34ddf90fbf991e3f47ff2217b2aaa6d`.
+`dde27238bab109c669241fadf5fc59f1dd4afdb12fac303e9ea8bb6076114589`.
 `Documento_TESIS/INDICE_EVIDENCIAS_VISUALES.md` relaciona cada figura con sus
 datos, significado y limitación. Las figuras nuevas de contacto y MuJoCo son
 regenerables mediante `Documento_TESIS/generar_figuras_resultados.py`.
+
+Corrección editorial posterior: el diagrama de arquitectura redujo el grosor
+de las flechas, eliminó la etiqueta superpuesta `referencias`, amplió los nodos
+y fijó saltos de línea para que ningún texto excediera los cuadros. El PDF se
+recompiló y la página corregida fue inspeccionada visualmente.
 
 ### Reinstalación de la memoria Raspberry Pi — 19 de agosto de 2026
 
