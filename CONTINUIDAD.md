@@ -1196,3 +1196,11 @@ regresión sobre gateo r7 pasó y la bolsa `cierre_paso_r1_20260901` produjo 21
 ciclos con coincidencia simultánea cruda/filtrada de 39,067/34,787 %. El
 análisis de contactos de paso quedó versionado y ya puede utilizarse en las
 siguientes repeticiones.
+
+Se ejecutó `Experimentos/evaluar_velocidades_nominales.py` con factores 1,0×,
+1,25× y 1,5×. Las referencias de gateo y paso permanecieron alcanzables; la
+velocidad articular máxima llegó a 1,525 y 0,609 rad/s, respectivamente, sin
+cambiar el salto articular. La criba es cinemática y no demuestra estabilidad
+dinámica; los factores mayores quedan preparados para pruebas posteriores en
+Gazebo. La explicación del alcance de la velocidad nominal se incorporó al
+capítulo de resultados de la tesis.
