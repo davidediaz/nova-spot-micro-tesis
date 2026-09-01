@@ -1233,3 +1233,11 @@ roll máximo 1,280899°, pitch máximo 2,486195°, salto articular máximo medio
 filtrada fue 34,631 %. Los CSV, gráficas e informes están en
 `Experimentos/resultados_paso_r2_20260901`; junto con `cierre_paso_r1` permite
 comparar dos repeticiones, sin confundir ciclos con réplicas independientes.
+Se ejecutó además el primer ensayo de velocidad incrementada de marcha paso,
+`velocidad_paso_125_20260901`. Fue válido: 25 ciclos, 4,607986 s/ciclo,
+0,021302 m/ciclo, 0,004623 m/s, roll máximo 1,259694°, pitch máximo 2,456898°,
+salto articular máximo medio 0,009755 rad y cero activaciones. La coincidencia
+simultánea filtrada fue 31,999 %. Sus análisis están en
+`Experimentos/resultados_paso_125_20260901`. La postura se conserva, pero la
+coordinación disminuye moderadamente frente a nominal; queda pendiente
+contrastar con 1,5×.
