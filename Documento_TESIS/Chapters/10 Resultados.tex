@@ -53,7 +53,17 @@ del cuerpo. La siguiente iteración deberá realizar una búsqueda acotada de la
 escala residual (incluyendo el caso cero), conservar las observaciones de
 contacto, IMU y altura, y seleccionar la política únicamente si supera a la
 línea base en avance y velocidad sin degradar roll, pitch ni las activaciones
-del supervisor.
+del supervisor. Para localizar la causa se realizó un barrido de escala
+residual $\{0{,}00;0{,}25;0{,}50;0{,}75;1{,}00\}$ con diez ciclos válidos por
+condición. Ninguna escala superó la línea base nominal; la escala cero fue la
+menos degradante ($0{,}021878$~m/ciclo), mientras que la escala uno alcanzó
+$0{,}003775$~m/ciclo y $4{,}436$ grados de roll máximo. También se evaluaron
+las cinco semillas a escala $0{,}25$: el mejor avance fue $0{,}019845$~m/ciclo
+(semilla 71), aún por debajo de $0{,}027761$~m/ciclo nominal. La auditoría de
+las bolsas confirmó miles de muestras finitas de IMU, altura, contactos y
+articulaciones en cada ensayo. Por tanto, el resultado negativo es consistente
+con la interferencia de la corrección residual y no con una ausencia de
+observaciones.
 
 \begin{figure}[p]
 \centering

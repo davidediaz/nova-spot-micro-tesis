@@ -22,6 +22,7 @@ class PPOResidualNode(Node):
         self.declare_parameter('input_topic','/nova/nominal_trajectory')
         self.declare_parameter('output_topic','/joint_trajectory_controller/joint_trajectory')
         self.declare_parameter('enabled',True)
+        self.declare_parameter('residual_scale',1.0)
         self.W=None; self.prev=np.zeros(12); self.q=np.zeros(12); self.roll=0.; self.pitch=0.; self.height=.22; self.contacts=np.ones(4); self.accel=np.zeros(3); self.gyro=np.zeros(3); self.phase=0.
         path=str(self.get_parameter('policy_path').value)
         if path:
@@ -53,7 +54,11 @@ class PPOResidualNode(Node):
         residual=np.zeros(12)
         if self.W is not None and bool(self.get_parameter('enabled').value):
             obs=np.r_[self.roll,self.pitch,self.height-.22,self.accel,self.gyro,self.contacts,self.q,math.sin(self.phase),math.cos(self.phase)]
-            residual=bounded_residual_action(self.W@obs,self.prev); self.prev=residual; self.phase=(self.phase+1/96)%1
+            scale=float(self.get_parameter('residual_scale').value)
+            if not math.isfinite(scale) or scale < 0.0 or scale > 1.0:
+                self.get_logger().error('residual_scale debe estar entre 0 y 1; se usa 0')
+                scale=0.0
+            residual=bounded_residual_action(scale*(self.W@obs),self.prev); self.prev=residual; self.phase=(self.phase+1/96)%1
             target=apply_residual(target,residual)
         out=JointTrajectory(); out.joint_names=list(JOINTS); p=JointTrajectoryPoint(); p.positions=target.tolist(); p.time_from_start=point.time_from_start; out.points=[p]; self.pub.publish(out)
 

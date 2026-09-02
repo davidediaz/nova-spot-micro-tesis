@@ -11,6 +11,6 @@ def generate_launch_description():
     demo=IncludeLaunchDescription(PythonLaunchDescriptionSource(os.path.join(share,'launch','demo.launch.py')),
         launch_arguments={'trajectory_topic':'/nova/nominal_trajectory'}.items())
     policy=Node(package='nova_gait_controller',executable='ppo_residual_node',output='screen',parameters=[{
-        'policy_path':LaunchConfiguration('policy_path'),'input_topic':'/nova/nominal_trajectory',
+        'policy_path':LaunchConfiguration('policy_path'),'residual_scale':LaunchConfiguration('residual_scale'),'input_topic':'/nova/nominal_trajectory',
         'output_topic':'/joint_trajectory_controller/joint_trajectory','enabled':LaunchConfiguration('enabled')}])
-    return LaunchDescription([DeclareLaunchArgument('policy_path'),DeclareLaunchArgument('enabled',default_value='true'),demo,TimerAction(period=6.0,actions=[policy])])
+    return LaunchDescription([DeclareLaunchArgument('policy_path'),DeclareLaunchArgument('enabled',default_value='true'),DeclareLaunchArgument('residual_scale',default_value='1.0'),demo,TimerAction(period=6.0,actions=[policy])])
