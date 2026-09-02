@@ -1372,3 +1372,26 @@ caracterización y seguridad física pendientes.
 La tesis preliminar se recompiló tras corregir las cifras y el carácter
 descriptivo no emparejado de la comparación. El PDF tiene 65 páginas y SHA-256
 `79d00a6f77a315d5bdea3bfc76151098abc9eb1a984290dd852af89c6d706102`.
+
+### Gráficas cinemáticas completadas (2 de septiembre de 2026)
+
+Se corrigió y amplió `Experimentos/generar_graficas_cinematica.py`. La versión
+anterior asignaba erróneamente 5,76 s al ciclo de gateo y su CSV solo conservaba
+esa marcha. El generador usa ahora 4,32 s para gateo y 5,76 s para paso,
+registra las 12 velocidades articulares de ambas marchas e incluye el cierre
+cíclico.
+
+La exploración uniforme contiene 52.111 configuraciones dentro de los límites
+del URDF. El 11,600 % cumple el umbral exploratorio
+`sigma_min < 0,005 m/rad` y el 5,889 % tiene `kappa > 100`; la postura nominal
+queda en `sigma_min=0,038037 m/rad` y `kappa=6,647045`. Las velocidades máximas
+de referencia son 0,944520 rad/s para gateo y 0,372327 rad/s para paso. Estos
+resultados no incluyen autocolisión ni sustituyen límites físicos calibrados.
+Figuras, CSV e informe regenerable están en
+`Documento_TESIS/Figures/Resultados`.
+
+La suite completa conserva 86 pruebas aprobadas. La tesis recompilada mantiene
+65 páginas y SHA-256
+`83aa51c737ac1b7deb5cf6c0958a64abbb36faf710a96a608a32edecb2305d85`.
+El modelo matemático mantiene 39 páginas y SHA-256
+`815747309da532d4c01ef9ccb96a8eaf3c4adb3570974a799f080d846839f5e1`.

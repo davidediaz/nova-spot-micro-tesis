@@ -9,6 +9,16 @@ supervisadas.
 
 Última actualización documental: 2 de septiembre de 2026, America/Bogota.
 
+Actualización cinemática del 2 de septiembre: se completaron las gráficas de
+workspace, proximidad a singularidades y velocidades articulares. Se corrigió
+el período de gateo de 5,76 a 4,32 s en el generador, se añadieron ambas marchas
+y las doce articulaciones al CSV, y se documentaron umbrales y limitaciones en
+`Documento_TESIS/Figures/Resultados/INFORME_GRAFICAS_CINEMATICA.md`. La postura
+nominal tiene $\sigma_{\min}=0,038037$ m/rad y $\kappa=6,647$; los máximos de
+referencia son 0,944520 rad/s en gateo y 0,372327 rad/s en paso. El punto queda
+cerrado computacionalmente, pero los límites físicos bajo carga siguen sujetos
+a calibración.
+
 ## Punto de partida confirmado
 
 No se parte de cero. Ya están implementados y comprobados:

@@ -62,6 +62,7 @@ identificación física.
 ## Estado de validez
 
 Es un modelo nominal computable y verificado internamente, no un gemelo digital
-del ejemplar físico. Continúan pendientes la identificación física, las
-gráficas de workspace y singularidad, la validación de `Jdot` y la comparación
+del ejemplar físico. Las gráficas reproducibles de workspace, singularidad y
+velocidades articulares ya están integradas en `Documento_TESIS`. Continúan
+pendientes la identificación física, la validación de `Jdot` y la comparación
 cuantitativa con mediciones independientes.

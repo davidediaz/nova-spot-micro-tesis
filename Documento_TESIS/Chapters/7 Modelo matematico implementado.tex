@@ -126,15 +126,21 @@ jacobiano analítico se contrastó con diferencias centrales y la conversión
 fuerza--par conservó potencia virtual dentro de la tolerancia numérica.
 
 La Figura~\ref{fig:workspace-singularidades} resume una exploración uniforme
-de los límites articulares de una pata. El color representa el menor valor
-singular del jacobiano; las configuraciones próximas a cero son las más
-cercanas a una pérdida de manipulabilidad.
+de 52.111 configuraciones dentro de los límites articulares de una pata. El
+color representa el menor valor singular del jacobiano; las configuraciones
+próximas a cero son las más cercanas a una pérdida de manipulabilidad. Con el
+umbral exploratorio $\sigma_{\min}<0{,}005$~m/rad, el 11,600~\% de la malla
+quedó próximo a singularidad; el 5,889~\% presentó $\kappa>100$. La postura
+nominal, con $\sigma_{\min}=0{,}038037$~m/rad y $\kappa=6{,}647$, no pertenece
+a esas regiones. El workspace describe alcance por límites articulares, no
+espacio libre de colisiones ni una envolvente físicamente calibrada.
 
 \begin{figure}[p]
 \centering
 \includegraphics[width=0.98\textwidth]{Resultados/workspace_singularidades.png}
-\caption{Workspace cinemático y distribución del número de condición del
-Jacobiano para una pata izquierda. Fuente: elaboración propia.}
+\caption{Workspace cinemático, localización de configuraciones próximas a
+singularidad y distribución del número de condición del Jacobiano para una
+pata izquierda. Fuente: elaboración propia.}
 \label{fig:workspace-singularidades}
 \end{figure}
 
@@ -184,16 +190,19 @@ propiedades internas del modelo, no la exactitud de los pares físicos.
 El MG996R se representó mediante una envolvente nominal lineal de par--velocidad:
 
 Las velocidades de las referencias nominales se obtuvieron por diferencias
-finitas entre muestras consecutivas. La Figura~\ref{fig:velocidades-articulares}
-indica que la velocidad máxima permanece por debajo del límite provisional del
-URDF (6,981~rad/s); es una verificación de referencias en simulación, no una
+finitas hacia adelante entre muestras consecutivas, incluido el cierre del
+ciclo. La Figura~\ref{fig:velocidades-articulares} muestra máximos de
+0,944520~rad/s para gateo (4,32~s/ciclo) y 0,372327~rad/s para paso
+(5,76~s/ciclo), ambos por debajo del límite provisional del URDF
+(6,981~rad/s). Es una verificación de las referencias discretas, no una
 caracterización del servo bajo carga.
 
 \begin{figure}[p]
 \centering
 \includegraphics[width=0.95\textwidth]{Resultados/velocidades_articulares.png}
-\caption{Velocidad articular máxima y media de las referencias nominales de
-gateo y paso. La línea discontinua indica el límite de velocidad del URDF.}
+\caption{Envolventes de velocidad de coxa, fémur y tibia, y máximo entre las
+doce articulaciones, para las referencias nominales de gateo y paso. La línea
+discontinua indica el límite provisional del URDF.}
 \label{fig:velocidades-articulares}
 \end{figure}
 
