@@ -1486,3 +1486,22 @@ superar esas puertas.
 
 La tesis se recompiló con 67 páginas y SHA-256
 `7ba0d066f679ae60d482a9ddb494fd8c2299c4ee5f06d11b3aa2200cf6e3bb3d`.
+
+### Documentación integral de resultados y anexos (2 de septiembre de 2026)
+
+Se actualizó `Documento_TESIS/MATRIZ_OBJETIVO_EVIDENCIA.md` para reflejar que
+las cinco semillas PPO sí fueron entrenadas y evaluadas, pero ninguna política
+quedó aceptada; OE4 se clasifica como ejecutado sin mejora y OE5 como parcial
+no concluyente. Se corrigió la discusión que todavía describía el entrenamiento
+como pendiente.
+
+El PDF incorporó una tabla de síntesis de resultados y alcance, un segundo
+diagrama que separa la plataforma computacional comprobada de las puertas
+físicas pendientes, y el Apéndice A con matriz objetivo--evidencia, protocolos,
+comandos mínimos, reglas de integridad, automatización y transición F0--F4. El
+índice visual y el README se sincronizaron con las figuras PPO y el estado real.
+
+La inspección visual confirmó que la tabla, ambos diagramas y la primera página
+del anexo permanecen dentro de márgenes. La compilación terminó sin referencias
+indefinidas ni desbordamientos nuevos; el PDF tiene 74 páginas y SHA-256
+`61a95ac84f91217d8ced474c4ce68215b1af4f8eb96240771dfc54d5241d55e5`.

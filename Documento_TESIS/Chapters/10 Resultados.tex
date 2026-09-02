@@ -1,12 +1,33 @@
 \chapter{Resultados verificados}
 
+\section{Síntesis de resultados y nivel de evidencia}
+
+\begin{table}[H]
+\centering
+\caption{Resultados principales y alcance de la evidencia.}
+\label{tab:sintesis-resultados}
+\small
+\begin{tabular}{p{0.25\textwidth}p{0.38\textwidth}p{0.27\textwidth}}
+\toprule
+Bloque & Resultado principal & Alcance \\
+\midrule
+Gateo nominal & Cinco ensayos, 191 ciclos de régimen; 0,023955 m/ciclo y 0,005545 m/s. & Repetibilidad en Gazebo, no hardware. \\
+Marcha paso & Dos ensayos nominales; cerca de 0,02167 m/ciclo y 5,76 s/ciclo. & Gazebo; MuJoCo cubre cadencia y articulaciones. \\
+Contacto trasero & Precarga 2,0: dos ensayos de 18 ciclos con 18/18 vuelos filtrados por pata trasera. & Candidato confirmado solo en simulación. \\
+Supervisor & Nueve escenarios provocados emitieron motivo, activación y \texttt{stand}. & Integración ROS~2; no corte eléctrico. \\
+PPO residual & Cinco semillas y barrido de escala; ninguna escala positiva cumplió el criterio conjunto. & Resultado negativo; transferencia bloqueada. \\
+Modelo & 52.111 configuraciones exploradas; postura nominal con $\sigma_{\min}=0{,}038037$ m/rad. & Modelo nominal aún no identificado físicamente. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \section{Criba de sensibilidad del modelo nominal}
 
 \section{Entrenamiento preparatorio de PPO residual}
 
 Se ejecutó un entrenamiento reproducible de PPO residual en el entorno
 cinemático reducido, usando cinco semillas y 180 episodios por semilla. La
-acción respetó en todo momento la envolvente de $±0{,}08$~rad y el cambio
+acción respetó en todo momento la envolvente de $\pm 0{,}08$~rad y el cambio
 máximo de $0{,}02$~rad por muestra. La comparación nominal--PPO obtenida en
 este banco verifica el flujo de aprendizaje y las terminaciones, pero no
 representa una comparación de estabilidad en Gazebo. La política deberá
@@ -300,9 +321,8 @@ máximos medios de roll y pitch fueron 2,074511 y 4,102216 grados.
 Antes de cada ensayo se auditó el grafo ROS~2 para evitar nodos duplicados. Las
 bolsas sin orden inicial, sin fases o con diagnósticos saturados se marcaron
 como inválidas. Los analizadores produjeron CSV por ciclo, transiciones y
-episodios, además de informes regenerables. El SHA-256 completo se conservó en
-el registro de ensayo; su forma abreviada fue
-\texttt{80cf3361...864f82}.
+episodios, además de informes regenerables. El registro conserva el SHA-256
+completo; su forma abreviada fue \texttt{80cf3361...864f82}.
 
 \section{Alcance de la velocidad nominal y criba de factores mayores}
 

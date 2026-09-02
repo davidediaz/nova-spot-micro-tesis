@@ -56,6 +56,44 @@ monitoreo, seguridad y registro de evidencia. Fuente: elaboración propia.}
 \label{fig:arquitectura-software}
 \end{figure}
 
+La Figura~\ref{fig:arquitectura-fisica-segura} separa lo ya comprobado de la
+ruta física condicionada. Esta separación evita interpretar la comunicación
+I$^2$C o un barrido limitado como validación del robot completo.
+
+\begin{figure}[H]
+\centering
+\resizebox{0.96\textwidth}{!}{%
+\begin{tikzpicture}[
+node distance=0.9cm and 1.15cm,
+done/.style={rectangle,draw,rounded corners,fill=green!16,
+text width=3.0cm,minimum height=1.05cm,align=center,font=\small},
+pending/.style={rectangle,draw,dashed,rounded corners,fill=orange!14,
+text width=3.0cm,minimum height=1.05cm,align=center,font=\small},
+guard/.style={diamond,draw,fill=red!10,aspect=2.0,align=center,font=\small},
+arrow/.style={-latex,semithick}]
+\node[done] (ros) {ROS~2, SSH y DDS\\verificados};
+\node[done,right=of ros] (i2c) {Arduino / Raspberry\\PCA9685 en 0x40};
+\node[pending,right=of i2c] (oe) {Fusible, OE y\\parada física};
+\node[guard,below=of oe] (gate) {¿Seguridad\\aprobada?};
+\node[pending,left=of gate] (cal) {Calibración\\CH0--CH11};
+\node[pending,left=of cal] (suspended) {Una pata y robot\\suspendido};
+\node[pending,below=of suspended] (ground) {Postura, paso y\\gateo con soporte};
+\node[pending,right=of ground] (sensors) {IMU, potencia,\\contactos y ángulos};
+\draw[arrow] (ros) -- (i2c);
+\draw[arrow] (i2c) -- (oe);
+\draw[arrow] (oe) -- (gate);
+\draw[arrow] (gate) -- node[above,font=\scriptsize]{sí} (cal);
+\draw[arrow] (cal) -- (suspended);
+\draw[arrow] (suspended) -- (ground);
+\draw[arrow] (ground) -- (sensors);
+\end{tikzpicture}%
+}
+\caption{Arquitectura de transición segura desde la plataforma computacional
+verificada hasta la validación física pendiente. Los bloques discontinuos no
+se presentan como resultados terminados. Fuente: elaboración propia.}
+\label{fig:arquitectura-fisica-segura}
+\end{figure}
+
 \section{Temporización reproducible}
 
 La implementación inicial avanzaba cada fase desde el instante tardío del

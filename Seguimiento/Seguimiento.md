@@ -578,6 +578,16 @@ nominal frente a nominal más RL y trazabilidad completa de cada ensayo.
 
 Estado: **parcial**.
 
+- [x] Actualizar la matriz objetivo--método--evidencia con el estado real de
+  PPO, seguridad y locomoción.
+- [x] Incorporar una tabla de síntesis y conservar las tablas cuantitativas de
+  cada campaña aceptada.
+- [x] Incorporar diagramas de arquitectura funcional y transición física
+  segura.
+- [x] Actualizar limitaciones y trabajo futuro sin presentar PPO o hardware
+  como validados.
+- [x] Crear anexos con protocolos, comandos, integridad y reproducibilidad.
+
 - [ ] Actualizar la introducción para explicar claramente la comparación con la
   capa correctiva RL.
 - [ ] Incorporar los resultados técnicos ya comprobados sin presentar el
@@ -596,6 +606,15 @@ Estado: **parcial**.
 
 Criterio de cierre: PDF final compilado, objetivos trazables a resultados y
 afirmaciones respaldadas por evidencia experimental.
+
+Actualización documental del 2 de septiembre de 2026: los cinco productos
+anteriores quedaron integrados en el PDF. La matriz viva corrigió OE4 como
+entrenado pero no aceptado y OE5 como comparación parcial no concluyente. Se
+añadieron una tabla ejecutiva de resultados, un segundo diagrama de arquitectura
+y el Apéndice A con protocolos, comandos, reglas de exclusión y transición al
+hardware. El PDF compiló en 74 páginas. La tesis continúa parcial porque aún
+faltan resultados físicos y una comparación final emparejada, no por ausencia
+de estructura documental.
 
 ## Próxima acción concreta
 

@@ -27,6 +27,7 @@ provocados ya se ejecutan automáticamente. Antes de habilitar por defecto las
 paradas de contacto, margen y datos vencidos se deberán medir falsos positivos
 durante campañas largas y definir un mecanismo de rearme seguro.
 
-Finalmente se formulará y entrenará la política PPO como una capa de
-correcciones acotadas. La comparación final conservará las semillas y tamaños
-de muestra definidos y evaluará la misma marcha con y sin corrección aprendida.
+Finalmente se rediseñará y reentrenará la política PPO como una capa de
+correcciones acotadas, porque la versión evaluada fue rechazada. La comparación
+final conservará las semillas y tamaños de muestra definidos y evaluará la
+misma marcha con y sin corrección aprendida mediante ensayos emparejados.

@@ -69,13 +69,16 @@ latexmk -pdf -interaction=nonstopmode -halt-on-error -outdir=build Thesis.tex
 ```
 
 El PDF es preliminar porque todavía faltan la caracterización y validación
-física, el entrenamiento RL y la comparación experimental final. La palabra
-«preliminar» no autoriza a completar esos apartados con resultados esperados.
+física y una comparación experimental final emparejada. PPO fue entrenado y
+evaluado, pero la política obtenida se rechazó porque ninguna escala positiva
+cumplió el criterio conjunto; deberá rediseñarse antes de repetir la campaña.
+La palabra «preliminar» no autoriza a completar apartados con resultados
+esperados.
 
 ## Evidencia visual
 
-El PDF incorpora gráficas procedentes exclusivamente de ensayos aceptados y un
-diagrama de la arquitectura implementada. La trazabilidad entre figura, datos,
+El PDF incorpora gráficas procedentes de ensayos aceptados, resultados
+negativos trazables y dos diagramas de arquitectura. La trazabilidad entre figura, datos,
 conclusión y limitación se mantiene en `INDICE_EVIDENCIAS_VISUALES.md`.
 
 Las figuras específicas de contacto y MuJoCo se regeneran desde los CSV con:

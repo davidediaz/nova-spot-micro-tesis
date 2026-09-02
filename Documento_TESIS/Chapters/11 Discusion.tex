@@ -32,8 +32,18 @@ representan directamente los futuros sensores físicos. Los resultados de
 simulación respaldan el desarrollo del controlador y el protocolo, pero no
 sustituyen la validación del robot real.
 
-La capa correctiva de aprendizaje por refuerzo no se entrenó aún porque la
-línea base física, la instrumentación y la seguridad no están cerradas. Esta
-decisión evita optimizar una política sobre observaciones o límites que después
-no estén disponibles en hardware y evita presentar curvas de entrenamiento sin
-una comparación final válida.
+La capa correctiva se entrenó con cinco semillas y se conectó a Gazebo, pero
+ninguna escala residual positiva cumplió simultáneamente los criterios de
+avance y postura. La escala cero reprodujo el nominal, lo que descartó un fallo
+del bypass, mientras las escalas positivas mostraron interferencia con la
+marcha. En consecuencia, el resultado válido es negativo: la política se
+rechaza para transferencia. La comparación fue descriptiva y no completamente
+emparejada; no sustituye la campaña final prevista después de rediseñar el
+entrenamiento.
+
+Las pruebas provocadas demostraron que el supervisor recibe estímulos de pose,
+contacto, estabilidad y trayectoria y ordena \texttt{stand}. Sin embargo,
+\texttt{stand} es una orden lógica, no un corte de energía. En hardware deberá
+existir una ruta independiente por OE, además de un rearme explícito y una
+medición de falsos positivos antes de habilitar por defecto los watchdogs de
+contacto, margen y telemetría.
