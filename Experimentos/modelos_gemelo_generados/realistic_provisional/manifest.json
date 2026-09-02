@@ -1,0 +1,28 @@
+{
+  "profile": "realistic_provisional",
+  "status": "provisional_not_identified",
+  "parameters": {
+    "mass_scale": 1.1,
+    "inertia_scale": 1.15,
+    "joint_damping": 0.12,
+    "joint_friction": 0.045,
+    "ground_friction": 0.675,
+    "backlash_rad": 0.017453293,
+    "command_delay_ms": 20,
+    "sensor_delay_ms": 50,
+    "voltage_v": 5.5,
+    "current_limit_per_servo_a": 1.0
+  },
+  "effective_stall_torque_nm": 0.7279245081300812,
+  "effective_no_load_speed_rad_s": 6.399540590645874,
+  "common_ros_layer": {
+    "backlash_rad": 0.017453293,
+    "command_delay_ms": 20,
+    "sensor_delay_ms": 50
+  },
+  "files": {
+    "nova_gazebo.urdf": "a30e23ee3406c7ff572066443092fcdad34d5f6ec5669a86043100fa93713ca5",
+    "nova_mujoco.xml": "edfb308706ddb07babbab3bd4cb379654b351d8f47624f3bc2513158dceaa58d",
+    "nova_world.sdf": "ad4e2fcc6807fa3569b4c0b1c17a1e059efb06e756b100bdf5f99fd48442df6f"
+  }
+}

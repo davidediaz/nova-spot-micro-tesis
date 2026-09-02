@@ -35,6 +35,7 @@
             <inertial pos="0 0 -0.080142857" mass="0.14" diaginertia="0.0002720143 0.0002745351 0.0000178672"/>
             <geom type="box" pos="0 0 -0.066" size="0.015 0.0125 0.066" material="black" mass="0"/>
             <geom name="front_left_foot" type="sphere" pos="0 0 -0.132" size="0.018" material="grey" mass="0.03"/>
+            <site name="front_left_foot_site" pos="0 0 -0.132" size="0.018"/>
           </body>
         </body>
       </body>
@@ -52,6 +53,7 @@
             <inertial pos="0 0 -0.080142857" mass="0.14" diaginertia="0.0002720143 0.0002745351 0.0000178672"/>
             <geom type="box" pos="0 0 -0.066" size="0.015 0.0125 0.066" material="black" mass="0"/>
             <geom name="front_right_foot" type="sphere" pos="0 0 -0.132" size="0.018" material="grey" mass="0.03"/>
+            <site name="front_right_foot_site" pos="0 0 -0.132" size="0.018"/>
           </body>
         </body>
       </body>
@@ -69,6 +71,7 @@
             <inertial pos="0 0 -0.080142857" mass="0.14" diaginertia="0.0002720143 0.0002745351 0.0000178672"/>
             <geom type="box" pos="0 0 -0.066" size="0.015 0.0125 0.066" material="black" mass="0"/>
             <geom name="rear_left_foot" type="sphere" pos="0 0 -0.132" size="0.018" material="grey" mass="0.03"/>
+            <site name="rear_left_foot_site" pos="0 0 -0.132" size="0.018"/>
           </body>
         </body>
       </body>
@@ -86,6 +89,7 @@
             <inertial pos="0 0 -0.080142857" mass="0.14" diaginertia="0.0002720143 0.0002745351 0.0000178672"/>
             <geom type="box" pos="0 0 -0.066" size="0.015 0.0125 0.066" material="black" mass="0"/>
             <geom name="rear_right_foot" type="sphere" pos="0 0 -0.132" size="0.018" material="grey" mass="0.03"/>
+            <site name="rear_right_foot_site" pos="0 0 -0.132" size="0.018"/>
           </body>
         </body>
       </body>
@@ -109,9 +113,9 @@
     <framequat name="imu_orientation" objtype="body" objname="base_link"/>
     <gyro name="imu_gyro" site="imu_site"/>
     <accelerometer name="imu_accel" site="imu_site"/>
-    <touch name="front_left_contact" geom="front_left_foot"/>
-    <touch name="front_right_contact" geom="front_right_foot"/>
-    <touch name="rear_left_contact" geom="rear_left_foot"/>
-    <touch name="rear_right_contact" geom="rear_right_foot"/>
+    <touch name="front_left_contact" site="front_left_foot_site"/>
+    <touch name="front_right_contact" site="front_right_foot_site"/>
+    <touch name="rear_left_contact" site="rear_left_foot_site"/>
+    <touch name="rear_right_contact" site="rear_right_foot_site"/>
   </sensor>
 </mujoco>

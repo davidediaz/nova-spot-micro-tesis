@@ -1,0 +1,36 @@
+schema_version: 1
+status: provisional_not_identified
+profiles:
+  nominal:
+    mass_scale: 1.0
+    inertia_scale: 1.0
+    joint_damping: 0.08
+    joint_friction: 0.03
+    ground_friction: 0.90
+    backlash_rad: 0.0
+    command_delay_ms: 0
+    sensor_delay_ms: 0
+    voltage_v: 6.0
+    current_limit_per_servo_a: 1.40
+  realistic_provisional:
+    mass_scale: 1.10
+    inertia_scale: 1.15
+    joint_damping: 0.12
+    joint_friction: 0.045
+    ground_friction: 0.675
+    backlash_rad: 0.017453293
+    command_delay_ms: 20
+    sensor_delay_ms: 50
+    voltage_v: 5.5
+    current_limit_per_servo_a: 1.00
+  low_mass_low_friction:
+    mass_scale: 0.90
+    inertia_scale: 0.85
+    joint_damping: 0.04
+    joint_friction: 0.015
+    ground_friction: 0.45
+    backlash_rad: 0.008726646
+    command_delay_ms: 20
+    sensor_delay_ms: 20
+    voltage_v: 6.0
+    current_limit_per_servo_a: 1.20

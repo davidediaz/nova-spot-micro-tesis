@@ -28,6 +28,15 @@ El modelo se trató como nominal computable y no como gemelo digital, debido a
 que las masas, geometría definitiva, fricción, holgura y parámetros de los
 actuadores físicos todavía no se han identificado por completo.
 
+Como preparación para esa identificación se implementó una fuente única de
+perfiles que genera pares URDF/SDF--MJCF auditables. Los perfiles varían masa,
+inercia, amortiguamiento, fricción articular y del suelo, holgura, retardos,
+tensión y corriente. El límite del MG996R combina la envolvente de catálogo
+par--velocidad con una cota de corriente; una capa ROS común aplica retardo,
+zona muerta y límite de cambio de referencia en ambos simuladores. Estos
+perfiles aumentan fidelidad y comparabilidad, pero sus valores continúan siendo
+hipótesis hasta contrastarlos con el robot físico.
+
 \section{Protocolo de caracterización física}
 
 Se preparó un protocolo trazable para contrastar el modelo con el ejemplar

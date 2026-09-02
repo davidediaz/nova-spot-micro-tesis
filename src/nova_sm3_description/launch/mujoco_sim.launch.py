@@ -12,9 +12,11 @@ def launch_setup(context):
     share = FindPackageShare('nova_sm3_description')
     model = PathJoinSubstitution([share, 'urdf', 'nova_sm3.urdf.xacro'])
     headless = LaunchConfiguration('headless')
+    mujoco_model = LaunchConfiguration('mujoco_model')
     description_text = Command([
         FindExecutable(name='xacro'), ' ', model,
         ' use_fake_hardware:=false use_mujoco:=true headless:=', headless,
+        ' mujoco_model:=', mujoco_model,
     ]).perform(context)
     description = {'robot_description': ParameterValue(description_text, value_type=str)}
     controllers = PathJoinSubstitution([share, 'config', 'controllers.yaml'])
@@ -39,5 +41,7 @@ def launch_setup(context):
 def generate_launch_description():
     return LaunchDescription([
         DeclareLaunchArgument('headless', default_value='false'),
+        DeclareLaunchArgument('mujoco_model', default_value=PathJoinSubstitution([
+            FindPackageShare('nova_sm3_description'), 'mujoco', 'nova_sm3.xml'])),
         OpaqueFunction(function=launch_setup),
     ])

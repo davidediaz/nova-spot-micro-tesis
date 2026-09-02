@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-  <xacro:macro name="nova_ros2_control" params="use_fake_hardware:=true use_mujoco:=false use_gazebo:=false headless:=false">
+  <xacro:macro name="nova_ros2_control" params="use_fake_hardware:=true use_mujoco:=false use_gazebo:=false headless:=false mujoco_model:=''">
     <ros2_control name="NovaSM3System" type="system">
       <hardware>
         <xacro:if value="${use_fake_hardware}">
@@ -9,7 +9,7 @@
         </xacro:if>
         <xacro:if value="${use_mujoco}">
           <plugin>mujoco_ros2_control/MujocoSystemInterface</plugin>
-          <param name="mujoco_model">$(find nova_sm3_description)/mujoco/nova_sm3.xml</param>
+          <param name="mujoco_model">${mujoco_model}</param>
           <param name="headless">${headless}</param>
           <param name="sim_speed_factor">1.0</param>
         </xacro:if>

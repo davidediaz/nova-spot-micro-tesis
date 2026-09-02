@@ -1,6 +1,7 @@
 """Regression checks that keep code, URDF/Xacro and MuJoCo parameters aligned."""
 
 from pathlib import Path
+import subprocess
 import xml.etree.ElementTree as ET
 
 import pytest
@@ -16,8 +17,18 @@ XACRO_NS = '{http://www.ros.org/wiki/xacro}'
 
 def _xacro_properties():
     root = ET.parse(XACRO).getroot()
-    return {item.attrib['name']: float(item.attrib['value'])
-            for item in root.findall(f'{XACRO_NS}property')}
+    result = {}
+    for item in root.findall(f'{XACRO_NS}property'):
+        try:
+            result[item.attrib['name']] = float(item.attrib['value'])
+        except ValueError:
+            pass
+    return result
+
+
+def _expanded_nominal_urdf():
+    return ET.fromstring(subprocess.check_output(
+        ['xacro', str(XACRO), 'include_ros2_control:=false']))
 
 
 def test_geometry_and_masses_match_xacro():
@@ -28,14 +39,17 @@ def test_geometry_and_masses_match_xacro():
         'coxa_length': DEFAULT_PARAMETERS.coxa_length,
         'femur_length': DEFAULT_PARAMETERS.femur_length,
         'tibia_length': DEFAULT_PARAMETERS.tibia_length,
-        'body_mass': DEFAULT_PARAMETERS.body_mass,
-        'coxa_mass': DEFAULT_PARAMETERS.coxa_mass,
-        'femur_mass': DEFAULT_PARAMETERS.femur_mass,
-        'tibia_mass': DEFAULT_PARAMETERS.tibia_mass,
-        'foot_mass': DEFAULT_PARAMETERS.foot_mass,
     }
     for name, value in expected.items():
         assert properties[name] == pytest.approx(value)
+    root = _expanded_nominal_urdf()
+    masses = {link.attrib['name']: float(link.find('./inertial/mass').attrib['value'])
+              for link in root.findall('./link') if link.find('./inertial/mass') is not None}
+    assert masses['base_link'] == pytest.approx(DEFAULT_PARAMETERS.body_mass)
+    assert masses['front_left_coxa_link'] == pytest.approx(DEFAULT_PARAMETERS.coxa_mass)
+    assert masses['front_left_femur_link'] == pytest.approx(DEFAULT_PARAMETERS.femur_mass)
+    assert masses['front_left_tibia_link'] == pytest.approx(DEFAULT_PARAMETERS.tibia_mass)
+    assert masses['front_left_foot_link'] == pytest.approx(DEFAULT_PARAMETERS.foot_mass)
 
 
 def test_mujoco_defaults_match_computable_model():
@@ -61,11 +75,19 @@ def test_mujoco_total_mass_matches_nominal_total():
     assert total == pytest.approx(DEFAULT_PARAMETERS.total_mass)
 
 
+def test_mujoco_touch_sensors_reference_existing_sites():
+    root = ET.parse(MUJOCO).getroot()
+    sites = {site.attrib['name'] for site in root.findall('.//site')}
+    touches = root.findall('./sensor/touch')
+    assert len(touches) == 4
+    assert all(sensor.attrib['site'] in sites for sensor in touches)
+
+
 def test_urdf_actuator_envelope_uses_mg996r_catalogue_limit():
-    root = ET.parse(XACRO).getroot()
+    root = _expanded_nominal_urdf()
     limits = root.findall(".//limit")
     dynamics = root.findall(".//dynamics")
-    assert len(limits) == 3 and len(dynamics) == 3
+    assert len(limits) == 12 and len(dynamics) == 12
     for limit in limits:
         assert float(limit.attrib['effort']) == pytest.approx(MG996R.stall_torque)
         assert float(limit.attrib['velocity']) == pytest.approx(MG996R.no_load_speed)

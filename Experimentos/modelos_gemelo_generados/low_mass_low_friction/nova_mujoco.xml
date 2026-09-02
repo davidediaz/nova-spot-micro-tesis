@@ -1,0 +1,127 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mujoco model="nova_sm3_provisional">
+  <compiler angle="radian" inertiafromgeom="false" />
+  <option timestep="0.002" gravity="0 0 -9.81" integrator="implicitfast" />
+  <custom>
+    <numeric name="backlash_rad" data="0.008726646" />
+    <numeric name="command_delay_ms" data="20" />
+    <numeric name="sensor_delay_ms" data="20" />
+    <numeric name="voltage_v" data="6.0" />
+    <numeric name="current_limit_per_servo_a" data="1.2" />
+  </custom>
+  <default>
+    <joint damping="0.04" frictionloss="0.015" armature="0.002" />
+    <geom contype="1" conaffinity="1" condim="3" friction="0.45 0.02 0.002" />
+    <position kp="8" kv="0.8" ctrllimited="true" />
+  </default>
+  <visual>
+    <global azimuth="135" elevation="-25" />
+    <headlight ambient="0.4 0.4 0.4" />
+  </visual>
+  <asset>
+    <material name="yellow" rgba="0.95 0.72 0.05 1" />
+    <material name="black" rgba="0.08 0.08 0.08 1" />
+    <material name="grey" rgba="0.35 0.35 0.35 1" />
+  </asset>
+  <worldbody>
+    <light pos="0 0 2" dir="0 0 -1" />
+    <geom name="floor" type="plane" size="2 2 0.05" rgba="0.75 0.75 0.75 1" />
+    <body name="base_link" pos="0 0 0.30">
+      <freejoint name="base_free_joint" />
+      <inertial pos="0 0 0" mass="1.08" diaginertia="0.0015319125 0.0044771625 0.00514845" />
+      <geom type="box" size="0.115 0.060 0.0375" material="yellow" mass="0" />
+      <site name="imu_site" pos="0 0 0" size="0.005" rgba="0 0 1 0" />
+      <body name="front_left_coxa_link" pos="0.09 0.06 0">
+        <joint name="front_left_coxa_joint" axis="1 0 0" range="-0.60 0.60" />
+        <inertial pos="0 0.045 0" mass="0.108" diaginertia="7.133625e-05 1.87425e-05 7.133625e-05" />
+        <geom type="box" pos="0 0.045 0" size="0.0175 0.045 0.0175" material="black" mass="0" />
+        <body name="front_left_femur_link" pos="0 0.09 0">
+          <joint name="front_left_femur_joint" axis="0 1 0" range="-1.20 1.20" />
+          <inertial pos="0 0 -0.0525" mass="0.108" diaginertia="9.122625e-05 9.37125e-05 1.625625e-05" />
+          <geom type="box" pos="0 0 -0.0525" size="0.0175 0.015 0.0525" material="yellow" mass="0" />
+          <body name="front_left_tibia_link" pos="0 0 -0.105">
+            <joint name="front_left_tibia_joint" axis="0 1 0" range="-2.20 0.10" />
+            <inertial pos="0 0 -0.080142857" mass="0.126" diaginertia="0.0002080909395 0.0002100193515 1.3668408e-05" />
+            <geom type="box" pos="0 0 -0.066" size="0.015 0.0125 0.066" material="black" mass="0" />
+            <geom name="front_left_foot" type="sphere" pos="0 0 -0.132" size="0.018" material="grey" mass="0.03" />
+            <site name="front_left_foot_site" pos="0 0 -0.132" size="0.018" />
+          </body>
+        </body>
+      </body>
+      <body name="front_right_coxa_link" pos="0.09 -0.06 0">
+        <joint name="front_right_coxa_joint" axis="-1 0 0" range="-0.60 0.60" />
+        <inertial pos="0 -0.045 0" mass="0.108" diaginertia="7.133625e-05 1.87425e-05 7.133625e-05" />
+        <geom type="box" pos="0 -0.045 0" size="0.0175 0.045 0.0175" material="black" mass="0" />
+        <body name="front_right_femur_link" pos="0 -0.09 0">
+          <joint name="front_right_femur_joint" axis="0 1 0" range="-1.20 1.20" />
+          <inertial pos="0 0 -0.0525" mass="0.108" diaginertia="9.122625e-05 9.37125e-05 1.625625e-05" />
+          <geom type="box" pos="0 0 -0.0525" size="0.0175 0.015 0.0525" material="yellow" mass="0" />
+          <body name="front_right_tibia_link" pos="0 0 -0.105">
+            <joint name="front_right_tibia_joint" axis="0 1 0" range="-2.20 0.10" />
+            <inertial pos="0 0 -0.080142857" mass="0.126" diaginertia="0.0002080909395 0.0002100193515 1.3668408e-05" />
+            <geom type="box" pos="0 0 -0.066" size="0.015 0.0125 0.066" material="black" mass="0" />
+            <geom name="front_right_foot" type="sphere" pos="0 0 -0.132" size="0.018" material="grey" mass="0.03" />
+            <site name="front_right_foot_site" pos="0 0 -0.132" size="0.018" />
+          </body>
+        </body>
+      </body>
+      <body name="rear_left_coxa_link" pos="-0.09 0.06 0">
+        <joint name="rear_left_coxa_joint" axis="1 0 0" range="-0.60 0.60" />
+        <inertial pos="0 0.045 0" mass="0.108" diaginertia="7.133625e-05 1.87425e-05 7.133625e-05" />
+        <geom type="box" pos="0 0.045 0" size="0.0175 0.045 0.0175" material="black" mass="0" />
+        <body name="rear_left_femur_link" pos="0 0.09 0">
+          <joint name="rear_left_femur_joint" axis="0 1 0" range="-1.20 1.20" />
+          <inertial pos="0 0 -0.0525" mass="0.108" diaginertia="9.122625e-05 9.37125e-05 1.625625e-05" />
+          <geom type="box" pos="0 0 -0.0525" size="0.0175 0.015 0.0525" material="yellow" mass="0" />
+          <body name="rear_left_tibia_link" pos="0 0 -0.105">
+            <joint name="rear_left_tibia_joint" axis="0 1 0" range="-2.20 0.10" />
+            <inertial pos="0 0 -0.080142857" mass="0.126" diaginertia="0.0002080909395 0.0002100193515 1.3668408e-05" />
+            <geom type="box" pos="0 0 -0.066" size="0.015 0.0125 0.066" material="black" mass="0" />
+            <geom name="rear_left_foot" type="sphere" pos="0 0 -0.132" size="0.018" material="grey" mass="0.03" />
+            <site name="rear_left_foot_site" pos="0 0 -0.132" size="0.018" />
+          </body>
+        </body>
+      </body>
+      <body name="rear_right_coxa_link" pos="-0.09 -0.06 0">
+        <joint name="rear_right_coxa_joint" axis="-1 0 0" range="-0.60 0.60" />
+        <inertial pos="0 -0.045 0" mass="0.108" diaginertia="7.133625e-05 1.87425e-05 7.133625e-05" />
+        <geom type="box" pos="0 -0.045 0" size="0.0175 0.045 0.0175" material="black" mass="0" />
+        <body name="rear_right_femur_link" pos="0 -0.09 0">
+          <joint name="rear_right_femur_joint" axis="0 1 0" range="-1.20 1.20" />
+          <inertial pos="0 0 -0.0525" mass="0.108" diaginertia="9.122625e-05 9.37125e-05 1.625625e-05" />
+          <geom type="box" pos="0 0 -0.0525" size="0.0175 0.015 0.0525" material="yellow" mass="0" />
+          <body name="rear_right_tibia_link" pos="0 0 -0.105">
+            <joint name="rear_right_tibia_joint" axis="0 1 0" range="-2.20 0.10" />
+            <inertial pos="0 0 -0.080142857" mass="0.126" diaginertia="0.0002080909395 0.0002100193515 1.3668408e-05" />
+            <geom type="box" pos="0 0 -0.066" size="0.015 0.0125 0.066" material="black" mass="0" />
+            <geom name="rear_right_foot" type="sphere" pos="0 0 -0.132" size="0.018" material="grey" mass="0.03" />
+            <site name="rear_right_foot_site" pos="0 0 -0.132" size="0.018" />
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+  <actuator>
+    <position name="front_left_coxa_act" joint="front_left_coxa_joint" ctrlrange="-0.60 0.60" forcelimited="true" forcerange="-0.903328004065 0.903328004065" />
+    <position name="front_left_femur_act" joint="front_left_femur_joint" ctrlrange="-1.20 1.20" forcelimited="true" forcerange="-0.903328004065 0.903328004065" />
+    <position name="front_left_tibia_act" joint="front_left_tibia_joint" ctrlrange="-2.20 0.10" forcelimited="true" forcerange="-0.903328004065 0.903328004065" />
+    <position name="front_right_coxa_act" joint="front_right_coxa_joint" ctrlrange="-0.60 0.60" forcelimited="true" forcerange="-0.903328004065 0.903328004065" />
+    <position name="front_right_femur_act" joint="front_right_femur_joint" ctrlrange="-1.20 1.20" forcelimited="true" forcerange="-0.903328004065 0.903328004065" />
+    <position name="front_right_tibia_act" joint="front_right_tibia_joint" ctrlrange="-2.20 0.10" forcelimited="true" forcerange="-0.903328004065 0.903328004065" />
+    <position name="rear_left_coxa_act" joint="rear_left_coxa_joint" ctrlrange="-0.60 0.60" forcelimited="true" forcerange="-0.903328004065 0.903328004065" />
+    <position name="rear_left_femur_act" joint="rear_left_femur_joint" ctrlrange="-1.20 1.20" forcelimited="true" forcerange="-0.903328004065 0.903328004065" />
+    <position name="rear_left_tibia_act" joint="rear_left_tibia_joint" ctrlrange="-2.20 0.10" forcelimited="true" forcerange="-0.903328004065 0.903328004065" />
+    <position name="rear_right_coxa_act" joint="rear_right_coxa_joint" ctrlrange="-0.60 0.60" forcelimited="true" forcerange="-0.903328004065 0.903328004065" />
+    <position name="rear_right_femur_act" joint="rear_right_femur_joint" ctrlrange="-1.20 1.20" forcelimited="true" forcerange="-0.903328004065 0.903328004065" />
+    <position name="rear_right_tibia_act" joint="rear_right_tibia_joint" ctrlrange="-2.20 0.10" forcelimited="true" forcerange="-0.903328004065 0.903328004065" />
+  </actuator>
+  <sensor>
+    <framequat name="imu_orientation" objtype="body" objname="base_link" />
+    <gyro name="imu_gyro" site="imu_site" />
+    <accelerometer name="imu_accel" site="imu_site" />
+    <touch name="front_left_contact" site="front_left_foot_site" />
+    <touch name="front_right_contact" site="front_right_foot_site" />
+    <touch name="rear_left_contact" site="rear_left_foot_site" />
+    <touch name="rear_right_contact" site="rear_right_foot_site" />
+  </sensor>
+</mujoco>

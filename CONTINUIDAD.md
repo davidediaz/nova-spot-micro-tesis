@@ -1395,3 +1395,32 @@ La suite completa conserva 86 pruebas aprobadas. La tesis recompilada mantiene
 `83aa51c737ac1b7deb5cf6c0958a64abbb36faf710a96a608a32edecb2305d85`.
 El modelo matemático mantiene 39 páginas y SHA-256
 `815747309da532d4c01ef9ccb96a8eaf3c4adb3570974a799f080d846839f5e1`.
+
+### Modelo digital configurable y perfiles emparejados (2 de septiembre de 2026)
+
+Se creó `src/nova_sm3_description/config/digital_twin_profiles.yaml` como
+fuente única para variar masa, inercia, amortiguamiento, fricción articular y
+del suelo, holgura, retardos, tensión y corriente. El estado explícito sigue
+siendo `provisional_not_identified`.
+
+`Experimentos/generar_perfiles_gemelo.py` genera un URDF Gazebo, mundo SDF,
+MJCF y manifiesto con hashes. Los perfiles `nominal`,
+`realistic_provisional` y `low_mass_low_friction` pasaron la auditoría de masa,
+amortiguamiento, fricción y esfuerzo común. El perfil realista provisional usa
+masa 1,10, inercia 1,15, fricción de suelo 0,675, holgura de un grado,
+retardos de 20/50 ms y 5,5 V con 1,0 A por servo; su par queda limitado a
+0,727925 N m.
+
+Se añadió `actuator_model_node` para aplicar holgura, retardo y límite de
+velocidad en ambas rutas. Gazebo carga perfiles con
+`profile_gazebo.launch.py` y MuJoCo acepta ahora una ruta MJCF configurable.
+Pasan 89 pruebas y ambos paquetes compilan. El perfil realista provisional se
+cargó en Gazebo con sus doce articulaciones y dos controladores activos; el
+MJCF correspondiente cargó directamente en MuJoCo con 12 actuadores y siete
+sensores. Falta ejecutar campañas iguales y
+exponer pose/contactos equivalentes desde MuJoCo; por ello aún no se declara un
+gemelo digital identificado ni una comparación dinámica completa. Documento:
+`Documentacion/GEMELO_DIGITAL_CONFIGURABLE.md`.
+
+La tesis se recompiló con 66 páginas y SHA-256
+`038c3fb25f2a5542cd7f249e5263dd01b1f3f0bd389bf60ed89f2f9d3852aba1`.

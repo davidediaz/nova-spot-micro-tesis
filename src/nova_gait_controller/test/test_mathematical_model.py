@@ -6,10 +6,24 @@ import numpy as np
 from nova_gait_controller.kinematics import forward_leg
 from nova_gait_controller.mathematical_model import (
     DEFAULT_PARAMETERS, MG996R, actuator_current, actuator_torque_limit,
-    compliant_contact_force, coriolis_torque, foot_force_to_joint_torque,
+    apply_backlash, compliant_contact_force, coriolis_torque, foot_force_to_joint_torque,
     inverse_dynamics, leg_jacobian, leg_link_com_positions, leg_mass_matrix,
     mat_vec, robot_center_of_mass, static_stability_margin,
-)
+    saturated_actuator_torque)
+
+
+def test_actuator_saturates_by_current_and_speed():
+    torque, current, saturated = saturated_actuator_torque(2.0, 0.0, current_limit=0.8)
+    assert 0.0 < torque < 1.0787315
+    assert current <= 0.8
+    assert saturated
+    assert saturated_actuator_torque(0.1, 0.0)[0] == pytest.approx(0.1)
+
+
+def test_backlash_dead_zone_and_direction():
+    assert apply_backlash(0.01, 0.0, 0.02) == 0.0
+    assert apply_backlash(0.10, 0.0, 0.02) == pytest.approx(0.08)
+    assert apply_backlash(-0.10, 0.0, 0.02) == pytest.approx(-0.08)
 
 
 def test_total_mass_matches_urdf_reference():

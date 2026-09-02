@@ -19,6 +19,15 @@ referencia son 0,944520 rad/s en gateo y 0,372327 rad/s en paso. El punto queda
 cerrado computacionalmente, pero los límites físicos bajo carga siguen sujetos
 a calibración.
 
+Actualización del modelo digital del 2 de septiembre: una fuente YAML genera
+perfiles emparejados para Gazebo y MuJoCo, con variación de masa, inercia,
+fricción, amortiguamiento, holgura, retardos, tensión y corriente. Tres perfiles
+pasan la auditoría de compatibilidad. Se modeló la saturación del MG996R por
+velocidad, tensión y corriente, y una capa ROS común aplica holgura y retardo.
+El avance prepara una comparación justa, pero no cierra un gemelo digital:
+faltan identificación física y campañas con pose y contactos equivalentes en
+MuJoCo.
+
 ## Punto de partida confirmado
 
 No se parte de cero. Ya están implementados y comprobados:

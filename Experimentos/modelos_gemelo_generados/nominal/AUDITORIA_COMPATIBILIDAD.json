@@ -1,0 +1,15 @@
+{
+  "profile": "nominal",
+  "expected_total_mass_kg": 2.72,
+  "urdf_total_mass_kg": 2.72,
+  "mujoco_total_mass_kg": 2.720000000000001,
+  "checks": {
+    "urdf_total_mass": true,
+    "mjcf_total_mass": true,
+    "joint_damping": true,
+    "joint_friction": true,
+    "mujoco_ground_friction": true,
+    "same_effort_limit": true
+  },
+  "compatible": true
+}

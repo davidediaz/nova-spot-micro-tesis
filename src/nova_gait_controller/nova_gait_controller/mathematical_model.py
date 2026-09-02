@@ -300,6 +300,36 @@ def actuator_current(torque, actuator=MG996R):
     return actuator.no_load_current + ratio * (actuator.stall_current - actuator.no_load_current)
 
 
+def saturated_actuator_torque(requested_torque, speed, voltage=6.0,
+                              current_limit=1.40, actuator=MG996R):
+    """Apply MG996R speed, voltage and per-servo current envelopes.
+
+    This is a catalogue-based engineering bound, not an identified motor model.
+    It returns ``(delivered_torque, estimated_current, saturated)``.
+    """
+    if current_limit <= 0.0:
+        raise ValueError('El límite de corriente debe ser positivo')
+    speed_limit = actuator_torque_limit(speed, voltage, actuator)
+    usable_current = max(0.0, current_limit - actuator.no_load_current)
+    current_torque = actuator.stall_torque * min(
+        1.0, usable_current /
+        (actuator.stall_current - actuator.no_load_current))
+    limit = min(speed_limit, current_torque)
+    delivered = max(-limit, min(limit, float(requested_torque)))
+    return delivered, min(current_limit, actuator_current(delivered, actuator)), \
+        abs(delivered - requested_torque) > 1e-12
+
+
+def apply_backlash(command, previous_output, backlash_rad):
+    """Dead-zone approximation shared by both simulator command paths."""
+    if backlash_rad < 0.0:
+        raise ValueError('La holgura no puede ser negativa')
+    delta = float(command) - float(previous_output)
+    if abs(delta) <= backlash_rad:
+        return float(previous_output)
+    return float(command) - (backlash_rad if delta > 0.0 else -backlash_rad)
+
+
 def robot_center_of_mass(joint_positions, parameters=DEFAULT_PARAMETERS):
     """Whole-robot COM in the body frame for a dict keyed by fl/fr/rl/rr."""
     required = {'fl', 'fr', 'rl', 'rr'}

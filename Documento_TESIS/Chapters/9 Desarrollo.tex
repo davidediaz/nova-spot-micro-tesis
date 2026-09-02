@@ -81,6 +81,16 @@ excedieron el límite articular adoptado.
 
 \section{Marcha paso}
 
+Para evitar que ambos simuladores usaran parámetros nominalmente equivalentes
+pero codificados por separado, se añadió
+\texttt{digital\_twin\_profiles.yaml}. Un generador produce el URDF y mundo SDF
+de Gazebo, el MJCF de MuJoCo y un manifiesto con hashes. Una auditoría rechaza
+el par si masa total, amortiguamiento, fricción o límite de esfuerzo no
+coinciden. Se generaron y auditaron los perfiles nominal, realista provisional
+y masa/fricción reducidas. La comparación dinámica completa permanece abierta
+porque la interfaz MuJoCo todavía no expone pose corporal y contactos con el
+mismo contrato de Gazebo.
+
 Se implementó una marcha paso independiente con 32 referencias por ciclo,
 longitud de 16~mm, elevación de 8~mm y transferencia lateral de 4~mm. El orden
 de las patas permaneció FL--RR--FR--RL, pero la transferencia de peso y la
