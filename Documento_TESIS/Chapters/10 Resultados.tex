@@ -29,6 +29,12 @@ máximo en 23,893~\%; por tanto, no se selecciona como política mejorada. Este
 resultado negativo es útil para bloquear la transferencia de una política no
 validada y exige reentrenamiento con observaciones de contacto y altura reales.
 
+Se realizó un segundo entrenamiento con observaciones ampliadas (IMU, altura
+corporal y cuatro contactos) y una recompensa que incluye avance. Las cinco
+semillas se ejecutaron nuevamente sin fallos de terminación en el entorno
+reducido. Este resultado preparatorio debe validarse en Gazebo antes de
+sustituir la política usada en la campaña anterior.
+
 \begin{figure}[p]
 \centering
 \includegraphics[width=0.95\textwidth]{Resultados/comparacion_final_ppo.png}
