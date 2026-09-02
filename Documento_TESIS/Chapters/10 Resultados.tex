@@ -35,6 +35,27 @@ semillas se ejecutaron nuevamente sin fallos de terminación en el entorno
 reducido. Este resultado preparatorio debe validarse en Gazebo antes de
 sustituir la política usada en la campaña anterior.
 
+\subsection{Revalidación dinámica de la política reentrenada}
+
+Antes de afirmar una mejora locomotora se ejecutó la validación dinámica
+pendiente en Gazebo: cinco ensayos PPO independientes, con aproximadamente
+60~s y diez ciclos completos válidos por ensayo. Se excluyó el primer ciclo
+transitorio y se comparó contra los cinco ensayos nominales de referencia. La
+política reentrenada incorporó contactos, IMU y altura corporal, pero no mejoró
+la locomoción: el avance medio disminuyó 97{,}~\% y la velocidad 98{,}~\%,
+mientras que roll y pitch máximos aumentaron 152~\% y 37~\%. Aunque el salto
+articular se redujo 67~\%, el criterio principal de avance y estabilidad no se
+cumple; por ello la política no se presenta como mejora y queda pendiente
+ajustar la escala de la acción residual y reentrenar.
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=0.95\textwidth]{Resultados/comparacion_reentrenada_ppo.png}
+\caption{Revalidación dinámica: cinco ensayos nominales frente a cinco con la
+política PPO reentrenada.}
+\label{fig:comparacion-reentrenada-ppo}
+\end{figure}
+
 \begin{figure}[p]
 \centering
 \includegraphics[width=0.95\textwidth]{Resultados/comparacion_final_ppo.png}
