@@ -118,3 +118,9 @@ envolvente articular; no produce PWM ni puede anular el supervisor. La función
 de recompensa penaliza inclinación, error de altura, error articular, magnitud
 de acción y activaciones de seguridad. Esta interfaz fue probada, pero aún no
 es una política entrenada ni un entorno dinámico completo.
+
+Como preparación del entrenamiento se implementó un banco PPO residual en
+NumPy con las cinco semillas congeladas (11, 23, 37, 53 y 71). El entorno
+reducido reproduce observaciones, saturaciones y terminaciones, pero no resuelve
+contacto ni dinámica de Gazebo; por ello sus políticas y curvas de aprendizaje
+son evidencia de integración preparatoria y no una mejora locomotora validada.

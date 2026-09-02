@@ -7,6 +7,7 @@ seguida de saturación en límites articulares. La terminación se activa por
 altura insegura, inclinación, estado no finito o supervisor enclavado.
 
 La línea base para comparar será la misma marcha, semilla, duración y ventana
-de ciclos que el ensayo nominal. Todavía no existe una política entrenada ni
-una comparación nominal--PPO; este archivo fija el protocolo para no presentar
-el diseño como resultado experimental.
+de ciclos que el ensayo nominal. Se entrenó una política preparatoria en un
+entorno cinemático reducido con las cinco semillas fijadas. Esta evidencia
+verifica el flujo PPO y las restricciones, pero no sustituye la conexión a
+Gazebo ni la comparación final de estabilidad; ambas permanecen pendientes.

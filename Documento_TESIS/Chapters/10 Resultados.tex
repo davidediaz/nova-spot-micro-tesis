@@ -2,6 +2,25 @@
 
 \section{Criba de sensibilidad del modelo nominal}
 
+\section{Entrenamiento preparatorio de PPO residual}
+
+Se ejecutó un entrenamiento reproducible de PPO residual en el entorno
+cinemático reducido, usando cinco semillas y 180 episodios por semilla. La
+acción respetó en todo momento la envolvente de $±0{,}08$~rad y el cambio
+máximo de $0{,}02$~rad por muestra. La comparación nominal--PPO obtenida en
+este banco verifica el flujo de aprendizaje y las terminaciones, pero no
+representa una comparación de estabilidad en Gazebo. La política deberá
+conectarse a las observaciones del simulador y someterse posteriormente a la
+misma campaña de cinco ensayos.
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=0.92\textwidth]{Resultados/ppo_residual_entrenamiento.png}
+\caption{Curva media de entrenamiento PPO residual en el entorno cinemático
+reducido.}
+\label{fig:ppo-residual-entrenamiento}
+\end{figure}
+
 Se evaluaron catorce combinaciones de marcha y parámetros mediante dinámica
 inversa sobre las referencias de gateo y paso. Una variación conjunta de
 $\pm 10$~\% en las masas modificó el par máximo aproximadamente $\pm 9$~\%;
