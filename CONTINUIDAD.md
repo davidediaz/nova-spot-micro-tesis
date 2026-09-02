@@ -1,6 +1,6 @@
 # Continuidad histórica de la tesis Nova Spot Micro
 
-Última actualización: 1 de septiembre de 2026, America/Bogota.
+Última actualización: 2 de septiembre de 2026, America/Bogota.
 
 ## Repositorio público de seguimiento
 
@@ -1342,3 +1342,33 @@ fricción articular (`Experimentos/perturbaciones_nominales_20260902`). Cubrió
 fricción de suelo, empujes, ruido y retardos. Estas últimas perturbaciones aún
 no se ejecutan porque falta un inyector Gazebo reproducible; no se presentan
 como estabilidad demostrada.
+
+### Corrección de la referencia nominal y cierre del barrido PPO (2 de septiembre de 2026)
+
+Se reconciliaron los avances PPO que aún no figuraban en esta memoria. Se
+entrenaron cinco políticas residuales con semillas 11, 23, 37, 53 y 71, se
+conectaron a observaciones de articulaciones, IMU, altura y contactos, y se
+evaluaron dinámicamente en Gazebo. La política no se acepta para transferencia:
+las escalas positivas ensayadas degradaron avance, velocidad o postura.
+
+El valor nominal publicado inicialmente (0,027761 m/ciclo) estaba contaminado
+por `campana_ppo_gazebo_20260902/nominal_03`. Ese ensayo generó siete segmentos
+de unos 2,88 s para una marcha paso de 5,76 s y discontinuidades de hasta
+±0,318 m; quedó reclasificado como inválido. Con los otros cuatro ensayos, la
+referencia corregida es 0,021935 m/ciclo y 0,003808 m/s. La escala 0,00 obtuvo
+0,021878 m/ciclo y 0,003798 m/s, diferencias de solo -0,258 % y -0,259 %; por
+tanto, reproduce el nominal dentro de la variación y no evidencia un fallo del
+bypass.
+
+`Experimentos/comparar_escala_ppo.py` valida ahora la duración de ciclo antes
+de construir la referencia. El diagnóstico completo está en
+`Experimentos/DIAGNOSTICO_REFERENCIA_PPO_ESCALA_CERO_20260902.md`. Ninguna
+escala positiva queda aceptada y PPO no debe pasar al prototipo. La siguiente
+acción técnica es repetir una campaña verdaderamente emparejada de cinco
+ensayos por condición y 20 ciclos, con auditoría previa de instancia única,
+solo después de redefinir o reentrenar la política; antes tiene prioridad la
+caracterización y seguridad física pendientes.
+
+La tesis preliminar se recompiló tras corregir las cifras y el carácter
+descriptivo no emparejado de la comparación. El PDF tiene 65 páginas y SHA-256
+`79d00a6f77a315d5bdea3bfc76151098abc9eb1a984290dd852af89c6d706102`.

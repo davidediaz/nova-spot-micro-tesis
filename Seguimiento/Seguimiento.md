@@ -7,7 +7,7 @@ Spot Micro mediante una marcha nominal convencional y una política de
 aprendizaje por refuerzo que aplique correcciones pequeñas, acotadas y
 supervisadas.
 
-Última actualización documental: 1 de septiembre de 2026, America/Bogota.
+Última actualización documental: 2 de septiembre de 2026, America/Bogota.
 
 ## Punto de partida confirmado
 
@@ -490,20 +490,30 @@ aprobado y sin eventos de seguridad.
 
 ### 10. Desarrollar la capa correctiva de aprendizaje por refuerzo
 
-Estado: **no iniciar todavía**.
+Estado: **entrenamiento y validación inicial completados; política rechazada**.
 
 - [ ] Definir observaciones disponibles tanto en simulación como en hardware.
 - [ ] Definir acciones como correcciones pequeñas de referencias nominales,
   nunca PWM directo.
 - [ ] Fijar saturaciones, tasa máxima de cambio y autoridad del supervisor.
 - [ ] Formular recompensa, terminaciones y currículo.
-- [ ] Entrenar inicialmente PPO en MuJoCo con varias semillas.
+- [x] Entrenar inicialmente PPO en un banco reducido con varias semillas.
 - [ ] Aleatorizar masas, fricción, centro de masa, ganancias, retardos y ruido.
-- [ ] Validar la política en Gazebo antes de cualquier transferencia.
+- [x] Validar la política en Gazebo antes de cualquier transferencia.
 - [ ] Conservar configuraciones, semillas, curvas, modelos y versiones.
 
 Criterio de cierre: mejora repetible de métricas físicas frente a la misma
 marcha nominal, sin aumentar caídas, saturaciones ni intervenciones.
+
+Actualización del 2 de septiembre: se entrenaron las semillas 11, 23, 37, 53 y
+71 y se ejecutaron campañas Gazebo y un barrido de escala residual. Ninguna
+escala positiva cumplió el criterio conjunto. La referencia nominal inicial
+estaba sesgada por `nominal_03`, ensayo inválido con ciclos de 2,88 s. Al
+excluirlo de forma trazable, el nominal quedó en 0,021935 m/ciclo y la escala
+0,00 en 0,021878 m/ciclo (-0,258 %), coherentes entre sí. El hallazgo corrige
+la comparación, pero no convierte ninguna política en mejora ni autoriza su
+transferencia. Véase
+`Experimentos/DIAGNOSTICO_REFERENCIA_PPO_ESCALA_CERO_20260902.md`.
 
 ### 11. Ejecutar la comparación experimental final
 
@@ -575,7 +585,10 @@ cadencia de 0,18 s por referencia:
    articulación, sin conectar todavía los doce sensores.
 
 El supervisor de contactos seguirá informativo durante esta corrección. No se
-debe comenzar PPO ni mover el hardware hasta superar las etapas que lo bloquean.
+debe transferir PPO ni mover el hardware hasta superar las etapas que lo
+bloquean. Una nueva campaña PPO solo procede después de corregir la política y
+debe usar cinco ensayos emparejados de 20 ciclos con validación automática de
+cadencia e instancia única.
 
 ## Propuesta de instrumentación física del 31 de agosto de 2026
 

@@ -1,6 +1,6 @@
 # Criterio de aceptación del barrido PPO
 
-Línea base nominal: avance 0.027761 m/ciclo, velocidad 0.006594 m/s, roll 1.276861°, pitch 2.502183°.
+Línea base nominal recalculada con cuatro ensayos válidos: avance 0.021935 m/ciclo, velocidad 0.003808 m/s, roll 1.279726°, pitch 2.506391°. `nominal_03` se excluyó porque sus ciclos observados duran 2,88 s en vez de 5,76 s.
 
 | Escala | Avance | Velocidad | Roll | Pitch | Aceptada |
 |---:|---:|---:|---:|---:|:---:|

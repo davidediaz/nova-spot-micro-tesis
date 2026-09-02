@@ -21,11 +21,13 @@ reducido.}
 \label{fig:ppo-residual-entrenamiento}
 \end{figure}
 
-La campaña emparejada posterior ejecutó cinco ensayos nominales y cinco con la
-capa PPO en Gazebo, con tres ciclos completos por ensayo. En esta primera
+La campaña posterior produjo cuatro ensayos nominales válidos y cinco con la
+capa PPO en Gazebo, con tres ciclos completos por ensayo. Un quinto nominal se
+reclasificó como inválido porque sus segmentos duraban 2,88~s en vez de
+5,76~s. En esta primera
 conexión se utilizó la política de la semilla 11 para aislar el efecto de la
-integración. El PPO redujo el avance medio en 41,355~\% y aumentó el pitch
-máximo en 23,893~\%; por tanto, no se selecciona como política mejorada. Este
+integración. La comparación descriptiva corregida mostró 25,779~\% menos
+avance y 23,685~\% más pitch máximo; por tanto, no se selecciona como política mejorada. Este
 resultado negativo es útil para bloquear la transferencia de una política no
 validada y exige reentrenamiento con observaciones de contacto y altura reales.
 
@@ -40,11 +42,11 @@ sustituir la política usada en la campaña anterior.
 Antes de afirmar una mejora locomotora se ejecutó la validación dinámica
 pendiente en Gazebo: cinco ensayos PPO independientes, con aproximadamente
 60~s y diez ciclos completos válidos por ensayo. Se excluyó el primer ciclo
-transitorio y se comparó contra los cinco ensayos nominales de referencia. La
+transitorio y se comparó descriptivamente contra los cuatro ensayos nominales válidos. La
 política reentrenada incorporó contactos, IMU y altura corporal, pero no mejoró
-la locomoción: el avance medio disminuyó 97{,}~\% y la velocidad 98{,}~\%,
-mientras que roll y pitch máximos aumentaron 152~\% y 37~\%. Aunque el salto
-articular se redujo 67~\%, el criterio conjunto de avance y estabilidad no se
+la locomoción: el avance medio disminuyó 95,850~\% y la velocidad 95,850~\%,
+mientras que roll y pitch máximos aumentaron 151,372~\% y 36,761~\%. Aunque el salto
+articular se redujo 3,789~\%, el criterio conjunto de avance y estabilidad no se
 cumple. En consecuencia, esta configuración no se acepta como mejora
 locomotora ni se recomienda para transferencia al prototipo. El resultado no
 descarta el enfoque PPO: indica que, con la escala residual utilizada, la
@@ -55,11 +57,12 @@ contacto, IMU y altura, y seleccionar la política únicamente si supera a la
 línea base en avance y velocidad sin degradar roll, pitch ni las activaciones
 del supervisor. Para localizar la causa se realizó un barrido de escala
 residual $\{0{,}00;0{,}25;0{,}50;0{,}75;1{,}00\}$ con diez ciclos válidos por
-condición. Ninguna escala superó la línea base nominal; la escala cero fue la
-menos degradante ($0{,}021878$~m/ciclo), mientras que la escala uno alcanzó
+condición. Tras excluir de forma trazable el nominal inválido, la referencia
+fue $0{,}021935$~m/ciclo. La escala cero reprodujo esa referencia con
+$0{,}021878$~m/ciclo (diferencia de $-0{,}258$~\%), mientras que la escala uno alcanzó
 $0{,}003775$~m/ciclo y $4{,}436$ grados de roll máximo. También se evaluaron
 las cinco semillas a escala $0{,}25$: el mejor avance fue $0{,}019845$~m/ciclo
-(semilla 71), aún por debajo de $0{,}027761$~m/ciclo nominal. La auditoría de
+(semilla 71), aún por debajo de $0{,}021935$~m/ciclo nominal. La auditoría de
 las bolsas confirmó miles de muestras finitas de IMU, altura, contactos y
 articulaciones en cada ensayo. Por tanto, el resultado negativo es consistente
 con la interferencia de la corrección residual y no con una ausencia de
@@ -68,16 +71,16 @@ observaciones.
 \begin{figure}[p]
 \centering
 \includegraphics[width=0.95\textwidth]{Resultados/comparacion_reentrenada_ppo.png}
-\caption{Revalidación dinámica: cinco ensayos nominales frente a cinco con la
-política PPO reentrenada.}
+\caption{Revalidación dinámica descriptiva: cuatro ensayos nominales válidos
+frente a cinco con la política PPO reentrenada.}
 \label{fig:comparacion-reentrenada-ppo}
 \end{figure}
 
 \begin{figure}[p]
 \centering
 \includegraphics[width=0.95\textwidth]{Resultados/comparacion_final_ppo.png}
-\caption{Comparación emparejada de cinco ensayos nominales y cinco ensayos con
-PPO residual en Gazebo.}
+\caption{Comparación descriptiva de cuatro ensayos nominales válidos y cinco
+ensayos con PPO residual en Gazebo.}
 \label{fig:comparacion-final-ppo}
 \end{figure}
 
