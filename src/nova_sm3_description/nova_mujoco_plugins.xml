@@ -1,0 +1,7 @@
+<library path="nova_mujoco_observation_plugin">
+  <class name="nova_sm3_description/MujocoObservationPlugin"
+         type="nova_sm3_description::MujocoObservationPlugin"
+         base_class_type="mujoco_ros2_control_plugins::MuJoCoROS2ControlPluginBase">
+    <description>Publishes Nova body pose, IMU and consolidated foot contacts from MuJoCo.</description>
+  </class>
+</library>

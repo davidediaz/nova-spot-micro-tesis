@@ -24,9 +24,10 @@ perfiles emparejados para Gazebo y MuJoCo, con variación de masa, inercia,
 fricción, amortiguamiento, holgura, retardos, tensión y corriente. Tres perfiles
 pasan la auditoría de compatibilidad. Se modeló la saturación del MG996R por
 velocidad, tensión y corriente, y una capa ROS común aplica holgura y retardo.
-El avance prepara una comparación justa, pero no cierra un gemelo digital:
-faltan identificación física y campañas con pose y contactos equivalentes en
-MuJoCo.
+MuJoCo publica ya pose, IMU y contactos mediante el contrato de Gazebo. La
+primera comparación común de 11 ciclos cubre avance, orientación, contactos,
+margen y seguimiento. No cierra un gemelo digital: falta identificación física
+y repetición estadística; se conserva ``modelo digital configurable''.
 
 Ficha de servos recibida el 2 de septiembre: confirma tensión, par, velocidad,
 masa y dimensiones de los doce MG996R-360, pero contradice el rango angular y
@@ -202,7 +203,7 @@ Estado: **parcial**.
 - [x] Añadir contactos de los cuatro pies en Gazebo.
 - [x] Comparar en línea contacto previsto frente a observado, inicialmente sin
   actuación automática.
-- [ ] Añadir contactos equivalentes en MuJoCo.
+- [x] Añadir pose, IMU y contactos equivalentes en MuJoCo.
 - [x] Añadir o conectar una IMU simulada.
 - [x] Calcular en línea el polígono de soporte y el margen de estabilidad con
   contactos y centro de masa.
@@ -219,7 +220,7 @@ ROS 2 aislados validaron margen negativo, pérdida de contacto, datos vencidos,
 altura baja y alta, roll, pitch, límite articular y discontinuidad. Todos
 produjeron `triggered=true`, el motivo esperado y la orden `stand`. La campaña
 es reproducible, se valida automáticamente y fue añadida a GitHub Actions. La
-suite determinista conserva 79 pruebas aprobadas. Evidencia:
+suite determinista conserva 80 pruebas aprobadas. Evidencia:
 `Experimentos/pruebas_dinamicas_supervisor_20260902`. El rearme seguro y la
 medición de falsos positivos antes de habilitar contacto, margen y timeout por
 defecto continúan pendientes.
@@ -700,7 +701,7 @@ fuente bajo carga y parada física segura mediante OE con pull-up. Evidencia:
 
 Se añadieron validaciones automáticas de límites articulares, continuidad entre
 referencias, pérdida de contacto esperado, altura, inclinación y condiciones de
-seguridad. Pasan 79 pruebas Python y el flujo de GitHub Actions compila y prueba
+seguridad. Pasan 80 pruebas Python y el flujo de GitHub Actions compila y prueba
 los paquetes en cada `push` y `pull_request`. Las pruebas integradas provocadas
 en los simuladores y la validación física siguen pendientes; no deben marcarse
 como completadas a partir de esta suite determinista.

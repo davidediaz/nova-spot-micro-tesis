@@ -54,8 +54,9 @@ Archivos:
 
 ## Alcance de la conclusión
 
-Gazebo valida pose corporal, seguridad y reproducibilidad. MuJoCo valida
-cadencia y seguimiento articular. La configuración actual de MuJoCo no publica
-una pose corporal equivalente a `/world/empty/dynamic_pose/info`; por ello no se
-comparan todavía avance, altura, roll ni pitch entre simuladores. Esta limitación
-debe conservarse en la tesis.
+La campaña histórica validó pose y seguridad en Gazebo, y cadencia y seguimiento
+en MuJoCo. Desde el 2 de septiembre MuJoCo publica pose, IMU y contactos con el
+mismo contrato; la campaña común y sus diferencias dinámicas están en
+`Documentacion/EQUIVALENCIA_GAZEBO_MUJOCO_2026-09-02.md`. Ya se comparan avance,
+altura, roll, pitch, contactos y margen; las diferencias observadas impiden
+afirmar equivalencia dinámica o física.

@@ -125,15 +125,15 @@ pero codificados por separado, se añadió
 de Gazebo, el MJCF de MuJoCo y un manifiesto con hashes. Una auditoría rechaza
 el par si masa total, amortiguamiento, fricción o límite de esfuerzo no
 coinciden. Se generaron y auditaron los perfiles nominal, realista provisional
-y masa/fricción reducidas. La comparación dinámica completa permanece abierta
-porque la interfaz MuJoCo todavía no expone pose corporal y contactos con el
-mismo contrato de Gazebo.
+y masa/fricción reducidas. Un complemento MuJoCo publicó pose corporal, IMU y
+contactos con los mismos tópicos, tipos y marcos consumidos en Gazebo, lo que
+permitió reutilizar métricas, comparación de contacto, margen y supervisor.
 
 Se implementó una marcha paso independiente con 32 referencias por ciclo,
 longitud de 16~mm, elevación de 8~mm y transferencia lateral de 4~mm. El orden
 de las patas permaneció FL--RR--FR--RL, pero la transferencia de peso y la
 trayectoria se parametrizaron por separado del gateo. La marcha se verificó en
-Gazebo y, para cadencia y articulaciones, en MuJoCo.
+Gazebo y MuJoCo bajo una campaña común de 11 ciclos completos.
 
 \section{Monitoreo y seguridad}
 

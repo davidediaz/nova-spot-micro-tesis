@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Valida ciclos y seguimiento articular de una bolsa MuJoCo."""
+"""Valida ciclos y seguimiento articular de una bolsa ROS 2."""
 
 import argparse
 import bisect
@@ -87,7 +87,7 @@ def main():
 
     steady = rows[1:] if len(rows) > 1 else rows
     lines = [
-        "# Validación articular de marcha paso en MuJoCo",
+        "# Validación articular de marcha paso",
         "",
         f"- Bolsa: `{args.bag}`.",
         f"- Ciclos completos: {complete_cycles}.",
@@ -97,7 +97,7 @@ def main():
         "",
         "El error se evalúa cerca del final de `time_from_start` de cada referencia, comparando los doce objetivos con `/joint_states`. El ciclo 1 se conserva como transitorio; las medias usan los ciclos 2 en adelante.",
         "",
-        "MuJoCo no publica todavía una pose corporal equivalente al puente de Gazebo; por ello esta validación demuestra ejecución temporal y seguimiento articular, no estabilidad corporal cuantitativa.",
+        "La evaluación usa el mismo contrato de referencias y estados articulares en ambos simuladores.",
     ]
     (args.output / "INFORME_MUJOCO.md").write_text("\n".join(lines), encoding="utf-8")
     print(f"MuJoCo: {complete_cycles} ciclos, {len(usable_targets)} referencias")

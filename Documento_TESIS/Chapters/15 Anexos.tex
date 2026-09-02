@@ -74,7 +74,9 @@ La línea base se lanza con \texttt{demo.launch.py}; antes de grabar se debe
 comprobar instancia única mediante \texttt{ros2 node list | sort | uniq -c} y
 confirmar los suscriptores del grabador en el tópico de órdenes. El análisis se
 realiza con \path{Experimentos/analizar_gateo_rosbag.py} y
-\path{Experimentos/analizar_contactos_rosbag.py}. Las rutas exactas de bolsa,
+\path{Experimentos/analizar_contactos_rosbag.py}. La equivalencia se agrega con
+\path{Experimentos/comparar_simuladores_equivalentes.py}; en MuJoCo se reinicia
+primero el keyframe \texttt{stand}. Las rutas exactas de bolsa,
 configuración y hashes se toman del registro de cada ensayo, nunca de una bolsa
 con marca \texttt{ENSAYO\_INVALIDO.md}.
 

@@ -5,6 +5,7 @@ import subprocess
 import xml.etree.ElementTree as ET
 
 import pytest
+import yaml
 
 from nova_gait_controller.mathematical_model import DEFAULT_PARAMETERS, MG996R
 from nova_gait_controller.safety import JOINT_LIMITS
@@ -82,6 +83,16 @@ def test_mujoco_touch_sensors_reference_existing_sites():
     touches = root.findall('./sensor/touch')
     assert len(touches) == 4
     assert all(sensor.attrib['site'] in sites for sensor in touches)
+
+
+def test_mujoco_observation_plugin_contract_is_configured():
+    config = ROOT / 'nova_sm3_description' / 'config' / 'mujoco_observations.yaml'
+    data = yaml.safe_load(config.read_text())['/**']['ros__parameters']['mujoco_plugins']
+    plugin = data['nova_observations']
+    assert plugin['type'] == 'nova_sm3_description/MujocoObservationPlugin'
+    assert plugin['publish_rate'] == pytest.approx(100.0)
+    assert plugin['contact_off_debounce'] == pytest.approx(0.12)
+    assert plugin['contact_on_debounce'] == pytest.approx(0.03)
 
 
 def test_urdf_actuator_envelope_uses_mg996r_catalogue_limit():

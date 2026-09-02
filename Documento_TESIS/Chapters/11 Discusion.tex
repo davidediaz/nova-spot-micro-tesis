@@ -21,10 +21,11 @@ la configuración. Debido a que esta modificación cambió la velocidad real, la
 bolsas anteriores y posteriores se analizaron como versiones experimentales
 separadas.
 
-La comparación Gazebo--MuJoCo también tuvo un alcance diferente. Gazebo aportó
-pose corporal, contacto y estabilidad, mientras que el adaptador de MuJoCo
-empleado permitió evaluar cadencia y articulaciones. No se infirió equivalencia
-de avance o estabilidad entre simuladores a partir de variables no observadas.
+La comparación Gazebo--MuJoCo utilizó finalmente el mismo contrato de pose,
+IMU, contacto y estado articular. Esto permitió contrastar todas las variables
+sin imputarlas, pero reveló diferencias materiales: MuJoCo avanzó mucho menos y
+no produjo los despegues previstos. Se demostró equivalencia de interfaz y
+procedimiento, no equivalencia dinámica ni física.
 
 Los márgenes de estabilidad y las posiciones de pie dependen todavía de una
 geometría y centro de masa nominales. Asimismo, los modelos de contacto no

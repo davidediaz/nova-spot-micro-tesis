@@ -1451,7 +1451,7 @@ comprueba además límites coherentes de las doce articulaciones en URDF, MJCF y
 supervisor; tiempos monótonos; referencias finitas; pérdida de contactos
 esperados; margen; telemetría vencida; altura y límites de roll/pitch.
 
-Pasan 79 pruebas Python. `.github/workflows/pruebas-automaticas.yml` compila
+Pasan 80 pruebas Python. `.github/workflows/pruebas-automaticas.yml` compila
 los paquetes `nova_sm3_description` y `nova_gait_controller` y ejecuta la suite
 en cada `push` y `pull_request`. La protección de rama debe configurarse en
 GitHub si se desea impedir formalmente una integración cuando falle el flujo.
@@ -1470,7 +1470,7 @@ alta, roll, pitch, límite articular y discontinuidad. Todos recibieron
 `triggered=true`, el motivo exacto esperado y la orden `stand`. La evidencia
 JSON y los logs están en
 `Experimentos/pruebas_dinamicas_supervisor_20260902`; la suite determinista
-continúa con 79 pruebas aprobadas.
+continúa con 80 pruebas aprobadas.
 
 La campaña completa y su validador quedaron automatizados en
 `Experimentos/ejecutar_pruebas_dinamicas_supervisor.sh` y GitHub Actions. Esto
@@ -1505,3 +1505,21 @@ La inspección visual confirmó que la tabla, ambos diagramas y la primera pági
 del anexo permanecen dentro de márgenes. La compilación terminó sin referencias
 indefinidas ni desbordamientos nuevos; el PDF tiene 74 páginas y SHA-256
 `61a95ac84f91217d8ced474c4ce68215b1af4f8eb96240771dfc54d5241d55e5`.
+
+### Equivalencia Gazebo--MuJoCo completada (2 de septiembre de 2026)
+
+`nova_mujoco_observations` publica a 100 Hz pose corporal, IMU y cuatro
+contactos con el contrato ROS 2 usado en Gazebo. El keyframe `stand` y ganancias
+provisionales 40/4 permiten reinicios reproducibles; la tentativa anterior se
+conserva marcada como inválida.
+
+`equivalencia_paso_mujoco_r2_20260902` contiene 11 ciclos completos y cero
+eventos del supervisor. Frente a `cierre_paso_r1_20260901`, Gazebo avanzó
+0,022025 m/ciclo y MuJoCo 0,001157; los errores RMS fueron 0,008412 y 0,014768
+rad. MuJoCo mantuvo cuatro apoyos y obtuvo 0 % de coincidencia con el plan. Se
+cerró equivalencia de interfaz y campaña, no equivalencia dinámica. Véase
+`Documentacion/EQUIVALENCIA_GAZEBO_MUJOCO_2026-09-02.md`. La denominación sigue
+siendo **modelo digital configurable** hasta la identificación física.
+
+La tesis recompilada tiene 73 páginas y SHA-256
+`72f850b248a1ca340fae302d06ad2cadd77b9ee7aefa0f278c59c1a81398e477`.

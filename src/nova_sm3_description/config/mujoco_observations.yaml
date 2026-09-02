@@ -1,0 +1,9 @@
+/**:
+  ros__parameters:
+    mujoco_plugins:
+      nova_observations:
+        type: "nova_sm3_description/MujocoObservationPlugin"
+        publish_rate: 100.0
+        contact_threshold: 0.000001
+        contact_off_debounce: 0.12
+        contact_on_debounce: 0.03

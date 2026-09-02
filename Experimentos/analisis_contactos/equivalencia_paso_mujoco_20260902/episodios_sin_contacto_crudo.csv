@@ -1,0 +1,5 @@
+leg,start_time_s,end_time_s,duration_s,exceeds_off_debounce,bounded_by_recontact
+fl,0.005176491,,,,False
+fr,0.005176491,,,,False
+rl,0.005176491,,,,False
+rr,0.005176491,,,,False

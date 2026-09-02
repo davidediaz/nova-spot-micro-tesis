@@ -19,9 +19,23 @@ def generate_launch_description():
     controller = Node(
         package='nova_gait_controller', executable='gait_controller', output='screen',
         parameters=[os.path.join(gait_share, 'config', 'gaits.yaml')])
+    monitoring = os.path.join(gait_share, 'config', 'monitoring.yaml')
+    metrics = Node(
+        package='nova_gait_controller', executable='metrics_node', output='screen',
+        parameters=[monitoring])
+    comparator = Node(
+        package='nova_gait_controller', executable='contact_comparator', output='screen',
+        parameters=[monitoring])
+    stability = Node(
+        package='nova_gait_controller', executable='stability_monitor', output='screen',
+        parameters=[monitoring])
+    safety = Node(
+        package='nova_gait_controller', executable='safety_supervisor', output='screen',
+        parameters=[monitoring])
 
     return LaunchDescription([
         DeclareLaunchArgument('headless', default_value='false'),
         simulation,
-        TimerAction(period=5.0, actions=[controller]),
+        TimerAction(period=5.0, actions=[controller, metrics, comparator,
+                                         stability, safety]),
     ])

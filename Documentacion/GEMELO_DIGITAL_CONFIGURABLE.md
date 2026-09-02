@@ -41,14 +41,13 @@ ros2 launch nova_gait_controller demo.launch.py \
 Gazebo acepta los archivos generados mediante `profile_gazebo.launch.py` y
 MuJoCo mediante el argumento `mujoco_model` de `mujoco_sim.launch.py`.
 
-## Comparación pendiente
+## Comparación dinámica disponible
 
-Para cada perfil deben ejecutarse cinco ensayos de 20 ciclos en cada simulador,
-excluyendo solo el ciclo 1 del resumen. Se congelarán marcha, referencias,
-perfil y semilla. Se compararán período, error RMS/máximo articular, avance,
-roll, pitch, contactos, margen, saturaciones y corriente estimada. La pose
-corporal y los contactos deben exponerse en MuJoCo antes de afirmar equivalencia
-completa; mientras falten, la comparación se limita a cadencia y articulaciones.
+MuJoCo ya expone pose, IMU y contactos mediante el contrato ROS 2 de Gazebo.
+Una campaña común de 11 ciclos comparó avance, orientación, altura, contactos,
+margen y seguimiento articular; véase
+`Documentacion/EQUIVALENCIA_GAZEBO_MUJOCO_2026-09-02.md`. Para caracterización
+estadística siguen pendientes cinco ensayos de 20 ciclos por perfil.
 
 No se mezclarán resultados de perfiles distintos ni se transferirá el perfil
 realista al hardware sin caracterización y seguridad eléctrica.

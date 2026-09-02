@@ -26,6 +26,10 @@ contacto inconsistente, margen y continuidad y los nueve escenarios integrados
 provocados ya se ejecutan automáticamente. Antes de habilitar por defecto las
 paradas de contacto, margen y datos vencidos se deberán medir falsos positivos
 durante campañas largas y definir un mecanismo de rearme seguro.
+También se repetirán cinco campañas emparejadas de 20 ciclos por simulador y se
+ajustarán contacto, fricción y actuación de MuJoCo, que en la primera comparación
+mantuvo cuatro apoyos y produjo menor avance. Ningún ajuste se interpretará como
+identificación antes del contraste físico.
 
 Finalmente se rediseñará y reentrenará la política PPO como una capa de
 correcciones acotadas, porque la versión evaluada fue rechazada. La comparación

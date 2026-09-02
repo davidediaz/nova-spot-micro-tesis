@@ -11,9 +11,9 @@ los 4,32~s configurados por ciclo. Dos ensayos de la nueva versión presentaron
 diferencias menores al 0,2~\% en las métricas medias seleccionadas, lo que
 respaldó una línea base repetible en simulación.
 
-\item La marcha paso fue reproducible en Gazebo y mantuvo continuidad articular
-en MuJoCo. La ausencia de pose corporal equivalente en el adaptador de MuJoCo
-limitó el contraste a cadencia y articulaciones.
+\item La marcha paso se ejecutó con pose, IMU, contactos y articulaciones bajo
+un contrato común en Gazebo y MuJoCo. Once ciclos mostraron diferencias de
+avance y contacto: se cerró la equivalencia instrumental, no la dinámica.
 
 \item El ensayo de contacto crudo y filtrado mostró que las interrupciones de
 RL y RR tuvieron máximos inferiores a 0,09~s y nunca superaron la persistencia
@@ -23,7 +23,8 @@ contactos.
 
 \item El modelo actual permitió calcular referencias, pose de pies y margen de
 estabilidad, pero continuó siendo nominal y no identificado. No corresponde
-denominarlo gemelo digital ni extrapolar directamente sus métricas al hardware.
+denominarlo gemelo digital identificado ni extrapolar directamente sus métricas
+al hardware; se mantiene la denominación modelo digital configurable.
 
 \item No existe todavía evidencia para concluir que una política de aprendizaje
 por refuerzo mejore la estabilidad o repetibilidad del robot. Los objetivos

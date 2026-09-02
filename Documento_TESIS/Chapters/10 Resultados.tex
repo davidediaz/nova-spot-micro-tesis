@@ -209,10 +209,9 @@ eventos del supervisor y diferencias de medias inferiores al 0,4~\%. En los
 ciclos 2--12, el avance medio fue 0,022031~m/ciclo, la velocidad
 0,003825~m/s, el roll máximo 1,281777 grados y el pitch máximo 2,483731 grados.
 
-MuJoCo ejecutó 12 ciclos con duración media de 5,759999~s, error RMS articular
-de 0,026232~rad y error máximo de 0,054983~rad. El adaptador utilizado no
-publicó una pose corporal equivalente a la de Gazebo; por tanto, esta prueba
-solo respaldó cadencia y seguimiento articular simulado.
+La campaña equivalente comparó 11 ciclos completos por simulador. MuJoCo tuvo
+una duración media de 5,760009~s, cero eventos del supervisor, error RMS
+articular de 0,014768~rad y error máximo de 0,047970~rad.
 
 Las series de la Figura~\ref{fig:paso-series} muestran el avance y la respuesta
 periódica del cuerpo durante la marcha paso. La comparación de la
@@ -246,20 +245,19 @@ elaboración propia a partir de \texttt{metricas\_mujoco\_por\_ciclo.csv}.}
 \label{fig:paso-mujoco}
 \end{figure}
 
-Se añadió al modelo MuJoCo un acelerómetro en la base y sensores táctiles en
-las cuatro esferas de los pies. Estos sensores son equivalentes conceptuales a
-la IMU y a los contactos publicados por Gazebo. La bolsa histórica de MuJoCo
-fue registrada antes de esta ampliación y por ello no contiene todavía esos
-tópicos; no se imputaron contactos ni señales IMU inexistentes. La comparación
-de las variables comunes sí mostró una duración media de $5{,}760011$~s en
-Gazebo y $5{,}760003$~s en MuJoCo, con diferencia relativa de $-0{,}0001$~%.
+El complemento MuJoCo publicó pose, IMU y contactos bajo el contrato de Gazebo.
+En los ciclos 2--11, Gazebo avanzó 0,022025~m/ciclo y MuJoCo 0,001157~m/ciclo;
+los máximos medios de roll fueron 1,281788 y 0,624950 grados, y los de pitch
+2,483606 y 1,738599 grados. La coincidencia simultánea de contactos fue 36,183~\%
+en Gazebo y 0~\% en MuJoCo. Los márgenes estáticos medios disponibles fueron
+0,017957 y 0,074766~m, respectivamente.
 
 \begin{figure}[p]
 \centering
 \includegraphics[width=0.95\textwidth]{Resultados/comparacion_gazebo_mujoco.png}
-\caption{Comparación ciclo a ciclo de las magnitudes registradas en Gazebo y
-MuJoCo para la marcha paso. La equivalencia de contactos e IMU queda pendiente
-de una nueva bolsa MuJoCo con los sensores expuestos en ROS~2.}
+\caption{Comparación de avance, orientación, seguimiento, contactos y margen
+en 11 ciclos equivalentes de Gazebo y MuJoCo. La interfaz es común, pero las
+diferencias dinámicas permanecen sujetas a identificación física.}
 \label{fig:comparacion-gazebo-mujoco}
 \end{figure}
 

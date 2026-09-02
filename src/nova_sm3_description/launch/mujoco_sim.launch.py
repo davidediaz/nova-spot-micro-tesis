@@ -20,6 +20,7 @@ def launch_setup(context):
     ]).perform(context)
     description = {'robot_description': ParameterValue(description_text, value_type=str)}
     controllers = PathJoinSubstitution([share, 'config', 'controllers.yaml'])
+    observations = PathJoinSubstitution([share, 'config', 'mujoco_observations.yaml'])
 
     state_publisher = Node(
         package='robot_state_publisher', executable='robot_state_publisher',
@@ -27,7 +28,8 @@ def launch_setup(context):
     control = Node(
         package='mujoco_ros2_control', executable='ros2_control_node',
         output='both', emulate_tty=True,
-        parameters=[{'use_sim_time': True}, ParameterFile(controllers)],
+        parameters=[{'use_sim_time': True}, ParameterFile(controllers),
+                    ParameterFile(observations)],
         remappings=([('~/robot_description', '/robot_description')]
                     if os.environ.get('ROS_DISTRO') == 'humble' else []),
         on_exit=Shutdown())
