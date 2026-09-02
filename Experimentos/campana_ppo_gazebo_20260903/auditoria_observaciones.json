@@ -1,0 +1,57 @@
+{
+  "ppo_gazebo_01": {
+    "/nova/imu": 7806,
+    "/world/empty/dynamic_pose/info": 4584,
+    "/nova/contact_diagnostics": 7434,
+    "/joint_states": 7806,
+    "imu_muestras_finitas": 7806,
+    "altura_muestras": 4584,
+    "altura_min_m": 0.22067155279871853,
+    "altura_max_m": 0.22810870155255458,
+    "contactos_no_vacios": 7434
+  },
+  "ppo_gazebo_02": {
+    "/nova/imu": 8045,
+    "/world/empty/dynamic_pose/info": 4729,
+    "/nova/contact_diagnostics": 7575,
+    "/joint_states": 7957,
+    "imu_muestras_finitas": 8045,
+    "altura_muestras": 4729,
+    "altura_min_m": 0.22073338798334285,
+    "altura_max_m": 0.2280507634060606,
+    "contactos_no_vacios": 7575
+  },
+  "ppo_gazebo_03": {
+    "/nova/imu": 8051,
+    "/world/empty/dynamic_pose/info": 4737,
+    "/nova/contact_diagnostics": 7643,
+    "/joint_states": 8027,
+    "imu_muestras_finitas": 8051,
+    "altura_muestras": 4737,
+    "altura_min_m": 0.22068776382483146,
+    "altura_max_m": 0.22772125838720111,
+    "contactos_no_vacios": 7643
+  },
+  "ppo_gazebo_04": {
+    "/nova/imu": 8051,
+    "/world/empty/dynamic_pose/info": 4731,
+    "/nova/contact_diagnostics": 7499,
+    "/joint_states": 8051,
+    "imu_muestras_finitas": 8051,
+    "altura_muestras": 4731,
+    "altura_min_m": 0.22008195537699488,
+    "altura_max_m": 0.22835158161734442,
+    "contactos_no_vacios": 7499
+  },
+  "ppo_gazebo_05": {
+    "/nova/imu": 7926,
+    "/world/empty/dynamic_pose/info": 4681,
+    "/nova/contact_diagnostics": 7545,
+    "/joint_states": 7910,
+    "imu_muestras_finitas": 7926,
+    "altura_muestras": 4681,
+    "altura_min_m": 0.22099500750719747,
+    "altura_max_m": 0.2283390038655541,
+    "contactos_no_vacios": 7545
+  }
+}
