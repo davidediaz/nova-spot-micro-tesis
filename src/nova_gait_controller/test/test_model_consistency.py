@@ -7,6 +7,7 @@ import xml.etree.ElementTree as ET
 import pytest
 
 from nova_gait_controller.mathematical_model import DEFAULT_PARAMETERS, MG996R
+from nova_gait_controller.safety import JOINT_LIMITS
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -94,3 +95,21 @@ def test_urdf_actuator_envelope_uses_mg996r_catalogue_limit():
     for item in dynamics:
         assert float(item.attrib['damping']) == pytest.approx(DEFAULT_PARAMETERS.joint_damping)
         assert float(item.attrib['friction']) == pytest.approx(DEFAULT_PARAMETERS.coulomb_friction)
+
+
+def test_all_joint_limits_match_urdf_mujoco_and_safety_supervisor():
+    urdf = _expanded_nominal_urdf()
+    urdf_joints = {joint.attrib['name']: joint for joint in urdf.findall('./joint')
+                   if joint.attrib.get('type') == 'revolute'}
+    mujoco = ET.parse(MUJOCO).getroot()
+    mujoco_joints = {joint.attrib['name']: joint
+                     for joint in mujoco.findall('.//joint') if 'name' in joint.attrib}
+    assert len(urdf_joints) == len(mujoco_joints) == 12
+    for name, joint in urdf_joints.items():
+        kind = next(kind for kind in JOINT_LIMITS if f'_{kind}_joint' in name)
+        expected = JOINT_LIMITS[kind]
+        urdf_limit = joint.find('./limit')
+        assert (float(urdf_limit.attrib['lower']),
+                float(urdf_limit.attrib['upper'])) == pytest.approx(expected)
+        assert tuple(map(float, mujoco_joints[name].attrib['range'].split())) == pytest.approx(
+            expected)

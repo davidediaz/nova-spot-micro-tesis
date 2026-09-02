@@ -283,8 +283,15 @@ Alcanzabilidad, periodicidad, líneas base y repetición \\
 \end{tabular}
 \end{table}
 
-La suite completa alcanzó 50 pruebas aprobadas al incorporar el análisis de
-contacto crudo y filtrado. El modelo detallado y sus ejemplos reproducibles se
+La suite alcanzó 79 pruebas Python aprobadas. Además de las comprobaciones
+numéricas anteriores, se automatizó la coincidencia de límites de las doce
+articulaciones entre URDF, MJCF y supervisor; el rechazo de referencias no
+finitas o fuera de rango; la detección de saltos mayores que 0,35 rad y tiempos
+no monótonos; la pérdida de un contacto esperado; y los umbrales de altura,
+roll y pitch. Un flujo de integración continua compila los dos paquetes ROS 2
+y ejecuta la suite en cada envío y solicitud de integración. Estas pruebas son
+deterministas y no sustituyen campañas dinámicas de caída o contacto ni la
+validación física. El modelo detallado y sus ejemplos reproducibles se
 conservaron además en \texttt{Documentacion/MODELO\_MATEMATICO\_LATEX}. El OE1
 quedó avanzado en modelado y verificación computacional, pero permaneció
 parcial hasta medir y contrastar el ejemplar físico completo.

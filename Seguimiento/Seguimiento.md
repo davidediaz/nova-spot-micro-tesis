@@ -659,3 +659,12 @@ pero no cierra la caracterización ni habilita una marcha. Permanecen pendientes
 la correspondencia canal-articulación, calibración independiente, ensayo de la
 fuente bajo carga y parada física segura mediante OE con pull-up. Evidencia:
 `Raspberry/AVANCES_PCA9685_2026-08-24.md`.
+
+## Automatización de pruebas del 2 de septiembre de 2026
+
+Se añadieron validaciones automáticas de límites articulares, continuidad entre
+referencias, pérdida de contacto esperado, altura, inclinación y condiciones de
+seguridad. Pasan 79 pruebas Python y el flujo de GitHub Actions compila y prueba
+los paquetes en cada `push` y `pull_request`. Las pruebas integradas provocadas
+en los simuladores y la validación física siguen pendientes; no deben marcarse
+como completadas a partir de esta suite determinista.

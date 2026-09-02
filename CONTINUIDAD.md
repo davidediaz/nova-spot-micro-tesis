@@ -1442,3 +1442,22 @@ identificar las doce. Auditoría:
 
 Tras incorporar estos datos, la tesis se recompiló con 66 páginas y SHA-256
 `521e4ec0d1aae34b65f27fca3f8825b8005578759d3721a91a1de909acdacd3b`.
+
+### Pruebas automáticas de seguridad (2 de septiembre de 2026)
+
+Se amplió el supervisor para detectar discontinuidades mayores que 0,35 rad
+tanto dentro de una trayectoria como entre mensajes consecutivos. La suite
+comprueba además límites coherentes de las doce articulaciones en URDF, MJCF y
+supervisor; tiempos monótonos; referencias finitas; pérdida de contactos
+esperados; margen; telemetría vencida; altura y límites de roll/pitch.
+
+Pasan 79 pruebas Python. `.github/workflows/pruebas-automaticas.yml` compila
+los paquetes `nova_sm3_description` y `nova_gait_controller` y ejecuta la suite
+en cada `push` y `pull_request`. La protección de rama debe configurarse en
+GitHub si se desea impedir formalmente una integración cuando falle el flujo.
+Estas verificaciones deterministas no sustituyen las pruebas dinámicas
+integradas ni físicas. Documento:
+`Documentacion/PRUEBAS_AUTOMATICAS_SEGURIDAD.md`.
+
+La tesis recompilada conserva 66 páginas y tiene SHA-256
+`ffa7760971c75c08c8b81feac1fb17246292868c74e1303b76e11f5c37992029`.

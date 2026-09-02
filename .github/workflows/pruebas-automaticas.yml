@@ -1,0 +1,33 @@
+name: Pruebas automaticas
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: pruebas-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  seguridad-y-modelo:
+    runs-on: ubuntu-22.04
+    container: osrf/ros:humble-desktop
+    timeout-minutes: 20
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+      - name: Instalar herramientas de prueba
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends python3-pytest python3-numpy python3-scipy python3-yaml ros-humble-xacro
+      - name: Compilar paquetes ROS 2
+        shell: bash
+        run: |
+          source /opt/ros/humble/setup.bash
+          colcon build --packages-select nova_sm3_description nova_gait_controller
+      - name: Ejecutar pruebas
+        shell: bash
+        run: |
+          source /opt/ros/humble/setup.bash
+          source install/setup.bash
+          python3 -m pytest -q src/nova_gait_controller/test

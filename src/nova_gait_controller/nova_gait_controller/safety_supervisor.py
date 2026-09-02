@@ -13,7 +13,7 @@ from trajectory_msgs.msg import JointTrajectory
 
 from .safety import (
     diagnostic_reasons, invalid_trajectory_reasons, quaternion_to_rpy,
-    stale_sources, unsafe_reasons,
+    reference_jump_reasons, stale_sources, unsafe_reasons,
 )
 
 
@@ -63,6 +63,7 @@ class SafetySupervisor(Node):
         self.latest_contact = None
         self.latest_stability = None
         self.unsafe_count = 0
+        self.last_reference_positions = None
         self.latched = False
         self.create_timer(0.10, self.watchdog_callback)
         self.get_logger().info(
@@ -103,8 +104,13 @@ class SafetySupervisor(Node):
         if self.latched or not self.get_parameter('enable_reference_stop').value:
             return
         reasons = invalid_trajectory_reasons(message.joint_names, message.points)
+        if message.points:
+            reasons.extend(reference_jump_reasons(
+                self.last_reference_positions, message.points[0].positions))
         if reasons:
             self.trigger(','.join(reasons))
+            return
+        self.last_reference_positions = tuple(message.points[-1].positions)
 
     def contact_callback(self, message):
         self.last_received['contacts'] = time.monotonic()

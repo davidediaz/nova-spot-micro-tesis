@@ -6,8 +6,16 @@ from types import SimpleNamespace
 
 from nova_gait_controller.safety import (
     diagnostic_reasons, invalid_trajectory_reasons, quaternion_to_rpy,
-    stale_sources, unsafe_reasons,
+    reference_jump_reasons, stale_sources, trajectory_discontinuity_reasons,
+    unsafe_reasons,
 )
+
+
+def trajectory_point(positions, seconds):
+    return SimpleNamespace(
+        positions=list(positions),
+        time_from_start=SimpleNamespace(sec=int(seconds),
+                                        nanosec=int(seconds % 1 * 1e9)))
 
 
 def test_quaternion_to_rpy_roll():
@@ -43,13 +51,52 @@ def test_diagnostics_detect_contact_margin_and_nonfinite_margin():
     assert diagnostic_reasons(None, stability, -0.005) == ['margen_no_finito']
 
 
+def test_diagnostics_distinguish_contact_loss_from_unexpected_contact():
+    lost = {'comparison_available': True, 'match': False,
+            'expected_contacts': ['fl', 'fr', 'rl'],
+            'observed_contacts': ['fl', 'fr']}
+    surplus = {'comparison_available': True, 'match': False,
+               'expected_contacts': ['fl', 'fr'],
+               'observed_contacts': ['fl', 'fr', 'rr']}
+    assert diagnostic_reasons(lost, None, -0.005) == ['perdida_contacto']
+    assert diagnostic_reasons(surplus, None, -0.005) == ['contactos_no_coinciden']
+
+
 def test_invalid_trajectory_rejects_nonfinite_and_limit_violation():
     names = [f'{leg}_{joint}_joint' for leg in
              ('front_left', 'front_right', 'rear_left', 'rear_right')
              for joint in ('coxa', 'femur', 'tibia')]
-    point = SimpleNamespace(positions=[0.0, 0.4, -0.8] * 4)
+    point = trajectory_point([0.0, 0.4, -0.8] * 4, 0.1)
     assert invalid_trajectory_reasons(names, [point]) == []
     point.positions[0] = float('nan')
     point.positions[1] = 2.0
     assert invalid_trajectory_reasons(names, [point]) == [
         'referencia_no_finita', 'limite_articular']
+
+
+def test_trajectory_discontinuity_and_time_reversal_are_rejected():
+    first = trajectory_point([0.0, 0.4, -0.8] * 4, 0.2)
+    smooth = trajectory_point([0.1, 0.5, -0.9] * 4, 0.4)
+    jump = trajectory_point([0.55, 0.5, -0.9] * 4, 0.3)
+    assert trajectory_discontinuity_reasons([first, smooth]) == []
+    assert trajectory_discontinuity_reasons([first, smooth, jump]) == [
+        'tiempo_trayectoria_no_monotono', 'discontinuidad_articular']
+
+
+def test_jump_between_consecutive_single_point_messages_is_rejected():
+    previous = [0.0, 0.4, -0.8] * 4
+    smooth = [0.1, 0.45, -0.9] * 4
+    jump = [0.5, 0.45, -0.9] * 4
+    assert reference_jump_reasons(None, previous) == []
+    assert reference_jump_reasons(previous, smooth) == []
+    assert reference_jump_reasons(smooth, jump) == ['discontinuidad_articular']
+
+
+@pytest.mark.parametrize('height,roll,pitch,reason', [
+    (0.159, 0.0, 0.0, 'altura_baja'),
+    (0.321, 0.0, 0.0, 'altura_alta'),
+    (0.224, 0.351, 0.0, 'roll'),
+    (0.224, 0.0, -0.351, 'pitch'),
+])
+def test_each_pose_safety_boundary_is_enforced(height, roll, pitch, reason):
+    assert reason in unsafe_reasons(height, roll, pitch, 0.16, 0.32, 0.35)
