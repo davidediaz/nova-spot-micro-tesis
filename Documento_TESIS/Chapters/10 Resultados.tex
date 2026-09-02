@@ -21,6 +21,22 @@ reducido.}
 \label{fig:ppo-residual-entrenamiento}
 \end{figure}
 
+La campaña emparejada posterior ejecutó cinco ensayos nominales y cinco con la
+capa PPO en Gazebo, con tres ciclos completos por ensayo. En esta primera
+conexión se utilizó la política de la semilla 11 para aislar el efecto de la
+integración. El PPO redujo el avance medio en 41,355~\% y aumentó el pitch
+máximo en 23,893~\%; por tanto, no se selecciona como política mejorada. Este
+resultado negativo es útil para bloquear la transferencia de una política no
+validada y exige reentrenamiento con observaciones de contacto y altura reales.
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=0.95\textwidth]{Resultados/comparacion_final_ppo.png}
+\caption{Comparación emparejada de cinco ensayos nominales y cinco ensayos con
+PPO residual en Gazebo.}
+\label{fig:comparacion-final-ppo}
+\end{figure}
+
 Se evaluaron catorce combinaciones de marcha y parámetros mediante dinámica
 inversa sobre las referencias de gateo y paso. Una variación conjunta de
 $\pm 10$~\% en las masas modificó el par máximo aproximadamente $\pm 9$~\%;

@@ -18,7 +18,7 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(PathJoinSubstitution(
             [FindPackageShare('ros_gz_sim'), 'launch', 'gz_sim.launch.py'])),
         launch_arguments={'gz_args': [
-            '-r ', PathJoinSubstitution([share, 'worlds', 'nova_empty.sdf'])
+            '-r -s ', PathJoinSubstitution([share, 'worlds', 'nova_empty.sdf'])
         ]}.items())
     state_publisher = Node(
         package='robot_state_publisher', executable='robot_state_publisher',
