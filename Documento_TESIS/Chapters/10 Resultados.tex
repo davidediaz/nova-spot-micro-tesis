@@ -44,9 +44,16 @@ transitorio y se comparó contra los cinco ensayos nominales de referencia. La
 política reentrenada incorporó contactos, IMU y altura corporal, pero no mejoró
 la locomoción: el avance medio disminuyó 97{,}~\% y la velocidad 98{,}~\%,
 mientras que roll y pitch máximos aumentaron 152~\% y 37~\%. Aunque el salto
-articular se redujo 67~\%, el criterio principal de avance y estabilidad no se
-cumple; por ello la política no se presenta como mejora y queda pendiente
-ajustar la escala de la acción residual y reentrenar.
+articular se redujo 67~\%, el criterio conjunto de avance y estabilidad no se
+cumple. En consecuencia, esta configuración no se acepta como mejora
+locomotora ni se recomienda para transferencia al prototipo. El resultado no
+descarta el enfoque PPO: indica que, con la escala residual utilizada, la
+política aprendida interfiere con la marcha nominal y amplifica la inclinación
+del cuerpo. La siguiente iteración deberá realizar una búsqueda acotada de la
+escala residual (incluyendo el caso cero), conservar las observaciones de
+contacto, IMU y altura, y seleccionar la política únicamente si supera a la
+línea base en avance y velocidad sin degradar roll, pitch ni las activaciones
+del supervisor.
 
 \begin{figure}[p]
 \centering

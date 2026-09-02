@@ -12,4 +12,4 @@
 | Pitch máximo (°) | 2.502183 | 3.427771 | 36.991 % | 0.926756 |
 | Salto articular (rad) | 0.024014 | 0.008037 | -66.531 % | 0.035350 |
 
-Estos resultados son evidencia de simulación dinámica en Gazebo y no implican transferencia al robot físico. La mejora locomotora solo se afirmará si avance y velocidad aumentan sin degradar estabilidad.
+Estos resultados son evidencia de simulación dinámica en Gazebo y no implican transferencia al robot físico. La configuración evaluada no se acepta como mejora locomotora ni se recomienda para el prototipo. Esto no descarta el método PPO: sugiere que la escala de la acción residual interfiere con la marcha nominal. La siguiente iteración debe incluir una búsqueda acotada de escala, incluido el caso cero, y solo aceptar una política que aumente avance y velocidad sin degradar roll, pitch ni activar el supervisor.
