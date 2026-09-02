@@ -1461,3 +1461,28 @@ integradas ni físicas. Documento:
 
 La tesis recompilada conserva 66 páginas y tiene SHA-256
 `ffa7760971c75c08c8b81feac1fb17246292868c74e1303b76e11f5c37992029`.
+
+### Pruebas dinámicas provocadas del supervisor (2 de septiembre de 2026)
+
+Se corrigió el cierre de `safety_test_node` y se amplió a nueve escenarios ROS
+2 aislados: margen negativo, pérdida de contacto, datos vencidos, altura baja y
+alta, roll, pitch, límite articular y discontinuidad. Todos recibieron
+`triggered=true`, el motivo exacto esperado y la orden `stand`. La evidencia
+JSON y los logs están en
+`Experimentos/pruebas_dinamicas_supervisor_20260902`; la suite determinista
+continúa con 79 pruebas aprobadas.
+
+La campaña completa y su validador quedaron automatizados en
+`Experimentos/ejecutar_pruebas_dinamicas_supervisor.sh` y GitHub Actions. Esto
+cierra las pruebas integradas provocadas pendientes, pero no demuestra corte
+eléctrico ni respuesta mecánica y no habilita las tres paradas por defecto. Aún
+se deben definir el rearme y medir falsos positivos en ejecuciones largas.
+
+La siguiente fase es física y comienza sin energía. El inventario F0--F4 quedó
+en `Raspberry/PLAN_VALIDACION_FISICA_DESPUES_SIMULACION_2026-09-02.md`: ensamble
+y caracterización, seguridad eléctrica/OE, calibración individual, integración
+progresiva e instrumentación. No se autoriza PPO ni marcha física antes de
+superar esas puertas.
+
+La tesis se recompiló con 67 páginas y SHA-256
+`7ba0d066f679ae60d482a9ddb494fd8c2299c4ee5f06d11b3aa2200cf6e3bb3d`.

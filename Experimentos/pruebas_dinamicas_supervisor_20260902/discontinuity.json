@@ -1,0 +1,19 @@
+{
+  "scenario": "discontinuity",
+  "triggered": true,
+  "events": [
+    {
+      "triggered": true,
+      "t": 0.1015511380001044
+    },
+    {
+      "command": "stand",
+      "t": 0.10170926499995403
+    },
+    {
+      "status": "{\"latched\":true,\"reason\":\"discontinuidad_articular\",\"values\":{},\"simulation_only\":true}",
+      "t": 0.1022210470000573
+    }
+  ],
+  "duration_s": 4.000345475999893
+}

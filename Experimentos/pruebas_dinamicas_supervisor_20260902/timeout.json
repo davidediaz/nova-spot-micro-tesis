@@ -1,0 +1,19 @@
+{
+  "scenario": "timeout",
+  "triggered": true,
+  "events": [
+    {
+      "triggered": true,
+      "t": 1.043123555999955
+    },
+    {
+      "command": "stand",
+      "t": 1.0432825849998153
+    },
+    {
+      "status": "{\"latched\":true,\"reason\":\"datos_vencidos:pose,contacts,stability\",\"values\":{},\"simulation_only\":true}",
+      "t": 1.0436561369997435
+    }
+  ],
+  "duration_s": 4.000747216000036
+}

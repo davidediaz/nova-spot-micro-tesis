@@ -206,13 +206,23 @@ Estado: **parcial**.
 - [x] Añadir o conectar una IMU simulada.
 - [x] Calcular en línea el polígono de soporte y el margen de estabilidad con
   contactos y centro de masa.
-- [ ] Extender el supervisor con contacto inesperado, pérdida de comunicación,
+- [x] Extender el supervisor con contacto inesperado, pérdida de comunicación,
   límites articulares y referencias inválidas.
 - [ ] Definir mecanismo de rearme seguro del supervisor.
 - [x] Ejecutar las pruebas unitarias nuevas con `python3 -m pytest`.
 
 Criterio de cierre: métricas y supervisor reaccionan correctamente a pruebas
 provocadas de altura, inclinación, contacto y pérdida de datos.
+
+Pruebas provocadas completadas el 2 de septiembre de 2026: nueve escenarios
+ROS 2 aislados validaron margen negativo, pérdida de contacto, datos vencidos,
+altura baja y alta, roll, pitch, límite articular y discontinuidad. Todos
+produjeron `triggered=true`, el motivo esperado y la orden `stand`. La campaña
+es reproducible, se valida automáticamente y fue añadida a GitHub Actions. La
+suite determinista conserva 79 pruebas aprobadas. Evidencia:
+`Experimentos/pruebas_dinamicas_supervisor_20260902`. El rearme seguro y la
+medición de falsos positivos antes de habilitar contacto, margen y timeout por
+defecto continúan pendientes.
 
 Integración del 31 de agosto de 2026: la IMU de Gazebo publica a 100 Hz en
 `/nova/imu`; el contacto distingue estado crudo, filtrado y transición
@@ -588,6 +598,13 @@ Criterio de cierre: PDF final compilado, objetivos trazables a resultados y
 afirmaciones respaldadas por evidencia experimental.
 
 ## Próxima acción concreta
+
+Las pruebas dinámicas provocadas del supervisor quedaron cerradas. La prioridad
+inmediata pasa a la fase física F0, todavía sin energizar: terminar e
+inspeccionar el ensamble, identificar los dos servos sustituidos, trazar
+CH0--CH11, completar fotografías y medir geometría y masa. El orden completo de
+puertas F0--F4 está en
+`Raspberry/PLAN_VALIDACION_FISICA_DESPUES_SIMULACION_2026-09-02.md`.
 
 Sin modificar la longitud de paso de 18 mm, la elevación máxima de 14 mm ni la
 cadencia de 0,18 s por referencia:

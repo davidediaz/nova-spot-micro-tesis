@@ -31,3 +31,8 @@ jobs:
           source /opt/ros/humble/setup.bash
           source install/setup.bash
           python3 -m pytest -q src/nova_gait_controller/test
+      - name: Ejecutar escenarios dinámicos del supervisor
+        shell: bash
+        run: |
+          chmod +x Experimentos/ejecutar_pruebas_dinamicas_supervisor.sh
+          ROS_DOMAIN_ID=93 Experimentos/ejecutar_pruebas_dinamicas_supervisor.sh /tmp/pruebas_dinamicas_supervisor

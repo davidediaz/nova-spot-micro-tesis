@@ -1,0 +1,19 @@
+{
+  "scenario": "contact",
+  "triggered": true,
+  "events": [
+    {
+      "triggered": true,
+      "t": 0.1893684640003812
+    },
+    {
+      "status": "{\"latched\":true,\"reason\":\"perdida_contacto\",\"values\":{\"margin_m\":null},\"simulation_only\":true}",
+      "t": 0.18948020400011956
+    },
+    {
+      "command": "stand",
+      "t": 0.18952289400021982
+    }
+  ],
+  "duration_s": 4.000896304999969
+}

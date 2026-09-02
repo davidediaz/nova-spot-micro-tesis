@@ -1,0 +1,19 @@
+{
+  "scenario": "high_height",
+  "triggered": true,
+  "events": [
+    {
+      "triggered": true,
+      "t": 0.30156265200002963
+    },
+    {
+      "command": "stand",
+      "t": 0.3016173850000996
+    },
+    {
+      "status": "{\"latched\":true,\"reason\":\"altura_alta\",\"values\":{\"height_m\":0.36,\"roll_deg\":0.0,\"pitch_deg\":0.0},\"simulation_only\":true}",
+      "t": 0.3017465280004217
+    }
+  ],
+  "duration_s": 4.000533440000254
+}

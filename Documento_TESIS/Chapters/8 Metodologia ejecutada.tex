@@ -91,11 +91,13 @@ no están identificados, esta magnitud se reportó explícitamente como nominal.
 
 \section{Seguridad}
 
-El supervisor verificó altura, inclinación, finitud y límites de las referencias
-articulares. Se prepararon observadores de timeout, discrepancias de contacto y
-margen negativo; estos últimos permanecieron desactivados mientras se
-caracterizaban sus falsos positivos. No se implementó un rearme automático del
-estado enclavado.
+El supervisor verificó altura, inclinación, finitud, límites y discontinuidades
+de las referencias articulares. Nueve escenarios ROS~2 aislados provocaron
+altura baja y alta, roll, pitch, pérdida de contacto, margen negativo, datos
+vencidos, exceso de límite articular y discontinuidad. Cada criterio exigió el
+motivo esperado, la activación enclavada y la orden \texttt{stand}. No se
+implementó un rearme automático; contacto, margen y timeout permanecieron
+deshabilitados por defecto hasta medir falsos positivos en campañas largas.
 
 \section{Preparación experimental final}
 

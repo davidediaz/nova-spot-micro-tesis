@@ -345,14 +345,25 @@ salto a 2,00$\times$ indican proximidad al umbral operativo. Se propone
 1,25$\times$ como operación rápida conservadora; 1,50$\times$ requiere
 validación adicional y 2,00$\times$ se conserva como condición de estrés.
 
-También se ejecutó una prueba provocada de seguridad integrada. Una referencia
-\texttt{JointTrajectory} con una articulación inexistente fue rechazada por el
-controlador y detectada por el supervisor, que registró
-\texttt{nombres\_articulares\_invalidos,articulacion\_desconocida} y ordenó la transición
-a \texttt{stand}. La evidencia se conserva en
-\texttt{Experimentos/prueba\_supervisor\_referencia\_invalida\_20260901}. Este resultado
-demuestra la parada preventiva por referencia inválida; las paradas de datos
-vencidos, contacto y margen siguen pendientes.
+También se ejecutó una prueba provocada de seguridad integrada. Una trayectoria
+articular con una articulación inexistente fue rechazada por el
+controlador y detectada por el supervisor, que registró nombres articulares
+inválidos y una articulación desconocida, y ordenó la transición a
+\texttt{stand}. La evidencia se conserva en
+\path{Experimentos/prueba_supervisor_referencia_invalida_20260901}. Este resultado
+demuestra la parada preventiva por referencia inválida.
+
+Posteriormente se ejecutaron nueve escenarios ROS~2 aislados. Alturas de
+$0{,}10$ y $0{,}36$~m produjeron \texttt{altura\_baja} y
+\texttt{altura\_alta}; inclinaciones de 30 grados produjeron \texttt{roll} y
+\texttt{pitch}; la ausencia de RL produjo una pérdida de contacto; un margen
+de $-0{,}20$~m produjo una parada por estabilidad; y la ausencia de las tres
+fuentes produjo una parada por datos vencidos. También se rechazaron una coxa a
+$0{,}70$~rad y un salto de $0{,}40$~rad. Los nueve casos emitieron
+\texttt{triggered=true}, el motivo esperado y \texttt{stand}. La evidencia está
+en \path{Experimentos/pruebas_dinamicas_supervisor_20260902}. Esto valida
+la reacción integrada ante estímulos controlados, no el corte eléctrico ni la
+respuesta mecánica física.
 Como preparación de la corrección del contacto trasero se ejecutó una criba
 cartesiana sobre la relación de altura durante el despegue. Con 24 muestras,
 paso de 18 mm y elevación máxima de 14 mm, los valores 0,707, 0,75 y 0,80

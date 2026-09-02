@@ -1,0 +1,19 @@
+{
+  "scenario": "joint_limit",
+  "triggered": true,
+  "events": [
+    {
+      "triggered": true,
+      "t": 0.10224092299995391
+    },
+    {
+      "command": "stand",
+      "t": 0.1022990819997176
+    },
+    {
+      "status": "{\"latched\":true,\"reason\":\"limite_articular\",\"values\":{},\"simulation_only\":true}",
+      "t": 0.10252754199973424
+    }
+  ],
+  "duration_s": 4.0004839069997615
+}

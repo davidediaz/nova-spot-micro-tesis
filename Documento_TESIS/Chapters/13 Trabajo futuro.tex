@@ -22,10 +22,10 @@ desplazamiento.
 En simulación se investigará una liberación trasera que produzca una pérdida
 filtrada sostenida sin aumentar la altura temprana por encima de 0,80 ni superar
 un salto articular de 0,20~rad. Las comprobaciones unitarias de límites, pose,
-contacto inconsistente, margen y continuidad ya se ejecutan automáticamente;
-el supervisor deberá someterse todavía a pruebas integradas provocadas de
-pérdida de datos, pérdida de contacto y margen negativo antes
-de habilitar estas paradas.
+contacto inconsistente, margen y continuidad y los nueve escenarios integrados
+provocados ya se ejecutan automáticamente. Antes de habilitar por defecto las
+paradas de contacto, margen y datos vencidos se deberán medir falsos positivos
+durante campañas largas y definir un mecanismo de rearme seguro.
 
 Finalmente se formulará y entrenará la política PPO como una capa de
 correcciones acotadas. La comparación final conservará las semillas y tamaños

@@ -1,0 +1,19 @@
+{
+  "scenario": "margin",
+  "triggered": true,
+  "events": [
+    {
+      "triggered": true,
+      "t": 0.19729148799979157
+    },
+    {
+      "status": "{\"latched\":true,\"reason\":\"margen_estabilidad\",\"values\":{\"margin_m\":-0.2},\"simulation_only\":true}",
+      "t": 0.19750531999989107
+    },
+    {
+      "command": "stand",
+      "t": 0.19759497899985945
+    }
+  ],
+  "duration_s": 4.0004330669999035
+}

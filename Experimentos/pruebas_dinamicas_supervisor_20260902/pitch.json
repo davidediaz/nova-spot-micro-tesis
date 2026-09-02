@@ -1,0 +1,19 @@
+{
+  "scenario": "pitch",
+  "triggered": true,
+  "events": [
+    {
+      "triggered": true,
+      "t": 0.30202763100032826
+    },
+    {
+      "command": "stand",
+      "t": 0.3021047659999567
+    },
+    {
+      "status": "{\"latched\":true,\"reason\":\"pitch\",\"values\":{\"height_m\":0.224,\"roll_deg\":0.0,\"pitch_deg\":29.999999999999996},\"simulation_only\":true}",
+      "t": 0.3022850750003272
+    }
+  ],
+  "duration_s": 4.000543354999991
+}

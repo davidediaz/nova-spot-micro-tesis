@@ -100,10 +100,12 @@ Gazebo y, para cadencia y articulaciones, en MuJoCo.
 \section{Monitoreo y seguridad}
 
 El nodo de métricas publicó posición, altura, orientación y estados articulares.
-El supervisor ordenó postura segura cuando se provocaron condiciones de altura
-o inclinación insegura y rechazó trayectorias no finitas o fuera de límites.
-Las entradas de contacto, vencimiento de datos y margen se mantuvieron
-informativas hasta completar pruebas provocadas y definir un rearme seguro.
+El supervisor ordenó postura segura ante estímulos provocados de altura,
+inclinación, contacto, margen, vencimiento de datos, límite articular y
+discontinuidad. Un nodo de prueba usó tópicos aislados y conservó en JSON la
+activación, el motivo y la orden \texttt{stand}. Las entradas de contacto,
+vencimiento y margen se mantuvieron deshabilitadas por defecto mientras se
+define el rearme seguro y se cuantifican falsos positivos.
 
 \section{Preparación del computador embebido}
 
