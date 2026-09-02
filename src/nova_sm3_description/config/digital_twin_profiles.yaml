@@ -1,5 +1,7 @@
 schema_version: 1
 status: provisional_not_identified
+# La ficha suministrada no declara corriente; los límites en amperios siguen
+# siendo hipótesis de ingeniería hasta medir cada servo y la fuente.
 profiles:
   nominal:
     mass_scale: 1.0

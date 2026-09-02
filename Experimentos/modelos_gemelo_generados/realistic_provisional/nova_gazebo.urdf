@@ -72,7 +72,7 @@
     <origin xyz="0.09 0.06 0"/>
     <axis xyz="1 0 0"/>
     <!-- Placeholder mechanical envelope; replace after physical calibration. -->
-    <limit effort="0.7279245081300812" lower="-0.60" upper="0.60" velocity="6.399540590645874"/>
+    <limit effort="0.6838078712737128" lower="-0.60" upper="0.60" velocity="6.368920779207378"/>
     <dynamics damping="0.12" friction="0.045"/>
   </joint>
   <link name="front_left_femur_link">
@@ -100,7 +100,7 @@
     <child link="front_left_femur_link"/>
     <origin xyz="0 0.09 0"/>
     <axis xyz="0 1 0"/>
-    <limit effort="0.7279245081300812" lower="-1.20" upper="1.20" velocity="6.399540590645874"/>
+    <limit effort="0.6838078712737128" lower="-1.20" upper="1.20" velocity="6.368920779207378"/>
     <dynamics damping="0.12" friction="0.045"/>
   </joint>
   <link name="front_left_tibia_link">
@@ -128,7 +128,7 @@
     <child link="front_left_tibia_link"/>
     <origin xyz="0 0 -0.105"/>
     <axis xyz="0 1 0"/>
-    <limit effort="0.7279245081300812" lower="-2.20" upper="0.10" velocity="6.399540590645874"/>
+    <limit effort="0.6838078712737128" lower="-2.20" upper="0.10" velocity="6.368920779207378"/>
     <dynamics damping="0.12" friction="0.045"/>
   </joint>
   <link name="front_left_foot_link">
@@ -192,7 +192,7 @@
     <origin xyz="0.09 -0.06 0"/>
     <axis xyz="-1 0 0"/>
     <!-- Placeholder mechanical envelope; replace after physical calibration. -->
-    <limit effort="0.7279245081300812" lower="-0.60" upper="0.60" velocity="6.399540590645874"/>
+    <limit effort="0.6838078712737128" lower="-0.60" upper="0.60" velocity="6.368920779207378"/>
     <dynamics damping="0.12" friction="0.045"/>
   </joint>
   <link name="front_right_femur_link">
@@ -220,7 +220,7 @@
     <child link="front_right_femur_link"/>
     <origin xyz="0 -0.09 0"/>
     <axis xyz="0 1 0"/>
-    <limit effort="0.7279245081300812" lower="-1.20" upper="1.20" velocity="6.399540590645874"/>
+    <limit effort="0.6838078712737128" lower="-1.20" upper="1.20" velocity="6.368920779207378"/>
     <dynamics damping="0.12" friction="0.045"/>
   </joint>
   <link name="front_right_tibia_link">
@@ -248,7 +248,7 @@
     <child link="front_right_tibia_link"/>
     <origin xyz="0 0 -0.105"/>
     <axis xyz="0 1 0"/>
-    <limit effort="0.7279245081300812" lower="-2.20" upper="0.10" velocity="6.399540590645874"/>
+    <limit effort="0.6838078712737128" lower="-2.20" upper="0.10" velocity="6.368920779207378"/>
     <dynamics damping="0.12" friction="0.045"/>
   </joint>
   <link name="front_right_foot_link">
@@ -312,7 +312,7 @@
     <origin xyz="-0.09 0.06 0"/>
     <axis xyz="1 0 0"/>
     <!-- Placeholder mechanical envelope; replace after physical calibration. -->
-    <limit effort="0.7279245081300812" lower="-0.60" upper="0.60" velocity="6.399540590645874"/>
+    <limit effort="0.6838078712737128" lower="-0.60" upper="0.60" velocity="6.368920779207378"/>
     <dynamics damping="0.12" friction="0.045"/>
   </joint>
   <link name="rear_left_femur_link">
@@ -340,7 +340,7 @@
     <child link="rear_left_femur_link"/>
     <origin xyz="0 0.09 0"/>
     <axis xyz="0 1 0"/>
-    <limit effort="0.7279245081300812" lower="-1.20" upper="1.20" velocity="6.399540590645874"/>
+    <limit effort="0.6838078712737128" lower="-1.20" upper="1.20" velocity="6.368920779207378"/>
     <dynamics damping="0.12" friction="0.045"/>
   </joint>
   <link name="rear_left_tibia_link">
@@ -368,7 +368,7 @@
     <child link="rear_left_tibia_link"/>
     <origin xyz="0 0 -0.105"/>
     <axis xyz="0 1 0"/>
-    <limit effort="0.7279245081300812" lower="-2.20" upper="0.10" velocity="6.399540590645874"/>
+    <limit effort="0.6838078712737128" lower="-2.20" upper="0.10" velocity="6.368920779207378"/>
     <dynamics damping="0.12" friction="0.045"/>
   </joint>
   <link name="rear_left_foot_link">
@@ -432,7 +432,7 @@
     <origin xyz="-0.09 -0.06 0"/>
     <axis xyz="-1 0 0"/>
     <!-- Placeholder mechanical envelope; replace after physical calibration. -->
-    <limit effort="0.7279245081300812" lower="-0.60" upper="0.60" velocity="6.399540590645874"/>
+    <limit effort="0.6838078712737128" lower="-0.60" upper="0.60" velocity="6.368920779207378"/>
     <dynamics damping="0.12" friction="0.045"/>
   </joint>
   <link name="rear_right_femur_link">
@@ -460,7 +460,7 @@
     <child link="rear_right_femur_link"/>
     <origin xyz="0 -0.09 0"/>
     <axis xyz="0 1 0"/>
-    <limit effort="0.7279245081300812" lower="-1.20" upper="1.20" velocity="6.399540590645874"/>
+    <limit effort="0.6838078712737128" lower="-1.20" upper="1.20" velocity="6.368920779207378"/>
     <dynamics damping="0.12" friction="0.045"/>
   </joint>
   <link name="rear_right_tibia_link">
@@ -488,7 +488,7 @@
     <child link="rear_right_tibia_link"/>
     <origin xyz="0 0 -0.105"/>
     <axis xyz="0 1 0"/>
-    <limit effort="0.7279245081300812" lower="-2.20" upper="0.10" velocity="6.399540590645874"/>
+    <limit effort="0.6838078712737128" lower="-2.20" upper="0.10" velocity="6.368920779207378"/>
     <dynamics damping="0.12" friction="0.045"/>
   </joint>
   <link name="rear_right_foot_link">

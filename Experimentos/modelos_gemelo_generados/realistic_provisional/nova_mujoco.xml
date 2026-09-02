@@ -102,18 +102,18 @@
     </body>
   </worldbody>
   <actuator>
-    <position name="front_left_coxa_act" joint="front_left_coxa_joint" ctrlrange="-0.60 0.60" forcelimited="true" forcerange="-0.72792450813 0.72792450813" />
-    <position name="front_left_femur_act" joint="front_left_femur_joint" ctrlrange="-1.20 1.20" forcelimited="true" forcerange="-0.72792450813 0.72792450813" />
-    <position name="front_left_tibia_act" joint="front_left_tibia_joint" ctrlrange="-2.20 0.10" forcelimited="true" forcerange="-0.72792450813 0.72792450813" />
-    <position name="front_right_coxa_act" joint="front_right_coxa_joint" ctrlrange="-0.60 0.60" forcelimited="true" forcerange="-0.72792450813 0.72792450813" />
-    <position name="front_right_femur_act" joint="front_right_femur_joint" ctrlrange="-1.20 1.20" forcelimited="true" forcerange="-0.72792450813 0.72792450813" />
-    <position name="front_right_tibia_act" joint="front_right_tibia_joint" ctrlrange="-2.20 0.10" forcelimited="true" forcerange="-0.72792450813 0.72792450813" />
-    <position name="rear_left_coxa_act" joint="rear_left_coxa_joint" ctrlrange="-0.60 0.60" forcelimited="true" forcerange="-0.72792450813 0.72792450813" />
-    <position name="rear_left_femur_act" joint="rear_left_femur_joint" ctrlrange="-1.20 1.20" forcelimited="true" forcerange="-0.72792450813 0.72792450813" />
-    <position name="rear_left_tibia_act" joint="rear_left_tibia_joint" ctrlrange="-2.20 0.10" forcelimited="true" forcerange="-0.72792450813 0.72792450813" />
-    <position name="rear_right_coxa_act" joint="rear_right_coxa_joint" ctrlrange="-0.60 0.60" forcelimited="true" forcerange="-0.72792450813 0.72792450813" />
-    <position name="rear_right_femur_act" joint="rear_right_femur_joint" ctrlrange="-1.20 1.20" forcelimited="true" forcerange="-0.72792450813 0.72792450813" />
-    <position name="rear_right_tibia_act" joint="rear_right_tibia_joint" ctrlrange="-2.20 0.10" forcelimited="true" forcerange="-0.72792450813 0.72792450813" />
+    <position name="front_left_coxa_act" joint="front_left_coxa_joint" ctrlrange="-0.60 0.60" forcelimited="true" forcerange="-0.683807871274 0.683807871274" />
+    <position name="front_left_femur_act" joint="front_left_femur_joint" ctrlrange="-1.20 1.20" forcelimited="true" forcerange="-0.683807871274 0.683807871274" />
+    <position name="front_left_tibia_act" joint="front_left_tibia_joint" ctrlrange="-2.20 0.10" forcelimited="true" forcerange="-0.683807871274 0.683807871274" />
+    <position name="front_right_coxa_act" joint="front_right_coxa_joint" ctrlrange="-0.60 0.60" forcelimited="true" forcerange="-0.683807871274 0.683807871274" />
+    <position name="front_right_femur_act" joint="front_right_femur_joint" ctrlrange="-1.20 1.20" forcelimited="true" forcerange="-0.683807871274 0.683807871274" />
+    <position name="front_right_tibia_act" joint="front_right_tibia_joint" ctrlrange="-2.20 0.10" forcelimited="true" forcerange="-0.683807871274 0.683807871274" />
+    <position name="rear_left_coxa_act" joint="rear_left_coxa_joint" ctrlrange="-0.60 0.60" forcelimited="true" forcerange="-0.683807871274 0.683807871274" />
+    <position name="rear_left_femur_act" joint="rear_left_femur_joint" ctrlrange="-1.20 1.20" forcelimited="true" forcerange="-0.683807871274 0.683807871274" />
+    <position name="rear_left_tibia_act" joint="rear_left_tibia_joint" ctrlrange="-2.20 0.10" forcelimited="true" forcerange="-0.683807871274 0.683807871274" />
+    <position name="rear_right_coxa_act" joint="rear_right_coxa_joint" ctrlrange="-0.60 0.60" forcelimited="true" forcerange="-0.683807871274 0.683807871274" />
+    <position name="rear_right_femur_act" joint="rear_right_femur_joint" ctrlrange="-1.20 1.20" forcelimited="true" forcerange="-0.683807871274 0.683807871274" />
+    <position name="rear_right_tibia_act" joint="rear_right_tibia_joint" ctrlrange="-2.20 0.10" forcelimited="true" forcerange="-0.683807871274 0.683807871274" />
   </actuator>
   <sensor>
     <framequat name="imu_orientation" objtype="body" objname="base_link" />

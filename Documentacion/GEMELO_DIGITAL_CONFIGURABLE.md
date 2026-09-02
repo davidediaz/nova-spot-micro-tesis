@@ -19,8 +19,9 @@ amortiguamiento y límite de esfuerzo antes de admitir una comparación.
 
 El límite efectivo combina la envolvente lineal par--velocidad y tensión con un
 límite de corriente por servo. El perfil `realistic_provisional` usa 5,5 V y
-1,0 A, que reducen el par estático computable a 0,727925 N m y la velocidad sin
-carga a 6,399541 rad/s. Son cotas de catálogo, no resultados físicos.
+1,0 A, que reducen el par estático computable a 0,683808 N m y la velocidad sin
+carga a 6,368921 rad/s. La corriente no aparece en la ficha suministrada y
+continúa siendo una hipótesis; estas son cotas de ingeniería, no resultados físicos.
 
 `actuator_model_node` aplica la misma zona muerta de holgura, retardo de comando
 y límite de cambio en ambas rutas. El inyector existente aplica el retardo de
@@ -32,7 +33,7 @@ Ejemplo para el perfil realista provisional:
 ```bash
 ros2 launch nova_gait_controller actuator_model.launch.py \
   backlash_rad:=0.017453293 command_delay_ms:=20 \
-  max_speed_rad_s:=6.399540591
+  max_speed_rad_s:=6.368920779
 ros2 launch nova_gait_controller demo.launch.py \
   trajectory_topic:=/nova/ideal_trajectory
 ```

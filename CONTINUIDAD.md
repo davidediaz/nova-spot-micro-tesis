@@ -1409,7 +1409,7 @@ MJCF y manifiesto con hashes. Los perfiles `nominal`,
 amortiguamiento, fricción y esfuerzo común. El perfil realista provisional usa
 masa 1,10, inercia 1,15, fricción de suelo 0,675, holgura de un grado,
 retardos de 20/50 ms y 5,5 V con 1,0 A por servo; su par queda limitado a
-0,727925 N m.
+0,683808 N m.
 
 Se añadió `actuator_model_node` para aplicar holgura, retardo y límite de
 velocidad en ambas rutas. Gazebo carga perfiles con
@@ -1424,3 +1424,21 @@ gemelo digital identificado ni una comparación dinámica completa. Documento:
 
 La tesis se recompiló con 66 páginas y SHA-256
 `038c3fb25f2a5542cd7f249e5263dd01b1f3f0bd389bf60ed89f2f9d3852aba1`.
+
+### Ficha suministrada de los doce MG996R-360 (2 de septiembre de 2026)
+
+Se archivó `Documentacion/Fuentes/MG996R-360_AG_Electronica.pdf`, SHA-256
+`9cbb94b33d2b84a52fad1c8379f98d6034231150f4b8f29b6a0fcd1054addd5d`.
+Confirma 4,8--6,6 V, 9,4/11 kgf cm a 4,8/6,0 V, 0,19/0,15 s por 60 grados,
+55 g, engranajes metálicos, doble rodamiento y banda muerta PWM de 1 us. El
+modelo interpola ahora entre los dos puntos declarados de par y velocidad.
+
+La ficha contradice su rango: título y tabla indican 360 grados, pero el texto
+dice «su giro es 60°» y no define si el pulso controla posición o velocidad.
+Tampoco declara corriente. No se modifican los límites revolutos del URDF y la
+corriente sigue provisional hasta probar una unidad desacoplada y después
+identificar las doce. Auditoría:
+`Documentacion/CARACTERISTICAS_MG996R_360_SUMINISTRADAS.md`.
+
+Tras incorporar estos datos, la tesis se recompiló con 66 páginas y SHA-256
+`521e4ec0d1aae34b65f27fca3f8825b8005578759d3721a91a1de909acdacd3b`.

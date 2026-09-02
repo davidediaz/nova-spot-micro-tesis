@@ -28,6 +28,12 @@ El avance prepara una comparación justa, pero no cierra un gemelo digital:
 faltan identificación física y campañas con pose y contactos equivalentes en
 MuJoCo.
 
+Ficha de servos recibida el 2 de septiembre: confirma tensión, par, velocidad,
+masa y dimensiones de los doce MG996R-360, pero contradice el rango angular y
+no contiene corriente. Se incorporaron ambos puntos nominales de 4,8 y 6,0 V
+al modelo. El giro continuo/posicional y las corrientes deben verificarse
+físicamente antes de modificar articulaciones o dimensionar la fuente.
+
 ## Punto de partida confirmado
 
 No se parte de cero. Ya están implementados y comprobados:

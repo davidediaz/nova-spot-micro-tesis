@@ -43,7 +43,11 @@ def effective_limits(profile):
     torque, _, _ = saturated_actuator_torque(
         100.0, 0.0, float(profile['voltage_v']),
         float(profile['current_limit_per_servo_a']))
-    velocity = MG996R.no_load_speed * float(profile['voltage_v']) / MG996R.nominal_voltage
+    voltage = float(profile['voltage_v'])
+    fraction = ((voltage-MG996R.min_voltage) /
+                (MG996R.nominal_voltage-MG996R.min_voltage))
+    velocity = MG996R.no_load_speed_4v8 + fraction * (
+        MG996R.no_load_speed-MG996R.no_load_speed_4v8)
     return torque, velocity
 
 

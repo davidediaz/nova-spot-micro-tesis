@@ -90,6 +90,8 @@ def test_inverse_dynamics_returns_finite_joint_torques():
 def test_mg996r_catalogue_envelope_and_current():
     assert actuator_torque_limit(0.0) == pytest.approx(MG996R.stall_torque)
     assert actuator_torque_limit(MG996R.no_load_speed) == pytest.approx(0.0)
+    assert actuator_torque_limit(0.0, 4.8) == pytest.approx(9.4 * 0.0980665)
+    assert MG996R.no_load_speed_4v8 == pytest.approx((math.pi / 3.0) / 0.19)
     assert actuator_current(0.0) == pytest.approx(MG996R.no_load_current)
     assert actuator_current(MG996R.stall_torque) == pytest.approx(MG996R.stall_current)
 

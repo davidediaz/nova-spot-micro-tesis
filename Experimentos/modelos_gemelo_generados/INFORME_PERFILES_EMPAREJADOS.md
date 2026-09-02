@@ -3,7 +3,7 @@
 | Perfil | Masa Gazebo (kg) | Masa MuJoCo (kg) | Par efectivo (N m) | Velocidad sin carga (rad/s) | Auditoría |
 |---|---:|---:|---:|---:|:---:|
 | nominal | 2,720 | 2,720 | 1,078732 | 6,981317 | aprobada |
-| realistic_provisional | 2,992 | 2,992 | 0,727925 | 6,399541 | aprobada |
+| realistic_provisional | 2,992 | 2,992 | 0,683808 | 6,368921 | aprobada |
 | low_mass_low_friction | 2,448 | 2,448 | 0,903328 | 6,981317 | aprobada |
 
 La auditoría también comprueba amortiguamiento, fricción articular, fricción de

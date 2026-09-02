@@ -55,11 +55,14 @@ DEFAULT_PARAMETERS = ModelParameters()
 
 @dataclass(frozen=True)
 class MG996RParameters:
-    """TowerPro catalogue data at 6 V; not a continuous safe operating limit."""
+    """Supplied vendor-sheet data; electrical currents remain assumptions."""
 
     mass: float = 0.055
+    stall_torque_4v8: float = 9.4 * 0.0980665
     stall_torque: float = 11.0 * 0.0980665  # kgf cm -> N m
+    no_load_speed_4v8: float = (pi / 3.0) / 0.19
     no_load_speed: float = (pi / 3.0) / 0.15  # 60 degrees in 0.15 s
+    # Not specified by MG996R-360_AG_Electronica.pdf; provisional assumptions.
     stall_current: float = 1.40
     no_load_current: float = 0.170
     idle_current: float = 0.010
@@ -288,9 +291,12 @@ def actuator_torque_limit(speed, voltage=6.0, actuator=MG996R):
     """Symmetric speed-dependent torque envelope using a linear DC approximation."""
     if not actuator.min_voltage <= voltage <= actuator.max_voltage:
         raise ValueError('Voltaje fuera del rango de catálogo del MG996R')
-    scale = voltage / actuator.nominal_voltage
-    stall = actuator.stall_torque * scale
-    no_load_speed = actuator.no_load_speed * scale
+    fraction = ((voltage - actuator.min_voltage) /
+                (actuator.nominal_voltage - actuator.min_voltage))
+    stall = actuator.stall_torque_4v8 + fraction * (
+        actuator.stall_torque - actuator.stall_torque_4v8)
+    no_load_speed = actuator.no_load_speed_4v8 + fraction * (
+        actuator.no_load_speed - actuator.no_load_speed_4v8)
     return max(0.0, stall * (1.0 - abs(speed) / no_load_speed))
 
 
@@ -311,7 +317,8 @@ def saturated_actuator_torque(requested_torque, speed, voltage=6.0,
         raise ValueError('El límite de corriente debe ser positivo')
     speed_limit = actuator_torque_limit(speed, voltage, actuator)
     usable_current = max(0.0, current_limit - actuator.no_load_current)
-    current_torque = actuator.stall_torque * min(
+    voltage_stall_torque = actuator_torque_limit(0.0, voltage, actuator)
+    current_torque = voltage_stall_torque * min(
         1.0, usable_current /
         (actuator.stall_current - actuator.no_load_current))
     limit = min(speed_limit, current_torque)

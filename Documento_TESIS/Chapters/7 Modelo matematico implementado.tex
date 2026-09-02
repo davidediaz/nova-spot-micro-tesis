@@ -187,7 +187,10 @@ propiedades internas del modelo, no la exactitud de los pares físicos.
 
 \section{Actuador, contacto y estabilidad}
 
-El MG996R se representó mediante una envolvente nominal lineal de par--velocidad:
+La ficha suministrada para los doce MG996R-360 declara 9,4~kgf,cm y
+0,19~s/60 grados a 4,8~V, y 11~kgf,cm y 0,15~s/60 grados a 6,0~V. El modelo
+interpola entre esos dos puntos mediante una envolvente nominal lineal de
+par--velocidad:
 
 Las velocidades de las referencias nominales se obtuvieron por diferencias
 finitas hacia adelante entre muestras consecutivas, incluido el cierre del
@@ -212,9 +215,12 @@ discontinua indica el límite provisional del URDF.}
 \label{eq:nova-actuator}
 \end{equation}
 
-El par de bloqueo de catálogo no se interpretó como par continuo seguro. Cada
-servo todavía requiere medición individual de centro, extremos, sentido,
-corriente, velocidad, temperatura y respuesta bajo carga.
+El par de bloqueo de catálogo no se interpretó como par continuo seguro. La
+misma ficha contradice el rango angular al anunciar 360 grados y describir un
+giro de 60 grados, y no publica corriente. Por ello no se cambió el modelo a
+rotación continua y los límites eléctricos siguen siendo provisionales. Cada
+servo requiere medición individual de centro, extremos, sentido, corriente,
+velocidad, temperatura y respuesta bajo carga.
 
 Para el contacto unilateral se emplearon las condiciones
 
