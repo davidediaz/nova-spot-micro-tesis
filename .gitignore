@@ -42,3 +42,7 @@ referencias/
 .env
 *.key
 *.pem
+
+# Bolsas rosbag2 locales (evidencia pesada; se conservan informes y CSV)
+*.db3
+Experimentos/campana_ppo_escala_20260904/
