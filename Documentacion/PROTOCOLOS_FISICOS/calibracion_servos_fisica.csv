@@ -1,0 +1,13 @@
+canal,pata,articulacion,servo_id,lote,centro_pwm_us,min_pwm_us,max_pwm_us,sentido,deadband_us,tiempo_30deg_s,corriente_reposo_a,corriente_movimiento_a,corriente_carga_a,temp_inicial_c,temp_60s_c,repetibilidad_us,fecha,instrumento,evidencia,estado
+0,FL,coxa,,,,,,,,,,,,,,,,,,,pendiente
+1,FL,femur,,,,,,,,,,,,,,,,,,,pendiente
+2,FL,tibia,,,,,,,,,,,,,,,,,,,pendiente
+3,FR,coxa,,,,,,,,,,,,,,,,,,,pendiente
+4,FR,femur,,,,,,,,,,,,,,,,,,,pendiente
+5,FR,tibia,,,,,,,,,,,,,,,,,,,pendiente
+6,RL,coxa,,,,,,,,,,,,,,,,,,,pendiente
+7,RL,femur,,,,,,,,,,,,,,,,,,,pendiente
+8,RL,tibia,,,,,,,,,,,,,,,,,,,pendiente
+9,RR,coxa,,,,,,,,,,,,,,,,,,,pendiente
+10,RR,femur,,,,,,,,,,,,,,,,,,,pendiente
+11,RR,tibia,,,,,,,,,,,,,,,,,,,pendiente

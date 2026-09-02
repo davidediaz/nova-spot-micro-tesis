@@ -1,0 +1,13 @@
+id,conjunto,m1_g,m2_g,m3_g,media_g,desv_std_g,instrumento,resolucion_g,fecha,responsable,evidencia,estado
+M01,robot_completo,,,,,,,,,,,pendiente
+M02,cuerpo_electronica,,,,,,,,,,,pendiente
+M03,pata_FL,,,,,,,,,,,pendiente
+M04,pata_FR,,,,,,,,,,,pendiente
+M05,pata_RL,,,,,,,,,,,pendiente
+M06,pata_RR,,,,,,,,,,,pendiente
+CM01,centro_masa_x_mm,,,,,,,,,,,pendiente
+CM02,centro_masa_y_mm,,,,,,,,,,,pendiente
+CM03,centro_masa_z_mm,,,,,,,,,,,pendiente
+IXX,inercia_eje_x_kgm2,,,,,,,,,,,pendiente
+IYY,inercia_eje_y_kgm2,,,,,,,,,,,pendiente
+IZZ,inercia_eje_z_kgm2,,,,,,,,,,,pendiente

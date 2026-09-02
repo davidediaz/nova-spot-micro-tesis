@@ -7,6 +7,14 @@ parada física mediante OE, calibrar cada MG996R y validar progresivamente un
 servo, una pata y el robot suspendido.
 
 La marcha nominal física se transferirá solo cuando se cumplan esas condiciones.
+
+Para preparar esta fase se consolidó el paquete
+\texttt{Documentacion/PROTOCOLOS\_FISICOS},
+que contiene listas de seguridad, formatos de calibración de los doce canales,
+identificación de masas, centro de masa e inercia, y una progresión de pruebas
+desde un servo asegurado hasta la marcha. Las plantillas distinguen mediciones
+físicas de los valores nominales usados en simulación y exigen evidencia,
+instrumento, resolución y repetición antes de actualizar URDF o MJCF.
 Las pruebas avanzarán desde postura con soporte hasta un paso, un ciclo de
 gateo y marcha continua, registrando orientación, potencia, intervenciones y
 desplazamiento.
