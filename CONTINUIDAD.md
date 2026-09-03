@@ -1545,3 +1545,18 @@ Las pruebas cortas solo validan la automatización y no son resultados de la
 tesis. La próxima acción es ejecutar una campaña nueva y limpia de cinco
 ensayos independientes de 20 ciclos; no completar la campaña antigua mezclando
 repeticiones producidas con procedimientos de reinicio distintos.
+
+La acción quedó completada el 3 de septiembre con
+`Experimentos/campanas_mujoco/paso_5x20_aislada_r3_20260903`. Después de
+detectar y eliminar tres grupos de procesos huérfanos, el ejecutor pasó a crear
+y cerrar un grupo completo por ensayo. Una prueba 2x2 confirmó cero procesos
+remanentes y cero retrocesos de reloj antes de iniciar la campaña definitiva.
+
+Los cinco ensayos definitivos contienen 21 ciclos y 672 referencias cada uno;
+el análisis comparable conserva el ciclo 1 como transitorio y usa los ciclos
+2--20. No hubo activaciones del supervisor. El avance medio fue 0,002701937
+m/ciclo, roll máximo 0,646314 grados, pitch máximo 1,787264 grados y error RMS
+articular 0,010531 rad. El CV entre ensayos del avance fue 0,020555 %. La
+coincidencia de contactos fue 0 %, por lo que se confirma reproducibilidad de
+la interfaz y seguimiento, pero no equivalencia dinámica ni marcha física útil
+en MuJoCo. El registro incluye hashes de las cinco bolsas.

@@ -627,6 +627,15 @@ confirmó el apagado acotado. Los paquetes compilaron y pasaron 98 pruebas. La
 próxima campaña MuJoCo 5x20 debe comenzar en una carpeta nueva y usar una
 instancia independiente por ensayo; las pruebas cortas no entran en resultados.
 
+Campaña completada el 3 de septiembre: cinco ensayos independientes de marcha
+paso en MuJoCo, cada uno con 21 ciclos completos, 672 referencias, nueve
+marcadores y cero activaciones del supervisor. Para la comparación se usaron
+los ciclos 2--20. El avance fue 0,002701937 m/ciclo, roll máximo 0,646314°,
+pitch máximo 1,787264° y error RMS articular 0,010531 rad; el CV del avance fue
+0,020555 %. La coincidencia simultánea de contactos permaneció en 0 %, así que
+la campaña demuestra repetibilidad computacional, no equivalencia dinámica.
+Evidencia en `Experimentos/campanas_mujoco/paso_5x20_aislada_r3_20260903`.
+
 Las pruebas dinámicas provocadas del supervisor quedaron cerradas. La prioridad
 inmediata pasa a la fase física F0, todavía sin energizar: terminar e
 inspeccionar el ensamble, identificar los dos servos sustituidos, trazar

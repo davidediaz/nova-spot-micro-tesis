@@ -31,18 +31,20 @@ LAUNCH_PID=""
 BAG_PID=""
 stop_launch() {
   [[ -n "$LAUNCH_PID" ]] || return 0
-  kill -INT "$LAUNCH_PID" 2>/dev/null || true
+  # El launch se inicia con setsid: la señal negativa alcanza también todos
+  # sus nodos hijos y evita dejar simuladores huérfanos entre repeticiones.
+  kill -INT -- "-$LAUNCH_PID" 2>/dev/null || true
   for _ in $(seq 1 40); do
-    kill -0 "$LAUNCH_PID" 2>/dev/null || {
+    kill -0 -- "-$LAUNCH_PID" 2>/dev/null || {
       wait "$LAUNCH_PID" 2>/dev/null || true
       LAUNCH_PID=""
       return 0
     }
     sleep 0.25
   done
-  kill -TERM "$LAUNCH_PID" 2>/dev/null || true
+  kill -TERM -- "-$LAUNCH_PID" 2>/dev/null || true
   sleep 1
-  kill -KILL "$LAUNCH_PID" 2>/dev/null || true
+  kill -KILL -- "-$LAUNCH_PID" 2>/dev/null || true
   wait "$LAUNCH_PID" 2>/dev/null || true
   LAUNCH_PID=""
 }
@@ -71,8 +73,10 @@ wait_for_log() {
 
 publish_marker() {
   local command=$1
-  # QoS volátil: publicar varias veces evita perder un marcador por descubrimiento DDS.
-  ros2 topic pub --times 3 --rate 5 /nova/gait_command \
+  # Esperar grabador + controlador evita que el publicador efímero enlace solo
+  # con rosbag y pierda la orden de marcha durante el descubrimiento DDS.
+  ros2 topic pub --times 3 --rate 5 --wait-matching-subscriptions 2 \
+    --qos-durability volatile --keep-alive 0.5 /nova/gait_command \
     std_msgs/msg/String "{data: $command}" >/dev/null
 }
 
@@ -90,7 +94,7 @@ for REP in $(seq "$INICIO_REP" "$ULTIMA_REP"); do
   fi
 
   # Una instancia nueva por ensayo mantiene /clock monótono y aísla el estado.
-  ros2 launch nova_gait_controller mujoco_demo.launch.py headless:=true \
+  setsid ros2 launch nova_gait_controller mujoco_demo.launch.py headless:=true \
     sim_speed_factor:="$FACTOR" > "$SALIDA/mujoco_${NOMBRE}.log" 2>&1 &
   LAUNCH_PID=$!
   for _ in $(seq 1 60); do
