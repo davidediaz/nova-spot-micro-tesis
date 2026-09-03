@@ -4,6 +4,7 @@
   <xacro:arg name="use_mujoco" default="false"/>
   <xacro:arg name="use_gazebo" default="false"/>
   <xacro:arg name="headless" default="false"/>
+  <xacro:arg name="sim_speed_factor" default="1.0"/>
   <xacro:arg name="include_ros2_control" default="true"/>
   <!-- Experimental scales shared with generated MuJoCo profiles. -->
   <xacro:arg name="mass_scale" default="1.0"/>
@@ -148,7 +149,7 @@
   <xacro:nova_leg prefix="rear_right"  x="${-hip_spacing_x/2}" y="${-hip_spacing_y/2}" side="-1"/>
 
   <xacro:if value="$(arg include_ros2_control)">
-    <xacro:nova_ros2_control use_fake_hardware="$(arg use_fake_hardware)" use_mujoco="$(arg use_mujoco)" use_gazebo="$(arg use_gazebo)" headless="$(arg headless)" mujoco_model="$(arg mujoco_model)"/>
+    <xacro:nova_ros2_control use_fake_hardware="$(arg use_fake_hardware)" use_mujoco="$(arg use_mujoco)" use_gazebo="$(arg use_gazebo)" headless="$(arg headless)" mujoco_model="$(arg mujoco_model)" sim_speed_factor="$(arg sim_speed_factor)"/>
   </xacro:if>
   <xacro:if value="$(arg use_gazebo)">
     <gazebo>

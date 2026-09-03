@@ -15,7 +15,10 @@ def generate_launch_description():
     simulation = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(nova_share, 'launch', 'mujoco_sim.launch.py')),
-        launch_arguments={'headless': LaunchConfiguration('headless')}.items())
+        launch_arguments={
+            'headless': LaunchConfiguration('headless'),
+            'sim_speed_factor': LaunchConfiguration('sim_speed_factor'),
+        }.items())
     controller = Node(
         package='nova_gait_controller', executable='gait_controller', output='screen',
         parameters=[os.path.join(gait_share, 'config', 'gaits.yaml')])
@@ -35,6 +38,7 @@ def generate_launch_description():
 
     return LaunchDescription([
         DeclareLaunchArgument('headless', default_value='false'),
+        DeclareLaunchArgument('sim_speed_factor', default_value='1.0'),
         simulation,
         TimerAction(period=5.0, actions=[controller, metrics, comparator,
                                          stability, safety]),

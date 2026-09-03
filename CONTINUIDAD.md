@@ -1523,3 +1523,25 @@ siendo **modelo digital configurable** hasta la identificación física.
 
 La tesis recompilada tiene 73 páginas y SHA-256
 `72f850b248a1ca340fae302d06ad2cadd77b9ee7aefa0f278c59c1a81398e477`.
+
+### Depuración de la campaña MuJoCo 5x20 (3 de septiembre de 2026)
+
+Se auditó la campaña incompleta `paso_5x20_r2_20260902`. Sus repeticiones 1 y
+2 contienen 21 ciclos completos, pero `paso_r3` registró 691.518 mensajes y
+cero órdenes en `/nova/gait_command`; quedó marcado como inválido y no puede
+incorporarse al resumen. Reiniciar el mundo con los nodos activos también hizo
+retroceder `/clock` y generó avisos persistentes en `robot_state_publisher`.
+
+`Experimentos/ejecutar_campana_mujoco.sh` inicia ahora una instancia MuJoCo
+aislada por ensayo, espera señales explícitas de controlador y grabador listos,
+publica marcadores redundantes, impide sobrescribir bolsas y aplica un apagado
+acotado. La validación `validacion_aislamiento_r4_20260903` capturó seis
+marcadores, 96 referencias y tres ciclos completos sin retrocesos de reloj. La
+validación adicional `validacion_cierre_20260903` confirmó el cierre automático
+con 32 referencias y error RMS articular de 0,010531 rad. Compilaron los dos
+paquetes y pasaron 98 pruebas.
+
+Las pruebas cortas solo validan la automatización y no son resultados de la
+tesis. La próxima acción es ejecutar una campaña nueva y limpia de cinco
+ensayos independientes de 20 ciclos; no completar la campaña antigua mezclando
+repeticiones producidas con procedimientos de reinicio distintos.

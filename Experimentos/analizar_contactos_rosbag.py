@@ -253,7 +253,9 @@ def main():
                 })
         with (args.output / 'episodios_sin_contacto_crudo.csv').open(
                 'w', newline='', encoding='utf-8') as handle:
-            writer = csv.DictWriter(handle, fieldnames=list(episode_rows[0]))
+            writer = csv.DictWriter(handle, fieldnames=[
+                'leg', 'start_time_s', 'end_time_s', 'duration_s',
+                'exceeds_off_debounce', 'bounded_by_recontact'])
             writer.writeheader()
             writer.writerows(episode_rows)
 

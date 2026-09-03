@@ -17,6 +17,7 @@ def main():
     parser.add_argument("bag", type=Path)
     parser.add_argument("output", type=Path)
     parser.add_argument("--samples-per-cycle", type=int, default=32)
+    parser.add_argument("--start-command", default="paso")
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=True)
 
@@ -37,9 +38,11 @@ def main():
         else:
             states.append((timestamp, message))
 
-    starts = [timestamp for timestamp, command in commands if command in ("paso", "step")]
+    aliases = ({"paso", "step"} if args.start_command in ("paso", "step")
+               else {"gateo", "crawl"})
+    starts = [timestamp for timestamp, command in commands if command in aliases]
     if not starts:
-        raise RuntimeError("No se encontró la orden paso/step")
+        raise RuntimeError(f"No se encontró la orden {args.start_command}")
     start = max(starts)
     end = next(timestamp for timestamp, command in commands
                if timestamp > start and command in ("stand", "stop"))

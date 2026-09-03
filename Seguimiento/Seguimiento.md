@@ -619,6 +619,14 @@ de estructura documental.
 
 ## Próxima acción concreta
 
+Actualización del 3 de septiembre de 2026: se depuró el ejecutor de campañas
+MuJoCo. La tercera repetición de `paso_5x20_r2_20260902` es inválida porque no
+capturó órdenes de marcha. Una validación aislada posterior registró 96
+referencias, tres ciclos y seis marcadores sin retrocesos de reloj; otra prueba
+confirmó el apagado acotado. Los paquetes compilaron y pasaron 98 pruebas. La
+próxima campaña MuJoCo 5x20 debe comenzar en una carpeta nueva y usar una
+instancia independiente por ensayo; las pruebas cortas no entran en resultados.
+
 Las pruebas dinámicas provocadas del supervisor quedaron cerradas. La prioridad
 inmediata pasa a la fase física F0, todavía sin energizar: terminar e
 inspeccionar el ensamble, identificar los dos servos sustituidos, trazar

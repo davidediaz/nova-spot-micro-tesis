@@ -7,3 +7,4 @@
         contact_threshold: 0.000001
         contact_off_debounce: 0.12
         contact_on_debounce: 0.03
+        wrench_duration: 0.25
