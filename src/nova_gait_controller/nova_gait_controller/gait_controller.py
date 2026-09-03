@@ -129,6 +129,7 @@ class DiscreteGaitController(Node):
         self.declare_parameter('step_length', 0.016)
         self.declare_parameter('step_height', 0.008)
         self.declare_parameter('step_weight_shift', 0.004)
+        self.declare_parameter('step_fore_aft_shift', 0.0)
         self.declare_parameter('gallop_phase_duration', 0.20)
         self.declare_parameter('speed_factor', 1.0)
         self.declare_parameter('enable_experimental_gallop', False)
@@ -250,15 +251,18 @@ class DiscreteGaitController(Node):
         step_length = float(self.get_parameter('step_length').value)
         step_height = float(self.get_parameter('step_height').value)
         weight_shift = float(self.get_parameter('step_weight_shift').value)
+        fore_aft_shift = float(self.get_parameter('step_fore_aft_shift').value)
         duration = float(self.get_parameter('step_phase_duration').value)
         if not 0.08 <= duration <= 1.0:
             raise ValueError('step_phase_duration debe estar entre 0,08 y 1,0 s')
         states = cartesian_step_walk(
             STAND, samples=samples, step_length=step_length,
-            step_height=step_height, weight_shift=weight_shift)
+            step_height=step_height, weight_shift=weight_shift,
+            fore_aft_shift=fore_aft_shift)
         self.get_logger().info(
             f'Marcha paso cartesiana: {samples} muestras, paso={step_length:.3f} m, '
             f'elevación={step_height:.3f} m, transferencia={weight_shift:.3f} m, '
+            f'transferencia longitudinal={fore_aft_shift:.3f} m, '
             f'ciclo={samples * scaled_phase_duration(duration, self.get_parameter("speed_factor").value):.2f} s')
         return states
 

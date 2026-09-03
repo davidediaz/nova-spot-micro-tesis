@@ -215,7 +215,8 @@ def cartesian_crawl(stand, samples=24, step_length=0.018, step_height=0.014,
 
 
 def cartesian_step_walk(stand, samples=32, step_length=0.016,
-                        step_height=0.008, weight_shift=0.004):
+                        step_height=0.008, weight_shift=0.004,
+                        fore_aft_shift=0.0):
     """Generate a conservative walk with explicit lateral weight transfer.
 
     Each quarter-cycle belongs to one leg in FL, RR, FR, RL order.  A smooth
@@ -230,6 +231,8 @@ def cartesian_step_walk(stand, samples=32, step_length=0.016,
         raise ValueError('step_height debe estar entre 0,004 y 0,025 m')
     if not 0.0 <= weight_shift <= 0.015:
         raise ValueError('step_weight_shift debe estar entre 0 y 0,015 m')
+    if not 0.0 <= fore_aft_shift <= 0.015:
+        raise ValueError('step_fore_aft_shift debe estar entre 0 y 0,015 m')
 
     neutral = {
         'fl': forward_leg(*stand, side=1),
@@ -252,6 +255,12 @@ def cartesian_step_walk(stand, samples=32, step_length=0.016,
         # left swing leg; the sign reverses for a right swing leg.
         shift_sign = 1.0 if swing_leg in ('fl', 'rl') else -1.0
         lateral_shift = shift_sign * weight_shift * sin(pi * local_quarter)
+        # Descargar el eje de la pata oscilante: los objetivos de los pies se
+        # desplazan hacia atrás para mover el tronco hacia delante al liberar
+        # una pata trasera, y viceversa para una pata delantera.
+        fore_aft_sign = 1.0 if swing_leg in ('fl', 'fr') else -1.0
+        longitudinal_shift = (
+            fore_aft_sign * fore_aft_shift * sin(pi * local_quarter))
         legs = {}
 
         for name in ('fl', 'fr', 'rl', 'rr'):
@@ -269,6 +278,7 @@ def cartesian_step_walk(stand, samples=32, step_length=0.016,
                 progress = min(1.0, (phase - duty) / swing_span)
                 x = x0 + step_length * (-0.5 + progress)
                 z = z0 + step_height * 4.0 * progress * (1.0 - progress)
-            legs[name] = inverse_leg(x, y0 + lateral_shift, z, sides[name])
+            legs[name] = inverse_leg(
+                x + longitudinal_shift, y0 + lateral_shift, z, sides[name])
         poses.append([*legs['fl'], *legs['fr'], *legs['rl'], *legs['rr']])
     return poses

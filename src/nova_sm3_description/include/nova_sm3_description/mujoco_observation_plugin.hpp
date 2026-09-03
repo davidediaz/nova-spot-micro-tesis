@@ -41,6 +41,8 @@ private:
   void update_contact_filter(ContactFilter & filter, bool raw, double now);
   void wrench_callback(const geometry_msgs::msg::WrenchStamped & message);
   void friction_callback(const std_msgs::msg::Float64 & message);
+  void actuator_kp_callback(const std_msgs::msg::Float64 & message);
+  void actuator_kv_callback(const std_msgs::msg::Float64 & message);
 
   rclcpp::Node::SharedPtr node_;
   rclcpp::Publisher<tf2_msgs::msg::TFMessage>::SharedPtr pose_publisher_;
@@ -48,6 +50,8 @@ private:
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr contacts_publisher_;
   rclcpp::Subscription<geometry_msgs::msg::WrenchStamped>::SharedPtr wrench_subscription_;
   rclcpp::Subscription<std_msgs::msg::Float64>::SharedPtr friction_subscription_;
+  rclcpp::Subscription<std_msgs::msg::Float64>::SharedPtr actuator_kp_subscription_;
+  rclcpp::Subscription<std_msgs::msg::Float64>::SharedPtr actuator_kv_subscription_;
   int base_body_id_{-1};
   int orientation_address_{-1};
   int gyro_address_{-1};
@@ -65,6 +69,8 @@ private:
   std::mutex perturbation_mutex_;
   std::atomic<bool> new_wrench_{false};
   std::atomic<double> requested_friction_{-1.0};
+  std::atomic<double> requested_actuator_kp_{-1.0};
+  std::atomic<double> requested_actuator_kv_{-1.0};
 };
 
 }  // namespace nova_sm3_description

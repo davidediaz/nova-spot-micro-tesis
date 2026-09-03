@@ -23,6 +23,9 @@ gait_controller:
     step_length: 0.016
     step_height: 0.008
     step_weight_shift: 0.004
+    # Nominal histórico: sin transferencia longitudinal. Los candidatos deben
+    # ensayarse como configuraciones separadas antes de cambiar este valor.
+    step_fore_aft_shift: 0.0
     gallop_phase_duration: 0.20
     # Fuera del alcance principal; no habilitar en hardware.
     enable_experimental_gallop: false

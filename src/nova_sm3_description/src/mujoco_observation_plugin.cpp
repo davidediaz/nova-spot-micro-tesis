@@ -82,6 +82,12 @@ bool MujocoObservationPlugin::init(
   friction_subscription_ = node_->create_subscription<std_msgs::msg::Float64>(
     "/nova/mujoco/ground_friction", 10,
     [this](const std_msgs::msg::Float64 & message) {friction_callback(message);});
+  actuator_kp_subscription_ = node_->create_subscription<std_msgs::msg::Float64>(
+    "/nova/mujoco/actuator_kp", 10,
+    [this](const std_msgs::msg::Float64 & message) {actuator_kp_callback(message);});
+  actuator_kv_subscription_ = node_->create_subscription<std_msgs::msg::Float64>(
+    "/nova/mujoco/actuator_kv", 10,
+    [this](const std_msgs::msg::Float64 & message) {actuator_kv_callback(message);});
   RCLCPP_INFO(node_->get_logger(), "Observaciones Nova MuJoCo listas a %.1f Hz", rate);
   return true;
 }
@@ -102,6 +108,24 @@ void MujocoObservationPlugin::friction_callback(const std_msgs::msg::Float64 & m
     requested_friction_.store(message.data);
   } else {
     RCLCPP_WARN(node_->get_logger(), "Fricción rechazada: debe estar entre 0.05 y 2.0");
+  }
+}
+
+void MujocoObservationPlugin::actuator_kp_callback(const std_msgs::msg::Float64 & message)
+{
+  if (std::isfinite(message.data) && message.data >= 5.0 && message.data <= 200.0) {
+    requested_actuator_kp_.store(message.data);
+  } else {
+    RCLCPP_WARN(node_->get_logger(), "Kp rechazado: debe estar entre 5 y 200");
+  }
+}
+
+void MujocoObservationPlugin::actuator_kv_callback(const std_msgs::msg::Float64 & message)
+{
+  if (std::isfinite(message.data) && message.data >= 0.1 && message.data <= 20.0) {
+    requested_actuator_kv_.store(message.data);
+  } else {
+    RCLCPP_WARN(node_->get_logger(), "Kv rechazado: debe estar entre 0.1 y 20");
   }
 }
 
@@ -148,6 +172,20 @@ void MujocoObservationPlugin::update(const mjModel * model, mjData * data)
     const int floor_id = mj_name2id(model, mjOBJ_GEOM, "floor");
     if (floor_id >= 0) {
       mutable_model->geom_friction[3 * floor_id] = friction;
+    }
+  }
+  const double kp = requested_actuator_kp_.exchange(-1.0);
+  const double kv = requested_actuator_kv_.exchange(-1.0);
+  if (kp > 0.0 || kv > 0.0) {
+    mjModel * mutable_model = const_cast<mjModel *>(model);
+    for (int actuator = 0; actuator < model->nu; ++actuator) {
+      if (kp > 0.0) {
+        mutable_model->actuator_gainprm[mjNGAIN * actuator] = kp;
+        mutable_model->actuator_biasprm[mjNBIAS * actuator + 1] = -kp;
+      }
+      if (kv > 0.0) {
+        mutable_model->actuator_biasprm[mjNBIAS * actuator + 2] = -kv;
+      }
     }
   }
   if (last_publish_time_ >= 0.0 && data->time - last_publish_time_ < publish_period_) {
@@ -227,6 +265,8 @@ void MujocoObservationPlugin::update(const mjModel * model, mjData * data)
 
 void MujocoObservationPlugin::cleanup()
 {
+  actuator_kv_subscription_.reset();
+  actuator_kp_subscription_.reset();
   friction_subscription_.reset();
   wrench_subscription_.reset();
   contacts_publisher_.reset();

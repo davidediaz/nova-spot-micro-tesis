@@ -1560,3 +1560,18 @@ articular 0,010531 rad. El CV entre ensayos del avance fue 0,020555 %. La
 coincidencia de contactos fue 0 %, por lo que se confirma reproducibilidad de
 la interfaz y seguimiento, pero no equivalencia dinámica ni marcha física útil
 en MuJoCo. El registro incluye hashes de las cinco bolsas.
+
+### Ajuste y campañas complementarias MuJoCo (3 de septiembre de 2026)
+
+Se añadió transferencia longitudinal, altura de paso y ganancias/fricción
+ajustables. La campaña `Experimentos/campanas_mujoco/paso_ajustado_5x20_20260903`
+(transferencia 15 mm, altura 12 mm, kp/kv 80/8, fricción 0,9) obtuvo 9,867
+mm/ciclo, 36,58 % de contacto, roll 1,51°, pitch 3,17° y RMS 0,00595 rad.
+Mejora el nominal (2,702 mm/ciclo y 0 %), pero sigue lejos de Gazebo (~22 mm/ciclo).
+
+Se ejecutó además `gateo_nominal_5x20_20260903` (6,304 mm/ciclo; 67,46 % de
+contacto) y empujes de 1, 2 y 3 N. Estos verifican el registro del inyector,
+pero no demuestran respuesta diferenciada del supervisor; ruido y retardos aún
+no están integrados. Los perfiles con esfuerzo provisional no sostuvieron la
+marcha: falta calibración con mediciones físicas. Detalle en
+`Documentacion/MUJOCO_CIERRE_2026-09-03.md`.

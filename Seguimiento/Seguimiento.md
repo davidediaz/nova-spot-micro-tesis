@@ -722,3 +722,12 @@ seguridad. Pasan 80 pruebas Python y el flujo de GitHub Actions compila y prueba
 los paquetes en cada `push` y `pull_request`. Las pruebas integradas provocadas
 en los simuladores y la validación física siguen pendientes; no deben marcarse
 como completadas a partir de esta suite determinista.
+
+## Campañas MuJoCo y ajuste de marcha del 3 de septiembre de 2026
+
+Se completaron barridos de transferencia, altura, fricción y ganancias, una
+campaña de paso 5×20 ajustada y una campaña de gateo 5×20. El ajuste seleccionado
+(15 mm, 12 mm, kp/kv 80/8) alcanzó 9,867 mm/ciclo y 36,58 % de coincidencia de
+contacto; gateo alcanzó 6,304 mm/ciclo y 67,46 %. Los empujes de 1–3 N quedaron
+registrados, pero ruido/retardos y calibración física siguen pendientes. Ver
+`Documentacion/MUJOCO_CIERRE_2026-09-03.md`.

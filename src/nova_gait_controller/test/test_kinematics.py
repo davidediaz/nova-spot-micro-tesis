@@ -166,3 +166,16 @@ def test_step_walk_weight_shift_is_bounded():
     for item in poses:
         observed.append(forward_leg(*item[0:3], side=1)[1] - neutral_y)
     assert max(abs(value) for value in observed) <= 0.004 + 1e-9
+
+
+def test_step_walk_fore_aft_shift_is_bounded_and_periodic():
+    poses = cartesian_step_walk(
+        (0.10, 0.42, -0.84), fore_aft_shift=0.012)
+    nominal = forward_leg(0.10, 0.42, -0.84, side=1)[0]
+    observed = [forward_leg(*item[0:3], side=1)[0] - nominal
+                for item in poses]
+    # Incluye el movimiento de paso de 8 mm a cada lado más la transferencia.
+    assert max(abs(value) for value in observed) <= 0.020 + 1e-9
+    cyclic = poses + poses[:1]
+    assert max(abs(cyclic[i][j] - cyclic[i - 1][j])
+               for i in range(1, len(cyclic)) for j in range(12)) < 0.20
