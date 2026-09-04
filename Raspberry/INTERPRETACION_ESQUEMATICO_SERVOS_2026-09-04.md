@@ -3,6 +3,9 @@
 Se revisó `/home/pavilion/Descargas/Esquemático .pdf` (3 páginas). La primera
 página establece la numeración eléctrica por grupos:
 
+La codificación fue confirmada con la fotografía lateral guardada en
+[`documentacion/cuadrupedo_vista_lateral_articulaciones_2026-09-04.png`](documentacion/cuadrupedo_vista_lateral_articulaciones_2026-09-04.png).
+
 | Grupo | Canales | Número físico | Interpretación provisional |
 |---|---:|---:|---|
 | Morado | CH0–CH3 | 1–4 | Coxa / articulación proximal |
@@ -40,10 +43,10 @@ rear_right:  CH3 (coxa), CH7 (fémur), CH11 (tibia)
 rear_left:   CH0 (coxa), CH4 (fémur), CH8 (tibia)
 ```
 
-## Confirmaciones pendientes
+## Confirmación final
 
-1. ¿Se confirma que morado/rojo/azul corresponden, respectivamente, a coxa,
-   fémur y tibia?
+La fotografía confirma que morado = coxa, rojo = fémur y azul = tibia. El mapa
+de canales y patas anterior queda validado visualmente.
 
 No se modificó aún `Raspberry/configuracion/servos.yaml`; se espera confirmar
 estas tres relaciones antes de asociar canales a nombres ROS 2 y ejecutar una
