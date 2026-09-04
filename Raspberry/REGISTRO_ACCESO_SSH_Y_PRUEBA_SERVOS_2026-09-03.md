@@ -54,3 +54,12 @@ parada física accesible y supervisión de la fuente.
 
 Este resultado confirma respuesta eléctrica y funcional básica de los doce
 canales. No sustituye la calibración de sentido, centro y límites mecánicos.
+
+## Repetición con fuente externa encendida
+
+- Fecha: 4 de septiembre de 2026.
+- Secuencia simultánea: `1500 → 1450 → 1550 → 1500 µs`.
+- Resultado: los 12 servos respondieron correctamente.
+- Conclusión: la falta de respuesta anterior en CH4–CH11 se debió a la fuente
+  externa apagada, no a una ausencia de señal del PCA9685.
+- Estado final: PWM apagado automáticamente.
