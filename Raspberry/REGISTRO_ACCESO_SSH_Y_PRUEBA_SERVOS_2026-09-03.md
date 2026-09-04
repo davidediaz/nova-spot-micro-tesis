@@ -80,6 +80,16 @@ canales. No sustituye la calibración de sentido, centro y límites mecánicos.
 - Nota: este sentido queda como observación mecánica; aún no se modifica el
   parámetro `direction` de la calibración oficial.
 
+## Diagnóstico de CH1 mediante intercambio
+
+- El servo originalmente conectado a CH1 no respondió al probarlo en CH0.
+- El servo originalmente funcional de CH0 tampoco respondió al probarlo en
+  CH1.
+- Conclusión provisional: hay que revisar tanto el servo/cable del conjunto
+  original de CH1 como la salida CH1 o su conexión en el PCA9685.
+- Acción de seguridad: apagar la fuente antes de restaurar los conectores; no
+  continuar con caminatas ni calibración hasta resolver CH1.
+
 ## Comparación de patas delanteras
 
 - Fecha: 4 de septiembre de 2026.
