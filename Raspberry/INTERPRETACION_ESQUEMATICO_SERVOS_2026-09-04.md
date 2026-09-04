@@ -34,13 +34,14 @@ inequívoco cuál de las patas 1–4 es `front_left`, `front_right`, `rear_left`
 - Pata 3: trasera derecha.
 - Pata 4: trasera izquierda.
 
-Con la orientación confirmada, la asociación ROS 2 queda:
+Con la orientación confirmada, la asociación ROS 2 queda (la numeración del PDF
+empieza en CH0 para la pata 1):
 
 ```text
-front_right: CH1 (coxa), CH5 (fémur), CH9 (tibia)
-front_left:  CH2 (coxa), CH6 (fémur), CH10 (tibia)
-rear_right:  CH3 (coxa), CH7 (fémur), CH11 (tibia)
-rear_left:   CH0 (coxa), CH4 (fémur), CH8 (tibia)
+front_right: CH0 (coxa), CH4 (fémur), CH8 (tibia)
+front_left:  CH1 (coxa), CH5 (fémur), CH9 (tibia)
+rear_right:  CH2 (coxa), CH6 (fémur), CH10 (tibia)
+rear_left:   CH3 (coxa), CH7 (fémur), CH11 (tibia)
 ```
 
 ## Confirmación final
