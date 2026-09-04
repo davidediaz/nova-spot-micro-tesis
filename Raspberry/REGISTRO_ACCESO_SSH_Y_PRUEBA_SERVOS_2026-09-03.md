@@ -72,6 +72,15 @@ canales. No sustituye la calibración de sentido, centro y límites mecánicos.
 - Resultado: conservó su postura; no se observaron desplazamientos bruscos.
 - Estado final: salidas PWM apagadas automáticamente.
 
+## Comparación de patas delanteras
+
+- Fecha: 4 de septiembre de 2026.
+- Pata 1: CH4 (fémur) y CH8 (tibia).
+- Pata 2: CH5 (fémur) y CH9 (tibia).
+- Secuencia común: `1500 → 1475 → 1525 → 1500 µs`.
+- Resultado: ambas patas respondieron al movimiento simultáneamente.
+- Estado final: salidas PWM apagadas automáticamente.
+
 ## Transferencia lateral mínima
 
 - Fecha: 4 de septiembre de 2026.
