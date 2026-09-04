@@ -22,12 +22,17 @@ La segunda página muestra esas etiquetas sobre el cuadrúpedo. El PDF no deja
 inequívoco cuál de las patas 1–4 es `front_left`, `front_right`, `rear_left` o
 `rear_right` porque no incluye una flecha de “frente” vista desde el robot.
 
+## Confirmación del usuario
+
+- Patas 1 y 2: delanteras.
+- Patas 3 y 4: traseras.
+
 ## Confirmaciones pendientes
 
-1. Mirando el robot desde su dirección de avance, ¿qué número (1–4) es la pata
-   delantera izquierda?
+1. Mirando el robot desde su dirección de avance, ¿la pata 1 es la delantera
+   izquierda o la delantera derecha?
 2. ¿La numeración sigue alrededor del cuerpo en sentido horario o antihorario?
-3. ¿Confirmas que morado/rojo/azul corresponden, respectivamente, a coxa,
+3. ¿Se confirma que morado/rojo/azul corresponden, respectivamente, a coxa,
    fémur y tibia?
 
 No se modificó aún `Raspberry/configuracion/servos.yaml`; se espera confirmar
