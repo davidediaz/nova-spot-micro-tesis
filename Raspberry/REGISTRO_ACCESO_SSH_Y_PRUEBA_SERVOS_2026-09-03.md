@@ -71,3 +71,13 @@ canales. No sustituye la calibración de sentido, centro y límites mecánicos.
 - Comando: 12 canales a `1500 µs` durante 1 segundo.
 - Resultado: conservó su postura; no se observaron desplazamientos bruscos.
 - Estado final: salidas PWM apagadas automáticamente.
+
+## Transferencia lateral mínima
+
+- Fecha: 4 de septiembre de 2026.
+- Coxas activadas: CH0 y CH3 con `1475 → 1525 → 1500 µs`.
+- Fémures y tibias: mantenidos en `1500 µs`.
+- Resultado observado: se movieron las cuatro patas.
+- Interpretación: existe respuesta mecánica global de las coxas; el sentido
+  cinemático y los signos ROS 2 aún requieren calibración.
+- Estado final: salidas PWM apagadas automáticamente.
