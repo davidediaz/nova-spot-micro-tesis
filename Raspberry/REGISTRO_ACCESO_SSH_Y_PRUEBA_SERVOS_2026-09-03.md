@@ -90,6 +90,33 @@ canales. No sustituye la calibración de sentido, centro y límites mecánicos.
 - Acción de seguridad: apagar la fuente antes de restaurar los conectores; no
   continuar con caminatas ni calibración hasta resolver CH1.
 
+## Cierre por sobrecarga
+
+- Se observó una sobrecarga de corriente durante las pruebas.
+- Se ordenó apagar la Raspberry mediante `sudo systemctl poweroff`.
+- La conexión SSH se perdió inmediatamente después, consistente con un apagado
+  ordenado.
+- La fuente externa de servos debe permanecer apagada hasta revisar la etapa de
+  potencia y dimensionar correctamente la alimentación.
+
+## Verificación pendiente del PCA9685
+
+Antes de reconectar los doce servos se debe comprobar, sin carga y con una
+fuente limitada en corriente:
+
+1. Inspección visual de V+, GND, VCC, SDA, SCL y OE; buscar calentamiento,
+   cables invertidos o cortocircuitos.
+2. Medir VCC lógico y V+ del PCA9685 con multímetro.
+3. Arrancar con todos los canales en `FULL_OFF` y confirmar I²C en `0x40`.
+4. Probar una salida conocida (CH0) con un servo aislado.
+5. Probar CH1 sin servo o con carga conocida y comparar la señal PWM con
+   osciloscopio/analizador lógico.
+6. Medir corriente de un servo y luego de grupos pequeños; no conectar los 12
+   hasta verificar que la fuente, cableado y protección soportan los picos.
+
+La marcha queda bloqueada hasta cerrar esta lista y resolver la anomalía de
+CH1.
+
 ## Comparación de patas delanteras
 
 - Fecha: 4 de septiembre de 2026.
