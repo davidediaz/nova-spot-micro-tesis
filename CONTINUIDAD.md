@@ -1575,3 +1575,16 @@ pero no demuestran respuesta diferenciada del supervisor; ruido y retardos aún
 no están integrados. Los perfiles con esfuerzo provisional no sostuvieron la
 marcha: falta calibración con mediciones físicas. Detalle en
 `Documentacion/MUJOCO_CIERRE_2026-09-03.md`.
+
+### Validación inicial del hardware real y sobrecarga (4 de septiembre de 2026)
+
+Se confirmó el mapa físico de canales y se verificó movimiento de los doce
+servos mediante PWM reducido. La postura neutra a 1500 µs conservó el
+cuadrúpedo estable y una transferencia mínima produjo movimiento de las patas.
+Durante las pruebas posteriores se observó una sobrecarga de corriente, por lo
+que se apagó ordenadamente la Raspberry y se dejó la fuente de servos apagada.
+
+La siguiente reanudación debe comenzar con la verificación eléctrica del
+PCA9685 sin carga, medición de VCC/V+, comprobación I²C en 0x40, diagnóstico de
+CH1 y medición de corriente por servo/grupos pequeños. No ejecutar caminatas
+hasta cerrar esa lista.

@@ -731,3 +731,10 @@ campaña de paso 5×20 ajustada y una campaña de gateo 5×20. El ajuste selecci
 contacto; gateo alcanzó 6,304 mm/ciclo y 67,46 %. Los empujes de 1–3 N quedaron
 registrados, pero ruido/retardos y calibración física siguen pendientes. Ver
 `Documentacion/MUJOCO_CIERRE_2026-09-03.md`.
+
+## Estado de hardware real al 4 de septiembre de 2026
+
+Los doce canales respondieron con fuente externa y se confirmó una postura
+neutra estable. Una sobrecarga de corriente obligó a apagar la Raspberry y
+mantener desconectada la fuente de servos. La próxima sesión debe verificar el
+PCA9685 sin carga, resolver CH1 y medir el consumo antes de cualquier marcha.
