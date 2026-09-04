@@ -63,3 +63,11 @@ canales. No sustituye la calibración de sentido, centro y límites mecánicos.
 - Conclusión: la falta de respuesta anterior en CH4–CH11 se debió a la fuente
   externa apagada, no a una ausencia de señal del PCA9685.
 - Estado final: PWM apagado automáticamente.
+
+## Activación neutra con el robot apoyado
+
+- Fecha: 4 de septiembre de 2026.
+- Condición: cuadrúpedo apoyado en el piso, cuerpo sujetado y parada física lista.
+- Comando: 12 canales a `1500 µs` durante 1 segundo.
+- Resultado: conservó su postura; no se observaron desplazamientos bruscos.
+- Estado final: salidas PWM apagadas automáticamente.
