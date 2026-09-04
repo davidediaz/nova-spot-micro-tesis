@@ -37,3 +37,9 @@ La siguiente acción aprobada es revisar un script secuencial que active un solo
 canal a la vez, con pulso central de 1500 µs durante un segundo y apagado antes
 de pasar al siguiente canal. La prueba debe hacerse con patas suspendidas,
 parada física accesible y supervisión de la fuente.
+
+## Resultado inicial de prueba
+
+- CH0: respondió con movimiento durante la prueba individual.
+- Pulso, sentido, recorrido y articulación mecánica: aún no registrados.
+- No se autoriza todavía la ejecución de `stand`, `gateo` o `paso`.
