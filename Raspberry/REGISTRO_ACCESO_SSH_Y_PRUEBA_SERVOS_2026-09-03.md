@@ -43,3 +43,14 @@ parada física accesible y supervisión de la fuente.
 - CH0: respondió con movimiento durante la prueba individual.
 - Pulso, sentido, recorrido y articulación mecánica: aún no registrados.
 - No se autoriza todavía la ejecución de `stand`, `gateo` o `paso`.
+
+## Prueba simultánea reducida
+
+- Fecha de ejecución: 4 de septiembre de 2026.
+- Canales: CH0–CH11.
+- Secuencia: `1500 → 1450 → 1550 → 1500 µs`.
+- Resultado: los doce servos respondieron al movimiento.
+- Finalización: salidas PWM apagadas automáticamente.
+
+Este resultado confirma respuesta eléctrica y funcional básica de los doce
+canales. No sustituye la calibración de sentido, centro y límites mecánicos.
