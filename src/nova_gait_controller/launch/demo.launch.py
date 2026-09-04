@@ -6,6 +6,7 @@ from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, Time
 from launch.substitutions import LaunchConfiguration
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
+from launch_ros.parameter_descriptions import ParameterValue
 
 
 def generate_launch_description():
@@ -19,6 +20,8 @@ def generate_launch_description():
     rear_swing_height_scale = LaunchConfiguration('rear_swing_height_scale')
     preload_shift_scale = LaunchConfiguration('preload_shift_scale')
     trajectory_topic = LaunchConfiguration('trajectory_topic')
+    step_fore_aft_shift = LaunchConfiguration('step_fore_aft_shift')
+    step_height = LaunchConfiguration('step_height')
 
     simulation = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(os.path.join(nova_share, 'launch', 'sim.launch.py')))
@@ -29,6 +32,9 @@ def generate_launch_description():
                      'crawl_rear_liftoff_height_ratio': rear_liftoff_ratio,
                      'crawl_rear_swing_height_scale': rear_swing_height_scale,
                      'crawl_preload_shift_scale': preload_shift_scale,
+                     'step_fore_aft_shift': ParameterValue(
+                         step_fore_aft_shift, value_type=float),
+                     'step_height': ParameterValue(step_height, value_type=float),
                      'trajectory_topic': trajectory_topic}])
     monitoring_parameters = os.path.join(gait_share, 'config', 'monitoring.yaml')
     pose_bridge = Node(
@@ -85,6 +91,12 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'trajectory_topic', default_value='/joint_trajectory_controller/joint_trajectory',
             description='Tópico donde publica la referencia nominal'),
+        DeclareLaunchArgument(
+            'step_fore_aft_shift', default_value='0.0',
+            description='Transferencia longitudinal para marcha paso (m)'),
+        DeclareLaunchArgument(
+            'step_height', default_value='0.008',
+            description='Altura de oscilación para marcha paso (m)'),
         simulation,
         pose_bridge,
         TimerAction(period=5.0, actions=[
