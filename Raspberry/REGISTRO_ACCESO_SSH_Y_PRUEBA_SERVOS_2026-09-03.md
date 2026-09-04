@@ -72,6 +72,14 @@ canales. No sustituye la calibración de sentido, centro y límites mecánicos.
 - Resultado: conservó su postura; no se observaron desplazamientos bruscos.
 - Estado final: salidas PWM apagadas automáticamente.
 
+## Sentido de coxa de pata 1
+
+- Canal: CH0.
+- Secuencia: `1500 → 1475 → 1525 → 1500 µs`.
+- Observación: el movimiento se identificó hacia dentro.
+- Nota: este sentido queda como observación mecánica; aún no se modifica el
+  parámetro `direction` de la calibración oficial.
+
 ## Comparación de patas delanteras
 
 - Fecha: 4 de septiembre de 2026.
