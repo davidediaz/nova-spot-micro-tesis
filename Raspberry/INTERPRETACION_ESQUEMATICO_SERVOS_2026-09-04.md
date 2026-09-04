@@ -26,13 +26,23 @@ inequívoco cuál de las patas 1–4 es `front_left`, `front_right`, `rear_left`
 
 - Patas 1 y 2: delanteras.
 - Patas 3 y 4: traseras.
+- Pata 1: delantera derecha.
+- Pata 2: delantera izquierda.
+- Pata 3: trasera derecha.
+- Pata 4: trasera izquierda.
+
+Con la orientación confirmada, la asociación ROS 2 queda:
+
+```text
+front_right: CH1 (coxa), CH5 (fémur), CH9 (tibia)
+front_left:  CH2 (coxa), CH6 (fémur), CH10 (tibia)
+rear_right:  CH3 (coxa), CH7 (fémur), CH11 (tibia)
+rear_left:   CH0 (coxa), CH4 (fémur), CH8 (tibia)
+```
 
 ## Confirmaciones pendientes
 
-1. Mirando el robot desde su dirección de avance, ¿la pata 1 es la delantera
-   izquierda o la delantera derecha?
-2. ¿La numeración sigue alrededor del cuerpo en sentido horario o antihorario?
-3. ¿Se confirma que morado/rojo/azul corresponden, respectivamente, a coxa,
+1. ¿Se confirma que morado/rojo/azul corresponden, respectivamente, a coxa,
    fémur y tibia?
 
 No se modificó aún `Raspberry/configuracion/servos.yaml`; se espera confirmar
