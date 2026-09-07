@@ -9,6 +9,6 @@ pdflatex -interaction=nonstopmode -halt-on-error main.tex
 pdflatex -interaction=nonstopmode -halt-on-error main.tex
 ```
 
-Antes de firmar debe confirmarse con el director si los cuatro objetivos de
-`Tabla_Objectivos.docx` son la versión formalmente aprobada, pues la tesis de
-trabajo contiene cinco objetivos reformulados.
+La versión vigente de la tesis y de la presentación adopta los cuatro objetivos
+suministrados en `Tabla_Objectivos.docx`. Las menciones históricas a cinco
+objetivos se conservan únicamente para trazabilidad del anteproyecto.

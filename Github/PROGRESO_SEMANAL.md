@@ -204,3 +204,27 @@ Se archivaron cinco fotografías del prototipo, sus piezas y electrónica. La fe
 ![Vista superior del banco de trabajo con el robot y conexiones.](evidencias/2026-09-07/5.jpeg)
 
 Originales y hashes: [registro fotográfico](evidencias/2026-09-07/README.md). Las cinco imágenes también se incorporaron a la presentación de seis diapositivas. Siguiente acción: asociar futuras mediciones a canal, configuración y fecha de ensayo.
+
+## Sincronización documental del 7 de septiembre de 2026
+
+### Realizado
+
+- Se sustituyó la estructura anterior por los cuatro objetivos oficiales del proyecto en la tesis, la matriz de evidencia, la presentación y los documentos de seguimiento.
+- Se actualizó la presentación a siete diapositivas sencillas: objetivo general, avance porcentual, objetivos específicos, resultados con Gazebo, estado de tesis, ruta y compromiso.
+- Se contrastaron las dimensiones nominales del modelo con la fuente oficial de Nova Spot Micro y se dejó pendiente la medición física de masas, límites y tolerancias.
+- Se dejó compilado el documento preliminar de tesis en 72 páginas y se conservaron las cinco fotografías y la captura de Gazebo como evidencias.
+
+### Estado por objetivo
+
+Los cuatro objetivos se reportan con avance documental orientativo del 50 %: OE1 y OE2 tienen implementación/modelo nominal; OE3 tiene entrenamiento PPO sin política que mejore la línea base; OE4 tiene evidencias parciales de estabilidad, seguimiento y repetibilidad, pero requiere cerrar las tres pruebas y el análisis conjunto.
+
+### Pendientes
+
+Diagnosticar la sobrecarga del hardware, medir dimensiones, masas y límites reales, completar calibración y parada segura, ejecutar las tres pruebas de evaluación y acordar con los directores el alcance final de PPO si no aparece mejora.
+
+### Evidencia
+
+- `Documento_TESIS/MATRIZ_OBJETIVO_EVIDENCIA.md`
+- `Documentacion/CONTRASTE_FUENTES_OFICIALES_NOVA_2026-09-07.md`
+- `ProyectoII_Clases/07_09_2026/Primera_entrega_avances_objetivos_corregidos.pptx`
+- `Documento_TESIS/Documento_TESIS_PRELIMINAR.pdf`

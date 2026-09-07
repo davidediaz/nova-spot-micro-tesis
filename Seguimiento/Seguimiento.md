@@ -789,3 +789,11 @@ MG996R locales. La caracterización física permanece pendiente y las columnas
 de mediciones se conservan vacías.
 
 Se sincronizaron objetivos, matriz, metodología, alcance, conclusiones y presentación. PDF de tesis: 72 páginas; presentación: siete diapositivas, versión `Primera_entrega_avances_objetivos_corregidos`. Sin ensayos nuevos ni cumplimiento adicional.
+
+### Actualización integral de seguimiento — 7 de septiembre de 2026
+
+El panel público, la ruta operativa, el README y el progreso semanal quedaron
+alineados con los cuatro objetivos oficiales. El estado se mantiene parcial:
+OE1/OE2 con base nominal, OE3 con cinco PPO sin mejora aceptada y OE4 con las
+tres pruebas aún por cerrar. Se priorizan mediciones físicas, diagnóstico de
+sobrecarga y seguridad, además del acuerdo de alcance con los directores.

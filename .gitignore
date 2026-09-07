@@ -45,6 +45,7 @@ referencias/
 
 # Bolsas rosbag2 locales (evidencia pesada; se conservan informes y CSV)
 *.db3
+ProyectoII_Clases/07_09_2026/.~lock*
 Experimentos/campana_ppo_escala_20260904/
 
 # Evidencia fotográfica autorizada del prototipo

@@ -1719,3 +1719,12 @@ BibTeX de esa plantilla; no se reemplazó su PDF histórico. Su capítulo de obj
 sí quedó sincronizado. Los PowerPoint antiguos abiertos/modificados por el usuario
 se preservaron. Siguiente acción: usar la presentación corregida y continuar el
 cierre de los cuatro objetivos; publicación remota pendiente.
+
+### Cierre de actualización documental — 7 de septiembre de 2026
+
+Se sincronizaron también el panel `Github/index.html`, la ruta de trabajo, el
+README y el progreso semanal con los cuatro objetivos vigentes. El panel ahora
+reporta 50 % documental por objetivo, 72 páginas preliminares y cinco semillas
+PPO sin mejora aceptada. Se dejaron visibles como pendientes la caracterización
+física, la sobrecarga y las tres pruebas de OE4. No se añadieron resultados
+experimentales nuevos.

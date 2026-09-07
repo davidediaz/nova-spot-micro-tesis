@@ -38,7 +38,7 @@
 </head>
 <body>
   <header><div class="wrap">
-    <div class="eyebrow">Tesis · Nova Spot Micro · actualización 24 agosto 2026</div>
+    <div class="eyebrow">Tesis · Nova Spot Micro · actualización 7 septiembre 2026</div>
     <h1>El robot aprende a caminar, paso a paso.</h1>
     <p class="lead">Panel público de avance del proyecto de control de locomoción del cuadrúpedo NovaSM3. Aquí se registran resultados, decisiones y la evidencia que sostiene cada semana de trabajo.</p>
     <div class="buttons"><a class="button primary" href="BITACORA.html">Abrir bitácora →</a><a class="button" href="RUTA_TRABAJO.md">Ver ruta completa</a><a class="button" href="CRONOGRAMA_SEMANAL.md">Ver cronograma semanal</a></div>
@@ -47,10 +47,10 @@
   <main class="wrap">
 <section class="card"><h2>Registro fotográfico del prototipo</h2><p>Cinco fotografías de piezas, articulaciones y electrónica, incorporadas el 7 de septiembre de 2026.</p><a href="BITACORA.html#fotos-20260907">Ver las cinco fotografías y sus descripciones →</a></section>
     <section><div class="grid">
-      <article class="card"><div class="metric">39 <small>✓</small></div><div class="muted">pruebas aprobadas</div></article>
-      <article class="card"><div class="metric">4,32 s</div><div class="muted">ciclo corregido de gateo</div></article>
-      <article class="card"><div class="metric">&lt;0,2 %</div><div class="muted">diferencia entre repeticiones</div></article>
-      <article class="card"><div class="metric">0</div><div class="muted">activaciones de seguridad</div></article>
+      <article class="card"><div class="metric">4 <small>OE</small></div><div class="muted">objetivos vigentes</div></article>
+      <article class="card"><div class="metric">50 %</div><div class="muted">avance documental por objetivo</div></article>
+      <article class="card"><div class="metric">72</div><div class="muted">páginas del documento preliminar</div></article>
+      <article class="card"><div class="metric">5</div><div class="muted">semillas PPO sin mejora aceptada</div></article>
     </div></section>
 
     <section class="layout">
@@ -67,12 +67,12 @@
         <div class="event"><div class="date">10 · En curso</div><h3>Raspberry Pi, Mega y PCA9685</h3><p class="muted">Ubuntu 22.04, SSH y DDS verificados; PCA9685 detectado en 0x40 y movimiento probado en CH5–CH10.</p></div>
         <div class="event"><div class="date">11 · Pendiente</div><h3>Interfaz articulación–PWM</h3><p class="muted">Arranque deshabilitado y estado seguro ante referencias inválidas o pérdida de datos.</p></div>
         <div class="event"><div class="date">12 · En curso controlado</div><h3>Transferencia progresiva al robot</h3><p class="muted">Movimiento individual y multicanal comprobado; postura y marcha siguen bloqueadas hasta cerrar seguridad y calibración.</p></div>
-        <div class="event"><div class="date">13 · No iniciar todavía</div><h3>Diseño RL correctivo</h3><p class="muted">Observaciones, acciones pequeñas, recompensa, terminaciones y currículo.</p></div>
-        <div class="event"><div class="date">14 · Pendiente</div><h3>Entrenamiento PPO</h3><p class="muted">Cinco semillas congeladas y aleatorización de dominio en simulación.</p></div>
-        <div class="event"><div class="date">15 · Pendiente</div><h3>Selección e integración RL</h3><p class="muted">Validación separada, saturaciones, supervisor y política final bloqueada.</p></div>
-        <div class="event"><div class="date">16 · Pendiente</div><h3>Comparación final</h3><p class="muted">Nominal frente a nominal más RL para gateo y paso: 400 ciclos programados.</p></div>
-        <div class="event"><div class="date">17 · Pendiente</div><h3>Análisis y tesis</h3><p class="muted">Métricas, estadística, limitaciones, tablas, gráficas y trazabilidad.</p></div>
-        <div class="event"><div class="date">18 · Pendiente</div><h3>Entrega y sustentación</h3><p class="muted">PDF final, anexos, código, datos, hashes, presentación y demostración.</p></div>
+        <div class="event"><div class="date">13 · Ejecutada sin mejora aceptada</div><h3>Control por aprendizaje</h3><p class="muted">Se entrenaron cinco semillas PPO; ninguna política supera la línea base. OE3 queda parcial.</p></div>
+        <div class="event"><div class="date">14 · En curso</div><h3>Tres pruebas de evaluación</h3><p class="muted">Cerrar margen de estabilidad estática, seguimiento articular y repetibilidad del patrón.</p></div>
+        <div class="event"><div class="date">15 · Pendiente crítico</div><h3>Caracterización y seguridad</h3><p class="muted">Medir dimensiones, masas y límites reales; resolver sobrecarga, calibración y parada segura.</p></div>
+        <div class="event"><div class="date">16 · Pendiente</div><h3>Validación en robot</h3><p class="muted">Transferencia progresiva cuando OE1 y la seguridad eléctrica estén cerrados.</p></div>
+        <div class="event"><div class="date">17 · En curso</div><h3>Redacción y revisión de tesis</h3><p class="muted">Documento preliminar de 72 páginas, matriz de evidencia y conclusiones sincronizadas.</p></div>
+        <div class="event"><div class="date">18 · Pendiente</div><h3>Entrega y sustentación</h3><p class="muted">PDF final, anexos, código, datos, presentación y demostración.</p></div>
       </div></article>
       <aside class="card"><h2>Estado por área</h2>
         <h3>Software y simulación</h3><div class="bar"><span style="width:92%"></span></div><div class="muted">Implementado y reproducible</div>
@@ -82,7 +82,7 @@
       </aside>
     </section>
 
-    <section class="layout"><article class="card"><h2>Próximos pasos</h2><ul><li>Identificar la articulación física correspondiente a cada canal.</li><li>Medir centro, mínimo, máximo y sentido de cada MG996R.</li><li>Verificar la fuente bajo carga e instalar parada física mediante OE con pull-up.</li><li>Ajustar y validar la curva de descenso del gateo antes de una nueva bolsa formal.</li></ul><a href="RUTA_TRABAJO.md">Ver las 18 fases de la ruta completa →</a></article><article class="card"><h2>Documentos clave</h2><ul><li><a href="BITACORA.html">Bitácora visual</a></li><li><a href="PROGRESO_SEMANAL.md">Progreso semanal</a></li><li><a href="../Raspberry/AVANCES_PCA9685_2026-08-24.md">Avances Mega–PCA9685</a></li><li><a href="INDICE_CODIGO.md">Modelado matemático y códigos de marcha</a></li><li><a href="RUTA_TRABAJO.md">Ruta completa de trabajo</a></li><li><a href="CRONOGRAMA_SEMANAL.md">Cronograma de 32 semanas</a></li><li><a href="SEGUIMIENTO_PROFESOR.md">Seguimiento profesor–estudiante</a></li></ul></article></section>
+    <section class="layout"><article class="card"><h2>Próximos pasos</h2><ul><li>Medir dimensiones, masas, límites y correspondencia de canales del robot real.</li><li>Diagnosticar la sobrecarga y cerrar calibración, OE con pull-up y parada segura.</li><li>Completar las tres pruebas de evaluación y su análisis conjunto.</li><li>Revisar el alcance de PPO con los directores si no aparece mejora.</li></ul><a href="RUTA_TRABAJO.md">Ver las 18 fases de la ruta completa →</a></article><article class="card"><h2>Documentos clave</h2><ul><li><a href="BITACORA.html">Bitácora visual</a></li><li><a href="PROGRESO_SEMANAL.md">Progreso semanal</a></li><li><a href="../Raspberry/AVANCES_PCA9685_2026-08-24.md">Avances Mega–PCA9685</a></li><li><a href="INDICE_CODIGO.md">Modelado matemático y códigos de marcha</a></li><li><a href="RUTA_TRABAJO.md">Ruta completa de trabajo</a></li><li><a href="CRONOGRAMA_SEMANAL.md">Cronograma de 32 semanas</a></li><li><a href="SEGUIMIENTO_PROFESOR.md">Seguimiento profesor–estudiante</a></li></ul></article></section>
   </main>
   <footer><div class="wrap">Nova Spot Micro · seguimiento académico verificable · <a href="PROGRESO_SEMANAL.md">última actualización semanal</a></div></footer>
 </body>

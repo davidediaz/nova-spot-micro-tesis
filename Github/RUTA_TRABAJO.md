@@ -18,11 +18,11 @@ seguridad y de una marcha nominal estable.
 | 10 | Raspberry Pi, ROS 2, red, Mega, I2C y PCA9685 | En curso | Ubuntu 22.04, SSH, DDS, I2C y movimiento limitado verificados |
 | 11 | Interfaz articulación–PWM y vigilancia de comunicaciones | Pendiente | Arranque deshabilitado y pérdida de datos lleva a estado seguro |
 | 12 | Transferencia progresiva al robot | En curso controlado | Individual y multicanal → pata → suspendido → suelo; sin marchas antes de cerrar seguridad |
-| 13 | RL correctivo acotado | No iniciar todavía | Marcha nominal física validada y protocolo congelado |
-| 14 | Entrenamiento PPO y validación separada | Pendiente | Cinco semillas, política seleccionada y saturaciones probadas |
-| 15 | Comparación nominal frente a nominal+RL | Pendiente | 400 ciclos programados y fallos contabilizados |
-| 16 | Análisis estadístico y estabilidad | Pendiente | Dataset, IC, margen, métricas y comparación emparejada |
-| 17 | Redacción y revisión de tesis | En curso | Resultados, limitaciones, trazabilidad y PDF final |
+| 13 | Control por aprendizaje (PPO) | Ejecutada sin mejora aceptada | Revisar alcance con los directores y demostrar estabilidad/continuidad si se mantiene |
+| 14 | Tres pruebas de evaluación | En curso | Completar margen de estabilidad estática, seguimiento articular y repetibilidad |
+| 15 | Caracterización física y seguridad | Pendiente crítico | Medir dimensiones, masas y límites; resolver sobrecarga, calibración y parada segura |
+| 16 | Validación progresiva en robot | Pendiente | Transferir cuando OE1 y la seguridad eléctrica estén cerrados |
+| 17 | Redacción y revisión de tesis | En curso | Integrar matriz, resultados, limitaciones, trazabilidad y PDF final |
 | 18 | Entrega y sustentación | Pendiente | Fuentes, anexos, hashes, presentación y demostración |
 
 ## Dependencias críticas
@@ -38,16 +38,15 @@ Protocolo aprobado → caracterización física → seguridad eléctrica
                                       ↓
                          transferencia progresiva al robot
                                       ↓
-                     validación nominal física → RL correctivo
+                     validación nominal física → revisión del alcance PPO
                                       ↓
-                         comparación final → tesis y sustentación
+                         tres pruebas de evaluación → tesis y sustentación
 ```
 
 ## Estado de la próxima semana
 
-1. Ajustar la curva completa de descenso del gateo.
-2. Completar la ficha de aprobación del protocolo con el profesor.
-3. Identificar la correspondencia física entre canales y articulaciones.
-4. Calibrar cada MG996R dentro de límites conservadores y registrar resultados.
-5. Verificar la fuente bajo carga e implementar OE con pull-up y parada física
-   antes de ejecutar posturas o marchas.
+1. Medir dimensiones, masas, límites y correspondencia física entre canales y articulaciones.
+2. Diagnosticar la sobrecarga, calibrar los MG996R y verificar la fuente bajo carga.
+3. Implementar OE con pull-up y parada física antes de ejecutar posturas o marchas.
+4. Completar las pruebas de margen estático, seguimiento articular y repetibilidad.
+5. Revisar con los directores el alcance final de PPO si no mejora la línea base.

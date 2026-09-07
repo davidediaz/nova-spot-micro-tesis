@@ -14,7 +14,13 @@ mediante:
 
 - una marcha nominal cartesiana (`gateo` y `paso`);
 - métricas de movimiento, contactos y seguridad en simulación;
-- una futura capa correctiva de aprendizaje por refuerzo, acotada y supervisada.
+- una capa de aprendizaje por refuerzo evaluada con cinco semillas PPO, sin una mejora aceptada sobre la línea base.
+
+Los cuatro objetivos oficiales vigentes cubren la implementación hardware/software,
+el modelo cinemático y dinámico, el control basado en aprendizaje y tres pruebas
+de evaluación: margen de estabilidad estática, seguimiento de posición articular
+y repetibilidad del patrón de marcha. Su trazabilidad está en la
+[`matriz de objetivos y evidencia`](../Documento_TESIS/MATRIZ_OBJETIVO_EVIDENCIA.md).
 
 El modelo actual es nominal y computable. Todavía no debe presentarse como un
 gemelo digital identificado ni como un sistema validado en hardware.
@@ -39,15 +45,17 @@ decisiones y siguiente objetivo.
   rango conservador de 1300--1700 microsegundos.
 - Las posturas y marchas físicas siguen bloqueadas hasta completar calibración,
   prueba de la fuente bajo carga y parada segura mediante OE.
+- El documento preliminar de tesis tiene 72 páginas; faltan las mediciones físicas
+  reales y cerrar las tres pruebas de evaluación.
 
 ## Código y modelo
 
 El [índice de código](INDICE_CODIGO.md) enlaza el modelado matemático en LaTeX,
 su implementación Python, la cinemática, el controlador de marcha, las
 configuraciones, las pruebas y los informes experimentales. El código de
-`gateo/crawl` y `paso/step` está en `src/nova_gait_controller`; no se presenta
-el RL como implementado hasta que su fase correspondiente sea ejecutada y
-validada.
+`gateo/crawl` y `paso/step` está en `src/nova_gait_controller`; el RL fue
+entrenado y evaluado con cinco semillas, pero no se presenta como solución
+aceptada porque ninguna mejoró la línea base.
 
 La preparación de la Raspberry está documentada en
 [`Raspberry/INSTALACION_THONNY.md`](../Raspberry/INSTALACION_THONNY.md) y el
