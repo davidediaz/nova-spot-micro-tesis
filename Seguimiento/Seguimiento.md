@@ -757,3 +757,8 @@ Se incorporaron las cinco fotografías suministradas a `Github/BITACORA.html`,
 `Github/evidencias/2026-09-07`. Se verificaron copias, enlaces y distribución
 visual del PDF. Documentan construcción e integración, sin cambiar porcentajes
 ni declarar marcha o seguridad física validadas. Captura sin fecha confirmada.
+
+Se añadió a la exposición una captura nativa actual de Gazebo del modelo Nova,
+sin generar resultados experimentales nuevos. Versión vigente:
+`ProyectoII_Clases/07_09_2026/Primera_entrega_avances_gazebo.pdf` y PowerPoint.
+Conserva seis diapositivas y las cinco fotografías del prototipo.

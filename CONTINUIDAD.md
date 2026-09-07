@@ -1635,3 +1635,14 @@ HTML de imágenes existentes. No se modificó hardware ni se ejecutaron ensayos.
 Siguiente acción: usar la versión con fotos para ensayar; publicación remota
 pendiente. La incorporación a la tesis final sigue como tarea documental de
 cierre, sin atribuir validación experimental a las fotografías.
+
+### Captura Gazebo para la exposición — 7 de septiembre de 2026
+
+Se obtuvo una captura nativa del modelo Nova en Gazebo, usando el lanzamiento
+local en dominio ROS 94 y partición Ignition exclusiva. Archivo y procedencia:
+`Github/evidencias/2026-09-07/gazebo_nova.png` y README con SHA-256. Es una vista
+ilustrativa actual, no un ensayo ni evidencia de las cifras históricas.
+Se incorporó a la diapositiva 3 en `Primera_entrega_avances_gazebo.pptx` y PDF;
+se conservaron las cinco fotografías y las versiones anteriores. PDF de seis
+páginas y página modificada revisados visualmente. Se detuvo el lanzamiento al
+terminar. Siguiente acción: ensayar con esta versión; publicación remota pendiente.

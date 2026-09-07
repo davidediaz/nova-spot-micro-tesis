@@ -11,3 +11,7 @@ Documentan el estado visible de piezas, articulaciones, ensamble y electrónica 
 | 3.jpeg | Detalle de una articulación, servomotor y soporte impreso. | `a89ab1c7b4dd4cb3c217cf676878fa51b28487603ae0d6e6c5a5fac94a6a363d` |
 | 4.jpeg | Pieza amarilla impresa, fotografiada fuera del ensamble. | `1371f1d7abd4b95124c59029d14022488fe44a666409a460e7cf8555a1d828df` |
 | 5.jpeg | Vista superior del banco de trabajo con el robot y conexiones. | `bc82acc15a63b1437d15c02ee7963c294f1d965e13abd745a2ba3b589eb55d26` |
+
+## Captura nativa de Gazebo
+
+`gazebo_nova.png`: vista del modelo del proyecto, obtenida el 07/09/2026 mediante `/gui/screenshot`. Se lanzó `nova_gait_controller demo.launch.py` en `ROS_DOMAIN_ID=94`, `ROS_LOCALHOST_ONLY=1` e `IGN_PARTITION=nova_captura_20260907`. Es una captura ilustrativa actual del entorno, no una evidencia de las campañas históricas ni un ensayo nuevo de marcha. Cámara en (0.35, -0.35, 0.37), orientación cuaternión (-0.16, 0.066, 0.91, 0.377). SHA-256: `addc2f69a7e5939c3cfe12526851a0e9db820cbc4aa90e789a14cdb0cf8b84dc`.

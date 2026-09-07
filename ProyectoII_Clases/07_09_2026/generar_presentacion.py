@@ -69,10 +69,11 @@ for y,title,body in [
     box(s,.8,y,7.0,1.0,CARD)
     txt(s,1,y+.07,6.6,.36,title,18,ACC,True)
     txt(s,1,y+.49,6.6,.45,body,17)
-photo(s,2,8.08,1.85,2.1,2.65,'2 · Ensamble abierto')
-photo(s,3,10.4,1.85,2.1,2.65,'3 · Articulación y soporte')
-photo(s,4,8.08,5.0,2.1,1.57,'4 · Pieza impresa')
-txt(s,10.4,5.03,2.12,1.5,'Fotos: evidencia de construcción.\nEnsayos: evidencia de desempeño.',15,ACC)
+s.shapes.add_picture(str(PHOTOS/'gazebo_nova.png'), Inches(8.08), Inches(1.85), width=Inches(4.42), height=Inches(3.38))
+txt(s,8.08,5.26,4.42,.4,'Nova Spot Micro · captura real de Gazebo',12,ACC)
+photo(s,2,8.08,5.8,1.3,.75,'Ensamble')
+photo(s,3,9.62,5.8,1.3,.75,'Articulación')
+photo(s,4,11.16,5.8,1.3,.75,'Pieza impresa')
 txt(s,.8,6.5,7,.4,'Fuentes: tesis; cierre MuJoCo 03/09; diagnóstico PPO 02/09.',11,MUTED)
 s.notes_slide.notes_text_frame.text='Tiempo: 2:00. Avance por ciclo indica desplazamiento neto. La coincidencia de contactos es simultánea respecto al plan y no un porcentaje de estabilidad. Las campañas MuJoCo cambian trayectoria y ganancias: no aíslan una sola causa. 5×20 es el diseño; el ejecutor registró 21 ciclos y el análisis comparable usa 2–20. Nueve pruebas prueban reacción lógica, no corte eléctrico. El resultado negativo PPO impide afirmar mejora.'
 
@@ -96,5 +97,6 @@ txt(s,.95,5.25,11.35,1.12,'“La evidencia que permitirá demostrar su finalizac
 s.notes_slide.notes_text_frame.text='Tiempo: 1:00. Presentar este compromiso como propuesta del grupo a ratificar. Criterio verificable: informe con condiciones, instrumentos, mediciones, incidencias y dictamen de continuar o mantener bloqueo; tesis compilada con los nuevos resultados y las conclusiones corregidas. Si una prueba con carga no puede ejecutarse con seguridad, registrar la causa y el requisito faltante, sin inventar mediciones. No prometer una caminata para la próxima revisión.'
 prs.slides[0].notes_slide.notes_text_frame.text += ' Fotos 1 y 5: vista general y electrónica en banco. Fecha de captura no confirmada; incorporación 07/09/2026.'
 prs.slides[2].notes_slide.notes_text_frame.text += ' Fotos 2, 3 y 4: ensamble abierto, articulación y pieza impresa. Son evidencia de construcción; no mediciones de desempeño.'
-prs.save(OUT/'Primera_entrega_avances_con_fotos.pptx')
-print(OUT/'Primera_entrega_avances_con_fotos.pptx')
+prs.slides[2].notes_slide.notes_text_frame.text += ' La imagen principal es una captura nativa de Gazebo del 07/09/2026, con el modelo del proyecto; no corresponde a una captura de las campañas históricas citadas.'
+prs.save(OUT/'Primera_entrega_avances_gazebo.pptx')
+print(OUT/'Primera_entrega_avances_gazebo.pptx')
