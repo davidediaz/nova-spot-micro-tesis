@@ -1588,3 +1588,31 @@ La siguiente reanudación debe comenzar con la verificación eléctrica del
 PCA9685 sin carga, medición de VCC/V+, comprobación I²C en 0x40, diagnóstico de
 CH1 y medición de corriente por servo/grupos pequeños. No ejecutar caminatas
 hasta cerrar esa lista.
+
+### Primera entrega de avances — 7 de septiembre de 2026
+
+Se revisaron la memoria histórica, el seguimiento, los objetivos, la matriz de
+ evidencia y las fuentes del documento final frente a la guía suministrada
+`Primera entrega de avances - Proyecto de grado II.pdf`. Se preparó
+`ProyectoII_Clases/07_09_2026` con presentación editable de seis diapositivas,
+PDF, generador Python y guía de exposición de aproximadamente 8:30 minutos.
+
+Los porcentajes propuestos (OE1 50 %, OE2 50 %, OE3 75 %, OE4 50 %, OE5 25 %)
+usan cuatro hitos de 25 % por objetivo y no acreditan hitos parciales. La rúbrica
+y el compromiso son propuestas para revisión del grupo, no aprobación docente.
+La exposición distingue el entrenamiento PPO del éxito de la política y
+conserva el bloqueo físico por sobrecarga del 4 de septiembre.
+
+Verificación: PDF exportado con seis páginas y revisión visual de todas las
+ diapositivas, con corrección de desbordamientos; cifras cotejadas con informes
+existentes. No se ejecutaron ensayos nuevos. El PDF de tesis consultado tiene
+73 páginas. Se detectaron conclusiones desactualizadas sobre entrenamiento PPO,
+un resumen antiguo del alcance MuJoCo y resultados del 3–4 de septiembre aún
+pendientes de incorporar. Las correcciones quedaron enumeradas en la guía;
+no se modificó la tesis ni el control del robot en esta tarea.
+
+Siguiente acción: revisar con el grupo los porcentajes y el compromiso, ensayar
+la exposición y sincronizar las secciones documentales identificadas. La próxima
+acción física conserva la verificación PCA9685 sin carga y el diagnóstico de
+CH1/consumo antes de cualquier marcha. La presentación se conserva localmente;
+la publicación en el repositorio queda pendiente.

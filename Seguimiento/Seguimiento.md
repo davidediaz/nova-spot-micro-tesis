@@ -738,3 +738,13 @@ Los doce canales respondieron con fuente externa y se confirmó una postura
 neutra estable. Una sobrecarga de corriente obligó a apagar la Raspberry y
 mantener desconectada la fuente de servos. La próxima sesión debe verificar el
 PCA9685 sin carga, resolver CH1 y medir el consumo antes de cualquier marcha.
+
+## Preparación de primera entrega — 7 de septiembre de 2026
+
+Se prepararon seis diapositivas en PowerPoint/PDF y una guía de 8:30 minutos en
+`ProyectoII_Clases/07_09_2026`. PDF verificado visualmente. La rúbrica de avance
+y el compromiso son propuestas explícitas; no cambian el cumplimiento técnico
+de los objetivos. La guía incluye fuentes y respuestas a las ocho preguntas
+del profesor. Pendiente: revisar con el grupo, ensayar y actualizar la tesis con
+las campañas MuJoCo del 3 de septiembre, la incidencia física del 4 y las
+conclusiones desactualizadas sobre PPO. No se ejecutaron pruebas de hardware.
