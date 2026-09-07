@@ -806,3 +806,36 @@ alineados con los cuatro objetivos oficiales. El estado se mantiene parcial:
 OE1/OE2 con base nominal, OE3 con cinco PPO sin mejora aceptada y OE4 con las
 tres pruebas aún por cerrar. Se priorizan mediciones físicas, diagnóstico de
 sobrecarga y seguridad, además del acuerdo de alcance con los directores.
+### 4. Diseñar la retroalimentación sensórica para aprendizaje por refuerzo
+
+Estado: **pendiente de diseño y validación en el cuadrúpedo físico**.
+
+El agente de aprendizaje no debe recibir únicamente referencias ideales del
+simulador. La observación debe construirse con señales que también puedan
+medirse en el robot real:
+
+- [ ] **Estado articular:** posición de las 12 articulaciones y, si es posible,
+  velocidad estimada. Los MG996R no entregan posición por PWM; se debe decidir
+  entre servos con realimentación, potenciómetros, encoders u otra medición
+  externa.
+- [ ] **Estado corporal:** IMU con orientación, velocidad angular y aceleración,
+  con reloj común para sincronizarla con las articulaciones.
+- [ ] **Contacto de los pies:** cuatro sensores de contacto o fuerza para saber
+  qué patas están apoyadas. La corriente del servo puede servir como diagnóstico,
+  pero no debe sustituir el contacto si se necesita una señal confiable.
+- [ ] **Salud del sistema:** tensión, corriente, temperatura, pérdida de
+  comunicación y estado del supervisor para terminar un episodio con seguridad.
+- [ ] **Comandos y fase:** velocidad o dirección solicitada, modo de marcha y
+  fase del ciclo, usando las mismas unidades y convenciones en simulación y
+  hardware.
+- [ ] **Contrato de datos:** nombres de tópicos, unidades, marcas de tiempo,
+  frecuencia efectiva, filtros, valores ausentes y límites de saturación.
+- [ ] **Correspondencia simulación--hardware:** generar en Gazebo/MuJoCo las
+  mismas observaciones, retardos, ruido, saturaciones y fallos que se medirán
+  físicamente antes de entrenar o transferir una política.
+
+La acción del agente debe ser una referencia articular o corrección acotada,
+pasada por límites y por el supervisor; no debe comandar PWM directamente. El
+criterio de cierre será una prueba de registro en la que todas las señales
+seleccionadas se reciban sincronizadas durante una postura y una marcha manual,
+antes de usarlas para aprendizaje por refuerzo.

@@ -1759,3 +1759,10 @@ reales.
 Siguiente paso: entregar la ficha para firma; una vez confirmada, congelar la
 matriz experimental y ejecutar las tres pruebas de OE4 en simulación usando la
 retroalimentación disponible.
+
+Se añadió a `Seguimiento/Seguimiento.md` el punto de diseño sensórico para RL y
+transferencia sim--real. Incluye estado articular, IMU, contactos de los cuatro
+pies, salud eléctrica, comandos/fase, sincronización temporal y un contrato de
+datos común entre simulación y hardware. El cierre exige registrar esas señales
+sincronizadas durante una postura y una marcha manual antes de entrenar o
+transferir una política.
