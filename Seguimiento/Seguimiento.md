@@ -766,3 +766,8 @@ Conserva seis diapositivas y las cinco fotografías del prototipo.
 La versión vigente de exposición es `Primera_entrega_avances_sencilla` (PDF y
 PowerPoint), con seis diapositivas, imágenes conservadas y `GUION_SENCILLO.md`.
 Se simplificó el lenguaje sin modificar los resultados ni el estado técnico.
+
+Por autorización del usuario, la exposición pasó a siete diapositivas con una
+tabla adicional de objetivos, estado, porcentajes y faltantes en la posición 3.
+Versión: `Primera_entrega_avances_7_diapositivas`. Guion y numeración actualizados;
+la ampliación no modifica el cumplimiento técnico de los objetivos.

@@ -107,5 +107,33 @@ prs.slides[2].notes_slide.notes_text_frame.text = 'Gazebo y MuJoCo son programas
 prs.slides[3].notes_slide.notes_text_frame.text = 'La tesis ya tiene un borrador de 73 páginas. Están escritos el modelo, los procedimientos, el funcionamiento del sistema y los resultados disponibles. Faltan las mediciones y pruebas del robot real, la comparación final y las conclusiones definitivas. También debemos añadir las nuevas pruebas y fotos. Hay frases antiguas que dicen que no hemos entrenado el algoritmo, aunque ya lo hicimos. Vamos a corregirlas para que el documento refleje el mismo estado en todas sus secciones. Tener los capítulos escritos no significa que la tesis esté terminada.'
 prs.slides[4].notes_slide.notes_text_frame.text = 'El orden de trabajo empieza por resolver el exceso de corriente y comprobar el apagado seguro. Después ajustaremos un motor y una pata antes de probar el robot completo. Registraremos sus movimientos y el consumo. Finalmente evaluaremos las correcciones aprendidas frente al movimiento básico, usando las mismas condiciones. La comparación debe mostrar tanto lo que mejora como lo que empeora. En paralelo actualizaremos la tesis. Las principales dificultades son la validación física pendiente y que aún no hemos demostrado la mejora mediante aprendizaje.'
 prs.slides[5].notes_slide.notes_text_frame.text = 'Para la próxima revisión proponemos entregar un informe de revisión eléctrica y una versión actualizada de la tesis. El informe debe decir qué revisamos, qué medimos, con qué instrumentos y qué falta. Si una prueba no puede hacerse con seguridad, lo registraremos como pendiente. No prometemos una caminata antes de resolver esos requisitos. Nuestro proyecto todavía no puede darse por terminado porque falta comprobar la marcha segura del robot real y evaluar las correcciones aprendidas. La evidencia de cierre serán pruebas comparables, mediciones y conclusiones que expliquen lo que funcionó y lo que no.'
-prs.save(OUT/'Primera_entrega_avances_sencilla.pptx')
-print(OUT/'Primera_entrega_avances_sencilla.pptx')
+
+# Diapositiva adicional solicitada por el usuario; se ubica después del resumen de avance.
+s=slide(3,'Objetivos: qué está cumplido y qué falta','Resumen de los objetivos de la tesis. Ninguno está cerrado al 100 %; el avance es estimado.')
+objective_rows=[
+    ['Objetivo específico','Estado / avance','¿Qué falta para cumplirlo?'],
+    ['OE1 · Caracterizar el robot y desarrollar sus modelos de movimiento y dinámica.','Parcial · 50 %','Medir dimensiones, masas y límites reales; contrastarlos con el modelo.'],
+    ['OE2 · Implementar la electrónica y el programa para mover y supervisar el robot con seguridad.','Parcial · 50 %','Resolver la sobrecarga y comprobar protecciones, parada física y calibración.'],
+    ['OE3 · Implementar el control de postura, paso y gateo mediante secuencias de movimiento.','Parcial · 75 %','Completar la validación física y mejorar la coordinación de apoyos en simulación.'],
+    ['OE4 · Entrenar en simulación e integrar al robot pequeñas correcciones aprendidas, bajo supervisión.','Parcial · 50 %\nSin mejora aceptada','Obtener correcciones que cumplan los criterios de mejora y validarlas antes de transferirlas.'],
+    ['OE5 · Comparar movimiento, estabilidad y repetibilidad con y sin aprendizaje, en simulación y robot real.','Parcial · 25 %','Completar la comparación final bajo las mismas condiciones y las pruebas físicas.']]
+t=s.shapes.add_table(6,3, Inches(.8), Inches(1.85), Inches(11.75), Inches(4.8)).table
+for col,w in zip(t.columns,[5.3,2.0,4.45]): col.width=Inches(w)
+for ri,row in enumerate(objective_rows):
+    t.rows[ri].height=Inches(.48 if ri==0 else .85)
+    for ci,value in enumerate(row):
+        cell=t.cell(ri,ci); cell.text=value; cell.fill.solid(); cell.fill.fore_color.rgb=RGBColor.from_string('28475F' if ri==0 else CARD)
+        for para in cell.text_frame.paragraphs:
+            para.font.name='Aptos'; para.font.size=Pt(15); para.font.bold=(ri==0 or ci==1); para.font.color.rgb=RGBColor.from_string(ACC if ci==1 else FG)
+txt(s,.8,6.65,11.75,.3,'Avance: 4 etapas por objetivo, 25 % por etapa cerrada. Fuente: objetivos y matriz de evidencias de la tesis.',11,MUTED)
+s.notes_slide.notes_text_frame.text='Esta diapositiva explica qué buscamos con cada objetivo y qué falta para cerrarlo. Todos tienen avances, pero ninguno está cumplido por completo. El tercero es el más avanzado porque ya implementamos y probamos los movimientos en simulación. El quinto tiene menor avance: faltan la comparación final y las pruebas del robot real. En el cuarto entrenar el algoritmo cuenta como trabajo realizado, pero todavía no demuestra la mejora buscada. Los porcentajes son estimaciones justificadas en la guía, no una calificación del profesor.'
+# Mover la nueva diapositiva a la tercera posición y actualizar la numeración.
+slide_ids=prs.slides._sldIdLst
+last=slide_ids[-1]; slide_ids.remove(last); slide_ids.insert(2,last)
+for number,current_slide in enumerate(prs.slides,1):
+    for shape in current_slide.shapes:
+        if shape.has_text_frame and shape.text in [f'{j}/6' for j in range(1,7)]:
+            shape.text_frame.paragraphs[0].runs[0].text=f'{number}/7'
+
+prs.save(OUT/'Primera_entrega_avances_7_diapositivas.pptx')
+print(OUT/'Primera_entrega_avances_7_diapositivas.pptx')

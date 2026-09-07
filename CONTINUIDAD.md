@@ -1659,3 +1659,14 @@ Se añadió `GUION_SENCILLO.md` y se actualizaron las notas del orador y el
 generador. Verificación: seis páginas inspeccionadas, seis imágenes y notas;
 sin nuevos ensayos ni cambios de cumplimiento técnico. Siguiente acción:
 ensayar la exposición y ajustar su duración. Publicación remota pendiente.
+
+### Diapositiva adicional de objetivos — 7 de septiembre de 2026
+
+El usuario autorizó explícitamente ampliar la presentación a siete diapositivas.
+Se insertó en la posición 3 una tabla con los cinco objetivos resumidos, estado
+parcial, porcentajes estimados (50/50/75/50/25 %) y requisitos pendientes.
+Ningún objetivo se presenta como cerrado. Resultados pasa a la posición 4.
+Versión vigente: `Primera_entrega_avances_7_diapositivas.pptx` y PDF, dentro de
+`ProyectoII_Clases/07_09_2026`. Se actualizaron fuente, guía y guion; se verificó
+la numeración y se inspeccionó visualmente la página nueva. Siguiente acción:
+ensayar la versión de siete páginas. Sin cambios técnicos ni ensayos nuevos.

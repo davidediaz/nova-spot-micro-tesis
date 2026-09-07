@@ -1,13 +1,13 @@
 # Primera entrega de avances — 7 de septiembre de 2026
 
-Presentación de seis diapositivas para aproximadamente 8 minutos y 30 segundos.
+Presentación ampliada a siete diapositivas por solicitud explícita del usuario. Ensayar para conservar 8–10 minutos.
 Los porcentajes y el compromiso son propuestas para revisión del grupo; no son
 calificaciones ni decisiones ya aprobadas por los directores.
 
 ## Archivos
 
-- `Primera_entrega_avances_sencilla.pptx`: versión vigente editable, con las cinco fotografías y notas del orador.
-- `Primera_entrega_avances_sencilla.pdf`: versión vigente para proyectar. Los archivos anteriores se conservan.
+- `Primera_entrega_avances_7_diapositivas.pptx`: versión vigente editable, con las cinco fotografías y notas del orador.
+- `Primera_entrega_avances_7_diapositivas.pdf`: versión vigente para proyectar. Los archivos anteriores se conservan.
 - `generar_presentacion.py`: fuente reproducible con python-pptx.
 - Guía del profesor: `/home/pavilion/Descargas/Primera entrega de avances - Proyecto de grado II.pdf`.
 
@@ -121,3 +121,7 @@ La diapositiva 3 incorpora además una captura nativa de Gazebo del 7 de septiem
 ## Versión simplificada
 
 Se simplificaron las seis diapositivas y sus notas del orador. `GUION_SENCILLO.md` contiene la explicación oral. Las cifras exactas y la rúbrica de esta guía se conservan como respaldo: 23,955 mm/ciclo se presenta como aproximadamente 2,4 cm y 9,87 mm/ciclo como 9,9 mm. No se modificaron los resultados, porcentajes ni criterios de cumplimiento.
+
+## Ampliación autorizada a siete diapositivas
+
+Se insertó una diapositiva de objetivos en la posición 3, después del resumen de avance. Expone los cinco objetivos resumidos, estado parcial, porcentaje y faltantes. Ninguno se declara cumplido al 100 %. Resultados pasa a la diapositiva 4; documento, ruta y compromiso a 5, 6 y 7. El guion vigente con la numeración correcta está en `GUION_SENCILLO.md`; la sección de guion anterior se conserva como antecedente.
