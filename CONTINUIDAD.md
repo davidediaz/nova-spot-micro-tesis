@@ -1740,3 +1740,15 @@ puntos porcentuales para aceptar ventaja de PPO. Los valores están escritos en
 `Documentacion/PROTOCOLO_EXPERIMENTAL_BORRADOR.md` y
 `Documentacion/FICHA_APROBACION_PROTOCOLO.md`, pero requieren firma antes de la
 campaña final.
+
+### Estado del cierre experimental — 7 de septiembre de 2026
+
+La propuesta de métricas, frecuencia y criterios numéricos quedó consolidada en
+el protocolo y la ficha de aprobación. En `Seguimiento/Seguimiento.md` se
+marcaron como completadas las definiciones técnicas y se dejó explícito que el
+visto bueno de los directores sigue pendiente. También se resolvió la redacción
+del nivel de modelo: nominal computable, coherente entre código, URDF/Gazebo y
+MJCF/MuJoCo, sin declararlo gemelo digital identificado.
+
+Siguiente paso: entregar la ficha para firma; una vez confirmada, congelar la
+matriz experimental y ejecutar las tres pruebas de OE4 en simulación.

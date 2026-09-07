@@ -138,7 +138,7 @@ línea base de la versión corregida queda cerrada y reproducida.
 
 ### 2. Cerrar las definiciones experimentales con los directores
 
-Estado: **pendiente de acuerdo**.
+Estado: **propuesta técnica completa; pendiente de visto bueno de los directores**.
 
 - [x] Redactar formalmente qué significa `paso` en esta tesis: movimiento de una
   pata o secuencia completa de cuatro patas.
@@ -147,13 +147,21 @@ Estado: **pendiente de acuerdo**.
 - [x] Definir en borrador ensayo, ciclo válido, fallo, intervención y caída.
 - [x] Aprobar y adoptar número de ensayos, ciclos por condición y semillas de
   RL.
-- [ ] Aprobar métricas principales, frecuencia de muestreo y criterios
-  numéricos de éxito.
-- [ ] Resolver la aparente contradicción de la tesis sobre el nivel de modelo
-  dinámico que se entregará.
+- [x] Definir la métrica primaria: porcentaje de ciclos válidos sin fallo,
+  caída ni intervención.
+- [x] Fijar frecuencia objetivo de 100 Hz, mínimo de 50 Hz y reporte de huecos
+  superiores a 0,10 s.
+- [x] Fijar criterios numéricos de cadencia, seguimiento, estabilidad, margen,
+  contactos, repetibilidad y mejora mínima de PPO.
+- [ ] Obtener la firma o confirmación escrita de los directores sobre estas
+  definiciones.
+- [x] Resolver documentalmente el nivel del modelo: nominal computable,
+  coherente entre código, URDF/Gazebo y MJCF/MuJoCo, sin declararlo gemelo
+  digital identificado.
 
-Criterio de cierre: protocolo escrito y aprobado antes de iniciar el
-experimento comparativo.
+Criterio de cierre: protocolo escrito y aprobado por los directores antes de
+iniciar el experimento comparativo. La propuesta técnica ya está consolidada;
+queda pendiente únicamente la confirmación externa.
 
 Borrador técnico creado en
 `Documentacion/PROTOCOLO_EXPERIMENTAL_BORRADOR.md`. Propone paso como oscilación
@@ -163,7 +171,8 @@ caída, datos, métricas, umbrales provisionales y alcance del modelo. Las
 cantidades quedaron fijadas internamente en cinco ensayos de 20 ciclos por
 condición y semillas RL `11`, `23`, `37`, `53`, `71`. La decisión está en
 `Documentacion/DECISION_TAMANO_MUESTRAL_Y_SEMILLAS_RL.md`. La métrica primaria,
-los umbrales y la redacción final permanecen pendientes.
+los umbrales y la redacción del nivel de modelo están consolidados en la ficha
+y el protocolo; falta la firma de los directores.
 
 ### 3. Implementar la marcha `paso`
 
