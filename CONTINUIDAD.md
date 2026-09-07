@@ -1728,3 +1728,15 @@ reporta 50 % documental por objetivo, 72 páginas preliminares y cinco semillas
 PPO sin mejora aceptada. Se dejaron visibles como pendientes la caracterización
 física, la sobrecarga y las tres pruebas de OE4. No se añadieron resultados
 experimentales nuevos.
+
+### Propuesta de métricas y criterios para simulación — 7 de septiembre de 2026
+
+Se dejó preparada para revisión de los directores la ficha de aprobación del
+protocolo. La propuesta fija como métrica primaria el porcentaje de ciclos
+válidos sin fallo, caída ni intervención; registro objetivo de 100 Hz, mínimo
+50 Hz y reporte de huecos mayores de 0,10 s; límites de roll/pitch, seguimiento
+articular, margen, contactos y repetibilidad; y una mejora mínima de cinco
+puntos porcentuales para aceptar ventaja de PPO. Los valores están escritos en
+`Documentacion/PROTOCOLO_EXPERIMENTAL_BORRADOR.md` y
+`Documentacion/FICHA_APROBACION_PROTOCOLO.md`, pero requieren firma antes de la
+campaña final.

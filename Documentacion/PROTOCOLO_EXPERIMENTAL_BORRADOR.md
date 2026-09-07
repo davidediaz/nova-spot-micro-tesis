@@ -180,7 +180,11 @@ Cada bolsa debe incluir como mínimo:
 - reloj de simulación.
 
 Antes de grabar se comprobará `ros2 node list | sort | uniq -c`; cada nodo debe
-aparecer una sola vez. La frecuencia de métricas objetivo será al menos 50 Hz.
+aparecer una sola vez. Se propone para aprobación una frecuencia común de
+registro de **100 Hz** para contactos, pose, IMU y métricas; se acepta una
+frecuencia efectiva mínima de **50 Hz** para señales que no puedan publicarse a
+100 Hz. Se informará cualquier hueco superior a **0,10 s** y no se supondrá
+muestreo uniforme.
 El análisis usará marcas temporales reales y reportará huecos superiores a 0,10
 s; no supondrá muestreo perfectamente uniforme.
 
@@ -207,8 +211,10 @@ s; no supondrá muestreo perfectamente uniforme.
 No se afirmará seguimiento articular físico mientras no exista medición real de
 posición en el hardware.
 
-## 6. Criterios provisionales de éxito
+## 6. Criterios numéricos propuestos para aprobación
 
+La siguiente regla queda como propuesta técnica para firma de los directores;
+no se presenta como aprobación académica hasta completar la ficha de revisión.
 Un ensayo de simulación se considera técnicamente exitoso si:
 
 - completa todos los ciclos previstos;
@@ -216,14 +222,30 @@ Un ensayo de simulación se considera técnicamente exitoso si:
 - el supervisor no se activa;
 - mantiene la pose dentro de los límites de seguridad provisionales;
 - no pierde referencias ni datos esenciales;
-- la cadencia media queda dentro de ±1 % del periodo configurado;
-- conserva continuidad articular sin saltos mayores de 0,05 rad entre muestras.
+- la cadencia media queda dentro de **±1 %** del periodo configurado;
+- conserva continuidad articular sin saltos mayores de **0,05 rad** entre
+  muestras;
+- el error articular de seguimiento tiene RMS **≤0,05 rad** y máximo
+  **≤0,15 rad**;
+- roll y pitch tienen RMS **≤5°** y máximo absoluto **≤15°**, con altura del
+  cuerpo dentro de **0,16--0,32 m**;
+- el margen estático mínimo es **≥0 mm** durante las fases cuasiestáticas de
+  gateo; en paso se reportan también las excursiones negativas, sin declarar
+  estabilidad solo por la ausencia de una caída;
+- al menos **90 %** de las transiciones de contacto previstas se emparejan con
+  una transición observada dentro de **±0,12 s**;
+- la repetibilidad entre los cinco ensayos alcanza un coeficiente de variación
+  **≤5 %** para duración de ciclo y avance por ciclo.
 
-Para afirmar mejora por aprendizaje, la condición corregida debe mejorar las
-métricas primarias preseleccionadas frente al control nominal sin aumentar
+La métrica primaria será el **porcentaje de ciclos válidos completados sin
+fallo, caída ni intervención**. Para afirmar mejora por aprendizaje, la
+condición corregida debe mejorar esta métrica en al menos **5 puntos
+porcentuales** frente al control nominal y cumplir simultáneamente los límites
+de seguridad, sin aumentar
 caídas, fallos, intervenciones, saturaciones ni violaciones de seguridad. La
-métrica principal y el umbral de mejora deben fijarse antes de observar el
-resultado final.
+comparación se hará con cinco ensayos emparejados por condición; si no se
+alcanza la mejora mínima, se conserva la línea base nominal y se reporta el
+resultado negativo.
 
 ## 7. Nivel de modelo que declarará la tesis
 
@@ -243,8 +265,7 @@ debe afirmar fidelidad cuantitativa del hardware antes de las mediciones física
 - aceptar “paso” como evento de una pata y “ciclo” como las cuatro oscilaciones;
 - **Decisión cerrada:** cinco ensayos de 20 ciclos por
   condición y cinco semillas RL (`11`, `23`, `37`, `53`, `71`).
-- seleccionar la métrica primaria de mejora;
-- aprobar los umbrales numéricos de éxito y caída;
+- firmar la métrica primaria y los umbrales numéricos de esta sección;
 - aprobar el nivel de modelo nominal y la limitación de no llamarlo gemelo
   digital identificado.
 
