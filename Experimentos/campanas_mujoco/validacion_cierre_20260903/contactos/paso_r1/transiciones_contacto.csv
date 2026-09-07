@@ -1,0 +1,15 @@
+leg,transition,expected_time_s,observed_time_s,delay_s,paired
+fl,landing,1.462560083,,,False
+fl,liftoff,5.763447532,,,False
+fl,landing,7.203903863,,,False
+fr,liftoff,2.882961013,,,False
+fr,landing,4.342380474,,,False
+fr,liftoff,8.64242357,,,False
+fr,landing,10.082838688,,,False
+rl,liftoff,4.342380474,,,False
+rl,landing,5.763447532,,,False
+rl,liftoff,10.082838688,,,False
+rr,liftoff,1.462560083,,,False
+rr,landing,2.882961013,,,False
+rr,liftoff,7.203903863,,,False
+rr,landing,8.64242357,,,False

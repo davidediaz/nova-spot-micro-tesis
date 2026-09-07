@@ -1,0 +1,9 @@
+leg,transition,paired_transitions,mean_delay_s,min_delay_s,max_delay_s,agreement_percent
+fl,liftoff,0,,,,74.43932251631225
+fl,landing,0,,,,74.43932251631225
+fr,liftoff,0,,,,75.19594539646369
+fr,landing,0,,,,75.19594539646369
+rl,liftoff,0,,,,75.18499814773278
+rl,landing,0,,,,75.18499814773278
+rr,liftoff,0,,,,75.17973393949126
+rr,landing,0,,,,75.17973393949126

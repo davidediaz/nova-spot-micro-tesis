@@ -1,0 +1,10 @@
+{
+  "ensayos": 1,
+  "promedios": {
+    "avance_m_ciclo": NaN,
+    "roll_max_deg": NaN,
+    "pitch_max_deg": NaN,
+    "error_rms_rad": 0.010531,
+    "contact_match_percent": 0.0
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "ensayos": 1,
+  "promedios": {
+    "avance_m_ciclo": 0.0071808018057385355,
+    "roll_max_deg": 1.1079667064384078,
+    "pitch_max_deg": 2.580696580921226,
+    "error_rms_rad": 0.01154,
+    "contact_match_percent": 25.289
+  }
+}
