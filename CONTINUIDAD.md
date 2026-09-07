@@ -1670,3 +1670,16 @@ Versión vigente: `Primera_entrega_avances_7_diapositivas.pptx` y PDF, dentro de
 `ProyectoII_Clases/07_09_2026`. Se actualizaron fuente, guía y guion; se verificó
 la numeración y se inspeccionó visualmente la página nueva. Siguiente acción:
 ensayar la versión de siete páginas. Sin cambios técnicos ni ensayos nuevos.
+
+### Contraste de dimensiones con el sitio oficial — 7 de septiembre de 2026
+
+Se consultó novaspotmicro.com y el código enlazado desde su lista de archivos.
+`Documentacion/CONTRASTE_FUENTES_OFICIALES_NOVA_2026-09-07.md` recoge fuentes y
+contraste: 90/105/132 mm por segmentos y 180/120 mm entre pivotes coinciden con
+el modelo local. La masa aproximada de seis libras corresponde a unos 2,72 kg.
+El enlace rotulado v5.2b conduce a código v5.0; se dejó explícita esa diferencia.
+Los límites publicados son valores PWM para motores distintos de nuestros
+MG996R; no se trasladan a radianes ni al robot sin calibración. No se modificaron
+modelo, mediciones vacías ni cumplimiento de OE1. Verificación documental y
+conversiones de unidades; sin ensayo físico. Siguiente acción: medir el ejemplar
+y contrastar masas, dimensiones y límites individuales con las referencias.

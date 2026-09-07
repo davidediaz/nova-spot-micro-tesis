@@ -771,3 +771,11 @@ Por autorización del usuario, la exposición pasó a siete diapositivas con una
 tabla adicional de objetivos, estado, porcentajes y faltantes en la posición 3.
 Versión: `Primera_entrega_avances_7_diapositivas`. Guion y numeración actualizados;
 la ampliación no modifica el cumplimiento técnico de los objetivos.
+
+### Referencias oficiales para OE1 — 7 de septiembre de 2026
+
+Se contrastaron cinco dimensiones nominales y la masa aproximada con fuentes
+del autor. Informe: `Documentacion/CONTRASTE_FUENTES_OFICIALES_NOVA_2026-09-07.md`.
+El diseño oficial usa motores diferentes; sus límites PWM no validan los
+MG996R locales. La caracterización física permanece pendiente y las columnas
+de mediciones se conservan vacías.
