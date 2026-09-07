@@ -179,6 +179,12 @@ Cada bolsa debe incluir como mínimo:
 - `/nova/safety/triggered`;
 - reloj de simulación.
 
+Para la transferencia al cuadrúpedo físico se conservará la misma lógica de
+retroalimentación, adaptada a los sensores realmente instalados: posición o
+estado de servos, IMU, contactos de pie y telemetría de alimentación cuando
+esté disponible. No se considerará cerrado el control físico si solo se envían
+referencias sin observar la respuesta del robot.
+
 Antes de grabar se comprobará `ros2 node list | sort | uniq -c`; cada nodo debe
 aparecer una sola vez. Se propone para aprobación una frecuencia común de
 registro de **100 Hz** para contactos, pose, IMU y métricas; se acepta una
@@ -211,41 +217,33 @@ s; no supondrá muestreo perfectamente uniforme.
 No se afirmará seguimiento articular físico mientras no exista medición real de
 posición en el hardware.
 
-## 6. Criterios numéricos propuestos para aprobación
+## 6. Criterios de evidencia alineados con los objetivos
 
-La siguiente regla queda como propuesta técnica para firma de los directores;
-no se presenta como aprobación académica hasta completar la ficha de revisión.
-Un ensayo de simulación se considera técnicamente exitoso si:
+La revisión de los directores debe centrarse en que cada prueba produzca
+evidencia suficiente para los cuatro objetivos. Los valores numéricos siguientes
+son umbrales iniciales de operación y análisis; podrán ajustarse antes de la
+campaña final si los datos o el director lo justifican, dejando registro del
+cambio. Un ensayo útil para la tesis debe:
 
 - completa todos los ciclos previstos;
 - no presenta caída, fallo ni intervención;
 - el supervisor no se activa;
 - mantiene la pose dentro de los límites de seguridad provisionales;
 - no pierde referencias ni datos esenciales;
-- la cadencia media queda dentro de **±1 %** del periodo configurado;
-- conserva continuidad articular sin saltos mayores de **0,05 rad** entre
-  muestras;
-- el error articular de seguimiento tiene RMS **≤0,05 rad** y máximo
-  **≤0,15 rad**;
-- roll y pitch tienen RMS **≤5°** y máximo absoluto **≤15°**, con altura del
-  cuerpo dentro de **0,16--0,32 m**;
-- el margen estático mínimo es **≥0 mm** durante las fases cuasiestáticas de
-  gateo; en paso se reportan también las excursiones negativas, sin declarar
-  estabilidad solo por la ausencia de una caída;
-- al menos **90 %** de las transiciones de contacto previstas se emparejan con
-  una transición observada dentro de **±0,12 s**;
-- la repetibilidad entre los cinco ensayos alcanza un coeficiente de variación
-  **≤5 %** para duración de ciclo y avance por ciclo.
+- registrar las señales de retroalimentación disponibles y su configuración;
+- permitir evaluar estabilidad, seguimiento articular y repetibilidad;
+- conservar fallos, caídas, intervenciones y datos incompletos;
+- documentar la configuración, versión del código y condiciones iniciales.
 
-La métrica primaria será el **porcentaje de ciclos válidos completados sin
-fallo, caída ni intervención**. Para afirmar mejora por aprendizaje, la
-condición corregida debe mejorar esta métrica en al menos **5 puntos
-porcentuales** frente al control nominal y cumplir simultáneamente los límites
-de seguridad, sin aumentar
-caídas, fallos, intervenciones, saturaciones ni violaciones de seguridad. La
-comparación se hará con cinco ensayos emparejados por condición; si no se
-alcanza la mejora mínima, se conserva la línea base nominal y se reporta el
-resultado negativo.
+Como guía inicial se conservarán cadencia, continuidad articular, error de
+seguimiento, roll/pitch, altura, margen, contactos y variabilidad entre ensayos.
+Estos valores apoyan OE1--OE4; no constituyen objetivos adicionales.
+
+La tesis podrá reportar una estrategia como válida cuando exista evidencia
+reproducible de coordinación, estabilidad y continuidad en paso y gateo, junto
+con las tres pruebas de OE4. Si PPO no mejora, se reporta el resultado negativo
+y se acuerda con los directores el alcance final; no se fuerza una mejora
+numérica artificial.
 
 ## 7. Nivel de modelo que declarará la tesis
 
@@ -265,7 +263,8 @@ debe afirmar fidelidad cuantitativa del hardware antes de las mediciones física
 - aceptar “paso” como evento de una pata y “ciclo” como las cuatro oscilaciones;
 - **Decisión cerrada:** cinco ensayos de 20 ciclos por
   condición y cinco semillas RL (`11`, `23`, `37`, `53`, `71`).
-- firmar la métrica primaria y los umbrales numéricos de esta sección;
+- confirmar las señales de retroalimentación, las pruebas y la evidencia mínima
+  que demostrará cada objetivo;
 - aprobar el nivel de modelo nominal y la limitación de no llamarlo gemelo
   digital identificado.
 

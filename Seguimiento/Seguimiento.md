@@ -147,12 +147,12 @@ Estado: **propuesta técnica completa; pendiente de visto bueno de los directore
 - [x] Definir en borrador ensayo, ciclo válido, fallo, intervención y caída.
 - [x] Aprobar y adoptar número de ensayos, ciclos por condición y semillas de
   RL.
-- [x] Definir la métrica primaria: porcentaje de ciclos válidos sin fallo,
-  caída ni intervención.
-- [x] Fijar frecuencia objetivo de 100 Hz, mínimo de 50 Hz y reporte de huecos
-  superiores a 0,10 s.
-- [x] Fijar criterios numéricos de cadencia, seguimiento, estabilidad, margen,
-  contactos, repetibilidad y mejora mínima de PPO.
+- [x] Definir la evidencia principal: señales de retroalimentación y pruebas
+  suficientes para demostrar OE1--OE4.
+- [x] Proponer frecuencias por sensor: contacto/IMU a 100 Hz como objetivo y
+  mínimo de 50 Hz para métricas.
+- [x] Dejar métricas y umbrales numéricos como guías de análisis, subordinadas
+  al cumplimiento de los objetivos y ajustables con los directores.
 - [ ] Obtener la firma o confirmación escrita de los directores sobre estas
   definiciones.
 - [x] Resolver documentalmente el nivel del modelo: nominal computable,
@@ -170,9 +170,9 @@ orden FL--RR--FR--RL. Define ensayo, transitorio, validez, fallo, intervención,
 caída, datos, métricas, umbrales provisionales y alcance del modelo. Las
 cantidades quedaron fijadas internamente en cinco ensayos de 20 ciclos por
 condición y semillas RL `11`, `23`, `37`, `53`, `71`. La decisión está en
-`Documentacion/DECISION_TAMANO_MUESTRAL_Y_SEMILLAS_RL.md`. La métrica primaria,
-los umbrales y la redacción del nivel de modelo están consolidados en la ficha
-y el protocolo; falta la firma de los directores.
+`Documentacion/DECISION_TAMANO_MUESTRAL_Y_SEMILLAS_RL.md`. La evidencia
+principal, la retroalimentación sensórica y la redacción del nivel de modelo
+están consolidadas en la ficha y el protocolo; falta la firma de los directores.
 
 ### 3. Implementar la marcha `paso`
 

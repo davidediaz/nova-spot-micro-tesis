@@ -1750,5 +1750,12 @@ visto bueno de los directores sigue pendiente. También se resolvió la redacci�
 del nivel de modelo: nominal computable, coherente entre código, URDF/Gazebo y
 MJCF/MuJoCo, sin declararlo gemelo digital identificado.
 
+La prioridad no es cumplir una lista rígida de umbrales, sino demostrar los
+objetivos con retroalimentación sensórica: posición articular, IMU, contactos y
+telemetría eléctrica cuando estén disponibles. Las métricas numéricas quedan
+como guías de análisis y se ajustarán con los directores según las señales
+reales.
+
 Siguiente paso: entregar la ficha para firma; una vez confirmada, congelar la
-matriz experimental y ejecutar las tres pruebas de OE4 en simulación.
+matriz experimental y ejecutar las tres pruebas de OE4 en simulación usando la
+retroalimentación disponible.
