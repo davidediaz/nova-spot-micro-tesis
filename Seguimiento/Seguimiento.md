@@ -431,12 +431,17 @@ mecánicos, revisadas antes de apoyar el robot.
 
 ### 8. Preparar Raspberry Pi 4 e interfaz PCA9685
 
-Estado: **scripts listos; hardware y microSD pendientes**.
+Estado: **base Raspberry instalada y comunicación lógica validada; interfaz física,
+seguridad e instrumentación pendientes**.
 
-- [ ] Conectar e identificar explícitamente una microSD.
-- [ ] Instalar Ubuntu Server 22.04 ARM64 con SSH habilitado.
-- [ ] Ejecutar y verificar los scripts de preparación de ROS 2 Humble.
-- [ ] Confirmar Wi-Fi/SSH, `ROS_DOMAIN_ID`, DDS, reloj e I2C.
+- [x] Identificar la unidad extraíble de 32 GB (`/dev/sda`) y grabar la imagen
+  ARM64, separándola del NVMe interno.
+- [x] Instalar y arrancar Ubuntu 22.04.5 ARM64 con SSH habilitado. La imagen
+  instalada es Desktop, no Server; se conserva así por la evidencia existente.
+- [x] Ejecutar y verificar la preparación de ROS 2 Humble: workspace compilado,
+  overlay cargable y paquetes reconocidos en la Raspberry.
+- [x] Confirmar Wi-Fi/SSH, `ROS_DOMAIN_ID=42`, DDS e I2C. El reloj común aún
+  debe documentarse explícitamente antes de sincronizar sensores.
 - [ ] Probar PCA9685 sin servos y comprobar PWM con instrumento.
 - [ ] Desarrollar la interfaz física `ros2_control` usando las calibraciones
   medidas.
@@ -455,6 +460,16 @@ Estado: **scripts listos; hardware y microSD pendientes**.
   la corriente real de los servos.
 - [ ] Añadir vigilancia por pérdida de comunicación y arranque con salidas
   deshabilitadas.
+
+Revisión del estado: ya están demostrados la microSD identificada, Ubuntu
+22.04.5 ARM64 con SSH, la compilación del workspace ROS 2, Wi-Fi/DDS con
+`ROS_DOMAIN_ID=42` y la detección I²C del PCA9685 en `0x40`. También existe
+una prueba Arduino/Mega que mueve `CH5`--`CH10` a 60 Hz con un barrido limitado,
+pero no es todavía una interfaz `ros2_control` calibrada ni una validación de
+PWM con instrumento. No hay evidencia de prototipo AS5600, TCA9548A, BNO055,
+contactos físicos o INA228 conectados; la arquitectura sensórica sigue siendo
+conceptual. La sobrecarga registrada obliga a mantener bloqueadas las posturas
+y marchas hasta cerrar fuente, OE, calibración y vigilancia de comunicaciones.
 
 Avance del 18 de agosto de 2026: se detectó la Raspberry como `arm64`, con
 Ethernet `192.168.0.132`, Wi-Fi `192.168.0.134` y SSH activo, habilitado y
@@ -520,8 +535,11 @@ protecciones, seguida de una prueba individual con un MG996R en `CH0`, sin
 carga mecánica. La marcha del robot y la conexión de los doce servos siguen
 bloqueadas.
 
-Criterio de cierre: referencias articulares convertidas de forma limitada a
-PWM, inicialmente sin actuadores y después con un solo servo.
+Criterio de cierre pendiente: referencias articulares convertidas a PWM con
+calibraciones medidas, salidas deshabilitadas durante el arranque y
+realimentación sensórica sincronizada. La comunicación Raspberry--PCA9685 está
+demostrada, pero el PWM instrumental, la interfaz `ros2_control` y la
+instrumentación física no están cerrados.
 
 ### 9. Transferir progresivamente la marcha nominal
 

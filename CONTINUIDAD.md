@@ -1766,3 +1766,14 @@ pies, salud eléctrica, comandos/fase, sincronización temporal y un contrato de
 datos común entre simulación y hardware. El cierre exige registrar esas señales
 sincronizadas durante una postura y una marcha manual antes de entrenar o
 transferir una política.
+### Revisión de Raspberry, PCA9685 e instrumentación — 7 de septiembre de 2026
+
+Se actualizó la sección 8 de `Seguimiento/Seguimiento.md` con la evidencia
+disponible: microSD identificada y grabada, Ubuntu 22.04.5 ARM64 con SSH,
+workspace ROS 2 compilado, Wi-Fi/DDS con `ROS_DOMAIN_ID=42` y PCA9685 detectado
+en `0x40`. El barrido Arduino/Mega de `CH5`--`CH10` demuestra movimiento limitado,
+pero no sustituye una interfaz `ros2_control` calibrada ni una prueba PWM con
+instrumento. AS5600/TCA9548A, BNO055, contactos físicos e INA228 permanecen sin
+prototipo conectado; la arquitectura de realimentación es conceptual. La
+sobrecarga mantiene bloqueadas las posturas y marchas hasta cerrar alimentación,
+OE, calibración y vigilancia de comunicaciones.
