@@ -2,7 +2,7 @@
 
 El proyecto abordó la reactivación progresiva del robot cuadrúpedo Nova Spot
 Micro mediante modelado, simulación, control de locomoción, preparación
-electrónica y diseño de una futura capa correctiva de aprendizaje por refuerzo.
+electrónica y entrenamiento y evaluación de una capa correctiva de aprendizaje por refuerzo.
 El sistema se limitó a postura y locomoción de baja velocidad tipo paso y gateo
 sobre una superficie plana y bajo condiciones controladas.
 
@@ -35,10 +35,13 @@ margen de estabilidad calculado en simulación no se presentó como medición
 física. Tampoco se reportó seguimiento articular real, ya que el PCA9685 no
 proporciona realimentación de posición.
 
-La seguridad eléctrica, calibración de doce servos, marcha física, entrenamiento
-PPO y comparación nominal frente a nominal más RL permanecieron fuera de los
-resultados cerrados de esta versión. Se mantuvieron como trabajo requerido para
-cumplir integralmente los objetivos cuarto y quinto.
+El entrenamiento PPO fue ejecutado, pero la estrategia evaluada no demostró
+la mejora requerida y no fue aceptada para transferencia. La seguridad eléctrica,
+calibración, ejecución física y validación del modelo siguen abiertas para
+OE1 y OE2. OE3 requiere demostrar estabilidad y continuidad del control aprendido
+en paso y gateo. OE4 exige completar la Prueba de Margen de Estabilidad Estática,
+la Prueba de Seguimiento de Posición Articular y la Prueba de Repetibilidad del
+Patrón de Marcha; la evidencia parcial en simulación no cierra su evaluación integral.
 
 \section{Productos obtenidos y productos abiertos}
 
@@ -46,6 +49,6 @@ Se obtuvieron código versionado, modelos de simulación, documentación
 matemática, controladores nominales, pruebas automatizadas, bolsas de datos,
 analizadores, informes y un protocolo experimental. La entrega final deberá
 añadir la caracterización física completa, diagramas y validación de seguridad,
-calibraciones, políticas entrenadas, conjuntos de datos físicos y comparación
+calibraciones, una estrategia aprendida validada, conjuntos de datos físicos y comparación
 estadística final. La separación evita presentar productos esperados como si
 hubieran sido obtenidos.

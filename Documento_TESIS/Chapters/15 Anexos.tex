@@ -4,7 +4,7 @@
 
 \section{Matriz objetivo--evidencia}
 
-La Tabla~\ref{tab:matriz-objetivos-anexo} resume el estado verificable al 2 de
+La Tabla~\ref{tab:matriz-objetivos-anexo} resume el estado verificable con los cuatro objetivos suministrados el 7 de
 septiembre de 2026. ``Parcial'' no significa incumplimiento oculto: identifica
 el producto disponible y la evidencia que todavía falta para cerrar el
 objetivo en el prototipo físico.
@@ -19,11 +19,10 @@ Objetivo & Resultado demostrable & Evidencia principal & Estado y faltante \\
 Objetivo & Resultado demostrable & Evidencia principal & Estado y faltante \\
 \midrule
 \endhead
-OE1 & Modelo cinemático y dinámico nominal implementado, consistente y sometido a sensibilidad. & Capítulo 7, pruebas de modelo y gráficas cinemáticas. & Parcial avanzado; faltan geometría, masas, límites y contraste físico. \\
-OE2 & Arquitectura ROS~2, sensores simulados y supervisor con nueve escenarios provocados aprobados. & JSON de seguridad, código, Raspberry y PCA9685. & Parcial avanzado; faltan OE, protección, rearme y validación física. \\
-OE3 & Gateo y marcha paso repetibles en simulación; precarga 2,0 repetida con vuelo trasero sostenido. & Bolsas, análisis por ciclo y validación Gazebo--MuJoCo. & Parcial avanzado; falta marcha nominal física. \\
-OE4 & Cinco semillas PPO entrenadas y evaluadas; ninguna escala positiva fue aceptada. & Curvas, modelos, bolsas y diagnóstico de escala cero. & Ejecutado sin mejora aceptada; requiere rediseño antes de repetir. \\
-OE5 & Comparación descriptiva corrigió una referencia inválida y bloqueó transferencia. & CSV y figuras de comparación nominal--PPO. & Parcial; falta campaña emparejada final de cinco ensayos por condición y marcha. \\
+OE1 & Hardware y software integrados parcialmente; respuesta inicial de doce servos. & ROS~2, registros Raspberry/PCA9685 y nueve escenarios del supervisor. & Parcial; resolver sobrecarga, protección, calibración y ejecución física. \\
+OE2 & Modelos cinemático y dinámico nominales implementados y verificados. & Capítulo 7, código, sensibilidad y gráficas. & Parcial; contrastar parámetros físicos y validar el modelo. \\
+OE3 & Estrategia residual PPO entrenada y evaluada con cinco semillas. & Modelos, curvas, bolsas y diagnóstico de escala cero. & Parcial; no se ha demostrado la estabilidad y continuidad requeridas. \\
+OE4 & Margen nominal disponible; seguimiento y repetibilidad medidos en simulación. & Monitor de estabilidad, errores articulares y comparación entre ensayos. & Parcial; completar y analizar las tres pruebas del objetivo bajo protocolo común. \\
 \bottomrule
 \end{longtable}
 

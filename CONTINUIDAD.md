@@ -2,6 +2,16 @@
 
 Última actualización: 2 de septiembre de 2026, America/Bogota.
 
+
+## Objetivos vigentes — corrección del usuario del 7 de septiembre de 2026
+
+Rigen el objetivo general y los cuatro objetivos específicos suministrados
+literalmente por el usuario: OE1 hardware/software; OE2 modelado cinemático y
+dinámico; OE3 control aprendido con estabilidad y continuidad en paso/gateo;
+OE4 evaluación mediante margen estático, seguimiento articular y repetibilidad.
+La clasificación histórica de cinco objetivos queda como antecedente y no debe
+reutilizarse en documentos vigentes. Texto fuente: `Documento_TESIS/Chapters/3 Objetivos.tex`.
+
 ## Repositorio público de seguimiento
 
 Desde el 19 de agosto de 2026 el proyecto tiene un repositorio público para
@@ -1683,3 +1693,29 @@ MG996R; no se trasladan a radianes ni al robot sin calibración. No se modificar
 modelo, mediciones vacías ni cumplimiento de OE1. Verificación documental y
 conversiones de unidades; sin ensayo físico. Siguiente acción: medir el ejemplar
 y contrastar masas, dimensiones y límites individuales con las referencias.
+
+### Objetivos originales sincronizados — 7 de septiembre de 2026
+
+Se sustituyó literalmente el objetivo general y los cuatro específicos tanto
+en `Documento_TESIS/Chapters/3 Objetivos.tex` como en la fuente equivalente de
+`tesis_overleaf`. Se reorganizaron matriz viva, anexo, alcance, metodología,
+referencia de modelado, conclusiones y plan documental para eliminar el antiguo
+OE5. Las tres pruebas de OE4 quedaron explícitas; PPO entrenado no se presenta
+como estabilidad garantizada.
+
+La presentación conserva siete diapositivas, fotos y captura Gazebo. Versión:
+`Primera_entrega_avances_objetivos_corregidos.pptx` y PDF. Incluye objetivo
+general literal, resumen de avance y cuatro objetivos completos. La rúbrica
+propuesta se rehízo: 50 % por objetivo, con entregables y pendientes distintos;
+no se cambiaron resultados experimentales. Guía y notas quedaron sincronizadas.
+
+Verificación: cuatro ítems idénticos en las dos fuentes, siete diapositivas,
+compilación del documento final sin citas/referencias indefinidas y revisión
+visual de objetivos, tabla de anexo y diapositivas modificadas. Persisten avisos
+de ancho en rutas/bibliografía ajenos a la sustitución de objetivos. El PDF final
+preliminar tiene 72 páginas. SHA-256: `54a151bd4cf1a40a0888e89cba8255bd963f5b8cd7ad568820631d3ab1147f33`.
+La compilación auxiliar del anteproyecto en `build_objetivos` encontró un problema
+BibTeX de esa plantilla; no se reemplazó su PDF histórico. Su capítulo de objetivos
+sí quedó sincronizado. Los PowerPoint antiguos abiertos/modificados por el usuario
+se preservaron. Siguiente acción: usar la presentación corregida y continuar el
+cierre de los cuatro objetivos; publicación remota pendiente.

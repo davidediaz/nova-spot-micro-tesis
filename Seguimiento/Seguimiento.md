@@ -1,5 +1,13 @@
 # Seguimiento
 
+## Objetivos vigentes
+
+Desde el 7 de septiembre rigen los cuatro objetivos aportados por el usuario:
+hardware/software (OE1), modelado (OE2), control aprendido (OE3) y las tres pruebas
+de margen estático, seguimiento articular y repetibilidad (OE4). Las referencias
+históricas a cinco objetivos deben interpretarse con la matriz actualizada de
+`Documento_TESIS/MATRIZ_OBJETIVO_EVIDENCIA.md`.
+
 ## Proyecto
 
 Desarrollo y evaluación del control de locomoción del robot cuadrúpedo Nova
@@ -779,3 +787,5 @@ del autor. Informe: `Documentacion/CONTRASTE_FUENTES_OFICIALES_NOVA_2026-09-07.m
 El diseño oficial usa motores diferentes; sus límites PWM no validan los
 MG996R locales. La caracterización física permanece pendiente y las columnas
 de mediciones se conservan vacías.
+
+Se sincronizaron objetivos, matriz, metodología, alcance, conclusiones y presentación. PDF de tesis: 72 páginas; presentación: siete diapositivas, versión `Primera_entrega_avances_objetivos_corregidos`. Sin ensayos nuevos ni cumplimiento adicional.

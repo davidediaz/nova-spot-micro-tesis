@@ -1,18 +1,18 @@
-# Guion sencillo para explicar las siete diapositivas
+# Guion: siete diapositivas y cuatro objetivos
 
-Versión vigente: `Primera_entrega_avances_7_diapositivas.pptx` y PDF. La diapositiva adicional fue solicitada por el usuario. La nueva diapositiva 3 detalla los objetivos; resultados pasa a la 4. Ensayar para mantener la exposición en 8–10 minutos. Porcentajes y fuentes en `GUIA_EXPOSICION.md`.
+Versión vigente: `Primera_entrega_avances_objetivos_corregidos`. Fuentes y porcentajes en `GUIA_EXPOSICION.md`.
 
 ## Diapositiva 1
 
-Nuestro propósito es que el robot camine de forma estable y comprobar si el aprendizaje ayuda a mejorar su movimiento. Ya tenemos el modelo en simulación y el prototipo que se ve en las fotografías. En las pruebas físicas respondieron los doce motores, pero apareció un exceso de corriente y detuvimos las pruebas. Todavía debemos resolver la causa antes de continuar. Las fotografías muestran la construcción; no demuestran por sí solas una marcha segura.
+Objetivo general: Desarrollar un sistema de control para la plataforma cuadrúpedo Spot Micro que integre aprendizaje por refuerzo para su ejecución y estabilización en los diferentes modos de locomoción tipo paso y gateo en condiciones de entorno controladas.
 
 ## Diapositiva 2
 
-Cada fila corresponde a uno de los cinco objetivos. Para el primero tenemos un modelo matemático, pero falta contrastarlo con mediciones del robot. Para el segundo tenemos un programa que detecta fallos, pero falta comprobar la seguridad eléctrica. En el tercero ya creamos y probamos movimientos en simulación. En el cuarto entrenamos el algoritmo, aunque no logró la mejora buscada. El quinto está menos avanzado porque falta completar la comparación. Estos porcentajes son estimaciones: dividimos cada objetivo en cuatro etapas y cada etapa cerrada suma 25 %. La guía técnica explica cuáles son.
+Los cuatro objetivos tienen un avance estimado del 50 %, por motivos diferentes. OE1: software y movimiento inicial, con integración física pendiente. OE2: modelo y pruebas computacionales, con contraste pendiente. OE3: estrategia y entrenamiento, sin estabilidad y continuidad demostradas. OE4: seguimiento y repetibilidad en simulación, con margen estático y evaluación integral pendientes. La rúbrica de la guía explica los cuatro hitos de cada objetivo.
 
 ## Diapositiva 3
 
-Esta diapositiva explica qué buscamos con cada objetivo y qué falta para cerrarlo. Todos tienen avances, pero ninguno está cumplido por completo. El tercero es el más avanzado porque ya implementamos y probamos los movimientos en simulación. El quinto tiene menor avance: faltan la comparación final y las pruebas del robot real. En el cuarto entrenar el algoritmo cuenta como trabajo realizado, pero todavía no demuestra la mejora buscada. Los porcentajes son estimaciones justificadas en la guía, no una calificación del profesor.
+Estos son los cuatro objetivos originales. El primero reúne hardware y software; el segundo es modelado; el tercero es control aprendido; el cuarto exige tres pruebas concretas. Todos están parciales. Los porcentajes se recalcularon con una rúbrica por entregables y no significan una calificación. El entrenamiento no demuestra por sí solo estabilidad ni continuidad.
 
 ## Diapositiva 4
 
@@ -20,7 +20,7 @@ Gazebo y MuJoCo son programas que simulan el robot. En Gazebo hicimos cinco prue
 
 ## Diapositiva 5
 
-La tesis ya tiene un borrador de 73 páginas. Están escritos el modelo, los procedimientos, el funcionamiento del sistema y los resultados disponibles. Faltan las mediciones y pruebas del robot real, la comparación final y las conclusiones definitivas. También debemos añadir las nuevas pruebas y fotos. Hay frases antiguas que dicen que no hemos entrenado el algoritmo, aunque ya lo hicimos. Vamos a corregirlas para que el documento refleje el mismo estado en todas sus secciones. Tener los capítulos escritos no significa que la tesis esté terminada.
+La tesis ya tiene un borrador de 72 páginas. Están escritos el modelo, los procedimientos, el funcionamiento del sistema y los resultados disponibles. Faltan las mediciones y pruebas del robot real, la comparación final y las conclusiones definitivas. También debemos añadir las nuevas pruebas y fotos. Hay frases antiguas que dicen que no hemos entrenado el algoritmo, aunque ya lo hicimos. Vamos a corregirlas para que el documento refleje el mismo estado en todas sus secciones. Tener los capítulos escritos no significa que la tesis esté terminada.
 
 ## Diapositiva 6
 

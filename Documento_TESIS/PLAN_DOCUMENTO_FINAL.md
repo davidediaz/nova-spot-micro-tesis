@@ -59,4 +59,4 @@ mantener separados método, resultado, discusión y conclusión.
 - Validación física de postura, paso y gateo.
 - Entrenamiento y selección final de políticas PPO.
 - Comparación experimental nominal frente a nominal más RL.
-- Conclusiones finales de cumplimiento de los objetivos cuarto y quinto.
+- Conclusiones finales de cumplimiento de los objetivos tercero y cuarto.

@@ -117,3 +117,7 @@ La presentación fue copiada desde
 tenían el SHA-256:
 
 `200ed2f5ada680325b5bbbd9efd83e2e906b9bdb65c609715d209c7a88cdc160`
+
+## Objetivos vigentes al 7 de septiembre de 2026
+
+Se adoptó literalmente el objetivo general y los cuatro específicos suministrados por el usuario. OE1: hardware/software; OE2: modelado; OE3: control aprendido; OE4: margen de estabilidad estática, seguimiento de posición articular y repetibilidad del patrón de marcha. Matriz y referencias internas sincronizadas. PDF recompilado de 72 páginas.

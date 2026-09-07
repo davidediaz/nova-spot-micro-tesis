@@ -35,8 +35,8 @@ def photo(s,n,x,y,w,h,caption):
     txt(s,x,y+h+.06,w,.4,caption,11,MUTED)
 
 s=slide(1,'Nuestro robot: qué hemos logrado','Nova Spot Micro · Control del movimiento y del equilibrio')
-txt(s,.8,1.8,5.1,1.0,'Buscamos una marcha estable y probar si el robot mejora aprendiendo de sus resultados.',19)
-card(s,.8,3.05,5.1,2.95,'Ahora: pruebas del robot real','El robot camina en simulación.\nLos 12 motores respondieron.\nLas pruebas físicas se pausaron por exceso de corriente.\nFalta resolver la causa.')
+txt(s,.8,1.68,5.1,1.8,'Desarrollar un sistema de control para la plataforma cuadrúpedo Spot Micro que integre aprendizaje por refuerzo para su ejecución y estabilización en los diferentes modos de locomoción tipo paso y gateo en condiciones de entorno controladas.',15)
+card(s,.8,3.7,5.1,2.65,'Ahora: pruebas del robot real','El robot camina en simulación.\nLos 12 motores respondieron.\nLas pruebas físicas se pausaron por exceso de corriente.\nFalta resolver la causa.')
 photo(s,1,6.15,1.85,2.55,4.5,'1 · Vista general del robot')
 photo(s,5,8.9,1.85,3.62,2.72,'5 · Electrónica y conexiones en banco')
 txt(s,8.9,5.05,3.62,1.35,'Ya tenemos el prototipo.\nFalta comprobar que camina de forma segura.',17,ACC)
@@ -44,16 +44,11 @@ txt(s,.8,6.6,11.8,.3,'David Esteban Díaz Castro · David Felipe Díaz Suesca',1
 s.notes_slide.notes_text_frame.text='Tiempo: 1:10. Explicar que el aporte comprobado es una plataforma de generación, registro y evaluación. La hipótesis de mejora mediante RL todavía no está demostrada. La postura física observada no equivale a una marcha validada.'
 
 s=slide(2,'¿Cuánto hemos avanzado?','OE = objetivo específico. Los porcentajes son estimaciones basadas en evidencias.')
-rows=[['Objetivo','¿Qué hicimos y cómo se demuestra?','%','Pendiente'],
-['OE1 · Conocer y modelar el robot','Creamos el modelo matemático.\nEvidencia: código y pruebas.','50 %','Medir el robot real y\ncomprobar el modelo.'],
-['OE2 · Controlarlo con seguridad','El programa detectó 9 fallos de prueba.\nEvidencia: registros de cada respuesta.','50 %','Comprobar alimentación,\nprotecciones y motores.'],
-['OE3 · Crear sus movimientos','Probamos postura, paso y gateo.\nEvidencia: datos de simulación.','75 %','Probar la marcha real y\nmejorar los apoyos simulados.'],
-['OE4 · Aprender correcciones','Entrenamos el algoritmo cinco veces.\nLas evaluaciones no mostraron la mejora buscada.','50 %','Mejorar el aprendizaje y\nprobarlo antes de usarlo.'],
-['OE5 · Comparar los resultados','Hicimos una comparación inicial.\nEvidencia: informes y datos.','25 %','Completar pruebas comparables\nen simulación y robot real.']]
-table=s.shapes.add_table(6,4, Inches(.8), Inches(1.95), Inches(11.75), Inches(4.55)).table
+rows=[['Objetivo', '¿Qué hicimos y cómo se demuestra?', '%', 'Pendiente'], ['OE1 · Hardware y software', 'Integramos el control y movimos los motores.\nEvidencia: código y registros.', '50 %', 'Resolver sobrecarga, calibrar\ny validar el movimiento real.'], ['OE2 · Modelo del robot', 'Creamos y verificamos el modelo.\nEvidencia: ecuaciones y pruebas.', '50 %', 'Contrastar parámetros físicos\ny validar el modelo.'], ['OE3 · Control con aprendizaje', 'Entrenamos y evaluamos el algoritmo.\nNo se demostró la mejora buscada.', '50 %', 'Demostrar estabilidad y\ncontinuidad en paso y gateo.'], ['OE4 · Tres pruebas de evaluación', 'Medimos seguimiento y repetibilidad\nen simulación; margen aún parcial.', '50 %', 'Completar las tres pruebas\ny su análisis conjunto.']]
+table=s.shapes.add_table(5,4, Inches(.8), Inches(1.95), Inches(11.75), Inches(4.55)).table
 for c,w in zip(table.columns,[3.05,4.65,.95,3.10]): c.width=Inches(w)
 for r,row in enumerate(rows):
-    table.rows[r].height=Inches(.48 if r==0 else .8)
+    table.rows[r].height=Inches(.48 if r==0 else 1.0)
     for j,v in enumerate(row):
         cell=table.cell(r,j); cell.text=v; cell.fill.solid(); cell.fill.fore_color.rgb=RGBColor.from_string('28475F' if r==0 else CARD)
         for p in cell.text_frame.paragraphs: p.font.name='Aptos'; p.font.size=Pt(14 if r else 15); p.font.bold=(r==0 or j==2); p.font.color.rgb=RGBColor.from_string(ACC if j==2 else FG)
@@ -78,7 +73,7 @@ photo(s,4,11.16,5.8,1.3,.75,'Pieza impresa')
 txt(s,.8,6.5,7,.4,'Fuentes: tesis; cierre MuJoCo 03/09; diagnóstico PPO 02/09.',11,MUTED)
 s.notes_slide.notes_text_frame.text='Tiempo: 2:00. Avance por ciclo indica desplazamiento neto. La coincidencia de contactos es simultánea respecto al plan y no un porcentaje de estabilidad. Las campañas MuJoCo cambian trayectoria y ganancias: no aíslan una sola causa. 5×20 es el diseño; el ejecutor registró 21 ciclos y el análisis comparable usa 2–20. Nueve pruebas prueban reacción lógica, no corte eléctrico. El resultado negativo PPO impide afirmar mejora.'
 
-s=slide(4,'¿Cómo va la escritura de la tesis?','Tenemos un borrador de 73 páginas. Falta completarlo con las pruebas y resultados pendientes.')
+s=slide(4,'¿Cómo va la escritura de la tesis?','Tenemos un borrador de 72 páginas. Falta completarlo con las pruebas y resultados pendientes.')
 card(s,.8,1.9,3.8,4.55,'Ya está escrito','Modelo matemático\nCómo hicimos las pruebas\nCómo funciona el sistema\nResultados de simulación\nProcedimientos y anexos')
 card(s,4.78,1.9,3.8,4.55,'Falta completar','Mediciones del robot real\nPruebas de seguridad\nComparación final\nAnálisis de los resultados\nConclusiones finales')
 card(s,8.76,1.9,3.8,4.55,'Hay que actualizar','Nuevas pruebas de MuJoCo\nAvances y fotos del prototipo\nProblema de corriente\nTextos que dicen que aún no entrenamos el algoritmo\nCronograma y presupuesto')
@@ -102,31 +97,27 @@ prs.slides[2].notes_slide.notes_text_frame.text += ' La imagen principal es una 
 
 # Guion oral en lenguaje sencillo; detalles y fuentes en GUIA_EXPOSICION.md.
 prs.slides[0].notes_slide.notes_text_frame.text = 'Nuestro propósito es que el robot camine de forma estable y comprobar si el aprendizaje ayuda a mejorar su movimiento. Ya tenemos el modelo en simulación y el prototipo que se ve en las fotografías. En las pruebas físicas respondieron los doce motores, pero apareció un exceso de corriente y detuvimos las pruebas. Todavía debemos resolver la causa antes de continuar. Las fotografías muestran la construcción; no demuestran por sí solas una marcha segura.'
-prs.slides[1].notes_slide.notes_text_frame.text = 'Cada fila corresponde a uno de los cinco objetivos. Para el primero tenemos un modelo matemático, pero falta contrastarlo con mediciones del robot. Para el segundo tenemos un programa que detecta fallos, pero falta comprobar la seguridad eléctrica. En el tercero ya creamos y probamos movimientos en simulación. En el cuarto entrenamos el algoritmo, aunque no logró la mejora buscada. El quinto está menos avanzado porque falta completar la comparación. Estos porcentajes son estimaciones: dividimos cada objetivo en cuatro etapas y cada etapa cerrada suma 25 %. La guía técnica explica cuáles son.'
+prs.slides[1].notes_slide.notes_text_frame.text = 'Los cuatro objetivos tienen un avance estimado del 50 %, por motivos diferentes. OE1: software y movimiento inicial, con integración física pendiente. OE2: modelo y pruebas computacionales, con contraste pendiente. OE3: estrategia y entrenamiento, sin estabilidad y continuidad demostradas. OE4: seguimiento y repetibilidad en simulación, con margen estático y evaluación integral pendientes. La rúbrica de la guía explica los cuatro hitos de cada objetivo.'
 prs.slides[2].notes_slide.notes_text_frame.text = 'Gazebo y MuJoCo son programas que simulan el robot. En Gazebo hicimos cinco pruebas y el avance medio fue de unos 2,4 centímetros por cada secuencia completa de gateo. En MuJoCo ajustamos el movimiento y el avance pasó de 2,7 a 9,9 milímetros por ciclo. Aún falta mejorar cuándo despega y aterriza cada pata. El programa de seguridad detectó los nueve fallos que provocamos y envió la orden de detener la marcha; falta comprobar la parada eléctrica real. Entrenamos el algoritmo de aprendizaje cinco veces, pero sus correcciones no cumplieron los criterios de mejora. La captura de Gazebo ilustra el modelo actual: los números vienen de los informes de pruebas anteriores.'
-prs.slides[3].notes_slide.notes_text_frame.text = 'La tesis ya tiene un borrador de 73 páginas. Están escritos el modelo, los procedimientos, el funcionamiento del sistema y los resultados disponibles. Faltan las mediciones y pruebas del robot real, la comparación final y las conclusiones definitivas. También debemos añadir las nuevas pruebas y fotos. Hay frases antiguas que dicen que no hemos entrenado el algoritmo, aunque ya lo hicimos. Vamos a corregirlas para que el documento refleje el mismo estado en todas sus secciones. Tener los capítulos escritos no significa que la tesis esté terminada.'
+prs.slides[3].notes_slide.notes_text_frame.text = 'La tesis ya tiene un borrador de 72 páginas. Están escritos el modelo, los procedimientos, el funcionamiento del sistema y los resultados disponibles. Faltan las mediciones y pruebas del robot real, la comparación final y las conclusiones definitivas. También debemos añadir las nuevas pruebas y fotos. Hay frases antiguas que dicen que no hemos entrenado el algoritmo, aunque ya lo hicimos. Vamos a corregirlas para que el documento refleje el mismo estado en todas sus secciones. Tener los capítulos escritos no significa que la tesis esté terminada.'
 prs.slides[4].notes_slide.notes_text_frame.text = 'El orden de trabajo empieza por resolver el exceso de corriente y comprobar el apagado seguro. Después ajustaremos un motor y una pata antes de probar el robot completo. Registraremos sus movimientos y el consumo. Finalmente evaluaremos las correcciones aprendidas frente al movimiento básico, usando las mismas condiciones. La comparación debe mostrar tanto lo que mejora como lo que empeora. En paralelo actualizaremos la tesis. Las principales dificultades son la validación física pendiente y que aún no hemos demostrado la mejora mediante aprendizaje.'
 prs.slides[5].notes_slide.notes_text_frame.text = 'Para la próxima revisión proponemos entregar un informe de revisión eléctrica y una versión actualizada de la tesis. El informe debe decir qué revisamos, qué medimos, con qué instrumentos y qué falta. Si una prueba no puede hacerse con seguridad, lo registraremos como pendiente. No prometemos una caminata antes de resolver esos requisitos. Nuestro proyecto todavía no puede darse por terminado porque falta comprobar la marcha segura del robot real y evaluar las correcciones aprendidas. La evidencia de cierre serán pruebas comparables, mediciones y conclusiones que expliquen lo que funcionó y lo que no.'
 
 # Diapositiva adicional solicitada por el usuario; se ubica después del resumen de avance.
-s=slide(3,'Objetivos: qué está cumplido y qué falta','Resumen de los objetivos de la tesis. Ninguno está cerrado al 100 %; el avance es estimado.')
-objective_rows=[
-    ['Objetivo específico','Estado / avance','¿Qué falta para cumplirlo?'],
-    ['OE1 · Caracterizar el robot y desarrollar sus modelos de movimiento y dinámica.','Parcial · 50 %','Medir dimensiones, masas y límites reales; contrastarlos con el modelo.'],
-    ['OE2 · Implementar la electrónica y el programa para mover y supervisar el robot con seguridad.','Parcial · 50 %','Resolver la sobrecarga y comprobar protecciones, parada física y calibración.'],
-    ['OE3 · Implementar el control de postura, paso y gateo mediante secuencias de movimiento.','Parcial · 75 %','Completar la validación física y mejorar la coordinación de apoyos en simulación.'],
-    ['OE4 · Entrenar en simulación e integrar al robot pequeñas correcciones aprendidas, bajo supervisión.','Parcial · 50 %\nSin mejora aceptada','Obtener correcciones que cumplan los criterios de mejora y validarlas antes de transferirlas.'],
-    ['OE5 · Comparar movimiento, estabilidad y repetibilidad con y sin aprendizaje, en simulación y robot real.','Parcial · 25 %','Completar la comparación final bajo las mismas condiciones y las pruebas físicas.']]
-t=s.shapes.add_table(6,3, Inches(.8), Inches(1.85), Inches(11.75), Inches(4.8)).table
-for col,w in zip(t.columns,[5.3,2.0,4.45]): col.width=Inches(w)
+s=slide(3,'Objetivos: qué está cumplido y qué falta','Cuatro objetivos suministrados por el grupo. Ninguno está cerrado al 100 %; el avance es estimado.')
+objective_rows=[['Objetivo específico (texto original)', 'Estado / avance', '¿Qué falta para cumplirlo?'], ['OE1 · Implementar el hardware y software necesario para la ejecución de movimiento de las extremidades de la plataforma spot micro con la que cuenta el laboratorio de robótica, siguiendo la documentación técnica del fabricante.', 'Parcial\n50 %', 'Resolver sobrecarga, calibrar y validar el movimiento real.'], ['OE2 · Modelar comportamiento cinemático y dinámico de la plataforma para simulación y posterior diseño a partir de la literatura y estudios previos sobre robots cuadrúpedos.', 'Parcial\n50 %', 'Contrastar parámetros físicos y validar el modelo.'], ['OE3 · Diseñar una estrategia de control basada en aprendizaje automático para la coordinación del movimiento del robot, garantizando estabilidad y continuidad durante los modos de locomoción tipo paso y gateo.', 'Parcial\n50 %', 'Demostrar estabilidad y continuidad en paso y gateo.'], ['OE4 · Evaluar el funcionamiento del modelo de caminata del robot cuadrúpedo mediante tres pruebas: la Prueba de Margen de Estabilidad Estática, la Prueba de Seguimiento de Posición Articular y la Prueba de Repetibilidad del Patrón de Marcha.', 'Parcial\n50 %', 'Completar las tres pruebas y su análisis conjunto.']]
+t=s.shapes.add_table(5,3, Inches(.8), Inches(1.85), Inches(11.75), Inches(4.8)).table
+for col,w in zip(t.columns,[7.05,1.65,3.05]): col.width=Inches(w)
 for ri,row in enumerate(objective_rows):
-    t.rows[ri].height=Inches(.48 if ri==0 else .85)
+    t.rows[ri].height=Inches(.50 if ri==0 else 1.05)
     for ci,value in enumerate(row):
-        cell=t.cell(ri,ci); cell.text=value; cell.fill.solid(); cell.fill.fore_color.rgb=RGBColor.from_string('28475F' if ri==0 else CARD)
+        cell=t.cell(ri,ci); cell.margin_top=Inches(.03); cell.margin_bottom=Inches(.03); cell.text=value; cell.fill.solid(); cell.fill.fore_color.rgb=RGBColor.from_string('28475F' if ri==0 else CARD)
         for para in cell.text_frame.paragraphs:
-            para.font.name='Aptos'; para.font.size=Pt(15); para.font.bold=(ri==0 or ci==1); para.font.color.rgb=RGBColor.from_string(ACC if ci==1 else FG)
+            para.font.name='Aptos'; para.font.size=Pt(12 if ci==0 else 13); para.font.bold=(ri==0 or ci==1); para.font.color.rgb=RGBColor.from_string(ACC if ci==1 else FG)
 txt(s,.8,6.65,11.75,.3,'Avance: 4 etapas por objetivo, 25 % por etapa cerrada. Fuente: objetivos y matriz de evidencias de la tesis.',11,MUTED)
-s.notes_slide.notes_text_frame.text='Esta diapositiva explica qué buscamos con cada objetivo y qué falta para cerrarlo. Todos tienen avances, pero ninguno está cumplido por completo. El tercero es el más avanzado porque ya implementamos y probamos los movimientos en simulación. El quinto tiene menor avance: faltan la comparación final y las pruebas del robot real. En el cuarto entrenar el algoritmo cuenta como trabajo realizado, pero todavía no demuestra la mejora buscada. Los porcentajes son estimaciones justificadas en la guía, no una calificación del profesor.'
+s.notes_slide.notes_text_frame.text='Estos son los cuatro objetivos originales. El primero reúne hardware y software; el segundo es modelado; el tercero es control aprendido; el cuarto exige tres pruebas concretas. Todos están parciales. Los porcentajes se recalcularon con una rúbrica por entregables y no significan una calificación. El entrenamiento no demuestra por sí solo estabilidad ni continuidad.'
+# Objetivo general literal en las notas de apertura.
+prs.slides[0].notes_slide.notes_text_frame.text = 'Objetivo general: Desarrollar un sistema de control para la plataforma cuadrúpedo Spot Micro que integre aprendizaje por refuerzo para su ejecución y estabilización en los diferentes modos de locomoción tipo paso y gateo en condiciones de entorno controladas.'
 # Mover la nueva diapositiva a la tercera posición y actualizar la numeración.
 slide_ids=prs.slides._sldIdLst
 last=slide_ids[-1]; slide_ids.remove(last); slide_ids.insert(2,last)
@@ -135,5 +126,5 @@ for number,current_slide in enumerate(prs.slides,1):
         if shape.has_text_frame and shape.text in [f'{j}/6' for j in range(1,7)]:
             shape.text_frame.paragraphs[0].runs[0].text=f'{number}/7'
 
-prs.save(OUT/'Primera_entrega_avances_7_diapositivas.pptx')
-print(OUT/'Primera_entrega_avances_7_diapositivas.pptx')
+prs.save(OUT/'Primera_entrega_avances_objetivos_corregidos.pptx')
+print(OUT/'Primera_entrega_avances_objetivos_corregidos.pptx')
