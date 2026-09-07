@@ -1616,3 +1616,22 @@ la exposición y sincronizar las secciones documentales identificadas. La próxi
 acción física conserva la verificación PCA9685 sin carga y el diagnóstico de
 CH1/consumo antes de cualquier marcha. La presentación se conserva localmente;
 la publicación en el repositorio queda pendiente.
+
+### Fotografías del prototipo incorporadas — 7 de septiembre de 2026
+
+A petición del usuario se archivaron cinco JPEG originales en
+`Github/evidencias/2026-09-07`, con descripciones visibles y hashes SHA-256.
+La fecha indica incorporación, no captura. Se integraron a la bitácora visual,
+el progreso semanal y un enlace destacado del panel. Documentan ensamble,
+electrónica, articulación y pieza impresa; aportan contexto a OE1/OE2/OE3 sin
+cerrar mediciones ni modificar porcentajes o el bloqueo por sobrecarga.
+
+Se actualizó el generador y la guía de exposición. Las cinco imágenes aparecen
+en las diapositivas 1 y 3 de `Primera_entrega_avances_con_fotos.pptx` y su PDF.
+Se conservó el PowerPoint anterior porque se detectó abierto mediante su archivo
+de bloqueo. Verificación: seis diapositivas, cinco imágenes originales
+incorporadas, revisión visual de páginas modificadas, copias idénticas y rutas
+HTML de imágenes existentes. No se modificó hardware ni se ejecutaron ensayos.
+Siguiente acción: usar la versión con fotos para ensayar; publicación remota
+pendiente. La incorporación a la tesis final sigue como tarea documental de
+cierre, sin atribuir validación experimental a las fotografías.

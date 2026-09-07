@@ -178,3 +178,29 @@ empeoramiento mecánico.
 Diseñar una hipótesis de liberación trasera distinta de aumentar la altura
 temprana y exigir como criterio observable una pérdida filtrada sostenida, sin
 exceder el salto articular de 0,20 rad.
+
+## Registro fotográfico incorporado el 7 de septiembre de 2026
+
+Se archivaron cinco fotografías del prototipo, sus piezas y electrónica. La fecha de captura no está confirmada. Complementan OE1/OE2 y el contexto físico de OE3; no cierran ensayos de marcha ni seguridad eléctrica. El diagnóstico de sobrecarga continúa pendiente según el registro del 4 de septiembre.
+
+### Fotografía 1 · Vista general del cuadrúpedo apoyado sobre el suelo.
+
+![Vista general del cuadrúpedo apoyado sobre el suelo.](evidencias/2026-09-07/1.jpeg)
+
+### Fotografía 2 · Vista superior del ensamble abierto, electrónica y cableado.
+
+![Vista superior del ensamble abierto, electrónica y cableado.](evidencias/2026-09-07/2.jpeg)
+
+### Fotografía 3 · Detalle de una articulación, servomotor y soporte impreso.
+
+![Detalle de una articulación, servomotor y soporte impreso.](evidencias/2026-09-07/3.jpeg)
+
+### Fotografía 4 · Pieza amarilla impresa, fotografiada fuera del ensamble.
+
+![Pieza amarilla impresa, fotografiada fuera del ensamble.](evidencias/2026-09-07/4.jpeg)
+
+### Fotografía 5 · Vista superior del banco de trabajo con el robot y conexiones.
+
+![Vista superior del banco de trabajo con el robot y conexiones.](evidencias/2026-09-07/5.jpeg)
+
+Originales y hashes: [registro fotográfico](evidencias/2026-09-07/README.md). Las cinco imágenes también se incorporaron a la presentación de seis diapositivas. Siguiente acción: asociar futuras mediciones a canal, configuración y fecha de ensayo.

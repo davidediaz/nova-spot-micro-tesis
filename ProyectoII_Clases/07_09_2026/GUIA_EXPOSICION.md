@@ -6,8 +6,8 @@ calificaciones ni decisiones ya aprobadas por los directores.
 
 ## Archivos
 
-- `Primera_entrega_avances.pptx`: presentación editable, con notas del orador.
-- `Primera_entrega_avances.pdf`: versión para proyectar.
+- `Primera_entrega_avances_con_fotos.pptx`: versión vigente editable, con las cinco fotografías y notas del orador.
+- `Primera_entrega_avances_con_fotos.pdf`: versión vigente para proyectar. Los archivos anteriores se conservan.
 - `generar_presentacion.py`: fuente reproducible con python-pptx.
 - Guía del profesor: `/home/pavilion/Descargas/Primera entrega de avances - Proyecto de grado II.pdf`.
 
@@ -111,3 +111,7 @@ Tiempo: 1:10. Las semanas son una ruta condicionada, no una promesa de marcha. L
 ### Diapositiva 6
 
 Tiempo: 1:00. Presentar este compromiso como propuesta del grupo a ratificar. Criterio verificable: informe con condiciones, instrumentos, mediciones, incidencias y dictamen de continuar o mantener bloqueo; tesis compilada con los nuevos resultados y las conclusiones corregidas. Si una prueba con carga no puede ejecutarse con seguridad, registrar la causa y el requisito faltante, sin inventar mediciones. No prometer una caminata para la próxima revisión.
+
+## Fotografías incorporadas
+
+Las fotografías 1 y 5 aparecen en la diapositiva 1; las 2, 3 y 4 en la diapositiva 3. Se conservan completas y sin retoque. Describen ensamble y electrónica; la fecha de captura no está confirmada. Originales, descripciones y hashes en `Github/evidencias/2026-09-07/README.md`. Se mantiene la presentación en seis diapositivas y la rúbrica de avance sin cambios.

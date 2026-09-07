@@ -4,6 +4,7 @@ from pptx.util import Inches, Pt
 from pptx.dml.color import RGBColor
 
 OUT=Path(__file__).resolve().parent
+PHOTOS=OUT.parents[1]/'Github/evidencias/2026-09-07'
 prs=Presentation(); prs.slide_width=Inches(13.333); prs.slide_height=Inches(7.5)
 BG='101D30'; FG='F3F6FA'; MUTED='B8C6D8'; ACC='4ED3BA'; CARD='1C3049'; WARN='FFD187'
 def box(s,x,y,w,h,color):
@@ -24,12 +25,22 @@ def slide(n,title,sub):
 def card(s,x,y,w,h,title,body):
     box(s,x,y,w,h,CARD); txt(s,x+.2,y+.15,w-.4,.55,title,19,ACC,True); txt(s,x+.2,y+.85,w-.4,h-.95,body,17)
 
+def photo(s,n,x,y,w,h,caption):
+    # Insertar el original completo, conservando proporciones y sin recorte.
+    from PIL import Image
+    with Image.open(PHOTOS/f'{n}.jpeg') as im: iw,ih=im.size
+    scale=min(w/iw,h/ih); pw,ph=iw*scale,ih*scale
+    box(s,x,y,w,h,CARD)
+    s.shapes.add_picture(str(PHOTOS/f'{n}.jpeg'), Inches(x+(w-pw)/2), Inches(y+(h-ph)/2), width=Inches(pw), height=Inches(ph))
+    txt(s,x,y+h+.06,w,.4,caption,11,MUTED)
+
 s=slide(1,'Control de locomoción: avances y límites','Diseño de un sistema de control para la locomoción y estabilización de un robot cuadrúpedo basado en aprendizaje por refuerzo')
-txt(s,.8,1.75,11.8,.9,'Propósito: combinar una marcha convencional con correcciones RL acotadas y evaluar estabilidad y repetibilidad.',25)
-card(s,.8,2.95,3.8,2.8,'Implementado','Modelo y cinemática propios\nROS 2 + Gazebo + MuJoCo\nPostura, paso y gateo')
-card(s,4.78,2.95,3.8,2.8,'Evaluado','Campañas reproducibles\nSupervisor: 9 escenarios\nPPO entrenado y rechazado')
-card(s,8.76,2.95,3.8,2.8,'Fase actual','Integración física inicial\n12 servos respondieron\nPruebas pausadas por sobrecarga')
-txt(s,.8,6.05,11.8,.65,'David Esteban Díaz Castro · David Felipe Díaz Suesca',18,MUTED)
+txt(s,.8,1.8,5.1,1.0,'Propósito: evaluar estabilidad y repetibilidad combinando marcha nominal y correcciones RL acotadas.',19)
+card(s,.8,3.05,5.1,2.95,'Fase actual: integración física','Modelo y marchas en simulación.\nPPO entrenado; no aceptado.\n12 servos: respuesta inicial registrada.\nSobrecarga: diagnóstico pendiente.')
+photo(s,1,6.15,1.85,2.55,4.5,'1 · Vista general del robot')
+photo(s,5,8.9,1.85,3.62,2.72,'5 · Electrónica y conexiones en banco')
+txt(s,8.9,5.05,3.62,1.35,'Registro visual del prototipo.\nLa marcha física continúa pendiente de validación.',17,ACC)
+txt(s,.8,6.6,11.8,.3,'David Esteban Díaz Castro · David Felipe Díaz Suesca',15,MUTED)
 s.notes_slide.notes_text_frame.text='Tiempo: 1:10. Explicar que el aporte comprobado es una plataforma de generación, registro y evaluación. La hipótesis de mejora mediante RL todavía no está demostrada. La postura física observada no equivale a una marcha validada.'
 
 s=slide(2,'Cumplimiento de los cinco objetivos','Estimación propuesta: 4 hitos por objetivo, 25 % por hito cerrado; los hitos parciales no suman. Ver rúbrica en el guion.')
@@ -50,11 +61,19 @@ txt(s,.8,6.55,11.6,.35,'Porcentajes de hitos documentados: no son una calificaci
 s.notes_slide.notes_text_frame.text='Tiempo: 2:00. Recorrer cada objetivo: actividad, resultado, evidencia y faltante. OE3 es el más avanzado por implementación y ensayos en simulación. OE5 es el menor: la comparación exploratoria no cumple el diseño final ni incluye hardware. Rúbrica propuesta para esta exposición, no aprobada por los directores.'
 
 s=slide(3,'Resultados que sí podemos demostrar','Las cifras corresponden a campañas distintas; no se mezclan configuraciones ni se afirma equivalencia dinámica.')
-card(s,.8,1.85,5.72,1.95,'Gazebo · gateo nominal','5 ensayos · 23,955 mm/ciclo\n5,545 mm/s · 191 ciclos de régimen')
-card(s,6.7,1.85,5.82,1.95,'Supervisor · integración ROS 2','9/9 escenarios provocados: activación,\nmotivo esperado y orden stand')
-card(s,.8,4.0,5.72,2.3,'MuJoCo · paso 5×20','Nominal: 2,70 mm/ciclo; contacto 0 %\nAjustado: 9,87 mm/ciclo; 36,58 %\nMejora virtual; no valida el robot físico.')
-card(s,6.7,4.0,5.82,2.3,'PPO · resultado negativo útil','5 semillas; ninguna escala positiva aceptada.\nEscala cero: −0,258 % frente al nominal.\nSe bloqueó la transferencia al prototipo.')
-txt(s,.8,6.48,11.8,.42,'Fuentes: tesis, cap. Resultados; MUJOCO_CIERRE_2026-09-03; diagnóstico PPO de escala cero (02/09).',12,MUTED)
+for y,title,body in [
+    (1.85,'Gazebo · gateo nominal','5 ensayos · 23,955 mm/ciclo · 5,545 mm/s.'),
+    (2.98,'MuJoCo · paso 5×20','2,70 → 9,87 mm/ciclo; contacto 0 → 36,58 %.'),
+    (4.11,'Supervisor · integración ROS 2','9/9 escenarios: activación, motivo y stand.'),
+    (5.24,'PPO · resultado negativo','5 semillas; ninguna escala positiva aceptada.')]:
+    box(s,.8,y,7.0,1.0,CARD)
+    txt(s,1,y+.07,6.6,.36,title,18,ACC,True)
+    txt(s,1,y+.49,6.6,.45,body,17)
+photo(s,2,8.08,1.85,2.1,2.65,'2 · Ensamble abierto')
+photo(s,3,10.4,1.85,2.1,2.65,'3 · Articulación y soporte')
+photo(s,4,8.08,5.0,2.1,1.57,'4 · Pieza impresa')
+txt(s,10.4,5.03,2.12,1.5,'Fotos: evidencia de construcción.\nEnsayos: evidencia de desempeño.',15,ACC)
+txt(s,.8,6.5,7,.4,'Fuentes: tesis; cierre MuJoCo 03/09; diagnóstico PPO 02/09.',11,MUTED)
 s.notes_slide.notes_text_frame.text='Tiempo: 2:00. Avance por ciclo indica desplazamiento neto. La coincidencia de contactos es simultánea respecto al plan y no un porcentaje de estabilidad. Las campañas MuJoCo cambian trayectoria y ganancias: no aíslan una sola causa. 5×20 es el diseño; el ejecutor registró 21 ciclos y el análisis comparable usa 2–20. Nueve pruebas prueban reacción lógica, no corte eléctrico. El resultado negativo PPO impide afirmar mejora.'
 
 s=slide(4,'Documento final: avance y actualización','PDF preliminar comprobado: 73 páginas. Documento_TESIS es la base final; tesis_overleaf conserva el anteproyecto.')
@@ -75,5 +94,7 @@ card(s,.8,1.85,11.72,1.75,'Entregar un informe de diagnóstico físico y la tesi
 txt(s,.95,3.92,11.35,1.05,'“Nuestro proyecto todavía no puede darse por terminado porque falta validar la locomoción y la seguridad físicas y cerrar la comparación nominal frente a RL.”',25)
 txt(s,.95,5.25,11.35,1.12,'“La evidencia que permitirá demostrar su finalización será una campaña trazable en simulación y hardware, con métricas acordadas y conclusiones respaldadas por resultados.”',25,ACC)
 s.notes_slide.notes_text_frame.text='Tiempo: 1:00. Presentar este compromiso como propuesta del grupo a ratificar. Criterio verificable: informe con condiciones, instrumentos, mediciones, incidencias y dictamen de continuar o mantener bloqueo; tesis compilada con los nuevos resultados y las conclusiones corregidas. Si una prueba con carga no puede ejecutarse con seguridad, registrar la causa y el requisito faltante, sin inventar mediciones. No prometer una caminata para la próxima revisión.'
-prs.save(OUT/'Primera_entrega_avances.pptx')
-print(OUT/'Primera_entrega_avances.pptx')
+prs.slides[0].notes_slide.notes_text_frame.text += ' Fotos 1 y 5: vista general y electrónica en banco. Fecha de captura no confirmada; incorporación 07/09/2026.'
+prs.slides[2].notes_slide.notes_text_frame.text += ' Fotos 2, 3 y 4: ensamble abierto, articulación y pieza impresa. Son evidencia de construcción; no mediciones de desempeño.'
+prs.save(OUT/'Primera_entrega_avances_con_fotos.pptx')
+print(OUT/'Primera_entrega_avances_con_fotos.pptx')

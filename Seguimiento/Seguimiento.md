@@ -748,3 +748,12 @@ de los objetivos. La guía incluye fuentes y respuestas a las ocho preguntas
 del profesor. Pendiente: revisar con el grupo, ensayar y actualizar la tesis con
 las campañas MuJoCo del 3 de septiembre, la incidencia física del 4 y las
 conclusiones desactualizadas sobre PPO. No se ejecutaron pruebas de hardware.
+
+### Evidencia fotográfica — 7 de septiembre de 2026
+
+Se incorporaron las cinco fotografías suministradas a `Github/BITACORA.html`,
+`Github/PROGRESO_SEMANAL.md` y a la presentación de seis diapositivas
+`Primera_entrega_avances_con_fotos`. Originales íntegros y hashes en
+`Github/evidencias/2026-09-07`. Se verificaron copias, enlaces y distribución
+visual del PDF. Documentan construcción e integración, sin cambiar porcentajes
+ni declarar marcha o seguridad física validadas. Captura sin fecha confirmada.
