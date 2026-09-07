@@ -6,8 +6,8 @@ calificaciones ni decisiones ya aprobadas por los directores.
 
 ## Archivos
 
-- `Primera_entrega_avances_gazebo.pptx`: versión vigente editable, con las cinco fotografías y notas del orador.
-- `Primera_entrega_avances_gazebo.pdf`: versión vigente para proyectar. Los archivos anteriores se conservan.
+- `Primera_entrega_avances_sencilla.pptx`: versión vigente editable, con las cinco fotografías y notas del orador.
+- `Primera_entrega_avances_sencilla.pdf`: versión vigente para proyectar. Los archivos anteriores se conservan.
 - `generar_presentacion.py`: fuente reproducible con python-pptx.
 - Guía del profesor: `/home/pavilion/Descargas/Primera entrega de avances - Proyecto de grado II.pdf`.
 
@@ -117,3 +117,7 @@ Tiempo: 1:00. Presentar este compromiso como propuesta del grupo a ratificar. Cr
 Las fotografías 1 y 5 aparecen en la diapositiva 1; las 2, 3 y 4 en la diapositiva 3. Se conservan completas y sin retoque. Describen ensamble y electrónica; la fecha de captura no está confirmada. Originales, descripciones y hashes en `Github/evidencias/2026-09-07/README.md`. Se mantiene la presentación en seis diapositivas y la rúbrica de avance sin cambios.
 
 La diapositiva 3 incorpora además una captura nativa de Gazebo del 7 de septiembre, obtenida para ilustrar el entorno del proyecto. No corresponde a las campañas históricas cuyos resultados se citan. Las cinco fotos se mantienen en la presentación.
+
+## Versión simplificada
+
+Se simplificaron las seis diapositivas y sus notas del orador. `GUION_SENCILLO.md` contiene la explicación oral. Las cifras exactas y la rúbrica de esta guía se conservan como respaldo: 23,955 mm/ciclo se presenta como aproximadamente 2,4 cm y 9,87 mm/ciclo como 9,9 mm. No se modificaron los resultados, porcentajes ni criterios de cumplimiento.

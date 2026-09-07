@@ -762,3 +762,7 @@ Se añadió a la exposición una captura nativa actual de Gazebo del modelo Nova
 sin generar resultados experimentales nuevos. Versión vigente:
 `ProyectoII_Clases/07_09_2026/Primera_entrega_avances_gazebo.pdf` y PowerPoint.
 Conserva seis diapositivas y las cinco fotografías del prototipo.
+
+La versión vigente de exposición es `Primera_entrega_avances_sencilla` (PDF y
+PowerPoint), con seis diapositivas, imágenes conservadas y `GUION_SENCILLO.md`.
+Se simplificó el lenguaje sin modificar los resultados ni el estado técnico.

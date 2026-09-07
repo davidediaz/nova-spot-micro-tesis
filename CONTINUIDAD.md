@@ -1646,3 +1646,16 @@ Se incorporó a la diapositiva 3 en `Primera_entrega_avances_gazebo.pptx` y PDF;
 se conservaron las cinco fotografías y las versiones anteriores. PDF de seis
 páginas y página modificada revisados visualmente. Se detuvo el lanzamiento al
 terminar. Siguiente acción: ensayar con esta versión; publicación remota pendiente.
+
+### Presentación en lenguaje sencillo — 7 de septiembre de 2026
+
+Por solicitud del usuario se simplificaron las seis diapositivas: se explican
+los simuladores y se reemplaza jerga de PPO, seguridad y planificación por
+frases directas. Se conservaron cinco fotos, captura Gazebo, porcentajes y
+alcance de resultados. El avance de 23,955 mm/ciclo se expresa como unos 2,4 cm;
+las cifras exactas y la rúbrica siguen en la guía técnica. Versión vigente:
+`ProyectoII_Clases/07_09_2026/Primera_entrega_avances_sencilla.pptx` y PDF.
+Se añadió `GUION_SENCILLO.md` y se actualizaron las notas del orador y el
+generador. Verificación: seis páginas inspeccionadas, seis imágenes y notas;
+sin nuevos ensayos ni cambios de cumplimiento técnico. Siguiente acción:
+ensayar la exposición y ajustar su duración. Publicación remota pendiente.
