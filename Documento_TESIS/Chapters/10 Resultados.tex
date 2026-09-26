@@ -89,6 +89,49 @@ articulaciones en cada ensayo. Por tanto, el resultado negativo es consistente
 con la interferencia de la corrección residual y no con una ausencia de
 observaciones.
 
+\subsection{Reentrenamiento extendido en MuJoCo}
+
+Para aumentar el presupuesto de aprendizaje se abrió una campaña independiente
+el 25 de septiembre de 2026. Se reentrenaron las candidatas gateo--53 y
+paso--71 durante 200.000 pasos solicitados, que correspondieron a 200.704 pasos
+efectivos por política debido al rollout de 1.024 pasos de PPO. Se mantuvieron
+la geometría medida, 27 observaciones, 12 acciones residuales, el límite de
+$\pm 0{,}08$~rad y el cambio máximo de $0{,}02$~rad por muestra. La
+aleatorización moderada de fricción y amortiguamiento se usó únicamente durante
+el entrenamiento.
+
+La evaluación emparejada de cinco episodios por condición produjo los
+resultados de la tabla~\ref{tab:ppo-extendido}. El avance aumentó en ambas
+marchas, pero también la inclinación máxima: de $0{,}00993$ a $0{,}03505$~rad
+en gateo y de $0{,}01392$ a $0{,}04289$~rad en paso. El aumento de avance no se
+interpreta como mejora aceptada porque debe comprobarse junto con estabilidad,
+contactos, continuidad y más condiciones.
+
+\begin{table}[H]
+\centering
+\caption{Evaluación emparejada del reentrenamiento PPO extendido en MuJoCo.}
+\label{tab:ppo-extendido}
+\small
+\begin{tabular}{llrrr}
+\toprule
+Marcha & Condición & Retorno & Avance (m) & Inclinación máxima (rad) \\
+\midrule
+Gateo & Nominal & 1091,31 & 0,4917 & 0,00993 \\
+Gateo & PPO & 1095,71 & 1,2860 & 0,03505 \\
+Paso & Nominal & 1451,30 & 0,0155 & 0,01392 \\
+Paso & PPO & 1497,67 & 3,5561 & 0,04289 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Se intentó continuar la adaptación de gateo en Gazebo con 50.000 pasos desde
+la nueva política MuJoCo. La sincronización por fase opera aproximadamente en
+tiempo real; la corrida se detuvo en 500 pasos y no produjo una política final.
+La adaptación de paso en Gazebo no se inició. El resultado extendido queda por
+tanto como evidencia adicional de simulación MuJoCo, no autoriza transferencia
+al robot y no modifica la conclusión de que PPO permanece pendiente de
+aceptación.
+
 \begin{figure}[p]
 \centering
 \includegraphics[width=0.95\textwidth]{Resultados/comparacion_reentrenada_ppo.png}

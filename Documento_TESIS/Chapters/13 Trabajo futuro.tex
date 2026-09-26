@@ -31,7 +31,10 @@ ajustarán contacto, fricción y actuación de MuJoCo, que en la primera compara
 mantuvo cuatro apoyos y produjo menor avance. Ningún ajuste se interpretará como
 identificación antes del contraste físico.
 
-Finalmente se rediseñará y reentrenará la política PPO como una capa de
-correcciones acotadas, porque la versión evaluada fue rechazada. La comparación
-final conservará las semillas y tamaños de muestra definidos y evaluará la
-misma marcha con y sin corrección aprendida mediante ensayos emparejados.
+Finalmente se continuará el reentrenamiento de la política PPO como una capa de
+correcciones acotadas. La campaña extendida en MuJoCo aumentó el avance, pero
+también la inclinación y todavía no constituye una mejora aceptada; la
+adaptación extendida en Gazebo y la selección conservadora siguen pendientes.
+La comparación final conservará las semillas y tamaños de muestra definidos y
+evaluará la misma marcha con y sin corrección aprendida mediante ensayos
+emparejados.
