@@ -6,6 +6,48 @@ Un robot cuadrúpedo alterna fases de apoyo y oscilación para desplazar el cuer
 
 Las plataformas cuadrúpedas modernas utilizan doce articulaciones actuadas, normalmente tres por extremidad. Esta configuración permite posicionar cada pie en tres dimensiones y controlar simultáneamente la postura del tronco~\cite{bledt2018cheetah3,hutter2016anymal}.
 
+\section{Teorías y modelos que sustentan el análisis}
+
+El fenómeno estudiado en esta tesis es la locomoción coordinada de un robot
+cuadrúpedo con actuadores de posición y recursos limitados. Para explicarlo y
+analizarlo se emplean cinco fundamentos principales: teoría de locomoción
+cuadrúpeda, modelado cinemático, modelado dinámico y de contacto, control
+discreto de marcha, y aprendizaje por refuerzo.
+
+La teoría de locomoción cuadrúpeda permite describir la marcha como una
+secuencia temporal de apoyos y oscilaciones. A partir de esta teoría se definen
+los modos de paso y gateo, el ciclo de marcha, las fases de contacto y el
+criterio de estabilidad estática basado en la relación entre el centro de masa y
+el polígono de soporte. Este fundamento sustenta la Prueba de Margen de
+Estabilidad Estática y la interpretación de contactos durante la marcha.
+
+El modelo cinemático explica la relación entre las posiciones articulares y la
+posición cartesiana de cada pie. Este modelo permite transformar trayectorias de
+los pies en referencias para las doce articulaciones, verificar si una postura
+es alcanzable y analizar continuidad entre muestras. Por ello, sustenta el
+diseño de las marchas nominales y la Prueba de Seguimiento de Posición
+Articular.
+
+El modelo dinámico y de contacto permite interpretar la interacción entre el
+cuerpo del robot, los actuadores y el suelo. Aunque el proyecto utiliza un
+modelo nominal no identificado físicamente, este fundamento es necesario para
+simular masas, inercias, gravedad, fricción, fuerzas de contacto y perturbaciones
+en Gazebo y MuJoCo. También permite explicar por qué una validación en
+simulación debe contrastarse posteriormente con mediciones físicas.
+
+El control discreto mediante una máquina de estados finitos permite organizar la
+marcha en fases repetibles. Cada estado define qué pata está en oscilación, qué
+patas deben permanecer en apoyo y qué referencia debe enviarse al controlador.
+Este modelo sustenta la generación de patrones de paso y gateo, además de la
+Prueba de Repetibilidad del Patrón de Marcha.
+
+El aprendizaje por refuerzo sustenta la capa correctiva propuesta. En este
+enfoque, una política aprende a seleccionar acciones a partir de observaciones y
+recompensas. En la tesis, estas acciones se delimitan como correcciones pequeñas
+sobre referencias nominales, no como comandos directos de PWM. Este fundamento
+permite analizar la comparación entre marcha nominal y marcha nominal con
+corrección aprendida, manteniendo límites y supervisión de seguridad.
+
 \section{Modelado cinemático}
 
 La cinemática directa relaciona las posiciones articulares con la pose del pie respecto al cuerpo. Para una extremidad con tres grados de libertad puede expresarse de forma general como

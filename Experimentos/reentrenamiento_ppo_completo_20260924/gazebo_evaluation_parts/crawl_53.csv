@@ -1,0 +1,3 @@
+simulator,gait,condition,episodes,return,advance_m,max_tilt_rad,steps,terminated
+gazebo,crawl,nominal,1,106.23055487862148,0.0,0.02122101529707035,105.0,0.0
+gazebo,crawl,ppo,1,100.08936984480775,0.0,0.04416479811986017,95.0,0.0

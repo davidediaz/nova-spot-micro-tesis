@@ -24,72 +24,72 @@
 
       <body name="front_left_coxa_link" pos="0.09 0.06 0">
         <joint name="front_left_coxa_joint" axis="1 0 0" range="-0.60 0.60"/>
-        <inertial pos="0 0.045 0" mass="0.12" diaginertia="0.00009325 0.0000245 0.00009325"/>
-        <geom type="box" pos="0 0.045 0" size="0.0175 0.045 0.0175" material="black" mass="0"/>
-        <body name="front_left_femur_link" pos="0 0.09 0">
+        <inertial pos="0 0.01905 0" mass="0.12" diaginertia="0.00009325 0.0000245 0.00009325"/>
+        <geom type="box" pos="0 0.01905 0" size="0.0175 0.01905 0.0175" material="black" mass="0"/>
+        <body name="front_left_femur_link" pos="0 0.0381 0">
           <joint name="front_left_femur_joint" axis="0 1 0" range="-1.20 1.20"/>
-          <inertial pos="0 0 -0.0525" mass="0.12" diaginertia="0.00011925 0.0001225 0.00002125"/>
-          <geom type="box" pos="0 0 -0.0525" size="0.0175 0.015 0.0525" material="yellow" mass="0"/>
-          <body name="front_left_tibia_link" pos="0 0 -0.105">
+          <inertial pos="0 0 -0.053975" mass="0.12" diaginertia="0.000125 0.000127 0.00002125"/>
+          <geom type="box" pos="0 0 -0.053975" size="0.0175 0.015 0.053975" material="yellow" mass="0"/>
+          <body name="front_left_tibia_link" pos="0 0 -0.10795">
             <joint name="front_left_tibia_joint" axis="0 1 0" range="-2.20 0.10"/>
-            <inertial pos="0 0 -0.080142857" mass="0.14" diaginertia="0.0002720143 0.0002745351 0.0000178672"/>
-            <geom type="box" pos="0 0 -0.066" size="0.015 0.0125 0.066" material="black" mass="0"/>
-            <geom name="front_left_foot" type="sphere" pos="0 0 -0.132" size="0.018" material="grey" mass="0.03"/>
-            <site name="front_left_foot_site" pos="0 0 -0.132" size="0.018"/>
+            <inertial pos="0 0 -0.082344" mass="0.14" diaginertia="0.000296 0.000298 0.0000179"/>
+            <geom type="box" pos="0 0 -0.067945" size="0.015 0.0125 0.067945" material="black" mass="0"/>
+            <geom name="front_left_foot" type="sphere" pos="0 0 -0.13589" size="0.018" material="grey" mass="0.03"/>
+            <site name="front_left_foot_site" pos="0 0 -0.13589" size="0.018"/>
           </body>
         </body>
       </body>
 
       <body name="front_right_coxa_link" pos="0.09 -0.06 0">
         <joint name="front_right_coxa_joint" axis="-1 0 0" range="-0.60 0.60"/>
-        <inertial pos="0 -0.045 0" mass="0.12" diaginertia="0.00009325 0.0000245 0.00009325"/>
-        <geom type="box" pos="0 -0.045 0" size="0.0175 0.045 0.0175" material="black" mass="0"/>
-        <body name="front_right_femur_link" pos="0 -0.09 0">
+        <inertial pos="0 -0.01905 0" mass="0.12" diaginertia="0.00009325 0.0000245 0.00009325"/>
+        <geom type="box" pos="0 -0.01905 0" size="0.0175 0.01905 0.0175" material="black" mass="0"/>
+        <body name="front_right_femur_link" pos="0 -0.0381 0">
           <joint name="front_right_femur_joint" axis="0 1 0" range="-1.20 1.20"/>
-          <inertial pos="0 0 -0.0525" mass="0.12" diaginertia="0.00011925 0.0001225 0.00002125"/>
-          <geom type="box" pos="0 0 -0.0525" size="0.0175 0.015 0.0525" material="yellow" mass="0"/>
-          <body name="front_right_tibia_link" pos="0 0 -0.105">
+          <inertial pos="0 0 -0.053975" mass="0.12" diaginertia="0.000125 0.000127 0.00002125"/>
+          <geom type="box" pos="0 0 -0.053975" size="0.0175 0.015 0.053975" material="yellow" mass="0"/>
+          <body name="front_right_tibia_link" pos="0 0 -0.10795">
             <joint name="front_right_tibia_joint" axis="0 1 0" range="-2.20 0.10"/>
-            <inertial pos="0 0 -0.080142857" mass="0.14" diaginertia="0.0002720143 0.0002745351 0.0000178672"/>
-            <geom type="box" pos="0 0 -0.066" size="0.015 0.0125 0.066" material="black" mass="0"/>
-            <geom name="front_right_foot" type="sphere" pos="0 0 -0.132" size="0.018" material="grey" mass="0.03"/>
-            <site name="front_right_foot_site" pos="0 0 -0.132" size="0.018"/>
+            <inertial pos="0 0 -0.082344" mass="0.14" diaginertia="0.000296 0.000298 0.0000179"/>
+            <geom type="box" pos="0 0 -0.067945" size="0.015 0.0125 0.067945" material="black" mass="0"/>
+            <geom name="front_right_foot" type="sphere" pos="0 0 -0.13589" size="0.018" material="grey" mass="0.03"/>
+            <site name="front_right_foot_site" pos="0 0 -0.13589" size="0.018"/>
           </body>
         </body>
       </body>
 
       <body name="rear_left_coxa_link" pos="-0.09 0.06 0">
         <joint name="rear_left_coxa_joint" axis="1 0 0" range="-0.60 0.60"/>
-        <inertial pos="0 0.045 0" mass="0.12" diaginertia="0.00009325 0.0000245 0.00009325"/>
-        <geom type="box" pos="0 0.045 0" size="0.0175 0.045 0.0175" material="black" mass="0"/>
-        <body name="rear_left_femur_link" pos="0 0.09 0">
+        <inertial pos="0 0.01905 0" mass="0.12" diaginertia="0.00009325 0.0000245 0.00009325"/>
+        <geom type="box" pos="0 0.01905 0" size="0.0175 0.01905 0.0175" material="black" mass="0"/>
+        <body name="rear_left_femur_link" pos="0 0.0381 0">
           <joint name="rear_left_femur_joint" axis="0 1 0" range="-1.20 1.20"/>
-          <inertial pos="0 0 -0.0525" mass="0.12" diaginertia="0.00011925 0.0001225 0.00002125"/>
-          <geom type="box" pos="0 0 -0.0525" size="0.0175 0.015 0.0525" material="yellow" mass="0"/>
-          <body name="rear_left_tibia_link" pos="0 0 -0.105">
+          <inertial pos="0 0 -0.053975" mass="0.12" diaginertia="0.000125 0.000127 0.00002125"/>
+          <geom type="box" pos="0 0 -0.053975" size="0.0175 0.015 0.053975" material="yellow" mass="0"/>
+          <body name="rear_left_tibia_link" pos="0 0 -0.10795">
             <joint name="rear_left_tibia_joint" axis="0 1 0" range="-2.20 0.10"/>
-            <inertial pos="0 0 -0.080142857" mass="0.14" diaginertia="0.0002720143 0.0002745351 0.0000178672"/>
-            <geom type="box" pos="0 0 -0.066" size="0.015 0.0125 0.066" material="black" mass="0"/>
-            <geom name="rear_left_foot" type="sphere" pos="0 0 -0.132" size="0.018" material="grey" mass="0.03"/>
-            <site name="rear_left_foot_site" pos="0 0 -0.132" size="0.018"/>
+            <inertial pos="0 0 -0.082344" mass="0.14" diaginertia="0.000296 0.000298 0.0000179"/>
+            <geom type="box" pos="0 0 -0.067945" size="0.015 0.0125 0.067945" material="black" mass="0"/>
+            <geom name="rear_left_foot" type="sphere" pos="0 0 -0.13589" size="0.018" material="grey" mass="0.03"/>
+            <site name="rear_left_foot_site" pos="0 0 -0.13589" size="0.018"/>
           </body>
         </body>
       </body>
 
       <body name="rear_right_coxa_link" pos="-0.09 -0.06 0">
         <joint name="rear_right_coxa_joint" axis="-1 0 0" range="-0.60 0.60"/>
-        <inertial pos="0 -0.045 0" mass="0.12" diaginertia="0.00009325 0.0000245 0.00009325"/>
-        <geom type="box" pos="0 -0.045 0" size="0.0175 0.045 0.0175" material="black" mass="0"/>
-        <body name="rear_right_femur_link" pos="0 -0.09 0">
+        <inertial pos="0 -0.01905 0" mass="0.12" diaginertia="0.00009325 0.0000245 0.00009325"/>
+        <geom type="box" pos="0 -0.01905 0" size="0.0175 0.01905 0.0175" material="black" mass="0"/>
+        <body name="rear_right_femur_link" pos="0 -0.0381 0">
           <joint name="rear_right_femur_joint" axis="0 1 0" range="-1.20 1.20"/>
-          <inertial pos="0 0 -0.0525" mass="0.12" diaginertia="0.00011925 0.0001225 0.00002125"/>
-          <geom type="box" pos="0 0 -0.0525" size="0.0175 0.015 0.0525" material="yellow" mass="0"/>
-          <body name="rear_right_tibia_link" pos="0 0 -0.105">
+          <inertial pos="0 0 -0.053975" mass="0.12" diaginertia="0.000125 0.000127 0.00002125"/>
+          <geom type="box" pos="0 0 -0.053975" size="0.0175 0.015 0.053975" material="yellow" mass="0"/>
+          <body name="rear_right_tibia_link" pos="0 0 -0.10795">
             <joint name="rear_right_tibia_joint" axis="0 1 0" range="-2.20 0.10"/>
-            <inertial pos="0 0 -0.080142857" mass="0.14" diaginertia="0.0002720143 0.0002745351 0.0000178672"/>
-            <geom type="box" pos="0 0 -0.066" size="0.015 0.0125 0.066" material="black" mass="0"/>
-            <geom name="rear_right_foot" type="sphere" pos="0 0 -0.132" size="0.018" material="grey" mass="0.03"/>
-            <site name="rear_right_foot_site" pos="0 0 -0.132" size="0.018"/>
+            <inertial pos="0 0 -0.082344" mass="0.14" diaginertia="0.000296 0.000298 0.0000179"/>
+            <geom type="box" pos="0 0 -0.067945" size="0.015 0.0125 0.067945" material="black" mass="0"/>
+            <geom name="rear_right_foot" type="sphere" pos="0 0 -0.13589" size="0.018" material="grey" mass="0.03"/>
+            <site name="rear_right_foot_site" pos="0 0 -0.13589" size="0.018"/>
           </body>
         </body>
       </body>

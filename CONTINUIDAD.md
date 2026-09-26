@@ -1,6 +1,6 @@
 # Continuidad histórica de la tesis Nova Spot Micro
 
-Última actualización: 2 de septiembre de 2026, America/Bogota.
+Última actualización: 25 de septiembre de 2026, America/Bogota.
 
 
 ## Objetivos vigentes — corrección del usuario del 7 de septiembre de 2026
@@ -92,6 +92,53 @@ Corrección editorial posterior: el diagrama de arquitectura redujo el grosor
 de las flechas, eliminó la etiqueta superpuesta `referencias`, amplió los nodos
 y fijó saltos de línea para que ningún texto excediera los cuadros. El PDF se
 recompiló y la página corregida fue inspeccionada visualmente.
+
+Actualización documental del 15 de septiembre de 2026: se retomó la línea de
+tesis leyendo este archivo y `Seguimiento/Seguimiento.md`. Se amplió
+`Documento_TESIS/Chapters/1 Introducción.tex` para explicar con claridad la
+comparación entre marcha nominal y marcha nominal con corrección aprendida,
+acotada y supervisada. La introducción quedó alineada con los cuatro objetivos
+vigentes y con las tres pruebas de OE4: margen de estabilidad estática,
+seguimiento articular y repetibilidad. También se dejó explícito que las
+campañas PPO disponibles constituyen evidencia negativa y no habilitan la
+transferencia al prototipo físico. La tesis recompiló correctamente y
+`Documento_TESIS/Documento_TESIS_PRELIMINAR.pdf` quedó en 78 páginas.
+Siguiente acción: integrar resultados comprobados y depurar el alcance del
+modelo dinámico sin declararlo gemelo digital.
+
+### Reentrenamiento PPO extendido de gateo y paso — 25 de septiembre de 2026
+
+Se creó la campaña independiente
+`Experimentos/reentrenamiento_ppo_extendido_20260925` para no sobrescribir las
+campañas del 24 de septiembre. Se reinstaló el entorno aislado de entrenamiento
+con Gymnasium 0.29.1, Stable-Baselines3 2.3.2, PyTorch CPU 2.3.1 y MuJoCo 3.9.0.
+
+Se reentrenaron las dos marchas en MuJoCo con la geometría medida, el contrato
+de 27 observaciones y 12 acciones residuales, límite de `±0,08 rad`, cambio
+máximo de `0,02 rad` por paso y `hardware_transfer=false`:
+
+- gateo (`crawl`, semilla 53): 200.704 pasos efectivos;
+- paso (`step`, semilla 71): 200.704 pasos efectivos.
+
+La evaluación emparejada de cinco episodios por condición mostró más avance con
+PPO, pero también mayor inclinación. Gateo pasó de `0,4917 m` nominales a
+`1,2860 m` con PPO y de `0,00993` a `0,03505 rad` de inclinación máxima; paso
+pasó de `0,0155 m` a `3,5561 m` y de `0,01392` a `0,04289 rad`. Estos resultados
+son evidencia de simulación y no aceptación: la recompensa y la inclinación
+deben analizarse con más condiciones antes de seleccionar una política.
+
+Se intentó continuar la adaptación en Gazebo con 50.000 pasos por marcha,
+inicializando desde estas políticas MuJoCo. La primera corrida de gateo se
+detuvo en 500 pasos porque Gazebo opera aproximadamente en tiempo real y el
+presupuesto completo requería varias horas; no dejó una política final y no se
+usa para conclusiones. No se inició la corrida de paso en Gazebo. El intento,
+su traza parcial y la razón de detención quedan conservados en la carpeta de la
+campaña. Siguiente acción: ejecutar la adaptación Gazebo en una sesión dedicada
+o definir con los directores un entorno acelerado que conserve la dinámica.
+
+Ninguna política se transfirió a la Raspberry Pi, se envió a PWM o se conectó a
+servos. El hardware continúa bloqueado hasta cerrar calibración, alimentación,
+supervisión y pruebas físicas controladas.
 
 ### Reinstalación de la memoria Raspberry Pi — 19 de agosto de 2026
 
@@ -1766,6 +1813,327 @@ pies, salud eléctrica, comandos/fase, sincronización temporal y un contrato de
 datos común entre simulación y hardware. El cierre exige registrar esas señales
 sincronizadas durante una postura y una marcha manual antes de entrenar o
 transferir una política.
+
+### Reconexión a la Raspberry para pruebas físicas — 15 de septiembre de 2026
+
+La IP histórica `192.168.0.101` no pertenece a la red actual del computador,
+que está en `10.217.224.0/24`. Se localizó la Raspberry Pi 4 como
+`cuadrupedo-pi` en `10.217.224.198` y se accedió por `ssh pavilion@10.217.224.198`.
+La placa reportó Ubuntu 22.04.5 LTS ARM64, workspace
+`/home/pavilion/nova-spot-micro-tesis` en el commit `3900edd`, PCA9685 detectado
+en `0x40` y llamada general `0x70`, sin nodos ROS ni procesos de control activos.
+
+La configuración remota conserva `hardware_ready: false`; las doce
+articulaciones están sin calibrar, no hay dispositivos `/dev/ttyACM*` o
+`/dev/ttyUSB*` y `pigpiod` está inactivo. Esta conexión solo verificó estado y
+no ejecutó PWM, controladores ni movimiento. La siguiente acción física sigue
+siendo cerrar F0--F1 y documentar mediciones antes de energizar un servo.
+
+### Pruebas físicas iniciales de las doce articulaciones — 15 de septiembre de 2026
+
+Durante la revisión del workspace remoto se encontró y leyó
+`Raspberry/AVANCES_PRUEBA_COXAS_2026-09-15.md`. El registro informa pruebas
+manuales con el robot elevado y alimentación externa del PCA9685: coxas en
+`CH0--CH3`, fémures en `CH4--CH7` y tibias en `CH8--CH11`, con recorridos
+reducidos y retorno al centro. Las doce articulaciones respondieron.
+
+Se confirmó inversión de sentido en las tres articulaciones de la pata
+delantera derecha: `CH0`, `CH4` y `CH8`, correspondientes a
+`front_right_coxa_joint`, `front_right_femur_joint` y `front_right_tibia_joint`.
+El informe no contiene calibración de centro, límites, velocidad, corriente o
+torque; por tanto, demuestra respuesta manual y correspondencia preliminar de
+canales, pero no autoriza postura, marcha ROS 2 ni transferencia al suelo.
+
+La evidencia se incorporó localmente como
+`Raspberry/AVANCES_PRUEBA_COXAS_2026-09-15.md`. En la Raspberry se observaron
+además commits de trabajo recientes en el reflog, pero su referencia `main`
+apunta a un objeto Git corrupto; queda pendiente reparar o resincronizar ese
+workspace sin perder los cambios físicos registrados.
+
+### Esquema visual de conexiones físicas — 15 de septiembre de 2026
+
+Se incorporó la imagen entregada como
+`Raspberry/documentacion/ESQUEMA_CONEXIONES_FISICAS_2026-09-15.jpeg` en el
+repositorio local y como `Raspberry/ESQUEMA_CONEXIONES_FISICAS_2026-09-15.jpeg`
+en la Raspberry. El SHA-256 de la imagen original y de ambas copias es
+`d95ac074483b94d3ea6d44efa418563393787610b46c6a0e9ff226fceeb60f36`.
+
+La imagen confirma la numeración desde la vista frontal: Pata 1 delantera
+derecha, Pata 2 delantera izquierda, Pata 3 trasera derecha y Pata 4 trasera
+izquierda. También confirma el mapa físico `CH0--CH3` para coxas, `CH4--CH7`
+para fémures y `CH8--CH11` para tibias. Se corrigió la tabla local de
+`Raspberry/CONEXIONES.md`, que conservaba un orden histórico incompatible con
+la configuración remota y las pruebas del 15 de septiembre.
+
+### Configuración remota alineada con la identificación física — 15 de septiembre de 2026
+
+Se sincronizó en `/home/pavilion/nova-spot-micro-tesis/Raspberry/configuracion/servos.yaml`
+el mapa confirmado por la imagen y las pruebas: `CH0--CH3` coxas, `CH4--CH7`
+fémures y `CH8--CH11` tibias. La inversión observada en la pata delantera
+derecha quedó en `CH0`, `CH4` y `CH8` (`direction: -1`). Todos los servos
+conservan `calibrated: false`, `hardware_ready: false` y límites provisionales;
+no se habilitó PWM ni se inició una caminata. La sincronización fue verificada
+por hash y se confirmó que no había procesos ROS/control activos.
+
+### Intento controlado de prueba en CH0 y pérdida de I²C — 15 de septiembre de 2026
+
+Con autorización explícita se intentó una prueba limitada únicamente en `CH0`,
+usando `OE` físico en GPIO 17, `FULL_OFF` para los demás canales, recorrido
+1450--1550 us y retorno al centro. El controlador falló durante la primera
+escritura de apagado global con `OSError: [Errno 121] Remote I/O error`; no
+llegó a armar PWM ni a mover el servo.
+
+La comprobación posterior mostró que `i2cdetect -y 1` ya no detecta `0x40` ni
+`0x70` y `i2cget` también falla. No hay procesos ROS/control activos. La prueba
+queda detenida hasta revisar físicamente VCC, GND, SDA, SCL, alimentación del
+PCA9685 y continuidad del bus; no se debe reintentar PWM mientras la dirección
+`0x40` no reaparezca de forma estable.
+
+### Prueba limitada de CH0 ejecutada tras recuperar I²C — 15 de septiembre de 2026
+
+Después de la reconexión física, `i2cdetect -y 1` volvió a mostrar `0x40` y
+`0x70`, y el registro `0x00` del PCA9685 respondió `0x11`. Se ejecutó la prueba
+autorizada únicamente en `CH0`, con `OE` en GPIO 17, canales `CH1--CH15` en
+`FULL_OFF` y secuencia `1500 -> 1550 -> 1450 -> 1500 us`. El comando terminó
+con código 0, retornó el canal al centro y deshabilitó el PWM de todos los
+canales. Esta evidencia confirma comunicación y ejecución del comando; la
+respuesta mecánica observada por el operador debe registrarse por separado.
+
+La observación presencial posterior informó que `CH0` no produjo movimiento.
+Se mantiene bloqueado cualquier aumento de recorrido o prueba multicanal hasta
+medir la alimentación `V+` del servo, comprobar `OE` durante la habilitación,
+revisar señal/tierra del conector y confirmar que el servo conectado corresponde
+al canal probado.
+
+Se repitió la prueba aislada de `CH0` sin control software de `OE`, manteniendo
+`CH1--CH15` apagados y el recorrido `1500 -> 1550 -> 1450 -> 1500 us`; terminó
+con código 0, pero tampoco hubo movimiento. La comunicación I²C y las
+escrituras al PCA9685 no bastan para demostrar PWM físico en el pin de salida.
+La siguiente acción debe ser medir la señal PWM de `CH0` con instrumento o
+intercambiar el servo por uno conocido, sin ejecutar una caminata ni aumentar
+el recorrido.
+
+La prueba se repitió con el mismo rango del script de Thonny de la Raspberry,
+`1350 -> 1650 -> 1350 -> 1500 us`, usando pasos de 5 us y solo `CH0` activo.
+El operador confirmó movimiento y el proceso terminó con código 0, centrando
+el servo y apagando todos los canales. Se concluye que el recorrido anterior
+de +/-50 us era insuficiente para provocar una respuesta mecánica observable.
+El centro, los límites y la velocidad de `CH0` siguen sin calibración formal.
+
+### Movimiento de la Pata 1 — 15 de septiembre de 2026
+
+Se ejecutó una prueba física limitada de la Pata 1 usando `CH0` (coxa), `CH4`
+(fémur) y `CH8` (tibia), con recorrido `1350--1650 us`, retorno al centro y
+los demás canales apagados. El operador observó que la pata se movió hacia
+arriba. El resultado demuestra respuesta mecánica conjunta de esa pata en el
+mapa confirmado, pero no constituye calibración angular ni una marcha; esas
+medidas requieren la realimentación prevista con AS5600 y TCA9548A.
+
+### Programa de posición de referencia visual — 15 de septiembre de 2026
+
+Se creó `Raspberry/codigo/posicionar_pata_referencia.py`. Permite seleccionar
+una pata, precarga sus tres canales en `1500 us`, apaga los demás, solicita
+confirmación textual, mantiene la referencia durante ocho segundos y deshabilita
+el PWM al salir. La posición es provisional para tomar fotografías y revisar el
+montaje; no representa el cero calibrado ni una postura de marcha. La
+calibración final se realizará con AS5600 y TCA9548A.
+
+### Visor 3D local para postura inicial — 15 de septiembre de 2026
+
+Se creó `Experimentos/visor_pose_inicial_3d.py` para revisar desde el PC la
+postura inicial sin conectarse a ROS, SSH ni PWM. El visor usa la cinemática
+nominal existente, muestra las cuatro patas, permite ajustar coxa, fémur y
+tibia de la pata seleccionada, reiniciar la postura nominal y guardar una
+captura PNG para contrastarla con el montaje físico. La prueba gráfica en
+backend no interactivo terminó correctamente; los ángulos mostrados son
+referencias del modelo, no medidas de AS5600.
+
+El visor se amplió con botones `Pata 1`--`Pata 4` para cambiar de articulación
+seleccionada sin cerrar la ventana. Cada pata conserva sus valores de coxa,
+fémur y tibia, y la pata activa se resalta en la escena. La función fue
+verificada generando una figura con la postura ampliada de Pata 1.
+
+Se envió desde el PC a la Raspberry la referencia provisional ajustada en el
+visor 3D para la Pata 1: `(q_coxa, q_femur, q_tibia) = (0.02, 0.03, -0.03)` rad,
+convertida de forma abierta a `CH0=1494 us`, `CH4=1490 us` y `CH8=1509 us`.
+Los demás canales permanecieron apagados, la referencia se mantuvo durante
+tres segundos y el PWM se deshabilitó al finalizar. La comparación con la
+postura física queda pendiente de la fotografía del operador; estos pulsos no
+son calibración definitiva.
+
+La Pata 1 fue colocada manualmente por el operador para hacer coincidir el
+prototipo con el visor 3D. La captura `Experimentos/pose_inicial_3d.png` quedó
+como referencia visual con valores aproximados `q_coxa=0.03 rad`,
+`q_femur=0.02 rad` y `q_tibia=-0.01 rad`. Estos valores describen la postura
+observada en el modelo, no una medición de los servos; no se enviaron como PWM
+ni se marcaron como calibración. La conversión confiable quedará pendiente de
+AS5600 y TCA9548A.
+
+Para la Pata 2, el operador ajustó manualmente la postura y observó que la
+coxa quedó más metida. La referencia visual guardada muestra aproximadamente
+`q_coxa=-0.60 rad`, `q_femur=-0.10 rad` y `q_tibia=-0.01 rad`; la coxa llegó al
+límite inferior provisional del visor. Este registro describe una observación
+del montaje, no una calibración de servo ni una autorización para ampliar los
+límites físicos sin sensores.
+
+Se amplió el rango visual de coxa en `Experimentos/visor_pose_inicial_3d.py`
+hasta `-1.00 rad` para representar la postura de la Pata 2, que alcanzaba el
+límite provisional de `-0.60 rad`. La prueba gráfica con `q_coxa=-0.90 rad`
+terminó correctamente. La ampliación es solo exploratoria y no modifica los
+límites físicos, el URDF ni la configuración PWM.
+
+En una segunda referencia visual, el operador ajustó manualmente la Pata 1 a
+`q_coxa=-0.47 rad`, `q_femur=-1.20 rad` y `q_tibia=-2.20 rad`. El visor 3D se
+amplió hasta `q_tibia=-3.00 rad` solo para exploración visual; no se modificó el
+límite físico/modelado ni se enviaron esos valores como PWM.
+
+### Corrección de longitud física de la coxa — 15 de septiembre de 2026
+
+El operador reportó, con evidencia visual del montaje, que el segmento entre
+la coxa y el fémur es demasiado largo y midió `1.5 in`, equivalente a
+`0.0381 m`. Se actualizó `COXA_LENGTH` en la cinemática, `coxa_length` en el
+URDF y la geometría equivalente de los cuatro eslabones de coxa en el MJCF.
+Las posiciones de las caderas respecto al cuerpo (`±0.09 m` longitudinal y
+`±0.06 m` lateral) se conservaron porque no representan la longitud del
+segmento de coxa.
+
+El visor 3D usa `COXA_LENGTH`, por lo que la modificación se refleja también
+en sus referencias geométricas. La medida queda como ajuste físico inicial,
+pendiente de confirmación en las cuatro patas y de validación con AS5600; no
+se modificaron límites PWM ni se ejecutó ningún movimiento en la Raspberry.
+
+El visor 3D quedó confirmado como consumidor directo de las constantes nuevas
+y ahora muestra en la ventana la escala medida directamente en pulgadas: coxa
+`1.50 in`, fémur `4.25 in` y tibia `5.35 in`.
+
+La medición complementaria del operador estableció inicialmente `4.5 in`
+(`0.1143 m`) para
+el fémur y, inicialmente, `5.5 in` (`0.1397 m`) para el tramo tibia-piso. Se actualizaron
+también `FEMUR_LENGTH` y `TIBIA_LENGTH` en la cinemática y sus equivalentes en
+URDF/MJCF. Estas longitudes son referencias geométricas medidas, no límites de
+ángulo ni parámetros de calibración de servos.
+
+Corrección posterior: la medida del tramo coxa-fémur quedó establecida en
+`4.25 in` (`0.10795 m`). Se corrigió `FEMUR_LENGTH` y la geometría dependiente
+en el visor, URDF y MJCF; posteriormente la tibia se corrigió a `5.35 in`
+(`0.13589 m`).
+
+Corrección posterior: el tramo tibia-piso mide `5.35 in` (`0.13589 m`). Se
+actualizó `TIBIA_LENGTH` y la geometría correspondiente en el visor, URDF y
+MJCF.
+
+### Confirmación de prueba de las cuatro coxas y lección operativa — 15 de septiembre de 2026
+
+El operador confirmó que las cuatro coxas respondieron correctamente en la
+Raspberry. La falla observada desde esta sesión no correspondía a los servos:
+se intentó preparar un segundo control mientras Thonny mantenía abierto
+`prueba_coxas_thonny.py`, y además el nombre `cuadrupedo-pi` resolvió a una IP
+no operativa (`10.58.164.198`) mientras la IP accesible era `10.217.224.198`.
+
+Regla para las siguientes pruebas: verificar primero procesos activos, usar la
+IP SSH accesible, trabajar con un único controlador del PCA9685, confirmar
+`0x40` en I²C y ejecutar una sola secuencia acotada. No se debe iniciar un
+segundo script de servos ni atribuir una falta de movimiento al hardware sin
+separar estos factores. La prueba de coxas queda documentada como exitosa;
+queda pendiente repetir Pata 1 con su postura angular inicial bajo este
+procedimiento único.
+
+Se ejecutó posteriormente la prueba controlada de la Pata 1 con `CH0` (coxa),
+`CH4` (fémur) y `CH8` (tibia), usando la referencia indicada por el operador
+`q=(0.04, 0.0, 0.0) rad`. Cada canal se recorrió individualmente entre
+`1350` y `1650 us`, con los demás canales apagados; la secuencia terminó con
+código 0, retorno al centro y PWM deshabilitado. La respuesta mecánica y el
+sentido observado por el operador quedan pendientes de registrar por canal.
+
+### Cierre de sesión de pruebas físicas — 15 de septiembre de 2026
+
+El operador indicó que cerraría la sesión. Estado guardado: Raspberry
+accesible en `10.217.224.198`, PCA9685 detectado en `0x40`, Thonny detenido y
+prueba de Pata 1 finalizada sin error. Se probaron individualmente `CH0`, `CH4`
+y `CH8` con recorrido `1350--1650 us`; los tres canales regresaron al centro y
+el controlador apagó el PWM. Falta registrar la observación física del sentido
+y reacción de coxa, fémur y tibia. La próxima sesión debe comenzar revisando
+ese registro antes de enviar otra orden.
+
+### Entrenamiento PPO en MuJoCo y Gazebo con geometría medida — 24 de septiembre de 2026
+
+Se centralizaron las dimensiones geométricas usadas por la cinemática, el visor
+3D y los entrenadores: separación de caderas `0,180 x 0,120 m`, cuerpo
+`0,230 x 0,120 x 0,075 m`, coxa `0,0381 m` (1,50 in), fémur `0,10795 m`
+(4,25 in) y tibia `0,13589 m` (5,35 in). También se corrigió el comentario del
+URDF que todavía describía el fémur como `0,1143 m`; no se modificaron límites
+PWM ni calibraciones físicas.
+
+Se creó `Experimentos/entrenar_ppo_mujoco.py`, un entorno Gymnasium que carga
+`src/nova_sm3_description/mujoco/nova_sm3.xml`, genera el gateo nominal con la
+misma cinemática y entrena PPO residual con 27 observaciones y 12 acciones
+articulares acotadas. La semilla 11 completó 20.480 pasos efectivos de PPO
+(20.000 solicitados, redondeados al rollout de 1.024) en
+`Experimentos/entrenamiento_ppo_mujoco_20260924/crawl_semilla_11`.
+
+Se creó `Experimentos/entrenar_ppo_gazebo.py` y se amplió
+`ppo_residual_node` para recibir acciones externas en `/nova/rl_action`. La
+semilla 11 completó 1.024 pasos de interacción real con Gazebo, esperando cada
+fase publicada por `/nova/gait_phase`, en
+`Experimentos/entrenamiento_ppo_gazebo_20260924/crawl_semilla_11`.
+La política de Gazebo quedó guardada en formato Stable-Baselines3 y la de
+MuJoCo en el mismo formato; ambas son políticas de simulación independientes.
+
+Validación de preparación: `check_env` de MuJoCo pasó, la suite ROS 2 terminó
+con 99 pruebas aprobadas y ambos paquetes compilaron. La evaluación exploratoria
+de cinco episodios en MuJoCo dio, para nominal frente a PPO, avance medio
+`0,469464` frente a `0,573312 m` y máxima inclinación media `0,00976` frente a
+`0,01549 rad`; esto no constituye criterio de aceptación porque la política
+aumentó la inclinación y todavía requiere evaluación emparejada. El
+entrenamiento Gazebo terminó sin error ni procesos remanentes, pero aún falta
+su evaluación separada y una campaña de cinco semillas.
+
+Las dependencias de entrenamiento se instalaron de forma aislada en
+`/tmp/nova_rl_deps` con versiones CPU de PyTorch, Gymnasium, Stable-Baselines3
+y MuJoCo. No se ejecutó ningún nodo de hardware, PWM, SSH ni conexión con la
+Raspberry. La próxima acción es evaluar ambas políticas contra sus nominales en
+los dos simuladores, repetir con las semillas aprobadas y conservar solo las
+políticas que mejoren la métrica primaria sin degradar seguridad o postura.
+
+### Campaña PPO completa de gateo y paso — 24 de septiembre de 2026
+
+Se añadió `Experimentos/campana_ppo_completa.py` para ejecutar de forma
+reproducible las dos caminatas con las semillas `11, 23, 37, 53, 71`, guardar
+metadatos y evaluar MuJoCo contra la marcha nominal. La campaña final quedó en
+`Experimentos/reentrenamiento_ppo_completo_20260924/`: 10 políticas MuJoCo de
+50.176 pasos efectivos cada una y 10 políticas Gazebo de 1.024 pasos efectivos
+cada una.
+
+La evaluación MuJoCo de cinco episodios por condición produjo estos promedios:
+gateo nominal/PPO `0,4917/0,4598 m` de avance y `0,00993/0,02390 rad` de
+inclinación máxima; paso nominal/PPO `0,0155/0,1534 m` y
+`0,01392/0,02406 rad`. Se conservan como candidatas offline gateo semilla 53
+y paso semilla 71, pero ninguna se acepta para hardware.
+
+Durante la primera corrida de Gazebo se detectó que la acción externa era
+limitada pero no se sumaba a la trayectoria nominal. Se corrigió
+`ppo_residual_node.py`, se detuvo esa corrida y se regeneraron las 10 políticas
+de Gazebo; la primera tanda invalidada no se usa. El informe completo está en
+`Experimentos/reentrenamiento_ppo_completo_20260924/INFORME.md`. Gazebo queda
+como campaña de interacción/robustez, no como convergencia final, porque
+1.024 pasos no bastan para aceptar PPO.
+
+La suite continúa en `99 passed`, el paquete ROS recompila y no quedaron
+procesos de simulación ni conexiones a la Raspberry. Antes de usar PPO en
+hardware aún faltan calibración, alimentación, seguridad y una campaña Gazebo
+con mayor presupuesto.
+
+El registro cronológico consolidado de toda la auditoría, corrección,
+campañas, reentrenamiento largo, validaciones y rutas de parámetros está en
+`Experimentos/reentrenamiento_ppo_largo_20260924/PROCESO_COMPLETO.md`.
+
+La evaluación Gazebo quedó además en `gazebo_evaluation.csv`, con una prueba
+nominal y una PPO por cada una de las 10 políticas. Los promedios nominal/PPO
+fueron: gateo retorno `108,54/94,93`, avance `-0,0164/-0,0942 m` e inclinación
+`0,03881/0,04459 rad`; paso retorno `139,28/110,49`, avance
+`-0,0662/-0,0638 m` e inclinación `0,01440/0,01316 rad`. Con una sola prueba
+por política y solo 1.024 pasos de entrenamiento, Gazebo queda como diagnóstico
+y no como política aceptada.
 ### Revisión de Raspberry, PCA9685 e instrumentación — 7 de septiembre de 2026
 
 Se actualizó la sección 8 de `Seguimiento/Seguimiento.md` con la evidencia
@@ -1777,3 +2145,28 @@ instrumento. AS5600/TCA9548A, BNO055, contactos físicos e INA228 permanecen sin
 prototipo conectado; la arquitectura de realimentación es conceptual. La
 sobrecarga mantiene bloqueadas las posturas y marchas hasta cerrar alimentación,
 OE, calibración y vigilancia de comunicaciones.
+
+### Adaptación larga de las candidatas PPO en Gazebo — 24 de septiembre de 2026
+
+A petición del operador se continuó el entrenamiento desde las políticas
+MuJoCo seleccionadas: gateo semilla 53 y paso semilla 71. Ambas completaron
+20.480 pasos efectivos en Gazebo, con checkpoints cada 2.048 pasos, y se
+guardaron en `Experimentos/reentrenamiento_ppo_largo_20260924/gazebo/`.
+
+La validación de tres episodios por condición dio gateo nominal/PPO largo
+`0,1143/0,1276 m` de avance y `0,06659/0,06421 rad` de inclinación máxima;
+paso nominal/PPO largo `0,0933/0,0312 m` y `0,04462/0,04639 rad`. El gateo
+queda como candidato offline; paso no se acepta aún porque pierde avance. Los
+archivos `policy.zip`, `metadata.json` y las trazas contienen los parámetros
+finales. No se transfirió ninguna política al hardware.
+
+### Actualización del estado guardado — 24 de septiembre de 2026
+
+Se verificó que el proceso completo permanece guardado en
+`Experimentos/reentrenamiento_ppo_largo_20260924/PROCESO_COMPLETO.md`, junto
+con las políticas finales, metadatos, checkpoints, trazas y evaluaciones. El
+repositorio conserva cambios locales documentados de simulación, geometría,
+control PPO, documentación y pruebas físicas; no se descartó ningún cambio
+previo. El estado experimental no cambia: gateo semilla 53 es el único
+candidato offline favorable, paso semilla 71 requiere otra iteración, y las
+políticas siguen bloqueadas para uso en hardware.

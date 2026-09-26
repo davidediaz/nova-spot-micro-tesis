@@ -1,24 +1,146 @@
 \chapter{Estado del arte}
 
-La investigación sobre locomoción cuadrúpeda combina modelado, simulación y validación experimental. Plataformas como MIT Cheetah~3 y ANYmal han servido para evaluar arquitecturas de control capaces de coordinar múltiples articulaciones y mantener la estabilidad durante desplazamientos dinámicos~\cite{bledt2018cheetah3,hutter2016anymal}. Estos trabajos evidencian la importancia de validar el controlador tanto en condiciones nominales como ante perturbaciones.
+La investigación sobre locomoción cuadrúpeda combina modelado, simulación,
+control y validación experimental. Plataformas como MIT Cheetah~3 y ANYmal han
+servido para evaluar arquitecturas capaces de coordinar múltiples articulaciones
+y conservar la estabilidad durante desplazamientos dinámicos
+~\cite{bledt2018cheetah3,hutter2016anymal}. Estos trabajos muestran que una
+marcha no se valida solamente porque el robot avance, sino porque mantiene
+continuidad, responde ante perturbaciones y conserva señales medibles de
+estabilidad.
 
-Una línea de trabajo utiliza optimización para generar movimientos de cuerpo completo. Bellicoso \textit{et al.} formulan la locomoción como un problema de optimización no lineal en línea, mientras que Neunert \textit{et al.} incorporan la dinámica y los contactos en un esquema de control predictivo no lineal~\cite{bellicoso2018dynamic,neunert2018wholebody}. En ambos casos, las restricciones físicas del robot forman parte explícita del problema de control.
+\section{Control dinámico y optimización}
 
-Otra aproximación emplea modelos simplificados para reducir el costo computacional. El controlador predictivo convexo desarrollado para MIT Cheetah~3 calcula fuerzas de reacción y referencias de movimiento en tiempo real, permitiendo ejecutar locomoción dinámica y responder a perturbaciones externas~\cite{dicarlo2018mpc}. Para un prototipo educativo, esta línea ofrece criterios útiles para separar la generación nominal de marcha de la capa de estabilización.
+Una línea de trabajo utiliza optimización para generar movimientos de cuerpo
+completo. Bellicoso \textit{et al.} formulan la locomoción como un problema de
+optimización no lineal en línea, mientras que Neunert \textit{et al.} incorporan
+la dinámica y los contactos en un esquema de control predictivo no lineal
+~\cite{bellicoso2018dynamic,neunert2018wholebody}. En ambos casos, las
+restricciones físicas del robot forman parte explícita del problema de control:
+límites articulares, contactos, fuerzas admisibles, orientación del cuerpo y
+capacidad de actuación. Por tanto, la literatura no separa el algoritmo de la
+plataforma física; el desempeño depende de la instrumentación disponible y de la
+calidad del modelo.
 
-La planificación tradicional de marcha continúa siendo relevante, especialmente cuando se busca una implementación interpretable y segura. Los modelos cinemáticos y dinámicos permiten definir secuencias de apoyo, verificar el espacio alcanzable y conservar condiciones de estabilidad durante marchas lentas~\cite{zamani2011dynamics}. Una máquina de estados finitos puede utilizar estas secuencias como referencia nominal antes de incorporar estrategias adaptativas.
+Otra aproximación emplea modelos simplificados para reducir el costo
+computacional. El controlador predictivo convexo desarrollado para MIT
+Cheetah~3 calcula fuerzas de reacción y referencias de movimiento en tiempo
+real, permitiendo ejecutar locomoción dinámica y responder a perturbaciones
+externas~\cite{dicarlo2018mpc}. Esta línea es relevante para el presente
+proyecto porque sugiere una separación útil: una referencia nominal de marcha
+puede generar el movimiento principal, mientras una capa adicional puede
+corregir o estabilizar el comportamiento. Sin embargo, dicha estrategia debe
+adaptarse cuando el robot no dispone de actuadores de par, sensores integrados
+de alta frecuencia ni cómputo embarcado comparable con las plataformas de
+referencia.
 
-El aprendizaje por refuerzo constituye una línea complementaria. Se ha observado que políticas entrenadas con objetivos relacionados con locomoción y consumo energético pueden producir comportamientos coordinados y diferentes patrones de marcha~\cite{heess2017emergence,fu2021energy}. Sin embargo, la transferencia al robot físico exige controlar el dominio de entrenamiento, las acciones permitidas y los mecanismos de seguridad.
+\section{Marchas nominales e interpretabilidad}
 
-La simulación dinámica permite repetir experimentos y modificar parámetros sin exponer el hardware. MuJoCo fue diseñado para simulación física y control basado en modelos, y se utiliza como soporte para desarrollar y evaluar estrategias antes de transferirlas al robot~\cite{todorov2012mujoco,tassa2018controlsuite}. En esta tesis se combinará la simulación con ROS~2 para conservar una arquitectura modular de comunicación y ejecución.
+La planificación tradicional de marcha continúa siendo relevante,
+especialmente cuando se busca una implementación interpretable y segura. Los
+modelos cinemáticos y dinámicos permiten definir secuencias de apoyo, verificar
+el espacio alcanzable y conservar condiciones de estabilidad durante marchas
+lentas~\cite{zamani2011dynamics}. Una máquina de estados finitos puede utilizar
+estas secuencias como referencia nominal antes de incorporar estrategias
+adaptativas.
+
+En robots educativos o de bajo costo, esta aproximación tiene una ventaja
+práctica: cada fase de la marcha puede asociarse con una pata en oscilación, un
+conjunto esperado de apoyos y límites articulares verificables. Esto facilita la
+trazabilidad experimental, permite detener el movimiento ante referencias
+inválidas y ofrece una línea base reproducible para comparar estrategias
+posteriores. Por esa razón, una marcha discreta de paso o gateo no se considera
+un retroceso frente a métodos modernos, sino una base controlada sobre la cual
+pueden evaluarse mejoras aprendidas.
+
+\section{Aprendizaje por refuerzo en locomoción}
+
+El aprendizaje por refuerzo constituye una línea complementaria. Se ha
+observado que políticas entrenadas con objetivos relacionados con locomoción y
+consumo energético pueden producir comportamientos coordinados y diferentes
+patrones de marcha~\cite{heess2017emergence,fu2021energy}. No obstante, la
+transferencia al robot físico exige controlar el dominio de entrenamiento, las
+acciones permitidas, los retardos, la saturación de actuadores y los mecanismos
+de seguridad.
+
+Para esta tesis, la revisión no conduce a comandar directamente señales PWM ni
+a sustituir por completo la marcha nominal. La alternativa adoptada es una capa
+correctiva: el agente de aprendizaje modifica referencias nominales dentro de
+límites acotados, mientras un supervisor independiente conserva autoridad para
+detener o llevar el robot a una postura segura. Esta decisión reduce el riesgo
+de acciones no interpretables, mantiene una trayectoria base verificable y
+permite comparar la marcha convencional frente a la marcha con corrección
+aprendida usando las mismas métricas.
+
+\section{Simulación, transferencia y señales de realimentación}
+
+La simulación dinámica permite repetir experimentos y modificar parámetros sin
+exponer el hardware. MuJoCo fue diseñado para simulación física y control
+basado en modelos, y se utiliza como soporte para desarrollar y evaluar
+estrategias antes de transferirlas al robot~\cite{todorov2012mujoco,tassa2018controlsuite}.
+En esta tesis se combina la simulación con ROS~2 para conservar una
+arquitectura modular de comunicación y ejecución.
+
+La simulación, sin embargo, no elimina la necesidad de mediciones físicas. Una
+política entrenada únicamente con señales ideales del simulador puede depender
+de información que no existe en el robot real o ignorar fenómenos como holgura,
+fricción, retardo, saturación, caídas de tensión y contactos intermitentes. Por
+ello, las observaciones destinadas a aprendizaje por refuerzo deben construirse
+con señales que también puedan medirse en el cuadrúpedo físico: posición
+articular real o estimada, orientación e IMU, contactos de los pies, fase de la
+marcha, comandos de referencia, tensión, corriente y estado del supervisor. La
+correspondencia entre simulación y hardware no se limita a usar la misma
+geometría; también requiere unidades, frecuencias, marcas de tiempo, filtros y
+reglas de saturación compatibles.
 
 \section{Comparación con desarrollos actuales}
 
-Los sistemas de referencia emplean actuadores, sensores y computadores de alto desempeño~\cite{bledt2018cheetah3,hutter2016anymal}. El presente proyecto trabaja con una plataforma de laboratorio de recursos más limitados; por ello, propone una marcha discreta como línea base y una política aprendida como capa correctiva limitada. Esta separación busca conservar interpretabilidad y facilitar una transferencia progresiva y segura.
+Los sistemas de referencia emplean actuadores, sensores y computadores de alto
+desempeño~\cite{bledt2018cheetah3,hutter2016anymal}. El presente proyecto
+trabaja con una plataforma de laboratorio de recursos más limitados, basada en
+servomotores de posición y electrónica accesible. Esta diferencia afecta la
+estrategia de control: no se puede asumir medición directa de par, seguimiento
+articular perfecto ni disponibilidad de todos los estados dinámicos usados por
+plataformas avanzadas.
+
+En consecuencia, el proyecto propone una marcha discreta como línea base y una
+política aprendida como capa correctiva limitada. La separación busca conservar
+interpretabilidad, facilitar la validación progresiva y evitar que una política
+aprendida tenga autoridad directa sobre los actuadores. La comparación relevante
+no es contra robots comerciales o de investigación de alto desempeño, sino
+entre dos condiciones reproducibles sobre la misma plataforma: marcha nominal y
+marcha nominal con corrección aprendida.
 
 \section{Vacío identificado}
 
-Los trabajos revisados demuestran resultados avanzados en plataformas especialmente diseñadas para locomoción dinámica. Existe una oportunidad de evaluar qué parte de esas estrategias puede trasladarse a un robot educativo de bajo costo, con actuadores de posición y capacidad computacional limitada. El aporte de esta tesis será una implementación documentada y una comparación experimental bajo métricas comunes, no la formulación de un nuevo algoritmo de aprendizaje.
+Los trabajos revisados demuestran resultados avanzados en plataformas
+especialmente diseñadas para locomoción dinámica. Existe una oportunidad de
+evaluar qué parte de esas estrategias puede trasladarse a un robot educativo de
+bajo costo, con actuadores de posición, sensado limitado y capacidad
+computacional moderada. El vacío no corresponde a formular un nuevo algoritmo de
+aprendizaje, sino a documentar una arquitectura completa y verificable que
+integre modelado, simulación, supervisor, instrumentación y comparación
+experimental bajo métricas comunes.
+
+El aporte de esta tesis se ubica en esa zona: construir una línea base de paso
+y gateo, delimitar una capa correctiva de aprendizaje por refuerzo, y evaluar
+el funcionamiento mediante margen de estabilidad estática, seguimiento de
+posición articular y repetibilidad del patrón de marcha. Estas pruebas permiten
+discutir no solo si el robot se desplaza, sino si lo hace de forma estable,
+continua y repetible dentro de las restricciones de la plataforma.
+
+\section{Relación con los objetivos de la tesis}
+
+La revisión anterior justifica los cuatro objetivos del proyecto. La literatura
+sobre plataformas cuadrúpedas y control modular respalda la necesidad de
+implementar hardware y software trazables para ejecutar las extremidades. Los
+trabajos de modelado, optimización y planificación justifican el desarrollo de
+un modelo cinemático y dinámico nominal para simulación y diseño. Los resultados
+en aprendizaje por refuerzo motivan explorar una estrategia aprendida, pero con
+acciones acotadas y supervisión independiente. Finalmente, las limitaciones de
+transferencia entre simulación y hardware justifican que la evaluación se haga
+con pruebas explícitas de margen estático, seguimiento articular y
+repetibilidad, en lugar de aceptar únicamente una demostración visual de marcha.
 
 \section{Punto de partida del proyecto}
 
@@ -27,4 +149,6 @@ documentada. Sobre esta base se desarrollaron los modelos nominales, el
 controlador discreto, la instrumentación simulada y el protocolo experimental.
 La arquitectura prevista para aprendizaje por refuerzo se delimitó como una
 corrección de referencias nominales, con límites de acción y un supervisor
-independiente; su evaluación comparativa permanece pendiente.
+independiente. Su evaluación comparativa permanece pendiente de cierre, por lo
+que los resultados parciales deben presentarse como evidencia de avance y no
+como validación definitiva de la locomoción aprendida.

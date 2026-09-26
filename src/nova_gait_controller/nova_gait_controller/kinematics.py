@@ -8,9 +8,18 @@ axis convention and measured/published NovaSM3 link lengths.
 from math import acos, atan2, cos, hypot, isfinite, log, pi, sin, sqrt
 
 
-COXA_LENGTH = 0.090
-FEMUR_LENGTH = 0.105
-TIBIA_LENGTH = 0.132
+# Measured/reference NovaSM3 geometry. These values are shared by the
+# kinematics, the 3D pose app and the simulation-training environments.
+HIP_SPACING_X = 0.180  # distance between front and rear hip pivots
+HIP_SPACING_Y = 0.120  # distance between left and right hip pivots
+BODY_LENGTH = 0.230
+BODY_WIDTH = 0.120
+BODY_HEIGHT = 0.075
+
+# Measured physical leg segments: coxa 1.5 in, femur 4.25 in, tibia 5.35 in.
+COXA_LENGTH = 0.0381
+FEMUR_LENGTH = 0.10795  # 4.25 in measured
+TIBIA_LENGTH = 0.13589  # 5.35 in measured
 
 
 def crawl_sample_profile(local_sample, samples_per_leg):

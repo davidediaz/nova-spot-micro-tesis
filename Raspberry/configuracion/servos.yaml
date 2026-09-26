@@ -27,15 +27,15 @@ motion_limits:
 # center_us, min_us, max_us y direction son valores provisionales deliberados.
 # calibrated debe cambiarse individualmente después de asegurar y medir el servo.
 servos:
-  front_left_coxa_joint:  {channel: 0, center_us: 1500, min_us: 1000, max_us: 2000, direction: 1, calibrated: false}
-  front_left_femur_joint: {channel: 1, center_us: 1500, min_us: 1000, max_us: 2000, direction: 1, calibrated: false}
-  front_left_tibia_joint: {channel: 2, center_us: 1500, min_us: 1000, max_us: 2000, direction: 1, calibrated: false}
-  front_right_coxa_joint:  {channel: 3, center_us: 1500, min_us: 1000, max_us: 2000, direction: 1, calibrated: false}
-  front_right_femur_joint: {channel: 4, center_us: 1500, min_us: 1000, max_us: 2000, direction: 1, calibrated: false}
-  front_right_tibia_joint: {channel: 5, center_us: 1500, min_us: 1000, max_us: 2000, direction: 1, calibrated: false}
-  rear_left_coxa_joint:  {channel: 6, center_us: 1500, min_us: 1000, max_us: 2000, direction: 1, calibrated: false}
-  rear_left_femur_joint: {channel: 7, center_us: 1500, min_us: 1000, max_us: 2000, direction: 1, calibrated: false}
-  rear_left_tibia_joint: {channel: 8, center_us: 1500, min_us: 1000, max_us: 2000, direction: 1, calibrated: false}
-  rear_right_coxa_joint:  {channel: 9, center_us: 1500, min_us: 1000, max_us: 2000, direction: 1, calibrated: false}
-  rear_right_femur_joint: {channel: 10, center_us: 1500, min_us: 1000, max_us: 2000, direction: 1, calibrated: false}
-  rear_right_tibia_joint: {channel: 11, center_us: 1500, min_us: 1000, max_us: 2000, direction: 1, calibrated: false}
+  front_right_coxa_joint:  {channel: 0, center_us: 1500, min_us: 1000, max_us: 2000, direction: -1, calibrated: false}
+  front_left_coxa_joint:   {channel: 1, center_us: 1500, min_us: 1000, max_us: 2000, direction: 1, calibrated: false}
+  rear_right_coxa_joint:   {channel: 2, center_us: 1500, min_us: 1000, max_us: 2000, direction: 1, calibrated: false}
+  rear_left_coxa_joint:    {channel: 3, center_us: 1500, min_us: 1000, max_us: 2000, direction: 1, calibrated: false}
+  front_right_femur_joint: {channel: 4, center_us: 1500, min_us: 1000, max_us: 2000, direction: -1, calibrated: false}
+  front_left_femur_joint:  {channel: 5, center_us: 1500, min_us: 1000, max_us: 2000, direction: 1, calibrated: false}
+  rear_right_femur_joint:  {channel: 6, center_us: 1500, min_us: 1000, max_us: 2000, direction: 1, calibrated: false}
+  rear_left_femur_joint:   {channel: 7, center_us: 1500, min_us: 1000, max_us: 2000, direction: 1, calibrated: false}
+  front_right_tibia_joint: {channel: 8, center_us: 1500, min_us: 1000, max_us: 2000, direction: -1, calibrated: false}
+  front_left_tibia_joint:  {channel: 9, center_us: 1500, min_us: 1000, max_us: 2000, direction: 1, calibrated: false}
+  rear_right_tibia_joint:  {channel: 10, center_us: 1500, min_us: 1000, max_us: 2000, direction: 1, calibrated: false}
+  rear_left_tibia_joint:   {channel: 11, center_us: 1500, min_us: 1000, max_us: 2000, direction: 1, calibrated: false}

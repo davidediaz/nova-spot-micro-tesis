@@ -35,6 +35,13 @@ referencias/
 *.pdf
 *.png
 *.jpeg
+!Raspberry/documentacion/ESQUEMA_CONEXIONES_FISICAS_2026-09-15.jpeg
+Documento_TESIS/*.bbl
+Documento_TESIS/*.bcf
+Documento_TESIS/*.blg
+Documento_TESIS/*.lof
+Documento_TESIS/*.lot
+Documento_TESIS/*.run.xml
 *.odt
 *.docx
 

@@ -6,6 +6,16 @@ El desempeño locomotor depende de la configuración estructural, la posición d
 
 Los enfoques modernos incorporan el estado del robot y la interacción pie--suelo para ajustar el movimiento. El control predictivo basado en modelo y la optimización de cuerpo completo permiten imponer restricciones de contacto y de los actuadores, además de responder a perturbaciones durante la locomoción~\cite{dicarlo2018mpc,neunert2018wholebody}. Estos resultados evidencian que el desarrollo de un sistema cuadrúpedo requiere integrar de manera coherente el diseño mecánico, el modelo matemático, la simulación y la arquitectura electrónica de control.
 
+En plataformas de bajo costo, la incorporación de aprendizaje por refuerzo
+requiere una delimitación adicional. Una política aprendida puede modificar la
+respuesta locomotora, pero si actúa directamente sobre los actuadores o si se
+entrena con observaciones que no existen en el robot físico, la comparación
+deja de ser trazable y aumenta el riesgo de transferencia. Por esta razón, en
+esta tesis el aprendizaje por refuerzo se plantea como una capa correctiva
+acotada sobre una marcha nominal: la referencia de paso o gateo define el
+movimiento principal y la política solo puede proponer ajustes limitados,
+supervisados y comparables contra esa misma referencia sin aprendizaje.
+
 El presente proyecto desarrolló progresivamente el sistema de locomoción de la
 plataforma Nova Spot Micro. Se construyeron modelos matemáticos y descripciones
 para dos simuladores, se implementó una arquitectura de control en ROS~2 y se
@@ -19,3 +29,13 @@ y análisis. Este criterio permitió identificar que el avance visual del robot
 no garantizaba el cumplimiento del patrón de contactos previsto. Los resultados
 presentados distinguen los componentes comprobados en simulación de las etapas
 físicas y de aprendizaje por refuerzo que aún no han producido evidencia final.
+
+La evaluación se estructura alrededor de una comparación entre dos condiciones:
+la marcha nominal y la misma marcha nominal con corrección aprendida. El
+funcionamiento se juzga mediante margen de estabilidad estática, seguimiento de
+posición articular y repetibilidad del patrón de marcha, de modo que una mejora
+solo puede aceptarse si conserva continuidad, estabilidad y repetibilidad bajo
+las mismas condiciones experimentales. Las campañas ejecutadas hasta el momento
+permiten documentar modelos, simulación, supervisión y resultados negativos de
+PPO residual; no autorizan todavía afirmar una mejora aprendida ni transferirla
+al prototipo físico.

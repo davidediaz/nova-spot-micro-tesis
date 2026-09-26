@@ -22,16 +22,17 @@
     PROVISIONAL REFERENCE MODEL — not yet a characterized digital twin.
     Published NovaSM3 v5.2b dimensions used here:
       hip pivot spacing: 0.180 m longitudinal x 0.120 m lateral
-      coxa/shoulder: 0.090 m; femur: 0.105 m; tibia: 0.132 m
+      coxa/shoulder: 0.0381 m (1.5 in measured); femur: 0.10795 m
+      (4.25 in measured); tibia: 0.13589 m (5.35 in measured)
       total reference mass: about 2.72 kg
     Link cross-sections and mass distribution are engineering estimates. Joint
     limits below are conservative placeholders, NOT copied servo calibration.
   -->
   <xacro:property name="hip_spacing_x" value="0.180"/>
   <xacro:property name="hip_spacing_y" value="0.120"/>
-  <xacro:property name="coxa_length" value="0.090"/>
-  <xacro:property name="femur_length" value="0.105"/>
-  <xacro:property name="tibia_length" value="0.132"/>
+  <xacro:property name="coxa_length" value="0.0381"/>
+  <xacro:property name="femur_length" value="0.10795"/>
+  <xacro:property name="tibia_length" value="0.13589"/>
   <xacro:property name="body_length" value="0.230"/>
   <xacro:property name="body_width" value="0.120"/>
   <xacro:property name="body_height" value="0.075"/>

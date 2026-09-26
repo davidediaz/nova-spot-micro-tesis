@@ -1,0 +1,17 @@
+{
+  "simulator": "gazebo",
+  "gait": "step",
+  "seed": 37,
+  "timesteps": 1024,
+  "dimensions_m": {
+    "hip_spacing_x": 0.18,
+    "hip_spacing_y": 0.12,
+    "body_length": 0.23,
+    "body_width": 0.12,
+    "body_height": 0.075,
+    "coxa": 0.0381,
+    "femur": 0.10795,
+    "tibia": 0.13589
+  },
+  "hardware_transfer": false
+}

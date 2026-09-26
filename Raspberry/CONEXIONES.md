@@ -43,12 +43,25 @@ empleado en Gazebo; el PCA9685 produce las doce señales PWM.
 
 | Canal | Articulación | Canal | Articulación |
 |---:|---|---:|---|
-| 0 | FL coxa | 6 | RL coxa |
-| 1 | FL fémur | 7 | RL fémur |
-| 2 | FL tibia | 8 | RL tibia |
-| 3 | FR coxa | 9 | RR coxa |
-| 4 | FR fémur | 10 | RR fémur |
-| 5 | FR tibia | 11 | RR tibia |
+| 0 | FR coxa | 6 | RR fémur |
+| 1 | FL coxa | 7 | RL fémur |
+| 2 | RR coxa | 8 | FR tibia |
+| 3 | RL coxa | 9 | FL tibia |
+| 4 | FR fémur | 10 | RR tibia |
+| 5 | FL fémur | 11 | RL tibia |
 
 FL: delantera izquierda; FR: delantera derecha; RL: trasera izquierda; RR:
 trasera derecha. Los canales 12--15 quedan libres.
+
+## Evidencia visual de la asignación física
+
+La imagen siguiente registra la numeración de las patas desde la vista frontal,
+la correspondencia entre coxa, fémur y tibia, y la asignación de los doce
+servos a los canales del PCA9685:
+
+![Esquema de conexiones físicas y asignación de canales](documentacion/ESQUEMA_CONEXIONES_FISICAS_2026-09-15.jpeg)
+
+La convención queda fijada así: Pata 1 es delantera derecha, Pata 2 delantera
+izquierda, Pata 3 trasera derecha y Pata 4 trasera izquierda. La imagen es una
+referencia de cableado y numeración; no sustituye la calibración individual ni
+la verificación de seguridad eléctrica.

@@ -10,15 +10,25 @@ from math import cos, pi, sin, tanh
 
 import numpy as np
 
-from .kinematics import COXA_LENGTH, FEMUR_LENGTH, TIBIA_LENGTH, forward_leg
+from .kinematics import (
+    BODY_HEIGHT,
+    BODY_LENGTH,
+    BODY_WIDTH,
+    COXA_LENGTH,
+    FEMUR_LENGTH,
+    HIP_SPACING_X,
+    HIP_SPACING_Y,
+    TIBIA_LENGTH,
+    forward_leg,
+)
 
 
 @dataclass(frozen=True)
 class ModelParameters:
     """SI parameters of the current, not-yet-characterized reference model."""
 
-    hip_spacing_x: float = 0.180
-    hip_spacing_y: float = 0.120
+    hip_spacing_x: float = HIP_SPACING_X
+    hip_spacing_y: float = HIP_SPACING_Y
     coxa_length: float = COXA_LENGTH
     femur_length: float = FEMUR_LENGTH
     tibia_length: float = TIBIA_LENGTH
@@ -27,9 +37,9 @@ class ModelParameters:
     femur_mass: float = 0.12
     tibia_mass: float = 0.11
     foot_mass: float = 0.03
-    body_length: float = 0.230
-    body_width: float = 0.120
-    body_height: float = 0.075
+    body_length: float = BODY_LENGTH
+    body_width: float = BODY_WIDTH
+    body_height: float = BODY_HEIGHT
     coxa_section_x: float = 0.035
     coxa_section_z: float = 0.035
     femur_section_x: float = 0.035

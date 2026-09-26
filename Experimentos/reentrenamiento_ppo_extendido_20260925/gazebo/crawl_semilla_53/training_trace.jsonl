@@ -1,0 +1,6 @@
+{"timesteps": 100, "mean_reward": null}
+{"timesteps": 200, "mean_reward": 83.896821}
+{"timesteps": 300, "mean_reward": 82.7629345}
+{"timesteps": 400, "mean_reward": 82.74714766666666}
+{"timesteps": 500, "mean_reward": 82.31110699999999}
+{"timesteps": 600, "mean_reward": 82.81037699999999}

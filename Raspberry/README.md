@@ -15,7 +15,11 @@ generan PWM ni controlan directamente el PCA9685 o los MG996R**.
 - `configuracion/servos.yaml`: canales y calibraciones, bloqueadas inicialmente.
 - `codigo/pca9685_seguro.py`: controlador PWM con `OE` y apagado global.
 - `codigo/interfaz_pwm_ros2.py`: conversión de trayectorias ROS 2 a PWM.
+- `codigo/posicionar_pata_referencia.py`: coloca una pata en 1500 us durante
+  unos segundos para inspección visual; no sustituye la calibración sensórica.
 - `CONEXIONES.md`: tabla de cableado y asignación de los doce servos.
+- `documentacion/ESQUEMA_CONEXIONES_FISICAS_2026-09-15.jpeg`: evidencia visual
+  de numeración de patas, segmentos y canales según la vista frontal.
 - `DIAGRAMA_CABLEADO_PI4_PCA9685_LM2596.pdf`: diagrama de pines y separación
   entre lógica I²C, potencia externa y servos; usarlo antes de cablear.
 - `DIAGRAMA_CABLEADO_PI4_PCA9685_LM2596.svg`: misma lámina en formato vectorial
