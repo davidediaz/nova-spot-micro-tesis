@@ -1210,3 +1210,9 @@ fallaron con error I2C 121. `0x71` canal 3 responde pero todavía no tiene
 articulación identificada. El registro, valores y protocolo siguiente están en
 `Raspberry/LECTURA_AS5600_TCA_2026-09-28.md`. La adquisición queda parcial y
 no habilita PWM, postura, marcha ni observaciones para PPO.
+
+Corrección del operador: esos tres canales sin respuesta están vacíos por
+diseño. El mapa de doce sensores queda en `0x70` 0--5 y `0x71` 0, 1, 3, 4, 5 y
+6, con articulaciones confirmadas en el informe de lectura. El lector se
+actualizó y falta un barrido completo con dicho mapa antes de medir cero,
+sentido, rango y repetibilidad.

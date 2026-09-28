@@ -38,9 +38,8 @@ class Sensor:
     joint: Optional[str]
 
 
-# Este orden transcribe el sketch Arduino entregado. La entrada 0x71/canal 3
-# queda sin articular a propósito: allí el sketch nombraba por segunda vez
-# "femur 2", pero el mapa de servos requiere la coxa de la pata 2.
+# Mapa confirmado físicamente por el operador el 28 de septiembre de 2026.
+# Los canales omitidos (0x70: 6--7; 0x71: 2 y 7) no tienen AS5600 conectado.
 SENSORS = (
     Sensor(TCA_1, 0, "tibia 4", "rear_left_tibia_joint"),
     Sensor(TCA_1, 1, "femur 4", "rear_left_femur_joint"),
@@ -48,12 +47,12 @@ SENSORS = (
     Sensor(TCA_1, 3, "tibia 3", "rear_right_tibia_joint"),
     Sensor(TCA_1, 4, "femur 3", "rear_right_femur_joint"),
     Sensor(TCA_1, 5, "coxa 3", "rear_right_coxa_joint"),
-    Sensor(TCA_1, 6, "tibia 1", "front_right_tibia_joint"),
-    Sensor(TCA_1, 7, "femur 1", "front_right_femur_joint"),
-    Sensor(TCA_2, 0, "coxa 1", "front_right_coxa_joint"),
-    Sensor(TCA_2, 1, "tibia 2", "front_left_tibia_joint"),
-    Sensor(TCA_2, 2, "femur 2", "front_left_femur_joint"),
-    Sensor(TCA_2, 3, "PENDIENTE: sensor 12", None),
+    Sensor(TCA_2, 0, "tibia 1", "front_right_tibia_joint"),
+    Sensor(TCA_2, 1, "femur 1", "front_right_femur_joint"),
+    Sensor(TCA_2, 3, "coxa 1", "front_right_coxa_joint"),
+    Sensor(TCA_2, 4, "tibia 2", "front_left_tibia_joint"),
+    Sensor(TCA_2, 5, "femur 2", "front_left_femur_joint"),
+    Sensor(TCA_2, 6, "coxa 2", "front_left_coxa_joint"),
 )
 
 

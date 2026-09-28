@@ -2207,3 +2207,10 @@ sin asociación articular confirmada. La evidencia exacta, valores crudos y
 siguientes comprobaciones se conservan en
 `Raspberry/LECTURA_AS5600_TCA_2026-09-28.md`. El resultado valida comunicación
 parcial de sensores, no calibración ni integración ROS 2.
+
+Corrección de mapa aportada por el operador el 28 de septiembre: los canales
+`0x70` 6--7 y `0x71` 2 están intencionalmente vacíos; los doce AS5600 están en
+`0x70` 0--5 y en `0x71` 0, 1, 3, 4, 5 y 6. Se asocian respectivamente con las
+patas 4, 3, 1 y 2 según la tabla trazable del informe de lectura. Se actualizó
+el lector para ese mapa y queda pendiente repetir el barrido completo, aún sin
+declarar calibración angular, postura o marcha física.
