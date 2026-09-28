@@ -41,6 +41,36 @@ Estos son puertos del **PCA9685**, no pines físicos de la Raspberry. La
 Raspberry envía por I2C las órdenes calculadas por el mismo generador de marcha
 empleado en Gazebo; el PCA9685 produce las doce señales PWM.
 
+## Dos TCA9548A y doce AS5600: retroalimentación articular
+
+Los multiplexores y el PCA9685 comparten **el mismo bus I2C-1**, no requieren
+un par de pines de señal adicional por cada TCA. Con la Raspberry apagada y la
+potencia de servos desconectada, el cableado de lógica debe ser:
+
+| Raspberry Pi 4 (pin físico) | Señal | Conectar a ambos TCA9548A |
+|---:|---|---|
+| 1 o 17 | 3V3 | `VIN`/`VCC` de lógica, solo si el módulo acepta 3,3 V |
+| 3 | GPIO2 / SDA1 | `SDA` |
+| 5 | GPIO3 / SCL1 | `SCL` |
+| 6 (u otro GND) | GND | `GND` |
+
+Los cables `SDA` y `SCL` se ramifican en paralelo hacia PCA9685, TCA `0x70` y
+TCA `0x71`; todos comparten GND. No aplicar 5 V directamente a `SDA` o `SCL`
+de la Raspberry: son señales lógicas de 3,3 V. Confirmar antes la serigrafía y
+las resistencias pull-up de cada breakout; algunos módulos comerciales unen
+los pull-up a su pin `VIN`.
+
+Cada AS5600 se conecta únicamente detrás de un canal del TCA: `VCC` a la
+alimentación lógica compatible del módulo, `GND` común, y `SDA`/`SCL` al canal
+seleccionado. Los canales de cada TCA aíslan los AS5600, que todos usan la
+dirección fija `0x36`.
+
+El lector de diagnóstico `codigo/leer_as5600_tca.py` no genera PWM ni modifica
+`OE`. Lee los doce canales descritos por el sketch Arduino y conserva como
+pendiente `0x71`, canal 3: el sketch proporcionado duplica «fémur 2» y no
+identifica «coxa 2», por lo que esa asociación debe confirmarse físicamente
+antes de publicar posiciones articulares.
+
 | Canal | Articulación | Canal | Articulación |
 |---:|---|---:|---|
 | 0 | FR coxa | 6 | RR fémur |
