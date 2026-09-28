@@ -2214,3 +2214,10 @@ Corrección de mapa aportada por el operador el 28 de septiembre: los canales
 patas 4, 3, 1 y 2 según la tabla trazable del informe de lectura. Se actualizó
 el lector para ese mapa y queda pendiente repetir el barrido completo, aún sin
 declarar calibración angular, postura o marcha física.
+
+El barrido completo posterior respondió en las doce rutas del mapa confirmado:
+los seis sensores de `0x70` (canales 0--5) y los seis de `0x71` (0, 1, 3--6).
+Los valores y su correspondencia están en
+`Raspberry/LECTURA_AS5600_TCA_2026-09-28.md`. Esto cierra únicamente la
+comunicación básica de los doce encoders; persisten estabilidad, cero, sentido,
+rango, holgura y validación de seguridad antes de postura o marcha.

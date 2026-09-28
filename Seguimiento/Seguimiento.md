@@ -1216,3 +1216,8 @@ diseño. El mapa de doce sensores queda en `0x70` 0--5 y `0x71` 0, 1, 3, 4, 5 y
 6, con articulaciones confirmadas en el informe de lectura. El lector se
 actualizó y falta un barrido completo con dicho mapa antes de medir cero,
 sentido, rango y repetibilidad.
+
+El barrido posterior del mapa actualizado respondió en las doce rutas. Queda
+confirmada la comunicación básica de todos los AS5600; no queda cerrada su
+calibración ni se habilitan posturas o caminatas hasta medir estabilidad, cero,
+sentido, rango y holgura.
