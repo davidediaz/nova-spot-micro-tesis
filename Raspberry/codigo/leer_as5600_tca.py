@@ -61,10 +61,15 @@ class AS5600Reader:
     def __init__(self, bus_number: int):
         try:
             from smbus2 import SMBus
-        except ImportError as error:
-            raise RuntimeError(
-                "Falta smbus2. En la Raspberry: sudo apt install python3-smbus "
-                "o python3 -m pip install --user smbus2") from error
+        except ImportError:
+            try:
+                # Ubuntu publica esta misma API con el nombre ``smbus`` en el
+                # paquete del sistema python3-smbus.
+                from smbus import SMBus
+            except ImportError as error:
+                raise RuntimeError(
+                    "Falta acceso Python a I2C. En la Raspberry: "
+                    "sudo apt install python3-smbus") from error
         self.bus = SMBus(bus_number)
 
     def select_channel(self, tca: int, channel: int) -> None:
