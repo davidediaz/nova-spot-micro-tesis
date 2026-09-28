@@ -2191,3 +2191,19 @@ no se ejecutó acceso I2C ni se movió hardware. Commit público: `986ea2d`.
 Siguiente acción: con potencia de servos desconectada y OE alto, escanear I2C,
 realizar una lectura única y confirmar físicamente el sensor 12 antes de
 publicar posiciones medidas en ROS 2.
+
+### Primera lectura real de AS5600 — 28 de septiembre de 2026
+
+La Raspberry se localizó por SSH como `cuadrupedo-pi.local` (`192.168.0.101`).
+I2C-1 confirmó `0x40` (PCA9685), `0x70` y `0x71` (TCA); no había procesos de
+PWM, Thonny ni otro controlador activo. Se transfirió el lector de solo lectura
+por SSH porque el repositorio local de la Raspberry contiene el objeto Git
+corrupto `3900edd` y no puede actualizarse con Git. El barrido único no tocó
+OE/PWM ni movió servos.
+
+Respondieron nueve rutas AS5600 y fallaron con error I2C 121 las rutas `0x70`
+canales 6--7 y `0x71` canal 2. La entrada `0x71` canal 3 respondió, pero sigue
+sin asociación articular confirmada. La evidencia exacta, valores crudos y
+siguientes comprobaciones se conservan en
+`Raspberry/LECTURA_AS5600_TCA_2026-09-28.md`. El resultado valida comunicación
+parcial de sensores, no calibración ni integración ROS 2.

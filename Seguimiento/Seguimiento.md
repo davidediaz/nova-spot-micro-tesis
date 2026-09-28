@@ -1201,3 +1201,12 @@ porque el sketch recibido duplica «fémur 2» y omite «coxa 2». Falta escanea
 bus con servos desenergizados, hacer una lectura única, verificar esa
 asociación y medir cero, sentido, rango, ruido y repetibilidad antes de integrar
 el tópico `/nova/joint_states_measured` o habilitar movimientos.
+
+### Primera lectura en Raspberry — 28 de septiembre de 2026
+
+Una lectura única, sin PWM ni movimiento, confirmó `0x40`, `0x70` y `0x71` en
+I2C-1. Respondieron nueve rutas AS5600; `0x70` canales 6--7 y `0x71` canal 2
+fallaron con error I2C 121. `0x71` canal 3 responde pero todavía no tiene
+articulación identificada. El registro, valores y protocolo siguiente están en
+`Raspberry/LECTURA_AS5600_TCA_2026-09-28.md`. La adquisición queda parcial y
+no habilita PWM, postura, marcha ni observaciones para PPO.
