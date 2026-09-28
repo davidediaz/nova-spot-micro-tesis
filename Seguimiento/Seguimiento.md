@@ -1187,3 +1187,17 @@ como resultado de convergencia.
 Estado: entrenamiento MuJoCo de ambas marchas completado; políticas pendientes
 de aceptación; Gazebo pendiente de adaptación extendida; transferencia física
 prohibida.
+
+## Preparación de adquisición articular AS5600 — 28 de septiembre de 2026
+
+Se preparó `Raspberry/codigo/leer_as5600_tca.py` para leer AS5600 mediante los
+TCA9548A `0x70` y `0x71` por I2C-1 de la Raspberry. Es una utilidad de solo
+lectura: no inicializa PCA9685, OE ni PWM. Produce valores crudos, grados
+absolutos y marca temporal; todavía no representa posición articular calibrada.
+
+El bus se comparte con PCA9685 por GPIO2/pin 3 (SDA) y GPIO3/pin 5 (SCL), con
+GND común y lógica de 3,3 V. La asociación `0x71`/canal 3 se mantiene pendiente
+porque el sketch recibido duplica «fémur 2» y omite «coxa 2». Falta escanear el
+bus con servos desenergizados, hacer una lectura única, verificar esa
+asociación y medir cero, sentido, rango, ruido y repetibilidad antes de integrar
+el tópico `/nova/joint_states_measured` o habilitar movimientos.

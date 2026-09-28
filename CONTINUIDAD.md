@@ -2170,3 +2170,24 @@ control PPO, documentación y pruebas físicas; no se descartó ningún cambio
 previo. El estado experimental no cambia: gateo semilla 53 es el único
 candidato offline favorable, paso semilla 71 requiere otra iteración, y las
 políticas siguen bloqueadas para uso en hardware.
+
+### Preparación de lectura AS5600 por TCA9548A — 28 de septiembre de 2026
+
+Se añadió `Raspberry/codigo/leer_as5600_tca.py`, un lector de diagnóstico para
+I2C-1 que selecciona los dos TCA9548A en `0x70` y `0x71` y lee el registro
+`RAW_ANGLE` de los AS5600 en `0x36`. El programa no importa el controlador
+PCA9685, no cambia OE y no emite PWM; por tanto no mueve los servos. Conserva
+marca temporal, valor crudo y grados absolutos, pero no declara todavía ángulos
+articulares: faltan cero mecánico, sentido, límites, holgura y calibración.
+
+La guía `Raspberry/CONEXIONES.md` especifica que PCA9685 y ambos TCA comparten
+SDA en GPIO2/pin físico 3 y SCL en GPIO3/pin físico 5, con GND común y lógica
+de 3,3 V. No se debe aplicar 5 V a SDA/SCL. El mapa entregado por Arduino
+confirma once articulaciones y deja ambigua la entrada `0x71`, canal 3: el
+sketch repetía «fémur 2» y no identificaba «coxa 2». El lector la deja pendiente
+en vez de inferirla. La sintaxis Python y el diff se verificaron localmente;
+no se ejecutó acceso I2C ni se movió hardware. Commit público: `986ea2d`.
+
+Siguiente acción: con potencia de servos desconectada y OE alto, escanear I2C,
+realizar una lectura única y confirmar físicamente el sensor 12 antes de
+publicar posiciones medidas en ROS 2.
