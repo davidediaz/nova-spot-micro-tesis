@@ -39,14 +39,17 @@ No obstante, la caminata no se acepta ni se escoge política:
 - La excursión lateral máxima media fue 0,0826 m (rango 0,0490–0,1069 m), frente
   a 0,0040 m nominales; deriva lateral final media 0,0360 m. La penalización
   lateral/rumbo no resolvió la desviación de trayectoria.
-- El error articular máximo medio fue 0,0738 rad y todas las cinco políticas
-  superan el umbral provisional 0,05 rad. El máximo salto articular medio fue
-  0,0115 rad, por debajo del umbral provisional 0,05 rad.
-- Contacto medio 0,8355 frente a 0,8485 nominal; ninguna evaluación terminó
-  temprano, pero el contacto no alcanza 0,90.
+- El error articular máximo medio fue 0,0738 rad (rango 0,0623–0,0906 rad): es
+  mayor que el nominal (0,0384 rad), pero queda por debajo del máximo permitido
+  de 0,15 rad. El error RMS medio fue 0,0138 rad, también bajo el límite de
+  0,05 rad; el salto articular medido medio fue 0,0115 rad. Por tanto, el
+  seguimiento empeora respecto al nominal, pero no incumple esos dos umbrales.
+- Fracción de contacto media 0,8355 frente a 0,8485 nominal (descriptiva; no
+  equivale a la métrica de transiciones de contacto de la ficha). Ninguna
+  evaluación terminó temprano.
 
-La variabilidad por semilla y la pérdida de seguimiento/deriva pesan más que
-la mejora de la inclinación. No hay candidata justificada para gastar las
+La variabilidad por semilla y la desviación lateral pesan más que la mejora de
+la inclinación. No hay candidata justificada para gastar las
 semillas bloqueadas de evaluación final; quedan intactas. Resultado técnico:
 campaña completada, políticas no seleccionadas, marcha PPO no aprobada.
 
@@ -62,7 +65,12 @@ sha256sum -c SHA256SUMS
 ```
 
 Próximo paso: ajustar y validar la referencia/control nominal para limitar
-excursión lateral y error articular antes de volver a PPO. Mantener sin cambios
-la ficha formal hasta revisión/firma del director; luego ejecutar evaluación
-final emparejada solo si una política pasa los criterios de desarrollo y
-comparación predefinidos. No hacer pruebas físicas todavía.
+excursión lateral antes de volver a PPO. La referencia step de 32 puntos usada
+en esta campaña tenía un salto articular máximo de 0,07277 rad entre waypoints;
+la revisión posterior detectó que excedía el criterio provisional de 0,05 rad.
+La nueva referencia de 48 puntos reduce el salto a 0,04911 rad y cambia la
+duración por punto a 0,12 s, manteniendo 5,76 s por ciclo. Estos cambios aún
+requieren evaluación dinámica, y no alteran los artefactos de esta campaña.
+Mantener la ficha formal hasta revisión/firma del director; ejecutar evaluación
+final emparejada solo si una política pasa los criterios de desarrollo. No
+hacer pruebas físicas todavía.

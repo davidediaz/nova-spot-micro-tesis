@@ -115,7 +115,9 @@ def _episode_metrics(env, model=None, seed=100):
 
 def evaluate_mujoco(output, eval_episodes, *, seeds=SEEDS, gaits=GAITS,
                     write_csv=True, episode_seeds=None, episode_cycles=5,
-                    environment_kwargs=None):
+                    environment_kwargs=None,
+                    evaluation_domain_randomization=False,
+                    csv_name="mujoco_evaluation.csv"):
     """Evaluate every MuJoCo policy and write paired nominal comparisons."""
     sys.path.insert(0, str(ROOT / "Experimentos"))
     sys.path.insert(0, str(ROOT / "src" / "nova_gait_controller"))
@@ -138,7 +140,8 @@ def evaluate_mujoco(output, eval_episodes, *, seeds=SEEDS, gaits=GAITS,
             for condition in ("nominal", "ppo"):
                 env = NovaMujocoResidualEnv(
                     model_path, gait=gait, episode_cycles=episode_cycles, seed=100,
-                    domain_randomization=False, **environment_kwargs)
+                    domain_randomization=evaluation_domain_randomization,
+                    **environment_kwargs)
                 try:
                     metrics = []
                     for episode_seed in episode_seeds:
@@ -172,7 +175,7 @@ def evaluate_mujoco(output, eval_episodes, *, seeds=SEEDS, gaits=GAITS,
                 aggregate["early_terminations"] = int(
                     sum(item["terminated"] for item in metrics))
                 rows.append(aggregate)
-    path = output / "mujoco_evaluation.csv"
+    path = output / csv_name
     if write_csv:
         _write_csv(path, rows)
     return rows
@@ -184,7 +187,8 @@ def _write_csv(path, rows):
         path.write_text("", encoding="utf-8")
         return
     with path.open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
+        writer = csv.DictWriter(
+            handle, fieldnames=list(rows[0]), lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
 

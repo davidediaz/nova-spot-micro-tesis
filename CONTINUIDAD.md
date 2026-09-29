@@ -1,6 +1,6 @@
 # Continuidad histórica de la tesis Nova Spot Micro
 
-Última actualización: 28 de septiembre de 2026, America/Bogota.
+Última actualización: 29 de septiembre de 2026, America/Bogota.
 
 
 ## Objetivos vigentes — corrección del usuario del 7 de septiembre de 2026
@@ -2338,11 +2338,46 @@ uno de 20 ciclos. Informe y artefactos:
 Las políticas mantienen inclinación RMS y altura dentro de los objetivos
 numéricos provisionales, pero no se selecciona ninguna: tres de cinco avanzan
 menos que el nominal; excursión lateral máxima media 0,0826 m frente a 0,0040 m
-nominal; error articular máximo medio 0,0738 rad (umbral guía 0,05); contacto
-medio 0,8355. Las semillas finales 101/202/303/404/505 permanecen sin usar.
+nominal; deriva lateral final media 0,0360 m; contacto medio 0,8355. El error
+articular máximo medio 0,0738 rad y RMS medio 0,0138 rad empeoran frente al
+nominal, pero cumplen los límites de ficha de 0,15 rad máximo y 0,05 rad RMS.
+Las semillas finales 101/202/303/404/505 permanecen sin usar.
 La ficha de aprobación sigue sin firma, por lo que la marcha no está aprobada y
 no se debe transferir PPO al robot. Próximo paso: corregir/validar control
 nominal lateral y seguimiento articular antes de otra optimización PPO.
+
+Corrección de referencia step: la trayectoria anterior de 32 puntos/0,18 s
+tenía un salto articular de waypoint máximo de 0,07277 rad. Se cambió a 48
+puntos/0,12 s, conservando 5,76 s por ciclo; el salto nominal calculado pasa a
+0,04911 rad. Pasaron las 15 pruebas cinemáticas y la respuesta dinámica
+nominal a 20 ciclos en MuJoCo antes de iniciar la siguiente campaña.
+
+### Referencia step de 48 waypoints y PPO lateral — 29 de septiembre de 2026
+
+La referencia se corrigió de 32 puntos/0,18 s a 48/0,12 s, manteniendo ciclo
+5,76 s. El salto de waypoint bajó de 0,072772 a 0,049115 rad; pasaron las 15
+pruebas de cinemática. En MuJoCo, la línea base de 20 ciclos tuvo 0,08415 m de
+avance, 0,00415 m de excursión lateral, error articular RMS 0,01170 rad y
+máximo 0,03795 rad; no hubo caída.
+
+La campaña nueva `Experimentos/campana_step_estabilidad_xy48_w32_l64_20260929`
+entrenó cinco PPO (11/23/37/53/71, 200.000 pasos c/u; actitud32/lateral64/
+rumbo32). Resultado aleatorizado emparejado: avance medio PPO 0,04219 m vs
+0,08414 nominal; excursión lateral máxima 0,06486 m vs 0,00417 m. Solo 1/5
+políticas supera el avance nominal. El error articular máximo medio 0,06210 rad
+y RMS 0,01297 rad sí están bajo los límites de ficha 0,15/0,05 rad. Escala de
+residual 0,25 reduce desviación, pero aún da 0,07301 m de avance y 0,02438 m de
+excursión lateral, peor que nominal. No se selecciona PPO; semillas finales
+101/202/303/404/505 siguen reservadas.
+
+La matriz sin aleatorización repitió un estado idéntico. En la evaluación
+emparejada con fricción/amortiguamiento aleatorizados, el avance nominal varió
+0,08348–0,08467 m y la excursión lateral 0,00386–0,00417 m. Las filas nominales
+del CSV agregado coinciden porque todas las políticas comparten las mismas
+cinco condiciones; no se perturbó pose inicial. Faltan perturbaciones
+iniciales representativas, margen estático y protocolo formal firmado. La marcha no está
+formalmente aprobada ni se autoriza transferencia física. Informe:
+`Experimentos/campana_step_estabilidad_xy48_w32_l64_20260929/INFORME_RESULTADOS.md`.
 
 Se solicitó apagar la Raspberry Pi. Se verificó que `172.18.81.198` presenta el
 hostname `cuadrupedo-pi` y responde por la identidad SSH conocida. `sync` se

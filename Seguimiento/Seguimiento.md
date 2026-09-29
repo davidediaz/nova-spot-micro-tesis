@@ -15,7 +15,7 @@ Spot Micro mediante una marcha nominal convencional y una política de
 aprendizaje por refuerzo que aplique correcciones pequeñas, acotadas y
 supervisadas.
 
-Última actualización documental: 2 de septiembre de 2026, America/Bogota.
+Última actualización documental: 29 de septiembre de 2026, America/Bogota.
 
 Actualización cinemática del 2 de septiembre: se completaron las gráficas de
 workspace, proximidad a singularidades y velocidades articulares. Se corrigió
@@ -1292,13 +1292,47 @@ pasos. No hubo terminaciones tempranas. El informe reproducible es
 
 Resultado negativo para selección: solo dos de cinco políticas superaron el
 avance nominal; la excursión lateral máxima media fue 0,0826 m frente a 0,0040
-m en nominal; error articular máximo medio 0,0738 rad, superior al umbral
-provisional de 0,05 rad. Aunque inclinación RMS y altura permanecieron dentro
+m en nominal. El error articular máximo medio 0,0738 rad (RMS 0,0138 rad) es
+mayor que el nominal, pero cumple los límites de la ficha (máximo 0,15 rad,
+RMS 0,05 rad). Aunque inclinación RMS y altura permanecieron dentro
 de la guía numérica provisional, no se elige política ni se marca la marcha
 aprobada. La ficha de aprobación sigue sin firma. No se usaron las semillas
 finales 101/202/303/404/505 y no se habilitó transferencia física. Siguiente:
 validar referencia nominal, trayectoria lateral y seguimiento articular antes
 de una nueva optimización.
+
+Corrección de referencia nominal step: se detectó que los 32 waypoints de la
+configuración anterior tienen un salto articular máximo de 0,07277 rad, por
+encima de la guía de 0,05 rad. La configuración actual propuesta aumenta a 48
+waypoints y reduce el tiempo por punto a 0,12 s; conserva el ciclo de 5,76 s y
+baja el salto calculado a 0,04911 rad. Se ejecutaron pruebas y evaluación
+dinámica MuJoCo antes de iniciar la siguiente campaña PPO.
+
+### Step 48 puntos y PPO lateral/rumbo — 29 de septiembre de 2026
+
+La referencia se cambió a 48 waypoints de 0,12 s sin alterar los 5,76 s por
+ciclo. Su salto máximo bajó de 0,072772 a 0,049115 rad; pasaron las 15 pruebas
+cinemáticas. La referencia nominal completó cinco episodios MuJoCo de 20 ciclos
+sin caída, con avance 0,08415 m, excursión lateral 0,00415 m, error articular
+RMS 0,01170 rad y máximo 0,03795 rad.
+
+La campaña `Experimentos/campana_step_estabilidad_xy48_w32_l64_20260929` entrenó
+cinco políticas (200.000 pasos; actitud32/lateral64/rumbo32). En evaluación
+emparejada, PPO promedió 0,04219 m de avance y 0,06486 m de excursión lateral
+máxima, contra 0,08414 m y 0,00417 m nominal. Una sola política superó el avance
+nominal. El error articular medio máximo/RMS 0,06210/0,01297 rad cumple las
+guías de 0,15/0,05 rad, pero no compensa la trayectoria lateral. La escala
+residual 0,25 tampoco dominó nominal.
+
+La evaluación sin aleatorización repitió un estado determinista. La evaluación
+emparejada con fricción/amortiguamiento aleatorizados encontró para nominal
+0,08348–0,08467 m de avance y 0,00386–0,00417 m de excursión lateral. Las filas
+nominales agregadas coinciden entre políticas porque comparten las cinco
+condiciones emparejadas; la pose inicial aún no se perturba. Esto no prueba
+repetibilidad física. Las semillas finales 101/202/303/404/505
+permanecen reservadas. Resultado: no se selecciona PPO, no se transfiere a
+hardware y la ficha sigue sin firma. Informe completo en
+`Experimentos/campana_step_estabilidad_xy48_w32_l64_20260929/INFORME_RESULTADOS.md`.
 
 ### Apagado de Raspberry pendiente de autenticación — 28 de septiembre de 2026
 

@@ -80,11 +80,12 @@ class NovaMujocoResidualEnv(gym.Env):
         super().__init__()
         self.model_path = str(model_path)
         self.gait = gait
-        self.samples = 24 if gait == "crawl" else 32
+        self.samples = 24 if gait == "crawl" else 48
+        self.sample_duration = 0.18 if gait == "crawl" else 0.12
         self.episode_cycles = int(episode_cycles)
         self.control_dt = float(control_dt)
         self.sim_substeps = max(1, round(self.control_dt / 0.002))
-        self.steps_per_sample = max(1, round(0.18 / self.control_dt))
+        self.steps_per_sample = max(1, round(self.sample_duration / self.control_dt))
         self.cycle_steps = self.samples * self.steps_per_sample
         self.ramp_steps = max(1, round(1.0 / self.control_dt))
         self.rng = np.random.default_rng(seed)
@@ -119,7 +120,7 @@ class NovaMujocoResidualEnv(gym.Env):
                 preload_shift_scale=2.0), dtype=float)
         elif gait == "step":
             self.nominal = np.asarray(cartesian_step_walk(
-                STAND, samples=32, step_length=0.016, step_height=0.008,
+                STAND, samples=48, step_length=0.016, step_height=0.008,
                 weight_shift=0.004), dtype=float)
         else:
             raise ValueError("gait debe ser crawl o step")
@@ -375,6 +376,7 @@ def main():
         "ramp_duration_s": env.ramp_steps * env.control_dt,
         "control_dt_s": env.control_dt,
         "gait_samples": env.samples,
+        "sample_duration_s": env.sample_duration,
         "steps_per_sample": env.steps_per_sample,
         "cycle_duration_s": env.cycle_steps * env.control_dt,
         "nominal_interpolation": "linear_at_control_rate",
