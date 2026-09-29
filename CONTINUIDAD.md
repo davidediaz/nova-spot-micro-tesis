@@ -2301,6 +2301,14 @@ configurado `davidediaz <davidediaz@users.noreply.github.com>`. La rama sigue
 local y aún no se ha publicado en GitHub. Ninguna política está aprobada para
 transferencia física.
 
+El análisis reproducible quedó en
+`Experimentos/campana_distribuida_step_s23_20260928/INFORME_ANALISIS_80_SEMILLAS.md`.
+La diferencia media pareada PPO−nominal es +2,903 m de avance (78/80 semillas
+mejoran) y +34,18 de retorno (76/80), pero también +0,03342 rad en inclinación
+reportada (80/80 empeoran). No hay política que mejore avance sin aumentar
+inclinación. La evaluación reutiliza cinco episodios sin aleatorización de
+dominio; requiere validación más amplia. `hardware_transfer=false` sigue vigente.
+
 Se solicitó apagar la Raspberry Pi. Se verificó que `172.18.81.198` presenta el
 hostname `cuadrupedo-pi` y responde por la identidad SSH conocida. `sync` se
 completó, pero el apagado remoto no: la cuenta requiere contraseña para `sudo`

@@ -4,6 +4,8 @@ Campaña ejecutada en el segundo PC el 28 de septiembre de 2026. Estado final:
 80 semillas completadas y 160 filas de evaluación (nominal y PPO por semilla).
 No se ha aceptado ninguna política ni transferido al hardware; queda pendiente
 comparar con la campaña del PC principal y validar las políticas candidatas.
+El análisis agregado, la distribución por semillas y las limitaciones de
+evaluación están documentados en `INFORME_ANALISIS_80_SEMILLAS.md`.
 
 ## Configuración y procedencia
 

@@ -1256,6 +1256,13 @@ en la rama local `resultados/mujoco-step-80-semillas-20260928` (commit
 `106ee5a`). No se ha subido aún a GitHub ni se aprueban políticas para hardware.
 Las carpetas PPO locales sin seguimiento se preservaron.
 
+El análisis está en
+`Experimentos/campana_distribuida_step_s23_20260928/INFORME_ANALISIS_80_SEMILLAS.md`:
+el avance medio mejora +2,903 m (78/80) y el retorno +34,18 (76/80), mientras
+la inclinación reportada empeora en 80/80 semillas (+0,03342 rad de media).
+Ninguna política domina la nominal en avance e inclinación. Faltan pruebas con
+episodios/escenarios nuevos y aleatorización ambiental antes de elegir candidatas.
+
 ### Apagado de Raspberry pendiente de autenticación — 28 de septiembre de 2026
 
 Se verificó la identidad SSH de `cuadrupedo-pi` en `172.18.81.198` y se ejecutó
