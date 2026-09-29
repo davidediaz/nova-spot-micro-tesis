@@ -2238,3 +2238,10 @@ fémures: P1 232,831° (rango 0,176°), P2 299,795° (0,000°), P3 47,039°
 los datos se conservaron como referencias visuales provisionales en el YAML de
 caracterización. Falta la captura antihoraria y la calibración angular antes de
 control físico.
+
+La captura pendiente de las tibias en el extremo horario respondió tras
+reconectar la Raspberry en `172.18.81.198`: P1 83,672° (rango 0,000°), P2
+83,232° (0,000°), P3 300,968° (8,877°) y P4 75,472° (0,088°). P3 se marca
+inestable y solo visual; las demás se conservan como referencias provisionales.
+Los doce resultados parciales están en el YAML y el informe AS5600. Aún faltan
+extremos antihorarios, conversión a radianes, márgenes y pruebas de seguridad.
