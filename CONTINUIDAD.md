@@ -2245,3 +2245,10 @@ reconectar la Raspberry en `172.18.81.198`: P1 83,672° (rango 0,000°), P2
 inestable y solo visual; las demás se conservan como referencias provisionales.
 Los doce resultados parciales están en el YAML y el informe AS5600. Aún faltan
 extremos antihorarios, conversión a radianes, márgenes y pruebas de seguridad.
+
+Se capturaron los extremos antihorarios de las coxas: P1 112,373° (rango
+1,142°), P2 146,162° (9,580°), P3 183,863° (0,615°) y P4 192,484° (0,088°).
+P2 continúa inestable y P1 requiere verificación; P3 y P4 fueron estables en
+esta captura. Se conservaron separados de los extremos horarios en la sección
+`counterclockwise_measurements` del YAML; sigue prohibido usarlos para control
+cerrado o marcha hasta completar la calibración y las puertas de seguridad.
