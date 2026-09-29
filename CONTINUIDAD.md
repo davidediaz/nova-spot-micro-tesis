@@ -2386,3 +2386,16 @@ y systemd requiere autorización interactiva. El operador debe ejecutar
 `sudo poweroff` localmente o `ssh -t pavilion@172.18.81.198 'sudo poweroff'`
 desde una terminal propia y escribir allí la contraseña. La alimentación
 independiente de los servos debe permanecer desconectada.
+
+### Raspberry Pi: conexión SSH vigente — 29 de septiembre de 2026
+
+La Raspberry volvió a la red y se conectó satisfactoriamente como
+`cuadrupedo-pi` en `10.139.240.198`; comprobación remota: hostname y uptime
+(39 minutos al momento de la conexión). La clave ED25519 presentada coincide
+con la huella SSH ya registrada para `cuadrupedo-pi`:
+`SHA256:mTERAysLSgm2Xlw36tOoV0uv5gC3vj7Xoycel2xe16M`.
+Se actualizó `/home/pavilion/.ssh/config`, alias `cuadrupedo-pi`, para usar
+esta IP; la conexión normal es `ssh cuadrupedo-pi`. La IP previa
+`172.18.81.198` ya no es válida en la red actual. La IP parece asignada por
+DHCP y podría cambiar; si vuelve a fallar, consultar `hostname -I` en la Pi o
+reservar esta dirección en el router. No se enviaron órdenes de movimiento.

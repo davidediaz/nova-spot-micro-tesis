@@ -1334,6 +1334,16 @@ permanecen reservadas. Resultado: no se selecciona PPO, no se transfiere a
 hardware y la ficha sigue sin firma. Informe completo en
 `Experimentos/campana_step_estabilidad_xy48_w32_l64_20260929/INFORME_RESULTADOS.md`.
 
+### Conexión SSH Raspberry recuperada — 29 de septiembre de 2026
+
+La Pi `cuadrupedo-pi` respondió en `10.139.240.198`; se validó hostname y
+uptime, y la huella ED25519 coincidió con la identidad ya conocida
+(`SHA256:mTERAysLSgm2Xlw36tOoV0uv5gC3vj7Xoycel2xe16M`). Se actualizó el alias
+`Host cuadrupedo-pi` en `~/.ssh/config`, de modo que puede conectarse con
+`ssh cuadrupedo-pi`. La IP `172.18.81.198` quedó obsoleta. Si DHCP cambia la
+dirección, leer `hostname -I` localmente y actualizar `HostName`; se recomienda
+reservar la IP en el router. No se enviaron órdenes a los servos.
+
 ### Apagado de Raspberry pendiente de autenticación — 28 de septiembre de 2026
 
 Se verificó la identidad SSH de `cuadrupedo-pi` en `172.18.81.198` y se ejecutó
