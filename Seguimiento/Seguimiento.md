@@ -1222,6 +1222,20 @@ confirmada la comunicación básica de todos los AS5600; no queda cerrada su
 calibración ni se habilitan posturas o caminatas hasta medir estabilidad, cero,
 sentido, rango y holgura.
 
+### Cierre de caracterización pasiva AS5600 — 28 de septiembre de 2026
+
+Se completaron capturas de referencia y de ambos extremos manuales para las
+doce articulaciones, con ventanas de veinte muestras por extremo. La tabla
+consolidada y las limitaciones están en
+`Raspberry/RESUMEN_CARACTERIZACION_AS5600_2026-09-28.md`; las estadísticas
+quedan en `Raspberry/configuracion/as5600_caracterizacion_provisional.yaml`.
+Coxa 2, coxa 3 y tibia 3 muestran dispersión relevante y no se autorizan para
+realimentación cerrada. Las lecturas son grados absolutos de encoder: todavía
+no están calibradas contra cero, sentido y límites del modelo. No se ordenó
+PWM ni marcha. Próximo paso: calibración angular con cruce circular, pruebas
+repetibles de una articulación a la vez, márgenes de tope y validación de parada
+segura antes de cualquier movimiento motorizado.
+
 ### Captura antihoraria de tibias — 28 de septiembre de 2026
 
 Se tomaron veinte muestras por tibia en el extremo antihorario: P1 203,379°

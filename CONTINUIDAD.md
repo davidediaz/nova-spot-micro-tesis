@@ -2268,3 +2268,23 @@ estables en veinte muestras: P1 132,460° (rango 0,176°), P2 288,809° (0,000°
 P3 98,126° (0,176°) y P4 66,006° (0,000°). Se guardaron en el YAML como
 referencias visuales provisionales. Siguen pendientes los extremos antihorarios
 de tibia, la conversión/calibración y las puertas de seguridad.
+
+## Cierre de sesión de caracterización AS5600 — 28 de septiembre de 2026
+
+La captura antihoraria de tibias también quedó completada: P1 203,379° (rango
+0,000°), P2 249,811° (0,088°), P3 37,446° (5,713°) y P4 303,047° (0,000°).
+Con el mapa físico corregido por el operador respondieron las doce rutas
+ocupadas. El informe consolidado está en
+`Raspberry/RESUMEN_CARACTERIZACION_AS5600_2026-09-28.md`; la cronología y
+detalle por captura, en `Raspberry/LECTURA_AS5600_TCA_2026-09-28.md`, y las
+estadísticas por articulación/condición, en
+`Raspberry/configuracion/as5600_caracterizacion_provisional.yaml`.
+
+Se conservaron medias, mínimos, máximos y rangos de ventanas de veinte
+muestras. Coxa 2, coxa 3 y tibia 3 tienen capturas variables; la referencia
+inicial de coxa 1 tampoco fue repetible. Son grados absolutos del imán, no
+ángulos calibrados del modelo. No se envió PWM ni se hizo una caminata durante
+esta caracterización. Antes de realimentación o marcha faltan cero/sentido por
+articulación, tratamiento del cruce 0°/360°, repetibilidad en movimiento,
+márgenes respecto a topes y resolución de señales variables, además de las
+puertas eléctricas y de parada segura.
