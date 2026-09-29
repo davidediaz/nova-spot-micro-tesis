@@ -26,3 +26,43 @@ measurements:
     span_deg: 0.000
     stable: true
     use_restriction: "Referencia visual provisional; falta cero y límites en radianes."
+  front_right_femur_joint:
+    leg: 1
+    tca_address: "0x71"
+    tca_channel: 1
+    mean_deg: 232.831
+    min_deg: 232.734
+    max_deg: 232.910
+    span_deg: 0.176
+    stable: true
+    use_restriction: "Extremo horario visual provisional; no es límite de control."
+  front_left_femur_joint:
+    leg: 2
+    tca_address: "0x71"
+    tca_channel: 5
+    mean_deg: 299.795
+    min_deg: 299.795
+    max_deg: 299.795
+    span_deg: 0.000
+    stable: true
+    use_restriction: "Extremo horario visual provisional; no es límite de control."
+  rear_right_femur_joint:
+    leg: 3
+    tca_address: "0x70"
+    tca_channel: 4
+    mean_deg: 47.039
+    min_deg: 47.021
+    max_deg: 47.109
+    span_deg: 0.088
+    stable: true
+    use_restriction: "Extremo horario visual provisional; no es límite de control."
+  rear_left_femur_joint:
+    leg: 4
+    tca_address: "0x70"
+    tca_channel: 1
+    mean_deg: 291.797
+    min_deg: 291.797
+    max_deg: 291.797
+    span_deg: 0.000
+    stable: true
+    use_restriction: "Extremo horario visual provisional; no es límite de control."

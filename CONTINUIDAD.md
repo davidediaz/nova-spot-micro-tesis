@@ -2231,3 +2231,10 @@ observada. Datos en
 `Raspberry/configuracion/as5600_caracterizacion_provisional.yaml` y en el
 informe de lectura; no constituyen calibración completa ni autorización de
 postura/marcha.
+
+Se registraron además veinte muestras en el extremo horario seguro de los cuatro
+fémures: P1 232,831° (rango 0,176°), P2 299,795° (0,000°), P3 47,039°
+(0,088°) y P4 291,797° (0,000°). Las cuatro señales permanecieron estables;
+los datos se conservaron como referencias visuales provisionales en el YAML de
+caracterización. Falta la captura antihoraria y la calibración angular antes de
+control físico.
