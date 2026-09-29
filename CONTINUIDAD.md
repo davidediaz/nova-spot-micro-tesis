@@ -2253,6 +2253,14 @@ esta captura. Se conservaron separados de los extremos horarios en la sección
 `counterclockwise_measurements` del YAML; sigue prohibido usarlos para control
 cerrado o marcha hasta completar la calibración y las puertas de seguridad.
 
+Se completó también la captura antihoraria de las tibias con veinte muestras:
+P1 203,379° (rango 0,000°), P2 249,811° (0,088°), P3 37,446° (5,713°) y P4
+303,047° (0,000°). P3 queda inestable y solo visual; las otras tres señales
+fueron estables. Los resultados se añadieron a `counterclockwise_measurements`
+del YAML y al informe de sensores. La caracterización de ambos sentidos está
+registrada, pero falta convertir a límites angulares calibrados, aplicar margen
+de tope y validar parada/control antes de cualquier caminata.
+
 Se verificó que la clave SSH anunciada por la nueva IP `172.18.81.198` coincidía
 con la identidad conocida de `cuadrupedo-pi.local`; se reconectó usando ese
 alias, sin aceptar claves nuevas. Los extremos antihorarios de fémur fueron

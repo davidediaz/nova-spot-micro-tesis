@@ -1221,3 +1221,13 @@ El barrido posterior del mapa actualizado respondió en las doce rutas. Queda
 confirmada la comunicación básica de todos los AS5600; no queda cerrada su
 calibración ni se habilitan posturas o caminatas hasta medir estabilidad, cero,
 sentido, rango y holgura.
+
+### Captura antihoraria de tibias — 28 de septiembre de 2026
+
+Se tomaron veinte muestras por tibia en el extremo antihorario: P1 203,379°
+(rango 0,000°), P2 249,811° (0,088°), P3 37,446° (5,713°) y P4 303,047°
+(0,000°). P3 se conserva como inestable; las otras tres fueron estables durante
+la toma. Los datos se guardaron en
+`Raspberry/configuracion/as5600_caracterizacion_provisional.yaml` y el detalle
+en `Raspberry/LECTURA_AS5600_TCA_2026-09-28.md`. Los extremos son referencias
+provisionales, no límites de control; faltan márgenes y validación de seguridad.
