@@ -78,7 +78,8 @@ def _episode_metrics(env, model=None, seed=100):
     }
 
 
-def evaluate_mujoco(output, eval_episodes):
+def evaluate_mujoco(output, eval_episodes, *, seeds=SEEDS, gaits=GAITS,
+                    write_csv=True):
     """Evaluate every MuJoCo policy and write paired nominal comparisons."""
     sys.path.insert(0, str(ROOT / "Experimentos"))
     sys.path.insert(0, str(ROOT / "src" / "nova_gait_controller"))
@@ -87,8 +88,8 @@ def evaluate_mujoco(output, eval_episodes):
 
     model_path = ROOT / "src" / "nova_sm3_description" / "mujoco" / "nova_sm3.xml"
     rows = []
-    for gait in GAITS:
-        for seed in SEEDS:
+    for gait in gaits:
+        for seed in seeds:
             policy_path = output / "mujoco" / f"{gait}_semilla_{seed}" / "policy.zip"
             if not policy_path.exists():
                 continue
@@ -116,7 +117,8 @@ def evaluate_mujoco(output, eval_episodes):
                     sum(item["terminated"] for item in metrics))
                 rows.append(aggregate)
     path = output / "mujoco_evaluation.csv"
-    _write_csv(path, rows)
+    if write_csv:
+        _write_csv(path, rows)
     return rows
 
 
