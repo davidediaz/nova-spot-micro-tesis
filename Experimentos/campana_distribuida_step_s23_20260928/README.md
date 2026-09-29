@@ -7,6 +7,14 @@ comparar con la campaña del PC principal y validar las políticas candidatas.
 El análisis agregado, la distribución por semillas y las limitaciones de
 evaluación están documentados en `INFORME_ANALISIS_80_SEMILLAS.md`.
 
+**Auditoría posterior (28-09-2026):** se encontró un error temporal en la
+versión de entorno con la que se entrenó y evaluó esta campaña. `nominal_index`
+avanzaba en cada paso de 20 ms, mientras que el horizonte asumía nueve pasos por
+muestra. Cada episodio de cinco ciclos declarados ejecutó en realidad 45 ciclos
+de referencia. Se conservan íntegros políticas y trazas como evidencia de esa
+versión exploratoria, pero sus cifras no son evidencia válida para los ciclos
+de 5,76 s definidos en el modelo; no seleccionar ni desplegar estas políticas.
+
 ## Configuración y procedencia
 
 - Código base: `2854673bc9c7c5cced981c40142a21d82cd5e7a5`.

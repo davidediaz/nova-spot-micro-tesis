@@ -4,6 +4,15 @@ Fecha de análisis: 28 de septiembre de 2026. Fuente cuantitativa:
 `mujoco_evaluation.csv`; configuración, logs, políticas y trazas se conservan
 junto a este informe. Los resultados no habilitan transferencia a hardware.
 
+**Auditoría temporal posterior (28 de septiembre de 2026):** la versión del
+entorno identificada en la procedencia avanzaba una muestra nominal por cada
+paso de control de 20 ms, pero dimensionaba el episodio para nueve pasos por
+muestra. Por ello, las corridas declaradas de cinco ciclos recorrieron en
+realidad 45 ciclos de referencia (0,64 s por ciclo en lugar de 5,76 s). La
+estadística de este informe describe fielmente esos artefactos, pero no valida
+la marcha en la temporización especificada. Se preserva la campaña sin cambios
+en sus datos originales; no usarla para selección ni transferencia.
+
 ## Diseño y comprobaciones
 
 - 80 entrenamientos PPO (`MlpPolicy`), semillas 23 y 1001–1079; 200.000 pasos

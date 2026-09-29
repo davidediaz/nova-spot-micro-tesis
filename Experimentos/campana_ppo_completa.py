@@ -61,6 +61,7 @@ def _episode_metrics(env, model=None, seed=100):
     contact_states = []
     joint_steps = []
     joint_tracking_errors = []
+    joint_tracking_error_vectors = []
     command_steps = []
     terminated = False
     truncated = False
@@ -79,9 +80,11 @@ def _episode_metrics(env, model=None, seed=100):
         pitches.append(float(info["pitch"]))
         heights.append(float(info["height"]))
         lateral_positions.append(float(env.data.xpos[env.base_body, 1]))
-        contact_states.append(np.asarray(obs[9:13], dtype=float))
+        contact_states.append(np.asarray(obs[env.contact_obs_slice], dtype=float))
         joint_steps.append(float(info["joint_step_rad"]))
         joint_tracking_errors.append(float(info["joint_tracking_error_rad"]))
+        joint_tracking_error_vectors.append(
+            np.asarray(env.data.qpos[env.qpos_ids] - env.data.ctrl, dtype=float))
         command_steps.append(float(info["command_step_rad"]))
         steps += 1
     final_x = float(env.data.xpos[env.base_body, 0])
@@ -102,6 +105,8 @@ def _episode_metrics(env, model=None, seed=100):
         "lateral_excursion_m": max(lateral_positions) - min(lateral_positions),
         "max_joint_step_rad": max(joint_steps),
         "max_joint_tracking_error_rad": max(joint_tracking_errors),
+        "joint_tracking_error_rms_rad": float(np.sqrt(
+            np.mean(np.square(joint_tracking_error_vectors)))),
         "max_command_step_rad": max(command_steps),
         "terminated": bool(terminated),
         "truncated": bool(truncated),
@@ -109,7 +114,8 @@ def _episode_metrics(env, model=None, seed=100):
 
 
 def evaluate_mujoco(output, eval_episodes, *, seeds=SEEDS, gaits=GAITS,
-                    write_csv=True, episode_seeds=None, episode_cycles=5):
+                    write_csv=True, episode_seeds=None, episode_cycles=5,
+                    environment_kwargs=None):
     """Evaluate every MuJoCo policy and write paired nominal comparisons."""
     sys.path.insert(0, str(ROOT / "Experimentos"))
     sys.path.insert(0, str(ROOT / "src" / "nova_gait_controller"))
@@ -121,6 +127,7 @@ def evaluate_mujoco(output, eval_episodes, *, seeds=SEEDS, gaits=GAITS,
                      if episode_seeds is None else tuple(episode_seeds))
     if len(episode_seeds) != eval_episodes:
         raise ValueError("episode_seeds debe tener eval_episodes elementos")
+    environment_kwargs = {} if environment_kwargs is None else dict(environment_kwargs)
     rows = []
     for gait in gaits:
         for seed in seeds:
@@ -131,7 +138,7 @@ def evaluate_mujoco(output, eval_episodes, *, seeds=SEEDS, gaits=GAITS,
             for condition in ("nominal", "ppo"):
                 env = NovaMujocoResidualEnv(
                     model_path, gait=gait, episode_cycles=episode_cycles, seed=100,
-                    domain_randomization=False)
+                    domain_randomization=False, **environment_kwargs)
                 try:
                     metrics = []
                     for episode_seed in episode_seeds:
@@ -155,6 +162,8 @@ def evaluate_mujoco(output, eval_episodes, *, seeds=SEEDS, gaits=GAITS,
                             "max_joint_tracking_error_rad",
                             "max_command_step_rad"):
                     aggregate[key] = float(max(item[key] for item in metrics))
+                aggregate["joint_tracking_error_rms_rad"] = float(np.mean(
+                    [item["joint_tracking_error_rms_rad"] for item in metrics]))
                 aggregate["min_height_m"] = float(
                     min(item["min_height_m"] for item in metrics))
                 aggregate["max_lateral_excursion_m"] = float(

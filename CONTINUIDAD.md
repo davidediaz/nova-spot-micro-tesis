@@ -1,6 +1,6 @@
 # Continuidad histórica de la tesis Nova Spot Micro
 
-Última actualización: 25 de septiembre de 2026, America/Bogota.
+Última actualización: 28 de septiembre de 2026, America/Bogota.
 
 
 ## Objetivos vigentes — corrección del usuario del 7 de septiembre de 2026
@@ -2317,6 +2317,32 @@ semillas finales 101/202/303/404/505 quedan reservadas. Se amplió el informe
 MuJoCo para recoger roll/pitch RMS y máximos, altura, contactos, deriva lateral,
 seguimiento y saltos articulares. Los umbrales de la ficha de aprobación siguen
 sin firma: la campaña es desarrollo, no certificación ni transferencia física.
+
+La primera tanda w32 terminó las cinco semillas, pero no se acepta: la evaluación
+mostró excursión lateral media 6,886 m y error articular máximo medio 0,1461 rad.
+Además, una auditoría detectó que el entorno antiguo recorría nueve ciclos por
+ciclo declarado (índice de fase avanzaba cada 20 ms, aunque cada muestra debía
+durar nueve pasos). Por ello las 80 semillas anteriores y w32 son exploratorias,
+no evidencia válida a la cadencia prevista. Se corrigió el entorno para
+interpolar cada muestra durante nueve pasos: el nominal ahora completa cinco
+ciclos en 1.440 pasos, 5,76 s por ciclo, y su salto de referencia tras el arranque
+es 0,0081 rad. Siguiente campaña aislada `campana_step_estabilidad_xy_w32_20260928`:
+actitud 32, posición lateral/rumbo 8 cada uno, observación de 30 dimensiones,
+semillas 11/23/37/53/71; evalúa desarrollo 701–705 a 20 ciclos. No usará las
+semillas finales reservadas.
+
+La campaña lateral/rumbo terminó el 28 de septiembre sin errores: cinco PPO de
+200.000 pasos y cinco episodios de evaluación de desarrollo por política, cada
+uno de 20 ciclos. Informe y artefactos:
+`Experimentos/campana_step_estabilidad_xy_w32_20260928/INFORME_RESULTADOS.md`.
+Las políticas mantienen inclinación RMS y altura dentro de los objetivos
+numéricos provisionales, pero no se selecciona ninguna: tres de cinco avanzan
+menos que el nominal; excursión lateral máxima media 0,0826 m frente a 0,0040 m
+nominal; error articular máximo medio 0,0738 rad (umbral guía 0,05); contacto
+medio 0,8355. Las semillas finales 101/202/303/404/505 permanecen sin usar.
+La ficha de aprobación sigue sin firma, por lo que la marcha no está aprobada y
+no se debe transferir PPO al robot. Próximo paso: corregir/validar control
+nominal lateral y seguimiento articular antes de otra optimización PPO.
 
 Se solicitó apagar la Raspberry Pi. Se verificó que `172.18.81.198` presenta el
 hostname `cuadrupedo-pi` y responde por la identidad SSH conocida. `sync` se

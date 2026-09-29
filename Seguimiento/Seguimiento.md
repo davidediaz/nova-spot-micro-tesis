@@ -1270,6 +1270,36 @@ mayor (32 frente a 8), cinco semillas del protocolo (11, 23, 37, 53 y 71),
 ficha de aprobación aún no está firmada; no se declarará marcha aprobada ni se
 habilitará hardware a partir de este entrenamiento.
 
+La tanda w32 completó cinco semillas, pero se rechazó como candidata por
+excursión lateral media de 6,886 m y error articular máximo medio de 0,1461 rad.
+También se corrigió un error de fase: el código antiguo recorría nueve ciclos
+por cada ciclo declarado. Las 80 semillas previas y w32 quedan etiquetadas como
+exploratorias, no comparables con la cadencia prevista. El nominal corregido
+interpola cada muestra durante nueve pasos y completa cinco ciclos en 1.440
+pasos; el salto de referencia en régimen es 0,0081 rad. Se preparó otra tanda
+desde cero con observación lateral/rumbo y penalizaciones, misma quinteta de
+entrenamiento y evaluación de desarrollo 701–705; las semillas finales siguen
+reservadas.
+
+### Evaluación step PPO con estabilidad lateral/rumbo — 28 de septiembre de 2026
+
+La campaña `Experimentos/campana_step_estabilidad_xy_w32_20260928` completó
+cinco políticas (200.000 pasos cada una) y su evaluación de cinco episodios por
+política, de 20 ciclos corregidos. La cadencia nominal es 288 pasos/ciclo a
+20 ms, precedidos por una rampa de 1 s; el episodio de 20 ciclos tiene 5.810
+pasos. No hubo terminaciones tempranas. El informe reproducible es
+`Experimentos/campana_step_estabilidad_xy_w32_20260928/INFORME_RESULTADOS.md`.
+
+Resultado negativo para selección: solo dos de cinco políticas superaron el
+avance nominal; la excursión lateral máxima media fue 0,0826 m frente a 0,0040
+m en nominal; error articular máximo medio 0,0738 rad, superior al umbral
+provisional de 0,05 rad. Aunque inclinación RMS y altura permanecieron dentro
+de la guía numérica provisional, no se elige política ni se marca la marcha
+aprobada. La ficha de aprobación sigue sin firma. No se usaron las semillas
+finales 101/202/303/404/505 y no se habilitó transferencia física. Siguiente:
+validar referencia nominal, trayectoria lateral y seguimiento articular antes
+de una nueva optimización.
+
 ### Apagado de Raspberry pendiente de autenticación — 28 de septiembre de 2026
 
 Se verificó la identidad SSH de `cuadrupedo-pi` en `172.18.81.198` y se ejecutó
