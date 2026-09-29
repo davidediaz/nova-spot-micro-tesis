@@ -2288,3 +2288,20 @@ esta caracterización. Antes de realimentación o marcha faltan cero/sentido por
 articulación, tratamiento del cruce 0°/360°, repetibilidad en movimiento,
 márgenes respecto a topes y resolución de señales variables, además de las
 puertas eléctricas y de parada segura.
+
+## Campaña MuJoCo step transferida desde JULI — 28 de septiembre de 2026
+
+Se verificó por huella SSH y se conectó al equipo `JULI` como `juli`. La campaña
+`Experimentos/campana_distribuida_step_s23_20260928` se copió sin eliminar ni
+modificar el original. La evidencia tiene 80 políticas, 80 semillas completas
+y 160 filas de evaluación; todas las sumas SHA-256 incluidas coinciden. El
+paquete (333 archivos versionados contando código) quedó en la rama
+`resultados/mujoco-step-80-semillas-20260928`, commit `106ee5a`, con autor
+configurado `davidediaz <davidediaz@users.noreply.github.com>`. La rama sigue
+local y aún no se ha publicado en GitHub. Ninguna política está aprobada para
+transferencia física.
+
+Se solicitó apagar la Raspberry Pi. Se verificó que `172.18.81.198` presenta el
+hostname `cuadrupedo-pi` y responde por la identidad SSH conocida. Pendiente
+confirmar apagado limpio; la alimentación independiente de los servos debe
+permanecer desconectada.

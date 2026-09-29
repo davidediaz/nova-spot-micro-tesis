@@ -1245,3 +1245,13 @@ la toma. Los datos se guardaron en
 `Raspberry/configuracion/as5600_caracterizacion_provisional.yaml` y el detalle
 en `Raspberry/LECTURA_AS5600_TCA_2026-09-28.md`. Los extremos son referencias
 provisionales, no límites de control; faltan márgenes y validación de seguridad.
+
+### Campaña step de 80 semillas recibida desde JULI — 28 de septiembre de 2026
+
+Se transfirió por SSH verificado la campaña completa MuJoCo step desde el equipo
+JULI, sin alterar la fuente. Se comprobaron las 80 políticas, 160 filas de
+evaluación y las sumas SHA-256. Quedó guardada en
+`Experimentos/campana_distribuida_step_s23_20260928`, con el código incremental,
+en la rama local `resultados/mujoco-step-80-semillas-20260928` (commit
+`106ee5a`). No se ha subido aún a GitHub ni se aprueban políticas para hardware.
+Las carpetas PPO locales sin seguimiento se preservaron.
