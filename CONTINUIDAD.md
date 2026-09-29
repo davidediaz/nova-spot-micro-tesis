@@ -2252,3 +2252,11 @@ P2 continúa inestable y P1 requiere verificación; P3 y P4 fueron estables en
 esta captura. Se conservaron separados de los extremos horarios en la sección
 `counterclockwise_measurements` del YAML; sigue prohibido usarlos para control
 cerrado o marcha hasta completar la calibración y las puertas de seguridad.
+
+Se verificó que la clave SSH anunciada por la nueva IP `172.18.81.198` coincidía
+con la identidad conocida de `cuadrupedo-pi.local`; se reconectó usando ese
+alias, sin aceptar claves nuevas. Los extremos antihorarios de fémur fueron
+estables en veinte muestras: P1 132,460° (rango 0,176°), P2 288,809° (0,000°),
+P3 98,126° (0,176°) y P4 66,006° (0,000°). Se guardaron en el YAML como
+referencias visuales provisionales. Siguen pendientes los extremos antihorarios
+de tibia, la conversión/calibración y las puertas de seguridad.
