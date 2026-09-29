@@ -2221,3 +2221,13 @@ Los valores y su correspondencia están en
 `Raspberry/LECTURA_AS5600_TCA_2026-09-28.md`. Esto cierra únicamente la
 comunicación básica de los doce encoders; persisten estabilidad, cero, sentido,
 rango, holgura y validación de seguridad antes de postura o marcha.
+
+Caracterización manual posterior: se guardaron veinte muestras en el extremo
+horario seguro de coxa 3 (`0x70`/5) y coxa 4 (`0x70`/2). Coxa 3 promedió
+36,290° con rango 16,435°; el operador indicó que no puede ajustarse en esta
+sesión, por lo que se conserva exclusivamente como referencia visual inestable
+y queda prohibida para control cerrado. Coxa 4 promedió 216,562° sin variación
+observada. Datos en
+`Raspberry/configuracion/as5600_caracterizacion_provisional.yaml` y en el
+informe de lectura; no constituyen calibración completa ni autorización de
+postura/marcha.

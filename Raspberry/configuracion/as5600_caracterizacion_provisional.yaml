@@ -1,0 +1,28 @@
+# Caracterización manual provisional de encoders AS5600.
+# No usar estos datos para habilitar PWM, marcha o corrección PPO.
+# Los valores son grados absolutos del imán, no radianes del modelo cinemático.
+date: 2026-09-28
+condition: extremo_horario_seguro_manual
+samples_per_joint: 20
+measurements:
+  rear_right_coxa_joint:
+    leg: 3
+    tca_address: "0x70"
+    tca_channel: 5
+    mean_deg: 36.290
+    min_deg: 27.510
+    max_deg: 43.945
+    span_deg: 16.435
+    stable: false
+    operator_constraint: "No es posible ajustar físicamente la señal en esta sesión."
+    use_restriction: "Solo referencia visual provisional; prohibido control en lazo cerrado."
+  rear_left_coxa_joint:
+    leg: 4
+    tca_address: "0x70"
+    tca_channel: 2
+    mean_deg: 216.562
+    min_deg: 216.562
+    max_deg: 216.562
+    span_deg: 0.000
+    stable: true
+    use_restriction: "Referencia visual provisional; falta cero y límites en radianes."
