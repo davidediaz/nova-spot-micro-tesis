@@ -68,7 +68,8 @@ class NovaMujocoResidualEnv(gym.Env):
     metadata = {"render_modes": []}
 
     def __init__(self, model_path, gait="crawl", episode_cycles=5,
-                 control_dt=0.02, seed=11, domain_randomization=True):
+                 control_dt=0.02, seed=11, domain_randomization=True,
+                 attitude_weight=8.0):
         super().__init__()
         self.model_path = str(model_path)
         self.gait = gait
@@ -78,6 +79,7 @@ class NovaMujocoResidualEnv(gym.Env):
         self.sim_substeps = max(1, round(self.control_dt / 0.002))
         self.rng = np.random.default_rng(seed)
         self.domain_randomization = bool(domain_randomization)
+        self.attitude_weight = float(attitude_weight)
         self.model = mujoco.MjModel.from_xml_path(self.model_path)
         self.data = mujoco.MjData(self.model)
         self.base_body = mujoco.mj_name2id(
@@ -150,8 +152,10 @@ class NovaMujocoResidualEnv(gym.Env):
         else:
             self.data.qpos[:] = 0.0
             self.data.qvel[:] = 0.0
-            self.data.ctrl[:] = 0.0
+        self.data.ctrl[:] = 0.0
         mujoco.mj_forward(self.model, self.data)
+        self.previous_q = self.data.qpos[self.qpos_ids].copy()
+        self.previous_ctrl = self.data.ctrl.copy()
 
     def _observation(self):
         roll, pitch = _quat_roll_pitch(self.data.xquat[self.base_body])
@@ -176,7 +180,8 @@ class NovaMujocoResidualEnv(gym.Env):
         q_error = self.data.qpos[self.qpos_ids] - self.nominal[self.nominal_index]
         contact_bonus = float(np.sum(obs[9:13])) * 0.003
         return float(
-            1.0 + 18.0 * dx - 8.0 * roll**2 - 8.0 * pitch**2
+            1.0 + 18.0 * dx - self.attitude_weight * roll**2
+            - self.attitude_weight * pitch**2
             - 25.0 * height_error**2 - 0.25 * np.dot(q_error, q_error)
             - 0.04 * np.dot(residual, residual) + contact_bonus)
 
@@ -222,6 +227,13 @@ class NovaMujocoResidualEnv(gym.Env):
         obs = self._observation()
         roll, pitch = map(float, obs[:2])
         height = float(self.data.xpos[self.base_body, 2])
+        q_now = self.data.qpos[self.qpos_ids].copy()
+        command = self.data.ctrl.copy()
+        joint_step = float(np.max(np.abs(q_now - self.previous_q)))
+        tracking_error = float(np.max(np.abs(q_now - command)))
+        command_step = float(np.max(np.abs(command - self.previous_ctrl)))
+        self.previous_q = q_now
+        self.previous_ctrl = command
         terminated = bool(
             not np.isfinite(obs).all() or height < 0.12 or height > 0.40
             or abs(roll) > 0.60 or abs(pitch) > 0.60)
@@ -230,6 +242,9 @@ class NovaMujocoResidualEnv(gym.Env):
         return obs, reward, terminated, truncated, {
             "roll": roll, "pitch": pitch, "height": height,
             "x": self.last_x, "residual_norm": float(np.linalg.norm(residual)),
+            "joint_step_rad": joint_step,
+            "joint_tracking_error_rad": tracking_error,
+            "command_step_rad": command_step,
         }
 
 
@@ -267,6 +282,8 @@ def main():
     parser.add_argument("--timesteps", type=int, default=20000)
     parser.add_argument("--seed", type=int, default=11)
     parser.add_argument("--episode-cycles", type=int, default=5)
+    parser.add_argument("--attitude-weight", type=float, default=8.0,
+                        help="peso común de penalización de roll y pitch")
     parser.add_argument("--output", type=Path, default=ROOT /
                         "Experimentos/entrenamiento_ppo_mujoco_20260924")
     parser.add_argument("--no-domain-randomization", action="store_true")
@@ -276,7 +293,8 @@ def main():
     output.mkdir(parents=True, exist_ok=True)
     env = NovaMujocoResidualEnv(
         model_path, gait=args.gait, episode_cycles=args.episode_cycles,
-        seed=args.seed, domain_randomization=not args.no_domain_randomization)
+        seed=args.seed, domain_randomization=not args.no_domain_randomization,
+        attitude_weight=args.attitude_weight)
     algorithm = PPO(
         "MlpPolicy", env, seed=args.seed, verbose=1, n_steps=1024,
         batch_size=256, learning_rate=3e-4, gamma=0.99, gae_lambda=0.95,
@@ -303,6 +321,7 @@ def main():
         "action_dim": 12,
         "residual_limit_rad": 0.08,
         "max_action_step_rad": 0.02,
+        "attitude_weight": args.attitude_weight,
         "hardware_transfer": False,
     }
     (output / "metadata.json").write_text(

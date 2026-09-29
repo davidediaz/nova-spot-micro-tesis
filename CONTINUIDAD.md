@@ -2309,6 +2309,15 @@ reportada (80/80 empeoran). No hay política que mejore avance sin aumentar
 inclinación. La evaluación reutiliza cinco episodios sin aleatorización de
 dominio; requiere validación más amplia. `hardware_transfer=false` sigue vigente.
 
+Para avanzar se preparó una campaña de desarrollo separada,
+`Experimentos/campana_step_estabilidad_w32_20260928`: PPO desde cero con peso de
+actitud 32 (base 8), cinco semillas predefinidas 11/23/37/53/71, 200.000 pasos
+por semilla y evaluación de desarrollo de 20 ciclos con semillas 601–605. Las
+semillas finales 101/202/303/404/505 quedan reservadas. Se amplió el informe
+MuJoCo para recoger roll/pitch RMS y máximos, altura, contactos, deriva lateral,
+seguimiento y saltos articulares. Los umbrales de la ficha de aprobación siguen
+sin firma: la campaña es desarrollo, no certificación ni transferencia física.
+
 Se solicitó apagar la Raspberry Pi. Se verificó que `172.18.81.198` presenta el
 hostname `cuadrupedo-pi` y responde por la identidad SSH conocida. `sync` se
 completó, pero el apagado remoto no: la cuenta requiere contraseña para `sudo`

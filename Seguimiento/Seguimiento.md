@@ -1263,6 +1263,13 @@ la inclinación reportada empeora en 80/80 semillas (+0,03342 rad de media).
 Ninguna política domina la nominal en avance e inclinación. Faltan pruebas con
 episodios/escenarios nuevos y aleatorización ambiental antes de elegir candidatas.
 
+Se preparó una campaña de desarrollo con penalización de actitud cuatro veces
+mayor (32 frente a 8), cinco semillas del protocolo (11, 23, 37, 53 y 71),
+200.000 pasos por semilla y evaluación de 20 ciclos en semillas de desarrollo
+601–605. Las semillas finales 101, 202, 303, 404 y 505 quedan reservadas. La
+ficha de aprobación aún no está firmada; no se declarará marcha aprobada ni se
+habilitará hardware a partir de este entrenamiento.
+
 ### Apagado de Raspberry pendiente de autenticación — 28 de septiembre de 2026
 
 Se verificó la identidad SSH de `cuadrupedo-pi` en `172.18.81.198` y se ejecutó
