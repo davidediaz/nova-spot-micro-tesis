@@ -2302,6 +2302,9 @@ local y aún no se ha publicado en GitHub. Ninguna política está aprobada para
 transferencia física.
 
 Se solicitó apagar la Raspberry Pi. Se verificó que `172.18.81.198` presenta el
-hostname `cuadrupedo-pi` y responde por la identidad SSH conocida. Pendiente
-confirmar apagado limpio; la alimentación independiente de los servos debe
-permanecer desconectada.
+hostname `cuadrupedo-pi` y responde por la identidad SSH conocida. `sync` se
+completó, pero el apagado remoto no: la cuenta requiere contraseña para `sudo`
+y systemd requiere autorización interactiva. El operador debe ejecutar
+`sudo poweroff` localmente o `ssh -t pavilion@172.18.81.198 'sudo poweroff'`
+desde una terminal propia y escribir allí la contraseña. La alimentación
+independiente de los servos debe permanecer desconectada.

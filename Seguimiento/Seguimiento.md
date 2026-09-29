@@ -1255,3 +1255,12 @@ evaluación y las sumas SHA-256. Quedó guardada en
 en la rama local `resultados/mujoco-step-80-semillas-20260928` (commit
 `106ee5a`). No se ha subido aún a GitHub ni se aprueban políticas para hardware.
 Las carpetas PPO locales sin seguimiento se preservaron.
+
+### Apagado de Raspberry pendiente de autenticación — 28 de septiembre de 2026
+
+Se verificó la identidad SSH de `cuadrupedo-pi` en `172.18.81.198` y se ejecutó
+`sync`. El apagado remoto fue rechazado porque `sudo` y systemd requieren
+autenticación interactiva. No se solicitó ni transmitió la contraseña. Para
+completarlo, el operador debe ejecutar `sudo poweroff` en la Raspberry o
+`ssh -t pavilion@172.18.81.198 'sudo poweroff'` desde su terminal e ingresar
+allí su contraseña.
