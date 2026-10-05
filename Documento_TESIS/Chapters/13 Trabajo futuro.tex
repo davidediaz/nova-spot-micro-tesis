@@ -1,40 +1,64 @@
-\chapter{Trabajo pendiente y futuro}
+\chapter{Proyección futura de la plataforma}
 
-El trabajo inmediato consiste en completar el ensamble y la caracterización
-física, medir geometría y masas, identificar los servos sustituidos y verificar
-holguras y topes. Después se debe cerrar el diseño eléctrico, implementar una
-parada física mediante OE, calibrar cada MG996R y validar progresivamente un
-servo, una pata y el robot suspendido.
+Los resultados de esta tesis dejan una plataforma de simulación, un generador
+cinemático de marchas, una arquitectura ROS~2 y una base de control sobre la
+cual pueden plantearse desarrollos posteriores. Este capítulo no enumera
+tareas de cierre de los objetivos presentes; describe líneas de evolución que
+ampliarían las capacidades del robot cuadrúpedo Nova Spot Micro después de la
+tesis.
 
-La marcha nominal física se transferirá solo cuando se cumplan esas condiciones.
+\section{Plataforma física instrumentada}
 
-Para preparar esta fase se consolidó el paquete
-\texttt{Documentacion/PROTOCOLOS\_FISICOS},
-que contiene listas de seguridad, formatos de calibración de los doce canales,
-identificación de masas, centro de masa e inercia, y una progresión de pruebas
-desde un servo asegurado hasta la marcha. Las plantillas distinguen mediciones
-físicas de los valores nominales usados en simulación y exigen evidencia,
-instrumento, resolución y repetición antes de actualizar URDF o MJCF.
-Las pruebas avanzarán desde postura con soporte hasta un paso, un ciclo de
-gateo y marcha continua, registrando orientación, potencia, intervenciones y
-desplazamiento.
+Una primera línea consiste en consolidar la plataforma como banco experimental
+instrumentado. La adquisición de posición articular mediante los doce AS5600
+permitiría implementar seguimiento cerrado de cada articulación, estimar
+velocidades articulares y registrar holgura, retardo y repetibilidad. La
+incorporación posterior de una IMU, sensores de contacto en los pies y medición
+de tensión y corriente permitiría observar la orientación corporal, el apoyo y
+el esfuerzo eléctrico durante la locomoción. Con esta instrumentación, la
+plataforma podría utilizarse para campañas sistemáticas de identificación y
+para contrastar el comportamiento simulado con el comportamiento físico.
 
-En simulación se investigará una liberación trasera que produzca una pérdida
-filtrada sostenida sin aumentar la altura temprana por encima de 0,80 ni superar
-un salto articular de 0,20~rad. Las comprobaciones unitarias de límites, pose,
-contacto inconsistente, margen y continuidad y los nueve escenarios integrados
-provocados ya se ejecutan automáticamente. Antes de habilitar por defecto las
-paradas de contacto, margen y datos vencidos se deberán medir falsos positivos
-durante campañas largas y definir un mecanismo de rearme seguro.
-También se repetirán cinco campañas emparejadas de 20 ciclos por simulador y se
-ajustarán contacto, fricción y actuación de MuJoCo, que en la primera comparación
-mantuvo cuatro apoyos y produjo menor avance. Ningún ajuste se interpretará como
-identificación antes del contraste físico.
+\section{Control de locomoción y repertorio de marchas}
 
-Finalmente se continuará el reentrenamiento de la política PPO como una capa de
-correcciones acotadas. La campaña extendida en MuJoCo aumentó el avance, pero
-también la inclinación y todavía no constituye una mejora aceptada; la
-adaptación extendida en Gazebo y la selección conservadora siguen pendientes.
-La comparación final conservará las semillas y tamaños de muestra definidos y
-evaluará la misma marcha con y sin corrección aprendida mediante ensayos
-emparejados.
+El generador cinemático actual puede extenderse desde postura, paso y gateo
+hacia transiciones suaves entre marchas, cambios de dirección, giro sobre el
+sitio, retroceso y regulación de velocidad. Una vez caracterizada la respuesta
+de las articulaciones, también podrían explorarse marchas más rápidas, como el
+trote, y estrategias de recuperación ante pequeñas perturbaciones. Estas
+extensiones deberían conservar límites articulares, velocidad acotada,
+supervisión independiente y criterios de parada, de modo que el aumento de
+movilidad no comprometa la seguridad de la plataforma.
+
+\section{Control adaptativo y aprendizaje por refuerzo}
+
+La plataforma permitiría investigar controladores que combinen una marcha
+cinemática interpretable con correcciones aprendidas a partir de los sensores
+que realmente estén disponibles. Por ejemplo, se podrían entrenar políticas
+residuales con posición y velocidad articular, y ampliarlas gradualmente con
+orientación, contacto y estimadores de estado. La aleatorización de parámetros,
+la adaptación de dominio y la comparación contra una referencia nominal
+permitirían estudiar qué correcciones mejoran el desempeño sin reemplazar las
+capas deterministas de seguridad. Esta línea es adecuada para evaluar
+transferencia simulación--real de manera incremental y trazable.
+
+\section{Percepción, navegación y autonomía}
+
+Una etapa posterior podría añadir percepción del entorno mediante cámara,
+sensor de profundidad o LiDAR. Sobre esa información, el cuadrúpedo podría
+incorporar localización, planificación de rutas, selección de zonas de apoyo y
+evitación de obstáculos. La locomoción desarrollada en esta tesis funcionaría
+entonces como nivel de ejecución articular dentro de una arquitectura de mayor
+nivel que reciba objetivos de navegación, en lugar de limitarse a caminar sobre
+una superficie plana y controlada.
+
+\section{Validación científica y uso como banco de investigación}
+
+Finalmente, la plataforma puede emplearse para estudiar la relación entre
+geometría, control, consumo, estabilidad y repetibilidad. Esto incluye crear
+conjuntos de datos abiertos de trayectorias, telemetría y ensayos; comparar
+simuladores; estudiar sensibilidad a la fricción, carga útil y tipo de suelo;
+y evaluar de forma estadística distintas estrategias de control. Así, el Nova
+Spot Micro puede evolucionar de un prototipo de locomoción a un banco de
+investigación reutilizable para proyectos posteriores de robótica móvil y
+aprendizaje aplicado.
