@@ -19,6 +19,35 @@ el esfuerzo eléctrico durante la locomoción. Con esta instrumentación, la
 plataforma podría utilizarse para campañas sistemáticas de identificación y
 para contrastar el comportamiento simulado con el comportamiento físico.
 
+\section{Energía, autonomía y gestión de potencia}
+
+Actualmente, la alimentación externa regulada permite realizar pruebas de banco
+con control de las condiciones eléctricas. Como desarrollo posterior, la
+plataforma podría incorporar un sistema de energía embarcado compuesto por
+batería, convertidores regulados, fusibles, interruptor de emergencia, monitor
+de tensión y medición de corriente. Esto habilitaría un análisis energético de
+cada marcha: potencia instantánea, energía por ciclo, consumo por articulación,
+temperatura de los actuadores y autonomía estimada para distintas velocidades,
+cargas útiles y superficies.
+
+Con dichos datos sería posible seleccionar la química, capacidad y tasa de
+descarga de una batería sin sobredimensionar el robot ni comprometer los picos
+de corriente de los actuadores. También se podrían implementar detección de
+batería baja, apagado seguro, distribución de potencia por grupos de servos y
+estrategias de locomoción que ajusten velocidad o amplitud cuando la energía
+disponible sea limitada. Esta línea convertiría la plataforma de un montaje de
+laboratorio alimentado por fuente a un sistema móvil con autonomía cuantificable.
+
+\section{Mejoras mecánicas y electrónicas}
+
+El prototipo puede evolucionar mediante soportes más rígidos para sensores,
+protección de cableado, conectores bloqueables, distribución ordenada de tierra
+y potencia, y módulos reemplazables por pata. También sería pertinente estudiar
+la reducción de holguras, el rediseño de los acoples entre servo y articulación,
+la mejora de las superficies de apoyo y la incorporación de una carga útil
+ligera. Estas modificaciones facilitarían mantenimiento, repetibilidad y
+experimentos comparables sin alterar la arquitectura cinemática de base.
+
 \section{Control de locomoción y repertorio de marchas}
 
 El generador cinemático actual puede extenderse desde postura, paso y gateo
