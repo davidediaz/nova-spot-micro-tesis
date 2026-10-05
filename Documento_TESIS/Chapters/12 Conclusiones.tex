@@ -1,39 +1,51 @@
 \chapter{Conclusiones provisionales}
 
+Las conclusiones siguientes se organizan según los cuatro objetivos
+específicos. Solo se incluyen resultados con evidencia verificable; por tanto,
+su alcance se limita a simulación cuando no existe todavía una prueba física
+equivalente.
+
 \begin{enumerate}
-\item Se implementó una arquitectura reproducible en ROS~2 para generar y
-supervisar postura, marcha paso y gateo del Nova Spot Micro en Gazebo y MuJoCo.
-El resultado aporta evidencia parcial a OE1 y OE2 y sirve de base a las pruebas de OE4, pero no
-cierra la caracterización ni la integración física.
+\item \textbf{OE1 -- hardware y software para la ejecución de movimiento.}
+Se completó la parte de software necesaria para generar postura, gateo y paso,
+publicar trayectorias articulares y supervisar condiciones inseguras en ROS~2.
+La arquitectura se ejecutó de forma reproducible en Gazebo y MuJoCo, y el
+supervisor reaccionó con la orden \texttt{stand} en los nueve escenarios
+provocados evaluados. Esta conclusión acredita la integración de software y de
+seguridad en simulación; no afirma todavía la ejecución de las doce
+articulaciones en el prototipo físico.
 
-\item La corrección del planificador temporal alineó la cadencia ejecutada con
-los 4,32~s configurados por ciclo. Dos ensayos de la nueva versión presentaron
-diferencias menores al 0,2~\% en las métricas medias seleccionadas, lo que
-respaldó una línea base repetible en simulación.
+\item \textbf{OE2 -- modelado cinemático y dinámico para simulación.}
+Se completó un modelo nominal computable que integra geometría, cinemática
+directa e inversa, Jacobianos, trayectorias cartesianas y una representación
+dinámica configurable en URDF/Gazebo y MJCF/MuJoCo. El modelo permitió verificar
+alcanzabilidad, continuidad y cadencia de las referencias de gateo y paso. Su
+resultado comprobado es una base reproducible de simulación y diseño; no se
+interpreta como un gemelo digital identificado del ejemplar físico.
 
-\item La marcha paso se ejecutó con pose, IMU, contactos y articulaciones bajo
-un contrato común en Gazebo y MuJoCo. Once ciclos mostraron diferencias de
-avance y contacto: se cerró la equivalencia instrumental, no la dinámica.
+\item \textbf{OE3 -- estrategia de control basada en aprendizaje automático.}
+Se completó el diseño, entrenamiento y evaluación en simulación de una capa PPO
+residual para gateo y paso. La política recibe observaciones del estado
+simulado y propone doce correcciones articulares acotadas que se suman a la
+marcha nominal. La evaluación mostró que las configuraciones ensayadas no
+superaron de forma conjunta la referencia nominal en avance e inclinación; este
+resultado negativo verificable permitió rechazar su transferencia, en vez de
+atribuirle una estabilidad no demostrada.
 
-\item El ensayo nominal de contacto crudo y filtrado mostró que las interrupciones de
-RL y RR tuvieron máximos inferiores a 0,09~s y nunca superaron la persistencia
-de 0,12~s. Por tanto, no se demostró un vuelo trasero sostenido. El avance del
-robot no fue evidencia suficiente del cumplimiento de la secuencia ideal de
-contactos.
-
-\item El modelo actual permitió calcular referencias, pose de pies y margen de
-estabilidad, pero continuó siendo nominal y no identificado. No corresponde
-denominarlo gemelo digital identificado ni extrapolar directamente sus métricas
-al hardware; se mantiene la denominación modelo digital configurable.
-
-\item No existe todavía evidencia para concluir que una política de aprendizaje
-por refuerzo mejore la estabilidad o repetibilidad del robot. Se entrenaron y evaluaron cinco semillas PPO, pero no se aceptó la estrategia
-para transferencia. OE3 permanece parcial hasta demostrar estabilidad y
-continuidad en paso y gateo. OE4 requiere completar y analizar las tres pruebas
-de margen de estabilidad estática, seguimiento de posición articular y
-repetibilidad del patrón de marcha.
+\item \textbf{OE4 -- evaluación del modelo de caminata.}
+Se completaron instrumentos y campañas reproducibles en simulación para las
+tres líneas de evaluación: cálculo del margen de estabilidad estática,
+seguimiento articular y repetibilidad del patrón de marcha. La línea base de
+gateo acumuló cinco ejecuciones válidas y 191 ciclos de régimen en Gazebo, con
+$0{,}023955$~m/ciclo y $0{,}005545$~m/s; además, dos repeticiones de la
+cadencia corregida difirieron menos del $0{,}2$~\% en sus medias seleccionadas.
+La marcha paso completó dos repeticiones nominales de 21 y 22 ciclos sin
+activaciones del supervisor. Estos resultados cierran la evidencia de
+repetibilidad y seguimiento \emph{en simulación}; no equivalen por sí solos a
+la validación física integral de las tres pruebas.
 \end{enumerate}
 
-Estas conclusiones son provisionales y se actualizarán únicamente después de
-incorporar resultados físicos y la comparación nominal frente a nominal más
-aprendizaje por refuerzo.
+En consecuencia, la tesis cuenta con resultados concluyentes sobre el
+desarrollo y la evaluación reproducible en simulación. La caracterización de
+hardware y la transferencia física se mantienen fuera de estas conclusiones
+hasta disponer de evidencia experimental equivalente.
