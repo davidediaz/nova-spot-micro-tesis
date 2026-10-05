@@ -5,6 +5,27 @@
 \usepackage{float}
 \usepackage{graphicx}
 
+% Presenta los capítulos en un único encabezado: ``6. Marco conceptual``.
+% Se evita así repetir visualmente la etiqueta ``Capítulo 6`` y el título en
+% líneas separadas; la numeración y el contenido del índice no se modifican.
+\makeatletter
+\renewcommand\@makechapterhead[1]{%
+  \vspace*{50\p@}%
+  {\parindent \z@ \raggedright \normalfont
+    \ifnum \c@secnumdepth >\m@ne
+      \Huge\bfseries \thechapter.\enspace
+    \fi
+    \Huge\bfseries #1\par\nobreak
+    \vskip 40\p@
+  }}
+\renewcommand\@makeschapterhead[1]{%
+  \vspace*{50\p@}%
+  {\parindent \z@ \raggedright \normalfont
+    \Huge\bfseries #1\par\nobreak
+    \vskip 40\p@
+  }}
+\makeatother
+
 \begin{document}
 
 \frontmatter
