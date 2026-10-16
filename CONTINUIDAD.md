@@ -1,6 +1,6 @@
 # Continuidad histórica de la tesis Nova Spot Micro
 
-Última actualización: 29 de septiembre de 2026, America/Bogota.
+Última actualización: 14 de octubre de 2026, America/Bogota.
 
 
 ## Objetivos vigentes — corrección del usuario del 7 de septiembre de 2026
@@ -2289,6 +2289,69 @@ articulación, tratamiento del cruce 0°/360°, repetibilidad en movimiento,
 márgenes respecto a topes y resolución de señales variables, además de las
 puertas eléctricas y de parada segura.
 
+### Cierre del dataset de grados absolutos AS5600 — 29 de septiembre de 2026
+
+Por solicitud del operador, las veinte muestras por articulación y sentido
+quedan finalizadas como dataset de ángulos absolutos del imán. Se actualizaron
+el estado y alcance en `Raspberry/configuracion/as5600_caracterizacion_provisional.yaml`
+y `Raspberry/RESUMEN_CARACTERIZACION_AS5600_2026-09-28.md`; se preservan los
+rangos amplios y las señales inestables. “Finalizado” no significa cero,
+sentido o límites articulares calibrados, y no habilita PWM ni caminata. El
+barrido único posterior del 29 de septiembre se mantiene separado de las
+ventanas de veinte muestras.
+
+El operador fijó además intervalos finales de referencia magnética para las
+doce articulaciones y ambos sentidos. Se registraron en el YAML bajo
+`operator_fixed_reference_ranges_deg` y en el resumen tabular. Son referencias
+absolutas del imán, no límites mecánicos ni posiciones articulares en radianes;
+se preservan intactas las estadísticas empíricas originales.
+
+### Pruebas físicas, visor 3D y preparación de calibración — 29 de septiembre de 2026
+
+El archivo `Experimentos/visor_pose_inicial_3d.py` amplió el deslizador de
+tibia hasta `+1.00 rad`, solo en la visualización. Se abrió con Pata 4; después
+el operador compartió una postura de Pata 3: coxa `0.10`, fémur `-0.42` y
+tibia `-0.88 rad`. Esos radianes no se enviaron al robot porque no existe
+conversión calibrada a PWM.
+
+Se hizo un barrido AS5600 de solo lectura en la Raspberry; respondieron las
+doce rutas. Ángulos RAW de imán de esa captura (grados; no mezclados con las
+ventanas de 20 muestras ni convertidos a radianes):
+
+| Pata | Coxa | Fémur | Tibia |
+|---:|---:|---:|---:|
+| 1 | 286.172 | 179.824 | 140.010 |
+| 2 | 118.477 | 261.299 | 9.668 |
+| 3 | 137.900 | 194.414 | 335.039 |
+| 4 | 148.887 | 317.725 | 354.814 |
+
+El operador informó haber hecho la preparación indicada para calibrar Pata 1,
+pero no se han recibido los resultados de los pulsos, la clasificación del
+servo (posicional o giro continuo) ni la respuesta de la tibia 1. Por tanto,
+ningún servo queda marcado como calibrado. Mapa de Pata 1: PCA CH0/AS5600
+`0x71`/3 coxa; CH4/`0x71`/1 fémur; CH8/`0x71`/0 tibia. Las señales de coxa 1
+y fémur 1 han dado campo magnético débil. La señal de tibia 1 fue válida, pero
+una prueba previa `1500→1505→1500 µs` dio movimiento no repetible; revisar su
+acople antes de inferir una escala.
+
+Tras adaptar `Raspberry/codigo/thonny_marcha_nova.py` al preset de avance
+Nova `march_forward`, se ejecutaron por SSH cuatro invocaciones de un ciclo;
+cada registro terminó con código 0 y apagado de PWM, aunque varias lecturas
+AS5600 dieron error I²C 121. Los registros de fases prueban que el script
+emitió órdenes, no que alcanzara una posición calibrada. El operador informó
+en una prueba anterior movimiento sin topar, sin medición repetible de la
+postura. Se comprobó después en la Pi `hardware_ready: false`, cero servos
+marcados calibrados y `nova-hardware.service` inactivo. El script directo de
+Thonny llama a `arm()`/`set_pulse_us()` sin consultar esa configuración; no
+volver a ejecutarlo hasta cerrar calibración y protección. Se registra que esa
+ruta directa se usó en las invocaciones anteriores.
+
+La ficha de `MG996R-360` anuncia 360 grados, pero su descripción suministrada
+también habla de giro de 60° y no define relación PWM--posición; el modo real
+de control todavía debe identificarse con un servo aislado y sin carga.
+Siguiente acción: registrar exactamente ese resultado y las mediciones de
+tibia 1 antes de modificar `calibracion_servos.csv` o habilitar hardware.
+
 ## Campaña MuJoCo step transferida desde JULI — 28 de septiembre de 2026
 
 Se verificó por huella SSH y se conectó al equipo `JULI` como `juli`. La campaña
@@ -2399,3 +2462,202 @@ esta IP; la conexión normal es `ssh cuadrupedo-pi`. La IP previa
 `172.18.81.198` ya no es válida en la red actual. La IP parece asignada por
 DHCP y podría cambiar; si vuelve a fallar, consultar `hostname -I` en la Pi o
 reservar esta dirección en el router. No se enviaron órdenes de movimiento.
+
+### Prueba mínima de tibia 1 y diagnóstico de sensores — 29 de septiembre de 2026
+
+Por autorización expresa se probó únicamente tibia 1, PCA CH8 y AS5600
+`0x71`/canal 0: `1500 → 1505 → 1500 µs`. El sensor partió en 144,756°, marcó
+150,645° a 1505 µs (+5,889°) y 161,455° al volver a 1500 µs (+16,699°). Una
+lectura posterior con PWM deshabilitado llegó a 170,947°, pese a que el estado
+magnético fue válido. No se continuó con otra articulación ni con una marcha.
+
+Veinte barridos pasivos encontraron seis sensores magnéticamente válidos, pero
+coxa 2 tuvo 27,070° de dispersión pese a `MD=1`; solo cinco señales fueron
+estables dentro de 2° y magnéticamente válidas. Las restantes incluyen tres
+estados de imán débil y tres sin detección. El detalle y la tabla completa están
+en `Raspberry/DIAGNOSTICO_AS5600_2026-09-29_POSTPRUEBA.md`.
+
+Después de la prueba se forzó OE BCM17 en HIGH y se verificaron individualmente
+los dieciséis canales en `FULL_OFF`; no se confió en el registro de apagado
+global porque su lectura no confirmó el bit. Se encontró que el driver local
+liberaba OE al cerrar y no fijaba `FULL_OFF` individual por canal. Se corrigió
+`Raspberry/codigo/pca9685_seguro.py`, se añadieron cuatro pruebas unitarias y
+pasaron también `py_compile`. Luego se instaló en la Pi con respaldo del driver
+previo; SHA-256 desplegado `a92e47aa75139f42b04cead746112818cddb6e1cdc35abdb22ef747eca8321e1`.
+En la Pi pasó `compile()` y se verificó OE BCM17 alto, 16/16 canales
+individualmente `FULL_OFF` y servicio de hardware inactivo. Se continúa solo
+con análisis pasivo; no se manda otra orden PWM mientras el retorno no sea
+repetible y la inestabilidad de sensores no esté resuelta.
+
+Reverificación tras indicar el operador que no movió el robot: quince barridos
+pasivos sin PWM repitieron señales variables (tibia 3 26,191°, coxa 3 28,389°,
+coxa 1 58,359° y coxa 2 27,070° de rango circular; algunas con estado magnético
+inválido). No se atribuye una causa única; se deben revisar alineación/fijación
+de imanes y sensores, cableado/alimentación y holgura o caída mecánica sin par.
+La razón directa de que no haya movimiento quedó verificada: OE BCM17 HIGH,
+16/16 canales PCA `FULL_OFF`, `hardware_ready: false`, 0/12 calibrados y
+servicio `nova-hardware.service` inactivo. Ningún PWM se ejecuta. Detalle en
+`Raspberry/DIAGNOSTICO_AS5600_2026-09-29_POSTPRUEBA.md`.
+
+Al continuar, se hicieron 60 barridos pasivos adicionales: las 12 rutas I²C
+respondieron 60/60. Seis sensores mantuvieron estado magnético OK, pero coxa 2
+dispersó 34,805° pese a MD=1; solo cinco señales fueron simultáneamente válidas
+y estables dentro de 2°. La falla no es el bus I²C: las salidas permanecen
+inhibidas intencionalmente y el feedback magnético/mecánico de siete ejes no es
+usable. Resultado completo en `Raspberry/DIAGNOSTICO_AS5600_2026-09-29_POSTPRUEBA.md`.
+
+Durante una posterior ventana en que el operador dijo enviar pulsos, se hizo
+otra lectura estrictamente pasiva de fémur 1 (60 muestras): 167,607–167,783° y
+`0x13` en todas (`MD=0`, `ML=1`, imán débil). No se envió PWM ni se pudo
+correlacionar el ángulo RAW con pulsos cuyos valores no fueron capturados. No
+cuenta como movimiento confirmado ni calibración; detalle en el diagnóstico.
+
+### Continuación de movimiento en MuJoCo headless — 29 de septiembre de 2026
+
+Como continuación sin tocar la realimentación física, se inició MuJoCo headless
+en `ROS_DOMAIN_ID=73` aislado de la Pi. Se verificaron los nodos de simulación,
+`gait_controller`, `joint_trajectory_controller`, métricas y supervisor. El
+gateo nominal corrió durante 6,71 s (parámetros congelados: 24 muestras, ciclo
+4,32 s, paso 18 mm y elevación 14 mm) y recibió `stop`; la simulación quedó en
+reposo. Una muestra de métricas posterior al stop dio x=0,004767 m,
+y=-0,000105 m, altura=0,234259 m; es una instantánea posterior, no métricas
+agregadas del ciclo. No se envió PWM ni se comunicó con la Raspberry. El proceso
+MuJoCo permanece abierto en reposo para inspección.
+
+### Reanudación de pruebas AS5600 desde Arduino Uno; Raspberry no alcanzable — 7 de octubre de 2026
+
+Se retomó el diagnóstico desde el Uno, que ya compila y ejecuta Blink. El escaneo
+exhaustivo previo cubrió direcciones I²C 0x08–0x77 en los canales disponibles de
+ambos TCA9548A y detectó doce AS5600 en `0x70` canales 0–5 y `0x71` canales 0, 1,
+3, 4, 5 y 6. En el sketch de 12 sensores, el operador identificó FEMUR 2 en
+`0x71`/canal 6 y se observó una lectura de 226,14°; las lecturas iniciales de
+aproximadamente nueve iteraciones variaron como máximo ~0,09° por sensor. Esto
+es una observación preliminar, no la caracterización de 100 muestras ni una
+calibración.
+
+Queda una discrepancia de asignación por resolver antes de alterar el mapa
+oficial: `Raspberry/CONEXIONES.md` asigna FEMUR 2 a `0x71`/canal 5 y COXA 2 al
+canal 6, mientras el sketch del Uno y la identificación física comunicada por
+el operador intercambian esas dos etiquetas. La presencia de `0x36` en ambas
+rutas no basta por sí sola para identificar cuál articulación es cada sensor.
+
+Se intentó reconectar por el alias SSH conocido `cuadrupedo-pi` y la dirección
+registrada `10.139.240.198`, desde el host `10.200.8.231/20`. SSH agotó el tiempo
+de conexión y tampoco se encontró la Pi por mDNS. No se ejecutó ningún comando
+remoto ni se obtuvieron nuevas lecturas de la Raspberry. El último estado
+documentado de seguridad permanece: OE BCM17 alto, 16/16 canales PCA9685 en
+`FULL_OFF`, `hardware_ready: false`, 0/12 servos calibrados y servicio inactivo.
+En esta sesión no se envió PWM ni se movieron servos.
+
+Para continuar, encender/conectar la Raspberry a una red alcanzable y confirmar
+cuando esté disponible. Revalidar la identidad SSH conocida, leer estado de
+seguridad sin alterarlo y usar únicamente el lector pasivo de AS5600. Comparar
+especialmente `0x71`/canales 5 y 6; reconciliar FEMUR 2/COXA 2 con seguimiento
+físico y lecturas repetibles antes de corregir `Raspberry/CONEXIONES.md`. No
+habilitar PWM ni declarar estabilidad con la observación preliminar del Uno.
+
+### Captura de referencias por postura, 100 muestras — 7 de octubre de 2026
+
+El operador aportó estadísticas de 100 lecturas por articulación para fémures
+(adelante/atrás), coxas (arriba/abajo) y tibias (adelante/atrás). Aclaró que
+servos/patas 1 y 2 son delanteros. Los datos completos quedan en
+`Raspberry/configuracion/as5600_caracterizacion_provisional.yaml`, bajo
+`operator_posture_samples_2026_10_07`, y resumidos en
+`Raspberry/RESUMEN_CARACTERIZACION_AS5600_2026-09-28.md`. Son ángulos absolutos
+del imán, no límites de servo/PWM ni topes mecánicos calibrados. Destaca fémur 3
+variable (15,820° de rango comunicado en postura adelante) y coxa 3 con 0,791°
+en ambos estados. La captura se conserva separada del dataset previo de 20
+muestras; no modifica la autorización de control, que continúa desactivada.
+
+### Registro de transferencia a Raspberry — comprobado el 7 y asentado el 14 de octubre de 2026
+
+Se recuperó la conexión SSH al hostname `cuadrupedo-pi.local`, IP observada
+`10.150.110.198`; la clave SSH conocida fue aceptada y se actualizó el alias
+local `cuadrupedo-pi` para resolver el hostname mDNS, ya que la IP anterior
+rechazaba conexiones. Se verificó la conexión por alias, hostname e IP. Esto no
+implica una prueba nueva de sensores ni de actuadores.
+
+Para compartir los datos de estabilidad y las referencias angulares se creó
+`Nuevo.md` y se copió, sin reemplazar archivos, a la raíz del checkout de la
+Raspberry (`/home/pavilion/nova-spot-micro-tesis/Nuevo.md`). También se copiaron
+`Raspberry/AVANCES_2026-10-07.md` y una copia fechada del dataset a
+`Raspberry/configuracion/as5600_caracterizacion_2026-10-07.yaml`. Los hashes
+SHA-256 remoto/local coincidieron: `Nuevo.md`
+`38f0a0e371a3727552ef151f7f3fc519dec31f0c60444fb492e62c76ab6326d1`, informe
+`4366ec67fc809f7023ef153b6e8cfe7e557c3dd097aea59d0c0cbff74755fbf2`, y YAML
+`4de8926f13b71189d923aa40a8db0fbdd5ff2ec46cfeac693ca31c057cf40bfc`. El YAML
+se pudo leer en la Pi y contiene 24 combinaciones articulación/postura, con 100
+muestras por combinación.
+
+Se transfirió además el archivo exacto `/home/pavilion/CODIGO/CODIGO.ino` a
+`Raspberry/codigo/arduino_uno_12_as5600_estabilidad_2026-10-07.ino`; SHA-256
+`52902c829c52cede932ee94a60b3c8c34e3f6d7f9fbe0d90d4ffc88bdfbc9f14`, igual en
+origen y destino. El sketch usa `Wire`, TCA `0x70`/`0x71` y AS5600 `0x36`; toma
+100 muestras de los 12 sensores, calcula mínimo/máximo/promedio/variación y no
+contiene control PWM de servos. No se compiló ni ejecutó en la Pi; para correrlo
+debe cargarse en un Arduino Uno conectado al equipo que lo programe.
+
+Permanece una discrepancia importante: ese sketch asigna COXA 2 a `0x71`/canal
+5 y FEMUR 2 a canal 6; `Raspberry/CONEXIONES.md` los asigna al revés. No cambiar
+el mapa ni usar los nombres del sketch como identificación física definitiva
+hasta comparar de forma pasiva canales 5/6 y confirmar el sensor correspondiente.
+Las lecturas de postura son grados absolutos del imán, no topes certificados ni
+límites PWM.
+
+La verificación de `git status` en la Pi no fue posible porque su checkout tiene
+un objeto suelto vacío/corrupto (`3900eddc17c8b0cff441a4884673fa3fa2762299`).
+Por eso se copiaron archivos nuevos sin pisar los existentes, pero no se hizo
+commit en la Pi. En este computador se preservan los cambios preexistentes; no
+se agruparon en un commit para evitar incluir trabajo ajeno a esta actualización.
+Siguiente paso técnico: revalidar estado seguro y obtener lecturas pasivas de
+`0x71` canales 5/6 con identificación física confirmada; no enviar PWM.
+
+### Pruebas con el Uno/PCA9685 y secuencia parcial tipo paso — 15 de octubre de 2026
+
+El Uno está conectado como `/dev/ttyACM0`; el entorno aislado inicialmente
+ocultaba el puerto. Se preparó y verificó en flash una orden `z` para tibia 3
+(CH10), 100°→102°→100°→98°→100°. Sesión 77: C11 quedó entre 313–322 cuentas
+en este tramo local; no se cruzó 104°. Sesión 78 terminó con las salidas en
+`OFF`. Los datos completos están en
+`CODIGO/datos_aprendizaje/datos_cuadrupedo.sqlite` y el análisis en
+`CODIGO/datos_aprendizaje/INFORME_IDENTIFICACION_2026-10-15.md`.
+
+A petición del operador se añadió y ejecutó una secuencia exploratoria `y`,
+dos alternancias diagonales de ±2° sobre cozas 2–4 y fémures 1–4 (PCA CH1–CH7).
+Coxa 1 (CH0) se omitió por su bloqueo de calibración; tibias 1–4 (CH8–CH11) y
+CH12 permanecieron apagados. Sesión 79 almacenó 101 tramas y terminó `OFF`.
+No se trata de locomoción apoyada ni de ejecutar PPO: al congelar tibias se
+altera cualquier política de 12 articulaciones y las patas no pueden completar
+el ciclo de levantar/apoyar. Las evaluaciones PPO guardadas no seleccionaron
+una política física; no transferir a marcha en suelo. El robot se trató como
+suspendido durante esta demostración breve.
+
+
+### Intento de pruebas desde el Uno — 16 de octubre de 2026
+
+El Uno tenía grabado otro sketch, "Lectura de servos y feedback". No hay fuente local; transmite a 9600 baudios y al arrancar manda PWM a CH0 = 150°, CH4 = 40° y CH8 = 55°. Se respaldó su flash y se volvió a grabar `movimiento_suspendido_11_servos`, que arranca en OFF. Tras la grabación verificada, el Uno se desconectó del USB (14:11:46) y no reapareció. No se ejecutó ninguna prueba de movimiento. Detalle: `CODIGO/datos_aprendizaje/INFORME_IDENTIFICACION_2026-10-16_sesion_claude.md`.
+
+### Verificación posterior de MUX y telemetría — 16 de octubre de 2026
+
+En una comprobación posterior, el Uno volvió a aparecer como `/dev/ttyACM0`
+(Arduino Uno R3). Se capturaron 71 tramas `DATA` válidas, todas en estado
+`OFF`, sin enviar orden de movimiento. La comunicación USB/serial está activa;
+sin embargo, las lecturas ADC de C0–C15 quedaron entre 0 y 1 cuentas en todas
+las muestras. Por tanto, en esta captura no se reciben señales analógicas
+útiles de los potenciómetros a través del MUX. La causa aún no está aislada
+(posibles alimentación de servos/MUX, tierra común, SIG/EN o cableado). No se
+movió ningún servo. Datos: sesión 87 de
+`CODIGO/datos_aprendizaje/datos_cuadrupedo.sqlite`; análisis en
+`CODIGO/datos_aprendizaje/INFORME_IDENTIFICACION_2026-10-15.md`.
+
+### Diagnóstico I²C y caminata en el aire desde el Uno — tarde del 16 de octubre de 2026
+
+- En el bus I²C del Uno solo responde el PCA9685 (`0x40`). `0x70` era su dirección All Call (se desactivó el bit ALLCALL como prueba). Ningún TCA9548A ni AS5600 llega al Uno.
+- El multiplexor analógico 16CH va cableado con S0=D7, S1=D6, S2=D5, S3=D4, SIG=A0 y EN=GND (diagrama del operador). El firmware `movimiento_suspendido_11_servos` se actualizó a esos pines. Los potenciómetros no dan señal individual válida desde la sesión 83 (sospecha: falta su alimentación de 5 V).
+- Nueva orden `b`: gateo en el aire, en lazo abierto, orden FL→RR→FR→RL. Se ejecutó en las sesiones 85 (fémures ±6°), 88 (±10°/tibias 8°) y 89 (±15°/tibias 14°), todas terminadas en `OFF`. El operador confirmó que se movió bien. Coxa 1 y CH8 siguen sin PWM. No está validada para el suelo.
+- Detalle: `CODIGO/datos_aprendizaje/INFORME_IDENTIFICACION_2026-10-16_sesion_claude.md`.
+- Tibias reconectadas (16 de octubre, confirmación visual del operador): T1 = CH8 (C8 poco fiable), T2 = CH12 (C9), T3 = CH9 (C11), T4 = CH11 (C10); CH10 vacío. Selectores del MUX analógico verificados en D8–D11. Firmware actualizado.
+- Caminata `b` estable (16 de octubre, sesión 135): gateo de 10 ciclos, fémures ±15°, tibias 14° (T4 invertida, 56–70°), 0,5 s por fase. Coxas fijas en su equilibrio C1=150°, C2=45°, C3=55°, C4=150°, con corrección realimentada filtrada en las coxas 2–4 (±6°, una corrección cada 200 ms). Termina con las coxas sostenidas. El operador confirmó que la coxa 2 mejoró muchísimo. Respaldo: `CODIGO/movimiento_suspendido_11_servos/caminata_estable_20261016.hex`.
+
+### PPO entrenado con datos reales del robot — 16 de octubre de 2026
+Con las caminatas `b` registradas por los sensores del MUX se identificó el actuador real: 100 ms de retardo; ganancia 0,88–0,98 en F2, F4 y T2; T4 casi sin movimiento; T1 sin PWM. Se creó `Experimentos/entrenamiento_real_20261016/entrenar_ppo_real.py`: la marcha nominal es la caminata `b` real, con coxas fijas y una observación limitada a lo medible por el Uno. Se entrenaron cinco semillas (11, 23, 37, 53 y 71) de 150 000 pasos. Todas superan el avance nominal (0,173 m). La semilla 11 mejora a la vez avance (0,299 m), deriva (0,046 m frente a 0,111 m) e inclinación (0,097 rad frente a 0,128 rad). Es un resultado de simulación, evaluado con las semillas de desarrollo 801–805; no se ha transferido al robot. Detalle en el `INFORME.md` de esa carpeta.
