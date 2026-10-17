@@ -124,8 +124,17 @@ int limitarAngulo(int angulo) {
   return constrain(angulo, 0, 180);
 }
 
+// 16-oct: topes absolutos por canal PCA, a partir de los limites medidos por el
+// operador con 10 grados de margen.
+// Protegen cualquier orden del firmware. Canales sin articulacion: 0-180.
+const byte TOPE_MIN[16] = {105, 10, 25, 125,  30, 45, 40, 25,  25, 11,   0, 15,  25,   0,   0,   0};
+// 16-oct (barrido de rango con sensores): F2 y F4 dejan de seguir la orden por
+// encima de ~135 y T4 por encima de ~105; se limitan ahi.
+const byte TOPE_MAX[16] = {170, 85, 90, 170, 140,135,160,135, 160,160, 180,105,  90, 180, 180, 180};
+
 void escribirServo(byte canal, int angulo) {
   angulo = limitarAngulo(angulo);
+  if (canal < 16) angulo = constrain(angulo, TOPE_MIN[canal], TOPE_MAX[canal]);
   int pulso = map(angulo, 0, 180, PULSO_MIN, PULSO_MAX);
   pca.setPWM(canal, 0, pulso);
 }
@@ -1134,6 +1143,64 @@ void sostenerCoxasEquilibrio() {
   Serial.println(F("Coxas sostenidas en equilibrio."));
 }
 
+// 16-oct: modo de ejecucion desde el PC (politica PPO). El PC envia lineas
+//   S,a0,...,a11\n  (grados de servo por indice; coxas y tibia 1 se ignoran)
+// y el Uno responde R,ms,C5,C6,C9,C1,C3,C2,C10,C11 tras aplicar cada linea.
+// Seguridad: limites de +/-45 alrededor de la base y topes absolutos por canal, cambio
+// maximo 3 grados por linea, coxas fijas con su correccion, tibia 1 sin PWM.
+// Si no llega una linea en 300 ms, o llega 'X', sostiene coxas y apaga el resto.
+void terminarStreaming(const __FlashStringHelper *motivo) {
+  for (byte i = 4; i < NUM_SERVOS; ++i) pca.setPWM(servo[i].canal, 0, 4096);
+  estadoActual = "HOLD_EQUILIBRIO";
+  Serial.print(F("FIN_STREAM ")); Serial.println(motivo);
+}
+void modoStreaming() {
+  apagarTodos();
+  const byte arranque[] = {0, 1, 2, 3, 4, 5, 6, 7, 9, 10, 11};
+  for (byte k = 0; k < sizeof(arranque); ++k) {
+    byte i = arranque[k];
+    ordenActual[i] = servo[i].base;
+    escribirServo(servo[i].canal, servo[i].base);
+    delay(300);
+  }
+  delay(500);
+  capturarReferenciaCoxas();
+  estadoActual = "STREAM";
+  Serial.println(F("STREAM_LISTO"));
+  char linea[96];
+  unsigned long ultimo = millis();
+  while (true) {
+    if (!Serial.available()) {
+      if (millis() - ultimo > 300) { terminarStreaming(F("timeout")); return; }
+      continue;
+    }
+    size_t n = Serial.readBytesUntil('\n', linea, sizeof(linea) - 1);
+    linea[n] = 0;
+    if (n == 0) continue;
+    if (linea[0] == 'X' || linea[0] == 'x') { terminarStreaming(F("orden")); return; }
+    if (linea[0] != 'S') continue;
+    int valores[NUM_SERVOS]; byte cuenta = 0;
+    char *tok = strtok(linea + 1, ",");
+    while (tok && cuenta < NUM_SERVOS) { valores[cuenta++] = atoi(tok); tok = strtok(NULL, ","); }
+    if (cuenta != NUM_SERVOS) continue;
+    ultimo = millis();
+    for (byte i = 4; i < NUM_SERVOS; ++i) {
+      if (i == 8) continue;  // tibia 1 sin PWM
+      int lim = 45;  // 16-oct: los topes absolutos de escribirServo() protegen el rango
+      int obj = constrain(valores[i], servo[i].base - lim, servo[i].base + lim);
+      obj = constrain(obj, ordenActual[i] - 3, ordenActual[i] + 3);
+      ordenActual[i] = obj;
+      escribirServo(servo[i].canal, obj);
+    }
+    corregirCoxas();
+    Serial.print(F("R,")); Serial.print(millis());
+    // 16-oct: se anaden C10 (tibia 4) y C11 (tibia 3) al final de la respuesta.
+    const byte canales[8] = {5, 6, 9, 1, 3, 2, 10, 11};
+    for (byte k = 0; k < 8; ++k) { Serial.print(','); Serial.print(leerCanalMux(canales[k])); }
+    Serial.println();
+  }
+}
+
 void setup() {
   Serial.begin(115200);
   pinMode(PIN_S0_MUX, OUTPUT);
@@ -1201,6 +1268,8 @@ void loop() {
     llevarPata1AtrasYVolver();
   } else if (orden >= '0' && orden <= '5') {
     probarUnCanal(10 + (orden - '0'));
+  } else if (orden == '@') {
+    modoStreaming();
   } else if (orden == '#') {
     sostenerCoxasEquilibrio();
   } else if (orden == 'd' || orden == 'D') {

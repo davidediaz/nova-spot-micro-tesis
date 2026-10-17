@@ -75,9 +75,9 @@ def marcha_b(control_dt):
 
 class NovaRealEnv(NovaMujocoResidualEnv):
     def __init__(self, actuador, seed=11, episode_cycles=6, domain_randomization=True,
-                 sensor_noise_deg=1.0):
+                 sensor_noise_deg=1.0, control_dt=0.02):
         super().__init__(MODEL, gait="crawl", episode_cycles=episode_cycles,
-                         control_dt=0.02, seed=seed,
+                         control_dt=control_dt, seed=seed,
                          domain_randomization=domain_randomization)
         self.nominal = marcha_b(self.control_dt)
         self.samples = len(self.nominal)
@@ -94,6 +94,7 @@ class NovaRealEnv(NovaMujocoResidualEnv):
             if datos["fiable"] or nombre == "rear_left_tibia_joint":
                 self.ganancia[JOINTS.index(nombre)] = datos["ganancia"]
         self.mascara = np.array([0.0 if j in SIN_RESIDUAL else 1.0 for j in JOINTS])
+        self.zona_muerta = np.deg2rad(float(actuador.get("zona_muerta_grados", 0.0)))
         self.idx_sensadas = [JOINTS.index(j) for j in SENSADAS]
         # Tibia 1 (FR) sin PWM: actuador sin rigidez, solo amortiguamiento.
         act = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_ACTUATOR, "front_right_tibia_act")
@@ -119,13 +120,21 @@ class NovaRealEnv(NovaMujocoResidualEnv):
         roll, pitch, h = self._cuerpo()
         dx = float(self.data.xpos[self.base_body, 0] - before_x)
         q_err = (self.data.qpos[self.qpos_ids] - self.current_nominal) * self.mascara
-        return float(1.0 + 18.0 * dx - 8.0 * (roll ** 2 + pitch ** 2)
-                     - 25.0 * (h - 0.235) ** 2 - 0.25 * q_err @ q_err
-                     - 0.04 * residual @ residual)
+        w = getattr(self, "pesos", {})
+        rec = (1.0 + w.get("avance", 18.0) * dx - w.get("actitud", 8.0) * (roll ** 2 + pitch ** 2)
+               - 25.0 * (h - 0.235) ** 2 - 0.25 * q_err @ q_err - 0.04 * residual @ residual)
+        if w.get("lateral") or w.get("giro"):
+            from entrenar_ppo_mujoco import _quat_yaw
+            lat = float(self.data.xpos[self.base_body, 1] - self.initial_y)
+            yaw = float(np.arctan2(np.sin(_quat_yaw(self.data.xquat[self.base_body]) - self.initial_yaw),
+                                   np.cos(_quat_yaw(self.data.xquat[self.base_body]) - self.initial_yaw)))
+            rec -= w.get("lateral", 0.0) * lat ** 2 + w.get("giro", 0.0) * yaw ** 2
+        return float(rec)
 
     def reset(self, *, seed=None, options=None):
         obs, info = super().reset(seed=seed, options=options)
         self.cola = deque([self.data.ctrl.copy()] * self.retardo_pasos)
+        self.ultimo_efectivo = None
         return self._observation(), info
 
     def step(self, action):
@@ -144,6 +153,12 @@ class NovaRealEnv(NovaMujocoResidualEnv):
         orden = nominal + residual
         stand = np.tile(STAND, 4)
         efectivo = stand + self.ganancia * (orden - stand)
+        if self.zona_muerta > 0:
+            # Zona muerta del servo: no se mueve si el cambio pedido es menor.
+            previo = getattr(self, "ultimo_efectivo", None)
+            if previo is not None:
+                efectivo = np.where(np.abs(efectivo - previo) < self.zona_muerta, previo, efectivo)
+            self.ultimo_efectivo = efectivo.copy()
         self.cola.append(efectivo)
         aplicado = self.cola.popleft() if len(self.cola) > self.retardo_pasos else efectivo
         before_x = float(self.data.xpos[self.base_body, 0])
@@ -165,11 +180,11 @@ class NovaRealEnv(NovaMujocoResidualEnv):
             "residual_norm": float(np.linalg.norm(residual)), "ramp_active": ramp}
 
 
-def evaluar(model, actuador, semillas, deterministic=True):
+def evaluar(model, actuador, semillas, deterministic=True, control_dt=0.02):
     filas = []
     for cond in ("nominal", "ppo"):
         for s in semillas:
-            env = NovaRealEnv(actuador, seed=s)
+            env = NovaRealEnv(actuador, seed=s, control_dt=control_dt)
             obs, _ = env.reset(seed=s)
             x0, y0, ret, maxinc, caida = None, None, 0.0, 0.0, False
             while True:
@@ -196,20 +211,33 @@ def main():
     p.add_argument("--timesteps", type=int, default=150_000)
     p.add_argument("--eval-seeds", type=int, nargs="+", default=[801, 802, 803, 804, 805])
     p.add_argument("--output", type=Path, default=HERE / "ppo")
+    p.add_argument("--actuador", type=Path, default=HERE / "actuadores_reales.json")
+    p.add_argument("--dt", type=float, default=0.02, help="periodo de control (s)")
+    p.add_argument("--femur", type=float, default=15.0)
+    p.add_argument("--tibia", type=float, default=14.0)
+    p.add_argument("--fase", type=float, default=0.5)
+    p.add_argument("--w-avance", type=float, default=18.0)
+    p.add_argument("--w-actitud", type=float, default=8.0)
+    p.add_argument("--w-lateral", type=float, default=0.0)
+    p.add_argument("--w-giro", type=float, default=0.0)
     a = p.parse_args()
-    actuador = json.loads((HERE / "actuadores_reales.json").read_text())
+    actuador = json.loads(a.actuador.read_text())
+    global FEMUR_AMP_DEG, TIBIA_AMP_DEG, FASE_MOV_S
+    FEMUR_AMP_DEG, TIBIA_AMP_DEG, FASE_MOV_S = a.femur, a.tibia, a.fase
+    NovaRealEnv.pesos = dict(avance=a.w_avance, actitud=a.w_actitud, lateral=a.w_lateral, giro=a.w_giro)
     out = a.output / f"semilla_{a.seed}"
     out.mkdir(parents=True, exist_ok=True)
-    env = NovaRealEnv(actuador, seed=a.seed)
+    env = NovaRealEnv(actuador, seed=a.seed, control_dt=a.dt)
     model = PPO("MlpPolicy", env, seed=a.seed, verbose=0, n_steps=1024, batch_size=256)
     model.learn(total_timesteps=a.timesteps, callback=MetricsCallback(out / "training_trace.csv"))
     model.save(out / "policy.zip")
-    filas = evaluar(model, actuador, a.eval_seeds)
+    filas = evaluar(model, actuador, a.eval_seeds, control_dt=a.dt)
     with (out / "evaluacion.csv").open("w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=list(filas[0]))
         w.writeheader(); w.writerows(filas)
     (out / "metadata.json").write_text(json.dumps(dict(
-        seed=a.seed, timesteps=int(model.num_timesteps), eval_seeds=a.eval_seeds,
+        seed=a.seed, timesteps=int(model.num_timesteps), eval_seeds=a.eval_seeds, control_dt=a.dt,
+        marcha=dict(femur_deg=a.femur, tibia_deg=a.tibia, fase_s=a.fase), pesos=NovaRealEnv.pesos,
         actuador=actuador, hardware_transfer=False,
         observacion=list(SENSADAS) + ["sin_fase", "cos_fase", "residual_previo x12"],
         nota="Simulación ajustada al robot real del 16-oct; no transferida al robot."),
