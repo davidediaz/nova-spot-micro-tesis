@@ -2695,3 +2695,4 @@ Pendiente para usar la Pi sin Arduino:
 - aviso de bajo voltaje al iniciar sesión (`/etc/profile.d/aviso_voltaje_cuadrupedo.sh`).
 
 **Pendiente (hardware):** fuente oficial de 5,1 V / 3 A con cable USB-C corto, alimentación separada de los servos y SD de marca nueva (A1/A2). Los cambios de `config.txt` y el `fsck` se aplican en el próximo reinicio.
+- 18 de octubre, 20:34: reinicio controlado. La Pi volvió en ~50 s con SSH por clave, sin pedir nada. El fsck se ejecutó (contador de montajes a 1, estado clean), arm_boost quedó desactivado y hay inicio de sesión automático de pavilion en el escritorio (`/etc/gdm3/custom.conf`, respaldo en `/root/respaldo_config_20261018`).
