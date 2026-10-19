@@ -2682,3 +2682,16 @@ Pendiente para usar la Pi sin Arduino:
 - 18 de octubre: se eliminó `~/nova-spot-micro-tesis` de la Pi y solo queda `~/Cuadrupedo`. Respaldo completo en `Raspberry/respaldo_nova-spot-micro-tesis_20261018.tar.gz`. Las 12 versiones editadas en la Pi el 7 de octubre, más recientes que las de Cuadrupedo, están en `Raspberry/versiones_pi_20261007/`, pendientes de revisar.
 - 18 de octubre: el operador autorizó desde la pantalla de la Pi: (1) se borró `~/nova-spot-micro-tesis`, de modo que solo queda `~/Cuadrupedo`; (2) `sudo` sin contraseña para `pavilion` (`/etc/sudoers.d/90-pavilion-nopasswd`, validado con visudo). Para revertirlo, borrar ese archivo.
 - 18 de octubre: conexión fácil del PC a la Pi. `ssh cuadrupedo-pi` usa el ProxyCommand `~/.local/bin/conectar-cuadrupedo-pi` (copia en `scripts/`): prueba el nombre mDNS `cuadrupedo-pi.local` (funciona en la misma subred, ~0,5 s), luego la última IP conocida, luego un túnel en localhost:2222 y, por último, escanea las redes /24 del PC (~7 s). Solo acepta la huella ED25519 de la Pi. El túnel inverso Pi→PC (para cuando el PC está en el router principal) quedó pendiente de autorización.
+
+### Diagnóstico y configuración de la Raspberry — 18 de octubre de 2026
+**Diagnóstico.** Hay bajo voltaje en los 6 arranques registrados (`throttled=0x50000`: hubo bajo voltaje y reducción de frecuencia). El 17 de octubre a las 12:52 hubo dos arranques fallidos seguidos, que terminaron justo después de un aviso de bajo voltaje. Es la causa probable de que la Pi no arrancara y hubiera que reinsertar la SD. La SD (genérica "SD32G", 2019) está limpia, sin errores ext4, pero no se revisaba desde 2024. Un arranque normal tarda 30 s y la temperatura es de 49 °C.
+
+**Configuración aplicada** (respaldos en `/root/respaldo_config_20261018`):
+- `fsck` forzado en el próximo arranque y cada 20 arranques (`tune2fs -c 20`);
+- registros del sistema limitados a 100 MB (`/etc/systemd/journald.conf.d/50-limite-sd.conf`; de 577 MB pasaron a 113 MB);
+- `arm_boost=1` desactivado en `config.txt` para bajar el consumo pico;
+- actualizaciones automáticas desactivadas;
+- `pavilion` añadido a los grupos `i2c` y `video` (ya tenía I²C y GPIO por `dialout`);
+- aviso de bajo voltaje al iniciar sesión (`/etc/profile.d/aviso_voltaje_cuadrupedo.sh`).
+
+**Pendiente (hardware):** fuente oficial de 5,1 V / 3 A con cable USB-C corto, alimentación separada de los servos y SD de marca nueva (A1/A2). Los cambios de `config.txt` y el `fsck` se aplican en el próximo reinicio.
