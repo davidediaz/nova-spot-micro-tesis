@@ -2667,3 +2667,14 @@ Con las caminatas `b` registradas por los sensores del MUX se identificó el act
 - Firmware del Uno: topes absolutos por canal en escribirServo() a partir de los límites medidos por el operador (margen de 10°; límite trasero de T2 = 100°).
 - Barrido de rango ±40° con sensores: relación ADC-ángulo lineal (≈2,5 cuentas/°, error RMS 0,4–1,1°), histéresis de 0,6–1,5°; F2 y F4 se saturan por encima de ~135° y T4 por encima de ~105°. Topes del firmware ajustados y modelo de actuador v4 guardado.
 - PPO v5 (actuador v4) no mejora la base. En evaluación cruzada, PPO v4 semilla 37 se mantiene robusta (−28 % de inclinación, misma deriva) y queda como política elegida. En el robot ejecuta el 99–100 % de la corrección en los fémures y el 71 % en T2.
+
+### Migración del control a la Raspberry Pi — 18 de octubre de 2026
+El PC y la Pi estaban en routers distintos con el mismo SSID (`F_DIAZ_D_5G`): la Pi en 192.168.0.100, detrás del segundo router. Con el PC conectado por cable a ese router (192.168.0.126), SSH funcionó. La clave de host se verificó (ED25519 `SHA256:mTERAysLSgm2Xlw36tOoV0uv5gC3vj7Xoycel2xe16M`) y el alias `cuadrupedo-pi` apunta ahora a 192.168.0.100.
+
+Estado de la Pi: Ubuntu 22.04.5 aarch64, 4 núcleos, 7,6 GB de RAM, Thonny 3.3.14, smbus y RPi.GPIO instalados. Sin torch ni SB3. Bus I²C vacío: el PCA9685 todavía está conectado al Uno. El repositorio antiguo `~/nova-spot-micro-tesis` sigue corrupto y se conserva como respaldo.
+
+Se copió el proyecto a `~/Cuadrupedo` en la Pi (351 MB, historial de Git sano hasta 67c48e3, sin el venv ni los datos pesados). Se creó `Raspberry/thonny/`: `robot_nova.py` (lógica del firmware del Uno en Python), `caminata_thonny.py` (menú para Thonny) y la política PPO v4 semilla 37 exportada a NumPy. Probado en modo simulado en el PC y en la Pi; la corrección PPO coincide con la del PC (diferencia ≤ 0,5° por redondeo).
+
+Pendiente para usar la Pi sin Arduino:
+- cablear el PCA9685 a la Pi;
+- añadir un ADC I²C (ADS1115) para los potenciómetros, porque la Pi no tiene entradas analógicas. Sin él no hay realimentación ni política PPO.
