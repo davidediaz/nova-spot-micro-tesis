@@ -15,7 +15,7 @@ Spot Micro mediante una marcha nominal convencional y una política de
 aprendizaje por refuerzo que aplique correcciones pequeñas, acotadas y
 supervisadas.
 
-Última actualización documental: 29 de septiembre de 2026, America/Bogota.
+Última actualización documental: 14 de octubre de 2026, America/Bogota.
 
 Actualización cinemática del 2 de septiembre: se completaron las gráficas de
 workspace, proximidad a singularidades y velocidades articulares. Se corrigió
@@ -1352,3 +1352,92 @@ autenticación interactiva. No se solicitó ni transmitió la contraseña. Para
 completarlo, el operador debe ejecutar `sudo poweroff` en la Raspberry o
 `ssh -t pavilion@172.18.81.198 'sudo poweroff'` desde su terminal e ingresar
 allí su contraseña.
+
+### Identificación pasiva posterior a prueba mínima — 29 de septiembre de 2026
+
+Se ejecutó por autorización una única prueba tibia 1/CH8 de 5 µs y retorno.
+El AS5600 `0x71`/canal 0 cambió 5,889° con el paso y quedó 16,699° apartado
+del punto inicial tras retornar a 1500 µs; luego alcanzó 170,947° con PWM
+deshabilitado. Se detuvo la prueba. Veinte barridos pasivos de los doce AS5600
+mostraron seis rutas con estado MD/ML/MH válido, pero solo cinco señales
+estables dentro de 2°; coxa 2 tuvo 27,070° de dispersión aun con imán detectado.
+La tabla está en `Raspberry/DIAGNOSTICO_AS5600_2026-09-29_POSTPRUEBA.md`.
+
+El cierre dejó OE BCM17 alto y los dieciséis canales individualmente en
+`FULL_OFF`. Se corrigió localmente `PCA9685Seguro` para fijar el apagado por
+canal y no liberar OE al cerrar. Pasaron cuatro pruebas unitarias y
+`py_compile`; luego se instaló en la Pi con respaldo del archivo anterior
+`pca9685_seguro.py.codex-backup-20260929`, SHA-256
+`a92e47aa75139f42b04cead746112818cddb6e1cdc35abdb22ef747eca8321e1`. La Pi pasó
+`compile()` y confirmó OE alto, 16/16 canales en `FULL_OFF` y servicio inactivo.
+Criterio de aceptación física no cumplido: retorno articular no repetible y
+sensores insuficientes; no se ejecutará otra orden a servos hasta resolver la
+inestabilidad. Detalle del ensayo en
+`Raspberry/DIAGNOSTICO_AS5600_2026-09-29_POSTPRUEBA.md`.
+
+Revisión adicional solicitada indicando el operador que no movió el robot:
+quince barridos sin PWM mantuvieron señales variables en tibia 3 y coxas 1/2/3;
+seis rutas tuvieron estados magnéticos débiles o sin detección. Se deben revisar
+alineación/fijación, cableado/alimentación y holgura mecánica; la causa exacta
+no está determinada. Se verificó por SSH por qué no se mueve: OE alto, 16/16
+canales `FULL_OFF`, `hardware_ready: false`, 0/12 calibrados y servicio
+inactivo. Es un bloqueo deliberado de seguridad, no una orden de marcha fallida.
+
+Se amplió la observación a 60 barridos pasivos: 12/12 rutas I²C respondieron
+60/60 veces, por lo que el bus/mapeo TCA funciona. Solo 5 sensores quedaron
+válidos y estables dentro de 2°; coxa 2 varió 34,805° aunque el imán fue
+detectado. Resultado completo en `Raspberry/DIAGNOSTICO_AS5600_2026-09-29_POSTPRUEBA.md`.
+
+Para avanzar sin hardware se abrió MuJoCo headless aislado en ROS domain 73 y se
+ejecutó gateo nominal durante 6,71 s (24 muestras; ciclo configurado 4,32 s;
+paso 18 mm; elevación 14 mm), seguido de `stop`. La simulación quedó en reposo.
+Una lectura post-stop fue x=0,004767 m, y=-0,000105 m y altura=0,234259 m; no
+constituye métrica agregada de la marcha. No hubo PWM ni enlace con la Raspberry.
+
+### Diagnóstico desde Arduino Uno y reconexión pendiente de la Raspberry — 7 de octubre de 2026
+
+El escaneo I²C realizado con Arduino Uno encontró doce AS5600 (`0x36`) en los
+canales `0–5` del TCA `0x70` y `0, 1, 3, 4, 5, 6` del TCA `0x71`. El sketch de
+doce sensores reportó FEMUR 2 en `0x71`/canal 6, con una lectura observada de
+226,14°; unas nueve iteraciones iniciales mostraron variaciones de hasta ~0,09°.
+Es evidencia preliminar, no una prueba de estabilidad de 100 muestras. Hay que
+resolver una discrepancia antes de editar el mapa de conexiones: el mapa de la
+Raspberry identifica `0x71`/canal 5 como FEMUR 2 y canal 6 como COXA 2, pero el
+sketch/identificación física comunicada para el Uno indica lo contrario.
+
+No se pudo iniciar la prueba con la Raspberry: `cuadrupedo-pi` en
+`10.139.240.198` agotó el tiempo de conexión SSH desde la red actual y mDNS no
+la descubrió. No hubo comandos remotos ni nuevas lecturas. Se conserva el último
+estado seguro registrado (OE alto, PCA9685 16/16 `FULL_OFF`, sin servos
+calibrados y servicio inactivo); no se envió PWM ni se movieron articulaciones.
+Próximo paso: conectar y encender la Pi, verificar su identidad SSH y ejecutar
+lecturas exclusivamente pasivas para comparar canales 5 y 6 y confirmar la
+etiqueta física de cada sensor antes de modificar el mapa.
+
+### Estadísticas AS5600 aportadas por postura — 7 de octubre de 2026
+
+Se registró una captura nueva, separada de la caracterización anterior: 100
+muestras por articulación en fémures adelante/atrás, coxas arriba/abajo y tibias
+adelante/atrás. El operador confirmó que las patas 1 y 2 son delanteras. El
+dataset detallado está en `Raspberry/configuracion/as5600_caracterizacion_provisional.yaml`
+(`operator_posture_samples_2026_10_07`); las tablas están en
+`Raspberry/RESUMEN_CARACTERIZACION_AS5600_2026-09-28.md`. Se mantienen unidades
+de grados absolutos del imán; no son límites PWM o mecánicos. Fémur 3 muestra la
+mayor variación comunicada (15,820° con fémur adelante); no se habilita control
+ni se infieren límites de servo a partir de estos datos.
+
+### Registro de transferencia de registros y sketch a Raspberry — 7–14 de octubre de 2026
+
+La Pi volvió a ser accesible como `cuadrupedo-pi.local` (`10.150.110.198`); se
+validó la identidad SSH conocida y se ajustó el alias local para resolver el
+nombre mDNS. Se enviaron archivos nuevos, sin sobrescritura: `Nuevo.md`, el
+resumen `Raspberry/AVANCES_2026-10-07.md`, copia fechada del YAML con las 24
+combinaciones de postura (100 muestras por combinación) y el sketch
+`Raspberry/codigo/arduino_uno_12_as5600_estabilidad_2026-10-07.ino`. Hashes de
+origen/destino coincidieron y el YAML se pudo leer en la Pi.
+
+El sketch es un lector de doce AS5600, no un controlador de servos: no genera
+PWM, y no se ejecutó en la Raspberry. Queda sin resolver el cruce de etiquetas
+FEMUR 2/COXA 2 entre canales 5 y 6 del TCA `0x71`; no modificar el mapa hasta
+confirmación física. El checkout remoto tiene un objeto Git vacío/corrupto y
+no se hizo commit allí. No hubo movimiento ni PWM durante esta transferencia.

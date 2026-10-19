@@ -2678,3 +2678,4 @@ Se copió el proyecto a `~/Cuadrupedo` en la Pi (351 MB, historial de Git sano h
 Pendiente para usar la Pi sin Arduino:
 - cablear el PCA9685 a la Pi;
 - añadir un ADC I²C (ADS1115) para los potenciómetros, porque la Pi no tiene entradas analógicas. Sin él no hay realimentación ni política PPO.
+- 18 de octubre: se reunieron en `~/Cuadrupedo` (Pi y PC) todos los avances. Incluye los archivos que solo estaban en la Pi: sketches de Arduino, scripts de Thonny, datos AS5600 del 7 de octubre, mapas PWM y de conexiones, fotos y registros de ensayos de agosto, más los pendientes locales de septiembre y octubre.
