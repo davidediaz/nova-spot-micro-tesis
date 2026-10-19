@@ -15,8 +15,16 @@ print(f"Pasos comparados: {n - rampa} (sin la rampa inicial)\n")
 print(f"{'Articulación':10s} {'corr. ordenada':>16s} {'corr. realizada':>16s} {'realizado':>10s} {'r':>6s} {'retardo':>8s}")
 for nom, oi, ch in ART:
     ordenada = (p[f"orden_{oi}"] - p[f"nominal_{oi}"])[rampa:n]
-    med_b = b[f"orden_{oi}"][0] - (b[ch] - b[ch][0]) / CPG
-    med_p = p[f"orden_{oi}"][0] - (p[ch] - p[ch][0]) / CPG
+    if nom == "Tibia 2" and "ENC_T2" in b and "ENC_T2" in p:
+        # 19-oct: la tibia 2 se mide con su AS5600 (−0,66 °encoder/°servo).
+        def enc_a_servo(d):
+            e = (d["ENC_T2"] - d["ENC_T2"][0]) * 360.0 / 4096.0
+            e = (e + 180.0) % 360.0 - 180.0
+            return d[f"orden_{oi}"][0] + e / -0.66
+        med_b, med_p = enc_a_servo(b), enc_a_servo(p)
+    else:
+        med_b = b[f"orden_{oi}"][0] - (b[ch] - b[ch][0]) / CPG
+        med_p = p[f"orden_{oi}"][0] - (p[ch] - p[ch][0]) / CPG
     # Ajuste por la misma posición inicial: ambas parten de la base.
     realizada = (med_p - med_b)[rampa:n]
     lag = max(range(6), key=lambda l: np.corrcoef(ordenada[:len(ordenada)-l], realizada[l:])[0, 1] if ordenada.std() > 0 else 0)

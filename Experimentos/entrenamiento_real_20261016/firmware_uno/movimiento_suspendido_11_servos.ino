@@ -47,7 +47,8 @@ class PCA9685 {
     escribirRegistro(0xFE, prescaler);
     escribirRegistro(0x00, modoAnterior);
     delay(5);
-    escribirRegistro(0x00, modoAnterior | 0xA1); // RESTART + auto-incremento
+    // 19-oct: sin ALLCALL (bit 0), para no chocar con el TCA9548A en 0x70.
+    escribirRegistro(0x00, (modoAnterior | 0xA0) & ~0x01); // RESTART + auto-incremento
   }
 
   void setPWM(byte canal, int encendido, int apagado) {
@@ -87,10 +88,10 @@ const int PULSO_MAX = 512;
 const int FRECUENCIA_SERVO = 50;
 const byte NUM_SERVOS = 12;
 const byte PIN_SIG_MUX = A0;
-const byte PIN_S0_MUX = 8;  // verificado 16-oct con diagnostico_mux_pines: D8-D11 (el diagrama D7-D4 no corresponde)
-const byte PIN_S1_MUX = 9;
-const byte PIN_S2_MUX = 10;
-const byte PIN_S3_MUX = 11;
+const byte PIN_S0_MUX = 4;  // 19-oct: selectores en D4-D7, D4 = bit de menor peso (S0)
+const byte PIN_S1_MUX = 5;
+const byte PIN_S2_MUX = 6;
+const byte PIN_S3_MUX = 7;
 const unsigned long PERIODO_TELEMETRIA_MS = 100;
 
 struct ServoPrueba {
@@ -102,18 +103,18 @@ struct ServoPrueba {
 };
 
 ServoPrueba servo[NUM_SERVOS] = {
-  {"Coxa 1",  0, 150, -5, false}, // BLOQUEADA: C0=93, fuera de la calibracion local; no ordenar a ciegas
+  {"Coxa 1",  0, 159, -5, false}, // 19-oct: equilibrio nuevo 159 (antes 150) // BLOQUEADA: C0=93, fuera de la calibracion local; no ordenar a ciegas
   {"Coxa 2",  1,  45,  5, true},  // 16-oct: operador indica que 40 queda muy abajo -> 45
-  {"Coxa 3",  2,  55,  5, true},
-  {"Coxa 4",  3, 150, -5, true},  // 16-oct: equilibrio indicado por el operador 147->150
+  {"Coxa 3",  2,  54,  5, true},  // 19-oct: equilibrio nuevo 54
+  {"Coxa 4",  3,  74, -5, true},  // 19-oct: equilibrio confirmado por el operador (C2=375, ~74 grados)
   {"Femur 1", 4, 110, -4, true},
   {"Femur 2", 5, 100,  4, true},
   {"Femur 3", 6, 100,  4, true},
   {"Femur 4", 7, 100, -4, true},
-  {"Tibia 1", 8, 100,  4, false}, // 16-oct: reconectada; operador confirma CH8. Sensor C8 poco fiable.
-  {"Tibia 2",12,  80,  0, false}, // 16-oct: reconectada; operador confirma CH12. Sensor C9.
-  {"Tibia 3", 9, 100,  4, true},  // 16-oct: reconectada; operador confirma CH9. Sensor C11.
-  {"Tibia 4",11,  70, -4, false}, // 16-oct: operador confirma CH11. Sensor C10. CH10 vacio.
+  {"Tibia 1", 8, 100,  4, true},  // 19-oct: servo reparado por el operador; vuelve a usarse.
+  {"Tibia 2", 9,  80,  0, false}, // 19-oct: el operador la paso a CH9.
+  {"Tibia 3",10, 100,  4, true},  // 19-oct: el operador la paso a CH10.
+  {"Tibia 4",14,  70, -4, false}, // 19-oct: el operador la tiene en CH14 (CH11 y CH12 vacios).
 };
 
 int ordenActual[NUM_SERVOS];
@@ -127,10 +128,12 @@ int limitarAngulo(int angulo) {
 // 16-oct: topes absolutos por canal PCA, a partir de los limites medidos por el
 // operador con 10 grados de margen.
 // Protegen cualquier orden del firmware. Canales sin articulacion: 0-180.
-const byte TOPE_MIN[16] = {105, 10, 25, 125,  30, 45, 40, 25,  25, 11,   0, 15,  25,   0,   0,   0};
+// 19-oct: CH9 = tibia 2, CH10 = tibia 3, CH14 = tibia 4; CH11 y CH12 vacios. Coxa 4 (CH3) con topes
+// provisionales 60-105 hasta medir sus limites tras el reajuste.
+const byte TOPE_MIN[16] = {105, 10, 25,  60,  30, 45, 40, 25,  25, 25,  11,  0,   0,   0,  15,   0};
 // 16-oct (barrido de rango con sensores): F2 y F4 dejan de seguir la orden por
 // encima de ~135 y T4 por encima de ~105; se limitan ahi.
-const byte TOPE_MAX[16] = {170, 85, 90, 170, 140,135,160,135, 160,160, 180,105,  90, 180, 180, 180};
+const byte TOPE_MAX[16] = {170, 85, 90, 105, 140,135,160,135, 160, 90, 160,180, 180, 180, 105, 180};
 
 void escribirServo(byte canal, int angulo) {
   angulo = limitarAngulo(angulo);
@@ -963,10 +966,10 @@ bool ejecutarCaminataEnAire() {
   const int ampTibia[5]   = {0, 14, 14, 14, 14};
   const byte ordenPatas[4] = {2, 3, 1, 4};
   // 16-oct: las cuatro coxas se sostienen fijas en sus puntos de equilibrio
-  // (C1=150, C2=45, C3=55, C4=150), incluida la coxa 1 (CH0).
+  // (C1=159, C2=45, C3=54, C4=74), incluida la coxa 1 (CH0).
   // 16-oct: tibia 1 (indice 8, CH8) fuera de la caminata: su potenciometro
   // interno tiene un tramo danado y produce tirones. Queda sin PWM.
-  const byte arranque[] = {0, 1, 2, 3, 4, 5, 6, 7, 9, 10, 11}; // indices servo
+  const byte arranque[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}; // indices servo (19-oct: tibia 1 reparada)
   float offset[5];
   int base[NUM_SERVOS];
   for (byte i = 0; i < NUM_SERVOS; ++i) base[i] = servo[i].base;
@@ -1019,10 +1022,8 @@ bool ejecutarCaminataEnAire() {
           byte f = 3 + pata, ti = 7 + pata;
           ordenActual[f] = base[f] + (int)round(signoFemur[pata] * o);
           escribirServo(servo[f].canal, ordenActual[f]);
-          if (ti != 8) {  // tibia 1 excluida
-            ordenActual[ti] = base[ti] + tib;
-            escribirServo(servo[ti].canal, ordenActual[ti]);
-          }
+          ordenActual[ti] = base[ti] + tib;
+          escribirServo(servo[ti].canal, ordenActual[ti]);
         }
         corregirCoxas();
         if (esperarConParada(PAUSA_PASO_CAMINATA_MS)) return false;
@@ -1149,6 +1150,19 @@ void sostenerCoxasEquilibrio() {
 // Seguridad: limites de +/-45 alrededor de la base y topes absolutos por canal, cambio
 // maximo 3 grados por linea, coxas fijas con su correccion, tibia 1 sin PWM.
 // Si no llega una linea en 300 ms, o llega 'X', sostiene coxas y apaga el resto.
+
+// 19-oct: lectura del AS5600 detras de un TCA9548A (crudo 0-4095, -1 si falla).
+int leerAS5600(byte tca, byte canal) {
+  Wire.beginTransmission(tca); Wire.write(1 << canal);
+  if (Wire.endTransmission() != 0) return -1;
+  int raw = -1;
+  Wire.beginTransmission(0x36); Wire.write(0x0C);
+  if (Wire.endTransmission(false) == 0 && Wire.requestFrom((uint8_t)0x36, (uint8_t)2) == 2) {
+    raw = ((Wire.read() << 8) | Wire.read()) & 0x0FFF;
+  }
+  Wire.beginTransmission(tca); Wire.write(0); Wire.endTransmission();
+  return raw;
+}
 void terminarStreaming(const __FlashStringHelper *motivo) {
   for (byte i = 4; i < NUM_SERVOS; ++i) pca.setPWM(servo[i].canal, 0, 4096);
   estadoActual = "HOLD_EQUILIBRIO";
@@ -1156,7 +1170,7 @@ void terminarStreaming(const __FlashStringHelper *motivo) {
 }
 void modoStreaming() {
   apagarTodos();
-  const byte arranque[] = {0, 1, 2, 3, 4, 5, 6, 7, 9, 10, 11};
+  const byte arranque[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
   for (byte k = 0; k < sizeof(arranque); ++k) {
     byte i = arranque[k];
     ordenActual[i] = servo[i].base;
@@ -1185,7 +1199,6 @@ void modoStreaming() {
     if (cuenta != NUM_SERVOS) continue;
     ultimo = millis();
     for (byte i = 4; i < NUM_SERVOS; ++i) {
-      if (i == 8) continue;  // tibia 1 sin PWM
       int lim = 45;  // 16-oct: los topes absolutos de escribirServo() protegen el rango
       int obj = constrain(valores[i], servo[i].base - lim, servo[i].base + lim);
       obj = constrain(obj, ordenActual[i] - 3, ordenActual[i] + 3);
@@ -1194,11 +1207,74 @@ void modoStreaming() {
     }
     corregirCoxas();
     Serial.print(F("R,")); Serial.print(millis());
-    // 16-oct: se anaden C10 (tibia 4) y C11 (tibia 3) al final de la respuesta.
+    // 16-oct: se anaden C10 y C11 al final de la respuesta.
     const byte canales[8] = {5, 6, 9, 1, 3, 2, 10, 11};
     for (byte k = 0; k < 8; ++k) { Serial.print(','); Serial.print(leerCanalMux(canales[k])); }
+    // 19-oct: angulo crudo (0-4095) del AS5600 de la tibia 2 (TCA 0x70, canal 3); -1 si falla.
+    Serial.print(','); Serial.print(leerAS5600(0x70, 3));
     Serial.println();
   }
+}
+
+// 19-oct: identificacion completa del mapa servo -> sensor. Mueve cada
+// articulacion sola +/-10 grados alrededor de su base (2 oscilaciones) y deja
+// la telemetria DATA con los 16 canales del MUX. Tibia 1 excluida (servo danado).
+bool identificarMapaCompleto() {
+  const byte orden[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
+  apagarTodos();
+  static char estado[16];
+  for (byte k = 0; k < sizeof(orden); ++k) {
+    byte i = orden[k];
+    snprintf(estado, sizeof(estado), "MAPA_I%d", i);
+    estadoActual = estado;
+    ordenActual[i] = servo[i].base;
+    escribirServo(servo[i].canal, servo[i].base);
+    if (esperarConParada(700)) return false;
+    for (byte v = 0; v < 2; ++v) {
+      if (!moverUnServoSuave(i, servo[i].base + 10) || esperarConParada(300)) return false;
+      if (!moverUnServoSuave(i, servo[i].base - 10) || esperarConParada(300)) return false;
+    }
+    if (!moverUnServoSuave(i, servo[i].base) || esperarConParada(300)) return false;
+    if (i >= 4) pca.setPWM(servo[i].canal, 0, 4096);  // suelta femur/tibia; coxas quedan sostenidas
+  }
+  for (byte i = 4; i < NUM_SERVOS; ++i) pca.setPWM(servo[i].canal, 0, 4096);
+  estadoActual = "HOLD_EQUILIBRIO";
+  Serial.println(F("Mapa completo terminado; coxas sostenidas."));
+  return true;
+}
+
+// 19-oct: reposo sostenido. Lleva cada articulacion a su base, una por una
+// (coxas primero), y la deja sostenida con PWM.
+void reposoSostenido() {
+  apagarTodos();
+  const byte orden[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
+  for (byte k = 0; k < sizeof(orden); ++k) {
+    byte i = orden[k];
+    ordenActual[i] = servo[i].base;
+    escribirServo(servo[i].canal, servo[i].base);
+    delay(300);
+  }
+  estadoActual = "HOLD_REPOSO";
+  Serial.println(F("Reposo sostenido: las 12 articulaciones en su base."));
+}
+
+// 19-oct: identifica el sensor de UNA articulacion. Orden '!' seguida de un
+// caracter '0'..'9','a','b' (indice del servo). Mueve solo esa articulacion
+// +/-10 grados alrededor de su base (2 oscilaciones) con telemetria DATA.
+void identificarUna(byte i) {
+  apagarTodos();
+  static char estado[12];
+  snprintf(estado, sizeof(estado), "UNA_I%d", i);
+  ordenActual[i] = servo[i].base;
+  escribirServo(servo[i].canal, servo[i].base);
+  estadoActual = estado;
+  if (esperarConParada(800)) return;
+  for (byte v = 0; v < 2; ++v) {
+    if (!moverUnServoSuave(i, servo[i].base + 10) || esperarConParada(400)) return;
+    if (!moverUnServoSuave(i, servo[i].base - 10) || esperarConParada(400)) return;
+  }
+  if (!moverUnServoSuave(i, servo[i].base) || esperarConParada(400)) return;
+  apagarTodos();
 }
 
 void setup() {
@@ -1268,6 +1344,16 @@ void loop() {
     llevarPata1AtrasYVolver();
   } else if (orden >= '0' && orden <= '5') {
     probarUnCanal(10 + (orden - '0'));
+  } else if (orden == '!') {
+    unsigned long t0 = millis();
+    while (!Serial.available() && millis() - t0 < 2000) {}
+    char c = Serial.read();
+    int i = (c >= '0' && c <= '9') ? c - '0' : (c == 'a' ? 10 : (c == 'b' ? 11 : -1));
+    if (i >= 0) identificarUna(i);
+  } else if (orden == '&') {
+    reposoSostenido();
+  } else if (orden == '%') {
+    identificarMapaCompleto();
   } else if (orden == '@') {
     modoStreaming();
   } else if (orden == '#') {

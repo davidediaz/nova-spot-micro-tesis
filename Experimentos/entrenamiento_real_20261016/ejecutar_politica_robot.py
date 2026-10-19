@@ -29,7 +29,7 @@ from entrenar_ppo_real import STAND, marcha_b, JOINTS  # noqa: E402
 
 # Índices del firmware: 0-3 coxas (patas 1..4), 4-7 fémures, 8-11 tibias.
 # Patas: 1=FR, 2=FL, 3=RR, 4=RL. Base y signos de la caminata `b` del firmware.
-BASE = [150, 45, 55, 150, 110, 100, 100, 100, 100, 80, 100, 70]
+BASE = [159, 45, 54, 74, 110, 100, 100, 100, 100, 80, 100, 70]  # 19-oct: equilibrio nuevo de coxas
 SIGNO_FEMUR = {1: -1, 2: 1, 3: -1, 4: 1}
 SIGNO_TIBIA = {1: -1, 2: -1, 3: -1, 4: -1}
 PATA = {1: "front_right", 2: "front_left", 3: "rear_right", 4: "rear_left"}
@@ -129,18 +129,24 @@ def main():
     # Referencias ADC en la postura base (servo en BASE).
     os.write(fd, ("S," + ",".join(map(str, BASE)) + "\n").encode())
     r = lec.linea().split(",")
-    ref = {"C5": int(r[2]), "C6": int(r[3]), "C9": int(r[4])}
+    ref = {"C5": int(r[2]), "C6": int(r[3]), "C9": int(r[4]),
+           # 19-oct: la tibia 2 se lee por su AS5600 (TCA 0x70/3), campo 10 de la respuesta.
+           "ENC_T2": int(r[10]) if len(r) > 10 else -1}
+    if ref["ENC_T2"] < 0:
+        sys.exit("El encoder de la tibia 2 (0x70/3) no responde: revisar antes de usar la PPO.")
 
     salida = a.salida or HERE / f"robot_{'ppo' if modelo else 'nominal'}_{time.strftime('%Y%m%d_%H%M%S')}.csv"
     f = salida.open("w", newline="")
     w = csv.writer(f)
     w.writerow(["t", "paso", "fase", *[f"orden_{i}" for i in range(12)], *[f"nominal_{i}" for i in range(12)],
-                "C5", "C6", "C9", "C1", "C3", "C2", *[f"residual_{j}" for j in JOINTS]])
+                "C5", "C6", "C9", "C1", "C3", "C2", "ENC_T2", *[f"residual_{j}" for j in JOINTS]])
     residual_prev = np.zeros(12)
     rampa = round(1.0 / DT)
     total = rampa + a.ciclos * len(nominal)
     obs_q = np.zeros(3)
     t0 = time.time()
+    # 19-oct: hora real de inicio, para sincronizar con el video de las cámaras.
+    salida.with_suffix('.inicio.txt').write_text(f"{t0:.6f}\n")
     try:
         for k in range(total):
             if k < rampa:
@@ -164,12 +170,20 @@ def main():
             if not resp or not resp.startswith("R,"):
                 print("Respuesta perdida en el paso", k, resp)
                 break
-            v = [int(x) for x in resp.split(",")[2:8]]  # C5,C6,C9,C1,C3,C2 (C10,C11 se ignoran aqui)
+            campos = resp.split(",")
+            v = [int(x) for x in campos[2:8]]  # C5,C6,C9,C1,C3,C2
+            enc = int(campos[10]) if len(campos) > 10 else -1  # AS5600 tibia 2 (crudo 0-4095)
+            v.append(enc)
             # ADC -> grados de servo (pendiente negativa) -> ángulo del modelo.
             # Escalas medidas en el barrido de rango del 16-oct (cuentas/grado).
             d5 = -(v[0] - ref["C5"]) / 2.52   # F2 (pata 2, signo +1)
             d6 = -(v[1] - ref["C6"]) / 2.51   # F4 (pata 4, signo +1)
-            d9 = -(v[2] - ref["C9"]) / 2.59   # T2 (pata 2, signo -1)
+            # T2: 20° de servo dan ≈ −13,2° de encoder (barrido del 19-oct) → −0,66 °enc/°servo.
+            if enc >= 0:
+                d_enc = ((enc - ref["ENC_T2"]) * 360.0 / 4096.0 + 180.0) % 360.0 - 180.0
+                d9 = d_enc / -0.66
+            else:
+                d9 = 0.0                       # lectura perdida: se toma la base
             obs_q = np.deg2rad([-d5, -d6, d9])
             w.writerow([round(time.time() - t0, 3), k, round(fase, 4), *grados, *grados_nom, *v,
                         *np.round(residual, 4)])

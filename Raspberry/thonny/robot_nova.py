@@ -3,11 +3,10 @@
 Reproduce en Python lo que hacía el firmware movimiento_suspendido_11_servos
 del Arduino Uno (16 de octubre de 2026):
 - mapa de canales del PCA9685 (coxas CH0-CH3, fémures CH4-CH7, tibias
-  T1=CH8, T2=CH12, T3=CH9, T4=CH11);
+  T1=CH8, T2=CH9, T3=CH10, T4=CH14, desde el 19-oct);
 - topes absolutos por canal (límites del operador con 10° de margen y
   saturaciones medidas: F2/F4 <= 135°, T4 <= 105°);
-- coxas fijas en su punto de equilibrio (150, 45, 55, 150);
-- tibia 1 sin uso (servo dañado);
+- coxas fijas en su punto de equilibrio (159, 45, 54, 74 desde el 19-oct);
 - caminata base (gateo FL -> RR -> FR -> RL) y ejecución de la política PPO
   exportada a NumPy.
 
@@ -28,22 +27,23 @@ sys.path.insert(0, str(AQUI.parent / "codigo"))
 # ---------------------------------------------------------------- mapa
 # Patas: 1 = delantera derecha (FR), 2 = delantera izquierda (FL),
 #        3 = trasera derecha (RR), 4 = trasera izquierda (RL).
+# 19-oct: tibias T1=CH8 (reparada), T2=CH9, T3=CH10, T4=CH14.
 CANAL = {
     "coxa1": 0, "coxa2": 1, "coxa3": 2, "coxa4": 3,
     "femur1": 4, "femur2": 5, "femur3": 6, "femur4": 7,
-    "tibia1": 8, "tibia2": 12, "tibia3": 9, "tibia4": 11,
+    "tibia1": 8, "tibia2": 9, "tibia3": 10, "tibia4": 14,
 }
 BASE = {
-    "coxa1": 150, "coxa2": 45, "coxa3": 55, "coxa4": 150,
+    "coxa1": 159, "coxa2": 45, "coxa3": 54, "coxa4": 74,  # 19-oct
     "femur1": 110, "femur2": 100, "femur3": 100, "femur4": 100,
     "tibia1": 100, "tibia2": 80, "tibia3": 100, "tibia4": 70,
 }
-SIN_USO = {"tibia1"}            # servo dañado: nunca recibe PWM
+SIN_USO = set()                 # 19-oct: la tibia 1 se reparó
 COXAS = ("coxa1", "coxa2", "coxa3", "coxa4")
 # Topes absolutos por canal PCA (mínimo, máximo).
-TOPES = {0: (105, 170), 1: (10, 85), 2: (25, 90), 3: (125, 170),
+TOPES = {0: (105, 170), 1: (10, 85), 2: (25, 90), 3: (60, 105),
          4: (30, 140), 5: (45, 135), 6: (40, 160), 7: (25, 135),
-         8: (25, 160), 9: (11, 160), 11: (15, 105), 12: (25, 90)}
+         8: (25, 160), 9: (25, 90), 10: (11, 160), 14: (15, 105)}
 SIGNO_FEMUR = {1: -1, 2: 1, 3: -1, 4: 1}   # sentido "adelante" en grados de servo
 SIGNO_TIBIA = {1: -1, 2: -1, 3: -1, 4: -1}  # sentido de elevación de la tibia
 ORDEN_PATAS = (2, 3, 1, 4)
@@ -114,7 +114,7 @@ class RobotNova:
     def postura_base(self, pausa=0.3):
         """Coxas primero, luego fémures y tibias en su posición estática."""
         self.sostener_coxas(pausa)
-        for a in ("femur1", "femur2", "femur3", "femur4", "tibia2", "tibia3", "tibia4"):
+        for a in ("femur1", "femur2", "femur3", "femur4", "tibia1", "tibia2", "tibia3", "tibia4"):
             self.mover(a, BASE[a])
             time.sleep(pausa)
 
