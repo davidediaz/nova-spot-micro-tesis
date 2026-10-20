@@ -35,6 +35,7 @@ class PCA9685 {
 
   void begin() {
     Wire.begin();
+    Wire.setClock(400000);  // 19-oct: PCA9685, TCA9548A y AS5600 admiten 400 kHz
     escribirRegistro(0x00, 0x00); // MODE1: oscilador activo, sin auto-incremento
     delay(5);
   }
@@ -105,8 +106,8 @@ struct ServoPrueba {
 ServoPrueba servo[NUM_SERVOS] = {
   {"Coxa 1",  0, 159, -5, false}, // 19-oct: equilibrio nuevo 159 (antes 150) // BLOQUEADA: C0=93, fuera de la calibracion local; no ordenar a ciegas
   {"Coxa 2",  1,  45,  5, true},  // 16-oct: operador indica que 40 queda muy abajo -> 45
-  {"Coxa 3",  2,  54,  5, true},  // 19-oct: equilibrio nuevo 54
-  {"Coxa 4",  3,  74, -5, true},  // 19-oct: equilibrio confirmado por el operador (C2=375, ~74 grados)
+  {"Coxa 3",  2,  61,  5, true},  // 19-oct: 72 y 65 chocaban la pata 3 con la 1; 57 no
+  {"Coxa 4",  3,  82, -5, true},  // 19-oct: equilibrio colocado a mano por el operador (C2=379)
   {"Femur 1", 4, 110, -4, true},
   {"Femur 2", 5, 100,  4, true},
   {"Femur 3", 6, 100,  4, true},
@@ -157,6 +158,9 @@ void seleccionarCanalMux(byte canal) {
   digitalWrite(PIN_S3_MUX, bitRead(canal, 3));
 }
 
+// 19-oct: el modo @ baja a 4 muestras para cumplir el periodo de 30 ms.
+byte muestrasMux = 8;
+
 int leerCanalMux(byte canal) {
   seleccionarCanalMux(canal);
   // El condensador de muestreo del ADC debe cargarse tras cambiar el 4067.
@@ -164,8 +168,8 @@ int leerCanalMux(byte canal) {
   delayMicroseconds(500);
   for (byte descarte = 0; descarte < 3; ++descarte) analogRead(PIN_SIG_MUX);
   long suma = 0;
-  for (byte muestra = 0; muestra < 8; ++muestra) suma += analogRead(PIN_SIG_MUX);
-  return suma / 8;
+  for (byte muestra = 0; muestra < muestrasMux; ++muestra) suma += analogRead(PIN_SIG_MUX);
+  return suma / muestrasMux;
 }
 
 // Formato estable para la base de datos:
@@ -924,7 +928,13 @@ const byte COXA_MUX[3] = {1, 3, 2};
 int coxaRefAdc[3];
 float coxaFiltro[3];
 unsigned long ultimaCorreccionCoxasMs = 0;
+// 19-oct: los potenciometros se desplazan juntos (hasta 30 cuentas) con la corriente
+// de los servos. La coxa 1 (C0) no se corrige y solo ve ese desplazamiento: se resta.
+int refComunC0 = 0;
 void capturarReferenciaCoxas() {
+  long sumC0 = 0;
+  for (byte n = 0; n < 4; ++n) sumC0 += leerCanalMux(0);
+  refComunC0 = sumC0 / 4;
   for (byte k = 0; k < 3; ++k) {
     long sum = 0;
     for (byte n = 0; n < 4; ++n) sum += leerCanalMux(COXA_MUX[k]);
@@ -935,9 +945,12 @@ void capturarReferenciaCoxas() {
 // Corrige solo la deriva lenta (caida por peso). Las caidas breves del paso se
 // atenuan con un promedio movil; las lecturas que saltan > 40 cuentas se ignoran.
 void corregirCoxas() {
+  int comun = leerCanalMux(0) - refComunC0;
+  if (abs(comun) > 80) comun = 0;  // lectura de C0 anomala: sin compensar
   for (byte k = 0; k < 3; ++k) {
     int adc = leerCanalMux(COXA_MUX[k]);
     if (adc < 30 || adc > 950) continue;
+    adc -= comun;
     if (abs(adc - coxaFiltro[k]) > 40) continue;
     coxaFiltro[k] = 0.85f * coxaFiltro[k] + 0.15f * adc;
   }
@@ -966,7 +979,7 @@ bool ejecutarCaminataEnAire() {
   const int ampTibia[5]   = {0, 14, 14, 14, 14};
   const byte ordenPatas[4] = {2, 3, 1, 4};
   // 16-oct: las cuatro coxas se sostienen fijas en sus puntos de equilibrio
-  // (C1=159, C2=45, C3=54, C4=74), incluida la coxa 1 (CH0).
+  // (C1=159, C2=45, C3=61, C4=82), incluida la coxa 1 (CH0).
   // 16-oct: tibia 1 (indice 8, CH8) fuera de la caminata: su potenciometro
   // interno tiene un tramo danado y produce tirones. Queda sin PWM.
   const byte arranque[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}; // indices servo (19-oct: tibia 1 reparada)
@@ -1166,6 +1179,7 @@ int leerAS5600(byte tca, byte canal) {
 void terminarStreaming(const __FlashStringHelper *motivo) {
   for (byte i = 4; i < NUM_SERVOS; ++i) pca.setPWM(servo[i].canal, 0, 4096);
   estadoActual = "HOLD_EQUILIBRIO";
+  muestrasMux = 8;
   Serial.print(F("FIN_STREAM ")); Serial.println(motivo);
 }
 void modoStreaming() {
@@ -1180,6 +1194,7 @@ void modoStreaming() {
   delay(500);
   capturarReferenciaCoxas();
   estadoActual = "STREAM";
+  muestrasMux = 4;
   Serial.println(F("STREAM_LISTO"));
   char linea[96];
   unsigned long ultimo = millis();
@@ -1212,6 +1227,14 @@ void modoStreaming() {
     for (byte k = 0; k < 8; ++k) { Serial.print(','); Serial.print(leerCanalMux(canales[k])); }
     // 19-oct: angulo crudo (0-4095) del AS5600 de la tibia 2 (TCA 0x70, canal 3); -1 si falla.
     Serial.print(','); Serial.print(leerAS5600(0x70, 3));
+    // 19-oct (v6): C0 (coxa 1), C8 (femur 1) y AS5600 de tibia 1 (0x70/0),
+    // al final para no mover los campos anteriores.
+    Serial.print(','); Serial.print(leerCanalMux(0));
+    Serial.print(','); Serial.print(leerCanalMux(8));
+    Serial.print(','); Serial.print(leerAS5600(0x70, 0));
+    // 19-oct: encoders de respaldo de femur 1 (0x70/1) y femur 4 (0x71/5).
+    Serial.print(','); Serial.print(leerAS5600(0x70, 1));
+    Serial.print(','); Serial.print(leerAS5600(0x71, 5));
     Serial.println();
   }
 }

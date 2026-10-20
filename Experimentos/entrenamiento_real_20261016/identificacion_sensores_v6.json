@@ -1,0 +1,78 @@
+{
+  "registro": "caminata.csv",
+  "periodo_s": 0.03300000000000014,
+  "articulaciones": {
+    "front_right_femur_joint": {
+      "campo": "C8",
+      "k": -2.5086,
+      "r": -0.996,
+      "retardo_s": 0.066,
+      "residuo_grados": 0.81,
+      "ganancia": 0.995,
+      "recorrido_orden": 30.0
+    },
+    "front_left_femur_joint": {
+      "campo": "C5",
+      "k": -2.556,
+      "r": -0.997,
+      "retardo_s": 0.099,
+      "residuo_grados": 0.77,
+      "ganancia": 1.014,
+      "recorrido_orden": 30.0
+    },
+    "rear_right_femur_joint": {
+      "campo": "C9",
+      "k": -2.5391,
+      "r": -0.996,
+      "retardo_s": 0.099,
+      "residuo_grados": 0.82,
+      "ganancia": 1.008,
+      "recorrido_orden": 30.0
+    },
+    "rear_left_femur_joint": {
+      "campo": "C6",
+      "k": -2.5324,
+      "r": -0.996,
+      "retardo_s": 0.099,
+      "residuo_grados": 0.84,
+      "ganancia": 1.005,
+      "recorrido_orden": 30.0
+    },
+    "front_right_tibia_joint": {
+      "campo": "ENC_T1",
+      "k": -0.8981,
+      "r": -0.996,
+      "retardo_s": 0.099,
+      "residuo_grados": 0.26,
+      "ganancia": 1.0,
+      "recorrido_orden": 10.0
+    },
+    "front_left_tibia_joint": {
+      "campo": "ENC_T2",
+      "k": -0.5837,
+      "r": -0.985,
+      "retardo_s": 0.066,
+      "residuo_grados": 0.51,
+      "ganancia": 1.0,
+      "recorrido_orden": 10.0
+    },
+    "rear_right_tibia_joint": {
+      "campo": "C11",
+      "k": -2.5284,
+      "r": -0.976,
+      "retardo_s": 0.066,
+      "residuo_grados": 0.64,
+      "ganancia": 1.003,
+      "recorrido_orden": 10.0
+    },
+    "rear_left_tibia_joint": {
+      "campo": "C10",
+      "k": -2.4755,
+      "r": -0.978,
+      "retardo_s": 0.099,
+      "residuo_grados": 0.63,
+      "ganancia": 0.982,
+      "recorrido_orden": 10.0
+    }
+  }
+}

@@ -26,6 +26,9 @@ from pathlib import Path
 
 import mujoco
 import numpy as np
+import torch
+
+torch.set_num_threads(1)   # 19-oct: varios entrenamientos en paralelo; con más hilos se estorban
 from gymnasium import spaces
 from stable_baselines3 import PPO
 
@@ -45,6 +48,9 @@ FASE_MOV_S, FASE_PAUSA_S = 0.5, 0.15
 SENSADAS = ("front_left_femur_joint", "rear_left_femur_joint", "front_left_tibia_joint")
 SIN_RESIDUAL = {"front_left_coxa_joint", "front_right_coxa_joint", "rear_left_coxa_joint",
                 "rear_right_coxa_joint", "front_right_tibia_joint"}
+# 19-oct (v6): observación de los 8 fémures y tibias y tibia 1 activa (--completo).
+SENSADAS_COMPLETO = tuple(j for j in JOINTS if "coxa" not in j)
+SIN_RESIDUAL_COMPLETO = {j for j in JOINTS if "coxa" in j}
 
 
 def marcha_b(control_dt):
@@ -73,13 +79,53 @@ def marcha_b(control_dt):
     return np.asarray(muestras)
 
 
+# 19-oct: segunda marcha, «paso». Versión articular de cartesian_step_walk con las
+# coxas fijas: continua, sin pausas, cada pata apoya el 75 % del ciclo (el fémur va
+# hacia atrás a velocidad constante) y oscila el 25 % restante en el orden
+# FL -> RR -> FR -> RL. La duración del ciclo es PASO_CICLO_S.
+LIMITE_CAMBIO_RAD = np.deg2rad(3.0)
+# 19-oct (v7): variación por episodio del actuador y de los sensores (--aleatorizar).
+ALEATORIZAR = False
+MARCHA = "gateo"
+PASO_CICLO_S = 2.4
+DESFASE_PASO = {"FL": 0.75, "RR": 0.50, "FR": 0.25, "RL": 0.00}
+
+
+def marcha_paso(control_dt):
+    """Muestras articulares (rad) de la marcha «paso», una por paso de control."""
+    a = np.deg2rad(FEMUR_AMP_DEG)
+    n = round(PASO_CICLO_S / control_dt)
+    apoyo = 0.75
+    muestras = []
+    for k in range(n):
+        ciclo = k / n
+        q = np.tile(STAND, 4).astype(float)
+        for pata, desfase in DESFASE_PASO.items():
+            fase = (ciclo + desfase) % 1.0
+            if fase < apoyo:
+                o, lift = a * (1.0 - 2.0 * fase / apoyo), 0.0
+            else:
+                t = (fase - apoyo) / (1.0 - apoyo)
+                o = a * (-1.0 + 2.0 * (1.0 - np.cos(np.pi * t)) / 2.0)
+                lift = np.deg2rad(TIBIA_AMP_DEG) * np.sin(np.pi * t)
+            b = LEG_JOINT_BASE[pata]
+            q[b + 1] = STAND[1] - o
+            q[b + 2] = STAND[2] - lift
+        muestras.append(q)
+    return np.asarray(muestras)
+
+
+def generar_marcha(control_dt):
+    return marcha_paso(control_dt) if MARCHA == "paso" else marcha_b(control_dt)
+
+
 class NovaRealEnv(NovaMujocoResidualEnv):
     def __init__(self, actuador, seed=11, episode_cycles=6, domain_randomization=True,
                  sensor_noise_deg=1.0, control_dt=0.02):
         super().__init__(MODEL, gait="crawl", episode_cycles=episode_cycles,
                          control_dt=control_dt, seed=seed,
                          domain_randomization=domain_randomization)
-        self.nominal = marcha_b(self.control_dt)
+        self.nominal = generar_marcha(self.control_dt)
         self.samples = len(self.nominal)
         self.steps_per_sample = 1
         self.cycle_steps = self.samples
@@ -96,10 +142,11 @@ class NovaRealEnv(NovaMujocoResidualEnv):
         self.mascara = np.array([0.0 if j in SIN_RESIDUAL else 1.0 for j in JOINTS])
         self.zona_muerta = np.deg2rad(float(actuador.get("zona_muerta_grados", 0.0)))
         self.idx_sensadas = [JOINTS.index(j) for j in SENSADAS]
-        # Tibia 1 (FR) sin PWM: actuador sin rigidez, solo amortiguamiento.
-        act = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_ACTUATOR, "front_right_tibia_act")
-        self.model.actuator_gainprm[act, 0] = 0.0
-        self.model.actuator_biasprm[act, 1] = 0.0
+        if "front_right_tibia_joint" in SIN_RESIDUAL:
+            # Tibia 1 (FR) sin PWM: actuador sin rigidez, solo amortiguamiento.
+            act = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_ACTUATOR, "front_right_tibia_act")
+            self.model.actuator_gainprm[act, 0] = 0.0
+            self.model.actuator_biasprm[act, 1] = 0.0
         obs_dim = len(SENSADAS) + 2 + 12
         self.observation_space = spaces.Box(-np.inf, np.inf, (obs_dim,), np.float32)
         self.cola = deque()
@@ -107,6 +154,7 @@ class NovaRealEnv(NovaMujocoResidualEnv):
     def _observation(self):
         q = self.data.qpos[self.qpos_ids][self.idx_sensadas]
         q = q + self.rng.normal(0.0, self.sensor_noise, size=q.shape)
+        q = q + getattr(self, "sesgo_sensor", 0.0)
         fase = (max(0, self.step_count - self.ramp_steps) % self.cycle_steps) / self.cycle_steps
         return np.asarray(np.r_[q - np.asarray(STAND * 4)[self.idx_sensadas],
                                 np.sin(2 * np.pi * fase), np.cos(2 * np.pi * fase),
@@ -133,8 +181,17 @@ class NovaRealEnv(NovaMujocoResidualEnv):
 
     def reset(self, *, seed=None, options=None):
         obs, info = super().reset(seed=seed, options=options)
+        if ALEATORIZAR:
+            # Retardo de 60-120 ms, ganancia +/-5 % por servo y desfase de sensor +/-1°.
+            if not hasattr(self, "ganancia_nominal"):
+                self.ganancia_nominal, self.retardo_nominal = self.ganancia.copy(), self.retardo_pasos
+            self.retardo_pasos = int(self.rng.integers(2, 5))
+            self.ganancia = self.ganancia_nominal * self.rng.uniform(0.95, 1.05, 12)
+            self.sesgo_sensor = np.deg2rad(self.rng.uniform(-1.0, 1.0, len(self.idx_sensadas)))
         self.cola = deque([self.data.ctrl.copy()] * self.retardo_pasos)
         self.ultimo_efectivo = None
+        self.orden_previa = None
+        self.yaw_ciclo = None
         return self._observation(), info
 
     def step(self, action):
@@ -151,6 +208,11 @@ class NovaRealEnv(NovaMujocoResidualEnv):
             nominal = self.nominal[(self.step_count - self.ramp_steps) % self.cycle_steps]
         self.current_nominal = nominal
         orden = nominal + residual
+        # 19-oct: el firmware limita el cambio de cada orden a 3° por línea.
+        previa = getattr(self, "orden_previa", None)
+        if previa is not None:
+            orden = np.clip(orden, previa - LIMITE_CAMBIO_RAD, previa + LIMITE_CAMBIO_RAD)
+        self.orden_previa = orden.copy()
         stand = np.tile(STAND, 4)
         efectivo = stand + self.ganancia * (orden - stand)
         if self.zona_muerta > 0:
@@ -167,6 +229,17 @@ class NovaRealEnv(NovaMujocoResidualEnv):
         for _ in range(self.sim_substeps):
             mujoco.mj_step(self.model, self.data)
         reward = self._reward(residual, before_x)
+        # 19-oct (v10): giro del cuerpo en cada ciclo completo. Sin IMU la política no ve el
+        # rumbo; penalizar el giro por ciclo evita que se curve en caminatas largas.
+        w_ciclo = getattr(self, "pesos", {}).get("giro_ciclo", 0.0)
+        if w_ciclo and not ramp and (self.step_count - self.ramp_steps + 1) % self.cycle_steps == 0:
+            from entrenar_ppo_mujoco import _quat_yaw
+            yaw = _quat_yaw(self.data.xquat[self.base_body])
+            previo = getattr(self, "yaw_ciclo", None)
+            if previo is not None:
+                giro = np.degrees(np.arctan2(np.sin(yaw - previo), np.cos(yaw - previo)))
+                reward -= w_ciclo * giro ** 2
+            self.yaw_ciclo = yaw
         self.step_count += 1
         roll, pitch, h = self._cuerpo()
         obs = self._observation()
@@ -220,26 +293,59 @@ def main():
     p.add_argument("--w-actitud", type=float, default=8.0)
     p.add_argument("--w-lateral", type=float, default=0.0)
     p.add_argument("--w-giro", type=float, default=0.0)
+    p.add_argument("--w-giro-ciclo", type=float, default=0.0, help="penalización por grado² de giro en cada ciclo")
+    p.add_argument("--marcha", choices=("gateo", "paso"), default="gateo")
+    p.add_argument("--ciclo-paso", type=float, default=2.4, help="duración del ciclo del paso (s)")
+    p.add_argument("--ciclos-episodio", type=int, default=6, help="ciclos de marcha por episodio")
+    p.add_argument("--lr", type=float, default=3e-4, help="tasa de aprendizaje")
+    p.add_argument("--target-kl", type=float, help="límite de cambio de la política por actualización")
+    p.add_argument("--n-steps", type=int, default=1024)
+    p.add_argument("--continuar", type=Path, help="policy.zip desde la que seguir entrenando")
+    p.add_argument("--guardar-cada", type=int, default=100_000, help="pasos entre copias intermedias")
+    p.add_argument("--aleatorizar", action="store_true",
+                   help="varía retardo, ganancia y desfase de sensores en cada episodio (v7)")
+    p.add_argument("--completo", action="store_true",
+                   help="observa los 8 fémures y tibias y corrige también la tibia 1 (v6)")
     a = p.parse_args()
+    global SENSADAS, SIN_RESIDUAL, MARCHA, PASO_CICLO_S
+    MARCHA, PASO_CICLO_S = a.marcha, a.ciclo_paso
+    global ALEATORIZAR
+    ALEATORIZAR = a.aleatorizar
+    if a.completo:
+        SENSADAS, SIN_RESIDUAL = SENSADAS_COMPLETO, SIN_RESIDUAL_COMPLETO
     actuador = json.loads(a.actuador.read_text())
     global FEMUR_AMP_DEG, TIBIA_AMP_DEG, FASE_MOV_S
     FEMUR_AMP_DEG, TIBIA_AMP_DEG, FASE_MOV_S = a.femur, a.tibia, a.fase
-    NovaRealEnv.pesos = dict(avance=a.w_avance, actitud=a.w_actitud, lateral=a.w_lateral, giro=a.w_giro)
+    NovaRealEnv.pesos = dict(avance=a.w_avance, actitud=a.w_actitud, lateral=a.w_lateral, giro=a.w_giro,
+                             giro_ciclo=a.w_giro_ciclo)
     out = a.output / f"semilla_{a.seed}"
     out.mkdir(parents=True, exist_ok=True)
-    env = NovaRealEnv(actuador, seed=a.seed, control_dt=a.dt)
-    model = PPO("MlpPolicy", env, seed=a.seed, verbose=0, n_steps=1024, batch_size=256)
-    model.learn(total_timesteps=a.timesteps, callback=MetricsCallback(out / "training_trace.csv"))
+    env = NovaRealEnv(actuador, seed=a.seed, control_dt=a.dt, episode_cycles=a.ciclos_episodio)
+    if a.continuar:
+        model = PPO.load(a.continuar, env=env, device="cpu",
+                         custom_objects=dict(learning_rate=a.lr, target_kl=a.target_kl))
+    else:
+        model = PPO("MlpPolicy", env, seed=a.seed, verbose=0, n_steps=a.n_steps, batch_size=256,
+                    learning_rate=a.lr, target_kl=a.target_kl)
+    from stable_baselines3.common.callbacks import CallbackList, CheckpointCallback
+    copias = CheckpointCallback(save_freq=a.guardar_cada, save_path=str(out / "intermedias"), name_prefix="policy")
+    model.learn(total_timesteps=a.timesteps, reset_num_timesteps=not a.continuar,
+                callback=CallbackList([MetricsCallback(out / "training_trace.csv"), copias]))
     model.save(out / "policy.zip")
     filas = evaluar(model, actuador, a.eval_seeds, control_dt=a.dt)
     with (out / "evaluacion.csv").open("w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=list(filas[0]))
         w.writeheader(); w.writerows(filas)
     (out / "metadata.json").write_text(json.dumps(dict(
-        seed=a.seed, timesteps=int(model.num_timesteps), eval_seeds=a.eval_seeds, control_dt=a.dt,
-        marcha=dict(femur_deg=a.femur, tibia_deg=a.tibia, fase_s=a.fase), pesos=NovaRealEnv.pesos,
+        seed=a.seed, timesteps=int(model.num_timesteps),
+        continuado_desde=str(a.continuar) if a.continuar else None, ciclos_episodio=a.ciclos_episodio,
+        ppo=dict(lr=a.lr, target_kl=a.target_kl, n_steps=a.n_steps), eval_seeds=a.eval_seeds, control_dt=a.dt,
+        marcha=dict(tipo=a.marcha, femur_deg=a.femur, tibia_deg=a.tibia, fase_s=a.fase,
+                    ciclo_paso_s=a.ciclo_paso), pesos=NovaRealEnv.pesos,
         actuador=actuador, hardware_transfer=False,
         observacion=list(SENSADAS) + ["sin_fase", "cos_fase", "residual_previo x12"],
+        sin_residual=sorted(SIN_RESIDUAL), aleatorizar_actuador=a.aleatorizar,
+        limite_cambio_grados=float(np.rad2deg(LIMITE_CAMBIO_RAD)),
         nota="Simulación ajustada al robot real del 16-oct; no transferida al robot."),
         indent=2, ensure_ascii=False))
     for cond in ("nominal", "ppo"):

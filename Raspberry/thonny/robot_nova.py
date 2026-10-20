@@ -34,7 +34,7 @@ CANAL = {
     "tibia1": 8, "tibia2": 9, "tibia3": 10, "tibia4": 14,
 }
 BASE = {
-    "coxa1": 159, "coxa2": 45, "coxa3": 54, "coxa4": 74,  # 19-oct
+    "coxa1": 159, "coxa2": 45, "coxa3": 61, "coxa4": 82,  # 19-oct: coxa 4 a mano; coxa 3 en 61 (72 y 65 chocaban con la pata 1)
     "femur1": 110, "femur2": 100, "femur3": 100, "femur4": 100,
     "tibia1": 100, "tibia2": 80, "tibia3": 100, "tibia4": 70,
 }
