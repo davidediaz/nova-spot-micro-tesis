@@ -12,12 +12,27 @@ Uso: protocolo_repetibilidad.py --sesion 20261019 --repeticiones 3 \\
         --condicion gateo_base:gateo: --condicion gateo_ppo:gateo:ppo_v10_gateo/semilla_71/policy.zip ...
 """
 import argparse
+import json
 import subprocess
 import sys
 import time
 from pathlib import Path
 
 AQUI = Path(__file__).resolve().parent
+
+
+def salud(carpeta, duracion):
+    diag = carpeta / "diagnostico.json"
+    if not diag.exists():
+        return "sin diagnóstico (caminata sin datos)"
+    d = json.loads(diag.read_text())
+    if d["duracion_s"] < 0.9 * duracion:
+        return f"caminata cortada a los {d['duracion_s']:.0f} s"
+    for n in ("femur1", "femur2", "femur3", "femur4"):
+        a = d["articulaciones"].get(n, {})
+        if a.get("caido") or a.get("r_medio", 0) < 0.9:
+            return f"{n} no sigue la orden (r={a.get('r_medio')}): posible bus I2C bloqueado"
+    return None
 
 
 def main():
@@ -53,6 +68,14 @@ def main():
                 return 1
             subprocess.run([sys.executable, "-I", str(AQUI / "diagnostico_caminata.py"), str(AQUI / "grabaciones" / carpeta)],
                            capture_output=True)
+            # 20-oct: comprobación de salud. Una caminata corta o con fémures que no siguen la orden
+            # indica fallo del bus I2C o de la alimentación: se detiene el protocolo.
+            problema = salud(AQUI / "grabaciones" / carpeta, a.duracion_s)
+            if problema:
+                print("  DETENIDO:", problema, flush=True)
+                (AQUI / "grabaciones" / carpeta / "invalida.txt").write_text(problema + "\n")
+                (AQUI / "grabaciones" / carpeta).rename(AQUI / "grabaciones" / f"{carpeta}_fallo")
+                return 2
             time.sleep(a.pausa_s)
     subprocess.run([sys.executable, "-I", str(AQUI / "catalogo_caminatas.py")])
     return 0

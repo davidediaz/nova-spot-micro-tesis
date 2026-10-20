@@ -1,5 +1,5 @@
 {
-  "fecha": "2026-10-20 08:51:25",
+  "fecha": "2026-10-20 10:09:44",
   "argumentos": [
     "--duracion-s",
     "180.0",
@@ -35,20 +35,20 @@
     70
   ],
   "referencias_sensores": {
-    "C5": 335,
-    "C6": 334,
-    "C9": 334,
+    "C5": 339,
+    "C6": 339,
+    "C9": 339,
     "C1": 492,
-    "C3": 448,
-    "C2": 383,
-    "C10": 411,
-    "C11": 334,
-    "ENC_T2": -1,
-    "C0": 178,
-    "C8": 311,
+    "C3": 452,
+    "C2": 382,
+    "C10": 416,
+    "C11": 339,
+    "ENC_T2": 572,
+    "C0": 183,
+    "C8": 316,
     "ENC_T1": -1,
-    "ENC_F1": 3956,
-    "ENC_F4": -1
+    "ENC_F1": 4010,
+    "ENC_F4": 2658
   },
   "calibracion_sensores": {
     "nota": "Sensor de cada articulación para la observación de la PPO. k = unidades del sensor por grado de servo (cuentas/° en potenciómetros, °encoder/° en AS5600). F2, F4 y T2 del barrido de rango del 16-oct y del 19-oct; el resto se identifica con identificar_sensores_v6.py.",
@@ -90,5 +90,5 @@
       "k": -2.4755
     }
   },
-  "firmware_sha1": "a9fd8a4bad1b61345b3cefe3d1456500a8988fbe"
+  "firmware_sha1": "bc8576c2dd68a3178790e757f802c45122f74c53"
 }
