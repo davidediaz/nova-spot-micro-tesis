@@ -36,6 +36,9 @@ class PCA9685 {
   void begin() {
     Wire.begin();
     Wire.setClock(400000);  // 19-oct: PCA9685, TCA9548A y AS5600 admiten 400 kHz
+    // 20-oct: si el bus se bloquea (SDA en 0) Wire no se queda esperando para siempre:
+    // a los 3 ms aborta y reinicia el bus; las lecturas fallidas salen como -1.
+    Wire.setWireTimeout(3000, true);
     escribirRegistro(0x00, 0x00); // MODE1: oscilador activo, sin auto-incremento
     delay(5);
   }

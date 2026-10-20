@@ -78,7 +78,7 @@ def main():
                 ciclos.append(dict(caminata=c.name, marcha=cfg["marcha"], politica=cfg["politica"],
                                    base_coxas=cfg["base_coxas"], ciclo=k + 1, articulacion=n, r="",
                                    error_rms=round(v, 3), desfase="", perdidas=""))
-        for cam in ("camara1", "camara2"):
+        for cam in ["camara1", "camara2"] + sorted(k for k in d if k.startswith("camara_")):
             if cam in d:
                 fila[f"{cam}_fps"] = round(d[cam]["fps_real"], 1)
                 fila[f"{cam}_huecos"] = d[cam]["huecos_mas_de_50ms"]

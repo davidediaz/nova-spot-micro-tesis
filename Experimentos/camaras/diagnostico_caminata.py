@@ -194,7 +194,9 @@ def main():
     carpeta = Path(sys.argv[1])
     res, series = sensores(carpeta)
     camaras = {}
-    for nombre, sub in (("camara1", carpeta), ("camara2", carpeta / "remota")):
+    camaras_dir = [("camara1", carpeta), ("camara2", carpeta / "remota")]
+    camaras_dir += [(d.name.replace("extra_", "camara_"), d) for d in sorted(carpeta.glob("extra_*"))]
+    for nombre, sub in camaras_dir:
         if (sub / "video.mkv").exists():
             inicio = float((sub / "video.inicio.txt").read_text())
             res[nombre], camaras[nombre] = camara(sub / "video.mkv", inicio, series["t_abs"], series["velocidad_orden"])
@@ -213,7 +215,7 @@ def main():
     for n, c in res["coxas"].items():
         pc = c["por_ciclo"]
         print(f"  {n}: media {c['desviacion_media']:.2f}° p95 {c['p95']:.2f}° (primer ciclo {pc[0]:.2f}°, último {pc[-1]:.2f}°)")
-    for nombre in ("camara1", "camara2"):
+    for nombre, _ in camaras_dir:
         if nombre in res:
             c = res[nombre]
             print(f"  {nombre}: {c['fotogramas']} fotogramas, {c['fps_real']:.1f} fps, huecos >50 ms {c['huecos_mas_de_50ms']} "

@@ -6,7 +6,8 @@
 3) Al terminar la caminata, graba 2 s más y para.
 Deja en grabaciones/<nombre>/: video.mkv, video.inicio.txt, caminata.csv y
 caminata.inicio.txt, y en remota/ el video del segundo portátil (pc2-camara) ya
-sincronizado con el reloj de este PC; las dos carpetas se analizan con analizar_video.py.
+sincronizado con el reloj de este PC. Desde el 20-oct también graba las cámaras locales
+de camaras_extra.json (Logitech y celular) en extra_<nombre>/, con la misma estructura.
 
 Uso:
   python3 grabar_caminata.py --nombre base_01 -- --ciclos 10 --dt 0.03 --tibia 10
@@ -43,6 +44,7 @@ def main():
     p.add_argument("--remota", default="pc2-camara",
                    help="alias SSH del segundo portátil ('' para grabar solo con este PC)")
     p.add_argument("--dispositivo-remoto", default="/dev/video0")
+    p.add_argument("--sin-extras", action="store_true", help="no grabar las cámaras de camaras_extra.json")
     a = p.parse_args(propios)
     carpeta = AQUI / "grabaciones" / a.nombre
     carpeta.mkdir(parents=True, exist_ok=False)
@@ -54,6 +56,17 @@ def main():
         stdin=subprocess.PIPE)
     t_video = time.time()
     (carpeta / "video.lanzamiento.txt").write_text(f"{t_video:.6f}\n")
+    extras = []
+    cfg_extra = AQUI / "camaras_extra.json"
+    if cfg_extra.exists() and not a.sin_extras:
+        for c in json.loads(cfg_extra.read_text())["camaras"]:
+            d = carpeta / f"extra_{c['nombre']}"; d.mkdir()
+            for ajuste in c.get("previo", []):
+                subprocess.run(["v4l2-ctl", "-d", c["dispositivo"], "-c", ajuste], capture_output=True)
+            proc = subprocess.Popen(["ffmpeg", "-hide_banner", "-loglevel", "error", "-f", "v4l2", *c["entrada"],
+                                     "-use_wallclock_as_timestamps", "1", "-i", c["dispositivo"], *c["salida"],
+                                     "-copyts", str(d / "video.mkv")], stdin=subprocess.PIPE)
+            extras.append((c["nombre"], d, proc))
     remoto = None
     SSH = ["-o", "BatchMode=yes", "-o", "ConnectTimeout=5", "-o", "ServerAliveInterval=5", "-o", "ServerAliveCountMax=3"]
     if a.remota and subprocess.run(["ssh", *SSH, a.remota, "true"], capture_output=True).returncode != 0:
@@ -90,6 +103,19 @@ def main():
             ff.terminate()
         # 19-oct: hora real del primer fotograma (la cámara tarda ~0,3-0,4 s en arrancar).
         (carpeta / "video.inicio.txt").write_text(f"{primer_fotograma(video):.6f}\n")
+        for nombre, d, proc in extras:
+            try:
+                proc.stdin.write(b"q"); proc.stdin.flush(); proc.wait(timeout=15)
+            except (OSError, subprocess.TimeoutExpired):
+                proc.terminate()
+            try:
+                (d / "video.inicio.txt").write_text(f"{primer_fotograma(d / 'video.mkv'):.6f}\n")
+                for f in ("caminata.csv", "caminata.inicio.txt", "caminata.config.json"):
+                    if (carpeta / f).exists():
+                        (d / f).write_bytes((carpeta / f).read_bytes())
+            except (subprocess.SubprocessError, OSError, ValueError, KeyError, IndexError) as e:
+                print(f"AVISO: la cámara {nombre} no grabó bien: {e}", flush=True)
+                (d / "error.txt").write_text(f"{e}\n")
         if remoto is not None:
             try:
                 remoto.stdin.write(b"q"); remoto.stdin.flush()
