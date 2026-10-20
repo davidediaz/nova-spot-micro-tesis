@@ -39,7 +39,8 @@ from entrenar_ppo_mujoco import (  # noqa: E402
     JOINTS, STAND, MetricsCallback, NovaMujocoResidualEnv, _quat_roll_pitch,
 )
 
-MODEL = ROOT / "src/nova_sm3_description/mujoco/nova_sm3.xml"
+# 20-oct: geometría medida en el robot real (antes nova_sm3.xml, referencia publicada).
+MODEL = ROOT / "src/nova_sm3_description/mujoco/nova_sm3_real.xml"
 LEG_JOINT_BASE = {"FL": 0, "FR": 3, "RL": 6, "RR": 9}
 ORDEN_PATAS = ("FL", "RR", "FR", "RL")
 FEMUR_AMP_DEG = 15.0
