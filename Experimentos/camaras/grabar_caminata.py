@@ -55,15 +55,21 @@ def main():
     t_video = time.time()
     (carpeta / "video.lanzamiento.txt").write_text(f"{t_video:.6f}\n")
     remoto = None
+    SSH = ["-o", "BatchMode=yes", "-o", "ConnectTimeout=5", "-o", "ServerAliveInterval=5", "-o", "ServerAliveCountMax=3"]
+    if a.remota and subprocess.run(["ssh", *SSH, a.remota, "true"], capture_output=True).returncode != 0:
+        # 19-oct: sin enlace con el segundo portátil se graba solo con esta cámara.
+        print(f"AVISO: {a.remota} no responde; se graba solo con la cámara local.", flush=True)
+        (carpeta / "remota.error.txt").write_text("sin conexión al empezar\n")
+        a.remota = ""
     if a.remota:
         # Diferencia de reloj: hora remota − hora local (punto medio de la consulta).
         t1 = time.time()
-        r_hora = float(subprocess.check_output(["ssh", "-o", "BatchMode=yes", a.remota, "date +%s.%N"]).decode())
+        r_hora = float(subprocess.check_output(["ssh", *SSH, a.remota, "date +%s.%N"]).decode())
         t2 = time.time()
         desfase = r_hora - (t1 + t2) / 2
         (carpeta / "remota.desfase.txt").write_text(f"{desfase:.6f}\n")
         remoto = subprocess.Popen(
-            ["ssh", "-o", "BatchMode=yes", a.remota,
+            ["ssh", *SSH, a.remota,
              f"date +%s.%N > /tmp/cam_remota.inicio.txt; exec ffmpeg -hide_banner -loglevel error -f v4l2 "
              f"-input_format mjpeg -video_size 1280x720 -framerate 30 -use_wallclock_as_timestamps 1 "
              f"-i {a.dispositivo_remoto} -c:v copy -copyts -y /tmp/cam_remota.mkv"],
@@ -85,20 +91,28 @@ def main():
         # 19-oct: hora real del primer fotograma (la cámara tarda ~0,3-0,4 s en arrancar).
         (carpeta / "video.inicio.txt").write_text(f"{primer_fotograma(video):.6f}\n")
         if remoto is not None:
-            remoto.stdin.write(b"q"); remoto.stdin.flush()
+            try:
+                remoto.stdin.write(b"q"); remoto.stdin.flush()
+            except OSError:
+                pass
             try:
                 remoto.wait(timeout=10)
             except subprocess.TimeoutExpired:
                 remoto.terminate()
             remota = carpeta / "remota"; remota.mkdir(exist_ok=True)
-            subprocess.run(["scp", "-q", f"{a.remota}:/tmp/cam_remota.mkv", str(remota / "video.mkv")])
-            subprocess.run(["scp", "-q", f"{a.remota}:/tmp/cam_remota.inicio.txt", str(remota / "video.inicio.remoto.txt")])
-            # Hora del primer fotograma remoto, pasada al reloj de este PC.
-            ini = primer_fotograma(remota / "video.mkv") - float((carpeta / "remota.desfase.txt").read_text())
-            (remota / "video.inicio.txt").write_text(f"{ini:.6f}\n")
-            for f in ("caminata.csv", "caminata.inicio.txt", "caminata.config.json"):
-                if (carpeta / f).exists():
-                    (remota / f).write_bytes((carpeta / f).read_bytes())
+            try:
+                # Copia con límite de tiempo: si se corta el cable no se queda colgado.
+                subprocess.run(["scp", "-q", *SSH, f"{a.remota}:/tmp/cam_remota.mkv", str(remota / "video.mkv")],
+                               check=True, timeout=600)
+                # Hora del primer fotograma remoto, pasada al reloj de este PC.
+                ini = primer_fotograma(remota / "video.mkv") - float((carpeta / "remota.desfase.txt").read_text())
+                (remota / "video.inicio.txt").write_text(f"{ini:.6f}\n")
+                for f in ("caminata.csv", "caminata.inicio.txt", "caminata.config.json"):
+                    if (carpeta / f).exists():
+                        (remota / f).write_bytes((carpeta / f).read_bytes())
+            except (subprocess.SubprocessError, OSError, ValueError, KeyError, IndexError) as e:
+                print(f"AVISO: no se pudo traer el video de {a.remota}: {e}", flush=True)
+                (carpeta / "remota.error.txt").write_text(f"{e}\n")
     print(f"Grabación en {carpeta} (caminata terminó con código {r.returncode})")
 
 
