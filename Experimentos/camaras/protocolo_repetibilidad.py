@@ -6,7 +6,8 @@ Cada condición (marcha + política) se camina --duracion-s segundos con las dos
 rondas (ronda 1: A B C D, ronda 2: B C D A, ...) para que la fatiga, la temperatura de los
 servos o la carga de la fuente no favorezcan a ninguna condición. Entre caminatas hay
 --pausa-s segundos de descanso. Al final se actualiza el catálogo.
-Las carpetas se llaman rep_<sesión>_<condición>_r<n>.
+Las carpetas se llaman rep_<sesión>_<condición>_r<n>. Desde el 20-oct, tras cada caminata se
+analizan sus videos por patas (analizar_video_patas.py) y se comprimen a H.264.
 
 Uso: protocolo_repetibilidad.py --sesion 20261019 --repeticiones 3 \\
         --condicion gateo_base:gateo: --condicion gateo_ppo:gateo:ppo_v10_gateo/semilla_71/policy.zip ...
@@ -76,6 +77,13 @@ def main():
                 (AQUI / "grabaciones" / carpeta / "invalida.txt").write_text(problema + "\n")
                 (AQUI / "grabaciones" / carpeta).rename(AQUI / "grabaciones" / f"{carpeta}_fallo")
                 return 2
+            # 20-oct: análisis de video de cada caminata antes de la siguiente y compresión a
+            # H.264 (≈12 veces menos espacio; se comprueba antes de sustituir el original).
+            for programa in ("analizar_video_patas.py", "comprimir_videos.py"):
+                r = subprocess.run([sys.executable, "-I", str(AQUI / programa), str(AQUI / "grabaciones" / carpeta)],
+                                   capture_output=True, text=True)
+                for l in r.stdout.splitlines():
+                    print("   ", l.strip(), flush=True)
             time.sleep(a.pausa_s)
     subprocess.run([sys.executable, "-I", str(AQUI / "catalogo_caminatas.py")])
     return 0

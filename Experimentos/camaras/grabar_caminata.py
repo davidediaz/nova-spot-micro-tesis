@@ -83,6 +83,7 @@ def main():
         (carpeta / "remota.desfase.txt").write_text(f"{desfase:.6f}\n")
         remoto = subprocess.Popen(
             ["ssh", *SSH, a.remota,
+             f"pkill -INT -f 'ffmpeg.*/tmp/cam_remota.mkv'; sleep 1; "   # 20-oct: grabación anterior colgada
              f"date +%s.%N > /tmp/cam_remota.inicio.txt; exec ffmpeg -hide_banner -loglevel error -f v4l2 "
              f"-input_format mjpeg -video_size 1280x720 -framerate 30 -use_wallclock_as_timestamps 1 "
              f"-i {a.dispositivo_remoto} -c:v copy -copyts -y /tmp/cam_remota.mkv"],
