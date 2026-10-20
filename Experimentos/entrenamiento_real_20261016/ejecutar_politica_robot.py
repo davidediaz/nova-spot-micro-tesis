@@ -126,7 +126,8 @@ def main():
     p.add_argument("--femur", type=float)
     p.add_argument("--tibia", type=float)
     p.add_argument("--fase", type=float)
-    p.add_argument("--marcha", choices=("gateo", "paso"))
+    p.add_argument("--marcha", choices=("gateo", "paso", "trote"))
+    p.add_argument("--ciclo-trote", type=float)
     p.add_argument("--ciclo-paso", type=float)
     a = p.parse_args()
     global DT
@@ -148,6 +149,7 @@ def main():
             E.FASE_MOV_S = m.get("fase_s", E.FASE_MOV_S)
             E.MARCHA = m.get("tipo", E.MARCHA)
             E.PASO_CICLO_S = m.get("ciclo_paso_s", E.PASO_CICLO_S)
+            E.TROTE_CICLO_S = m.get("ciclo_trote_s", E.TROTE_CICLO_S)
             sensadas = [o for o in md.get("observacion", sensadas) if o.endswith("_joint")]
             sin_residual = set(md.get("sin_residual", sin_residual))
     if a.dt:
@@ -157,6 +159,7 @@ def main():
     if a.fase: E.FASE_MOV_S = a.fase
     if a.marcha: E.MARCHA = a.marcha
     if a.ciclo_paso: E.PASO_CICLO_S = a.ciclo_paso
+    if a.ciclo_trote: E.TROTE_CICLO_S = a.ciclo_trote
     print(f"Periodo de control: {DT*1000:.0f} ms | {E.MARCHA} fémur {E.FEMUR_AMP_DEG}° tibia {E.TIBIA_AMP_DEG}° fase {E.FASE_MOV_S} s")
     nominal = E.generar_marcha(DT)
     stand = np.tile(STAND, 4).astype(float)

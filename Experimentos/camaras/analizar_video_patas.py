@@ -27,6 +27,11 @@ import numpy as np
 
 COLORES = {1: (0, 0, 255), 2: (0, 200, 0), 3: (255, 0, 0), 4: (0, 200, 255)}
 FEMUR = {1: "orden_4", 2: "orden_5", 3: "orden_6", 4: "orden_7"}
+# 20-oct: en el trote las patas de cada par diagonal reciben la misma orden y los dos pares
+# van en contrafase, así que solo se pueden separar los pares, con las órdenes de tibia
+# (cada par levanta en su mitad del ciclo): grupo 1 = patas 2+3 (FL+RR), 2 = patas 1+4.
+TROTE = {1: "orden_9", 2: "orden_8"}
+NOMBRE_TROTE = {1: "P2+P3", 2: "P1+P4"}
 TAM = (160, 90)
 
 
@@ -55,7 +60,7 @@ def ajuste(X, O):
     return r2, B, res
 
 
-def analizar_camara(nombre, sub, raiz, filas, ciclos):
+def analizar_camara(nombre, sub, raiz, filas, ciclos, grupos=FEMUR):
     if not (sub / "video.mkv").exists() or not (sub / "video.inicio.txt").exists():
         return None
     imgs, ts, muestra = leer(sub / "video.mkv", float((sub / "video.inicio.txt").read_text()))
@@ -63,29 +68,30 @@ def analizar_camara(nombre, sub, raiz, filas, ciclos):
         return dict(error=f"solo {len(imgs)} fotogramas")
     t0 = float((raiz / "caminata.inicio.txt").read_text())
     tc = t0 + np.array([float(f["t"]) for f in filas])
-    ordenes = {p: np.array([float(f[c]) for f in filas]) for p, c in FEMUR.items()}
+    ordenes = {p: np.array([float(f[c]) for f in filas]) for p, c in grupos.items()}
+    claves = list(grupos)
     dentro = (ts >= tc[0] + 1.2) & (ts <= tc[-1])
     X = imgs[dentro].reshape(dentro.sum(), -1)
     t = ts[dentro]
     # Retardo de la cámara: el que maximiza el R² medio de los píxeles mejor explicados.
     mejor = (0.0, -1.0)
     for L in np.arange(0.0, 1.21, 0.1):
-        O = np.column_stack([np.interp(t - L, tc, ordenes[p]) for p in (1, 2, 3, 4)])
+        O = np.column_stack([np.interp(t - L, tc, ordenes[p]) for p in claves])
         r2, _, _ = ajuste(X, O)
         q = float(np.percentile(r2, 99))
         if q > mejor[1]:
             mejor = (float(L), q)
     L = mejor[0]
-    O = np.column_stack([np.interp(t - L, tc, ordenes[p]) for p in (1, 2, 3, 4)])
+    O = np.column_stack([np.interp(t - L, tc, ordenes[p]) for p in claves])
     r2, B, res = ajuste(X, O)
     # Un píxel es de una pata si esa orden lo explica al menos el doble que cualquier otra
     # y el ajuste es bueno; después se quitan los píxeles sueltos (zonas < 6 píxeles).
     absB = np.abs(B)
     orden_b = np.sort(absB, axis=0)
-    pata = np.argmax(absB, axis=0) + 1
+    pata = np.array(claves)[np.argmax(absB, axis=0)]
     buenos = (r2 > 0.5) & (orden_b[-1] >= 2 * orden_b[-2])
     limpio = np.zeros_like(buenos)
-    for p in (1, 2, 3, 4):
+    for p in claves:
         m = (buenos & (pata == p)).reshape(TAM[1], TAM[0]).astype(np.uint8)
         n, etiquetas, est, _ = cv2.connectedComponentsWithStats(m, connectivity=8)
         for k in range(1, n):
@@ -94,13 +100,13 @@ def analizar_camara(nombre, sub, raiz, filas, ciclos):
     buenos = limpio
     resultado = dict(retardo_s=L, r2_p99=round(mejor[1], 3), patas={})
     Xc = X - X.mean(0)
-    for p in (1, 2, 3, 4):
+    for i, p in enumerate(claves):
         m = buenos & (pata == p)
         if m.sum() < 8:
             resultado["patas"][p] = dict(visible=False, pixeles=int(m.sum()))
             continue
-        senal = (Xc[:, m] * np.sign(B[p - 1, m])).mean(1)
-        orden = O[:, p - 1]
+        senal = (Xc[:, m] * np.sign(B[i, m])).mean(1)
+        orden = O[:, i]
         por_ciclo = []
         for a, b in ciclos:
             sel = (t >= t0 + float(filas[a]["t"])) & (t < t0 + float(filas[min(b, len(filas) - 1)]["t"]))
@@ -135,13 +141,13 @@ def analizar_camara(nombre, sub, raiz, filas, ciclos):
     if muestra is not None:
         h, w = muestra.shape[:2]
         capa = muestra.copy()
-        for p in (1, 2, 3, 4):
+        for p in claves:
             m = (buenos & (pata == p)).reshape(TAM[1], TAM[0]).astype(np.uint8)
             m = cv2.resize(m, (w, h), interpolation=cv2.INTER_NEAREST) > 0
             capa[m] = (0.45 * capa[m] + 0.55 * np.array(COLORES[p])).astype(np.uint8)
             if m.any():
                 ys, xs = np.nonzero(m)
-                cv2.putText(capa, f"P{p}", (int(xs.mean()), int(ys.mean())), cv2.FONT_HERSHEY_SIMPLEX, 1.4, (255, 255, 255), 4)
+                cv2.putText(capa, NOMBRE_TROTE[p] if grupos is TROTE else f"P{p}", (int(xs.mean()), int(ys.mean())), cv2.FONT_HERSHEY_SIMPLEX, 1.4, (255, 255, 255), 4)
         cv2.putText(capa, f"{nombre}  retardo {L * 1000:.0f} ms", (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2)
         cv2.imwrite(str(raiz / f"video_analisis_{nombre}.png"), cv2.resize(capa, (960, int(960 * h / w))))
     return resultado
@@ -155,10 +161,13 @@ def main():
     ciclos = [(a, b) for a, b in zip(ini, ini[1:] + [len(fase)]) if b - a > 10]
     camaras = [("hp_pc1", raiz), ("hp_pc2", raiz / "remota")] + \
               [(d.name.replace("extra_", ""), d) for d in sorted(raiz.glob("extra_*"))]
-    salida = {}
+    cfg = raiz / "caminata.config.json"
+    marcha = json.loads(cfg.read_text()).get("marcha") if cfg.exists() else None
+    grupos = TROTE if marcha == "trote" else FEMUR
+    salida = {"marcha": marcha, "grupos": "pares diagonales" if grupos is TROTE else "patas"}
     from multiprocessing import Pool
     with Pool(len(camaras)) as pool:        # una cámara por proceso
-        resultados = pool.starmap(analizar_camara, [(n, sub, raiz, filas, ciclos) for n, sub in camaras])
+        resultados = pool.starmap(analizar_camara, [(n, sub, raiz, filas, ciclos, grupos) for n, sub in camaras])
     for (nombre, sub), r in zip(camaras, resultados):
         if r is None:
             continue
@@ -168,7 +177,8 @@ def main():
             continue
         partes = []
         for p, d in r["patas"].items():
-            partes.append(f"P{p} r {d['r_medio']:.2f} CV {d['cv_amplitud_pct']:.0f}%" if d["visible"] else f"P{p} no visible")
+            et = NOMBRE_TROTE[p] if grupos is TROTE else f"P{p}"
+            partes.append(f"{et} r {d['r_medio']:.2f} CV {d['cv_amplitud_pct']:.0f}%" if d["visible"] else f"{et} no visible")
         ne = r["no_explicado"]
         print(f"  {nombre:9s} retardo {r['retardo_s'] * 1000:4.0f} ms | " + " | ".join(partes) +
               (f" | anomalías en ciclos {ne['ciclos_anomalos']}" if ne["ciclos_anomalos"] else " | sin anomalías"))

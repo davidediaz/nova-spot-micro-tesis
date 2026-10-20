@@ -26,12 +26,38 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
 
+def episodio_completo(E, env, modelo, semilla):
+    """Avance, deriva, inclinación y, desde el 20-oct (v11), desviación de las coxas y suavidad."""
+    obs, _ = env.reset(seed=semilla)
+    cox = [E.JOINTS.index(j) for j in E.JOINTS if "coxa" in j]
+    x0 = y0 = None; inc, ec, d2 = [], [], []
+    previo = np.zeros(12)
+    while True:
+        act = np.zeros(12) if modelo is None else modelo.predict(obs, deterministic=True)[0]
+        obs, r, term, trunc, info = env.step(act)
+        if x0 is None and not info["ramp_active"]:
+            x0, y0 = info["x"], info["y"]
+        if not info["ramp_active"]:
+            inc.append((info["roll"], info["pitch"]))
+            ec.append(np.degrees(env.data.qpos[env.qpos_ids][cox] - env.data.ctrl[cox]))
+            d2.append(float(np.sum(((env.previous_residual - previo) / 0.02) ** 2)))
+        previo = env.previous_residual.copy()
+        if term or trunc:
+            break
+    inc, ec = np.degrees(np.array(inc)), np.array(ec)
+    return dict(avance_m=info["x"] - x0, deriva_m=abs(info["y"] - y0),
+                roll_rms_deg=float(np.sqrt(np.mean(inc[:, 0] ** 2))),
+                pitch_rms_deg=float(np.sqrt(np.mean(inc[:, 1] ** 2))),
+                inclinacion_max_deg=float(np.abs(inc).max()),
+                coxas_rms_deg=float(np.sqrt(np.mean(ec ** 2))), suavidad=float(np.mean(d2)),
+                caida=bool(term))
+
+
 def evaluar(trabajo):
     import torch
     torch.set_num_threads(1)
     from stable_baselines3 import PPO
     import entrenar_ppo_real as E
-    from evaluar_v4_v6 import episodio
     ruta, marcha, ciclos, semillas = trabajo
     E.MARCHA, E.PASO_CICLO_S = marcha, 2.0
     E.FEMUR_AMP_DEG, E.TIBIA_AMP_DEG, E.FASE_MOV_S = 15.0, 10.0, 0.5
@@ -39,7 +65,7 @@ def evaluar(trabajo):
     E.SENSADAS, E.SIN_RESIDUAL = E.SENSADAS_COMPLETO, E.SIN_RESIDUAL_COMPLETO
     actuador = json.loads((HERE / "actuadores_reales_v5.json").read_text())
     modelo = PPO.load(ruta, device="cpu") if ruta != "base" else None
-    res = [episodio(E.NovaRealEnv(actuador, seed=s, control_dt=0.03, episode_cycles=ciclos), modelo, s)
+    res = [episodio_completo(E, E.NovaRealEnv(actuador, seed=s, control_dt=0.03, episode_cycles=ciclos), modelo, s)
            for s in range(901, 901 + semillas)]
     return ruta, {k: float(np.mean([r[k] for r in res])) for k in res[0] if k != "caida"} | \
         {"caidas": sum(r["caida"] for r in res)}
@@ -70,28 +96,30 @@ def main():
     filas = []
     for ruta, m in resultados.items():
         valida = m["avance_m"] > base["avance_m"] and m["deriva_m"] <= a.deriva_max and m["caidas"] == 0
-        punt = m["deriva_m"] / 0.1 + m["roll_rms_deg"] + m["pitch_rms_deg"] - m["avance_m"] / base["avance_m"]
+        # 20-oct: también cuentan las coxas (respecto a la base) y la suavidad de la corrección.
+        punt = (m["deriva_m"] / 0.1 + m["roll_rms_deg"] + m["pitch_rms_deg"] - m["avance_m"] / base["avance_m"]
+                + 2.0 * (m["coxas_rms_deg"] / base["coxas_rms_deg"] - 1.0) + m["suavidad"])
         filas.append(dict(copia=ruta, semilla=Path(ruta).parts[-3] if "intermedias" in ruta else Path(ruta).parts[-2],
                           pasos=pasos(ruta), valida=valida, puntuacion=round(punt, 3), **{k: round(v, 4) for k, v in m.items()}))
     filas.sort(key=lambda f: (not f["valida"], f["puntuacion"]))
     with (HERE / f"seleccion_{a.marcha}.csv").open("w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=list(filas[0])); w.writeheader(); w.writerows(filas)
     print(f"base: avance {base['avance_m']:.3f} m, deriva {base['deriva_m']:.3f} m, roll {base['roll_rms_deg']:.2f}°, "
-          f"pitch {base['pitch_rms_deg']:.2f}°")
+          f"pitch {base['pitch_rms_deg']:.2f}°, coxas {base['coxas_rms_deg']:.2f}°")
     for f in filas[:8]:
         print(f"{'OK ' if f['valida'] else '-- '}{f['semilla']:10s} {f['pasos']:>8d} pasos  avance {f['avance_m']:.3f}  "
               f"deriva {f['deriva_m']:.3f}  roll {f['roll_rms_deg']:.2f}  pitch {f['pitch_rms_deg']:.2f}  "
-              f"incl.máx {f['inclinacion_max_deg']:.2f}  punt {f['puntuacion']:.2f}")
+              f"incl.máx {f['inclinacion_max_deg']:.2f}  coxas {f['coxas_rms_deg']:.2f}  suav {f['suavidad']:.2f}  punt {f['puntuacion']:.2f}")
     mejor = filas[0]
     if mejor["valida"]:
-        destino = HERE / "ppo_v10_robot" / f"{a.marcha}_{mejor['semilla']}_{mejor['pasos'] // 1000}k"
+        destino = HERE / "ppo_v10_robot" / f"{a.carpeta.name}_{mejor['semilla']}_{mejor['pasos'] // 1000}k"
         destino.mkdir(parents=True, exist_ok=True)
         shutil.copy(mejor["copia"], destino / "policy.zip")
         md = json.loads((HERE / "ppo_v6/semilla_11/metadata.json").read_text())
         md.pop("actuador", None)
         md.update(seed=mejor["semilla"], timesteps=mejor["pasos"], origen=mejor["copia"],
                   evaluacion_3min={k: mejor[k] for k in ("avance_m", "deriva_m", "roll_rms_deg", "pitch_rms_deg",
-                                                          "inclinacion_max_deg")},
+                                                          "inclinacion_max_deg", "coxas_rms_deg", "suavidad")},
                   marcha=dict(tipo=a.marcha, femur_deg=15.0, tibia_deg=10.0, fase_s=0.5, ciclo_paso_s=2.0))
         (destino / "metadata.json").write_text(json.dumps(md, indent=2, ensure_ascii=False))
         print("Elegida:", destino)

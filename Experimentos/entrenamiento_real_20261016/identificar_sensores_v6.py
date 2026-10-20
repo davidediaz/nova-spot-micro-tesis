@@ -54,6 +54,9 @@ def main():
         o = np.array([float(f[col]) for f in filas])[rampa:]
         s = np.array([float(f[campo]) for f in filas])[rampa:]
         ok = s >= 0
+        if ok.sum() < 50:
+            print(f"{nombre:26s} {campo:7s} sin lecturas válidas: se conserva su calibración anterior")
+            continue
         if not campo.startswith("ENC"):
             s = s - (c0 - c0[0])
         else:

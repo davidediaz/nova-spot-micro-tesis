@@ -4,7 +4,7 @@
 HP de este PC (/dev/video1), Logitech (/dev/video3), celular DroidCam (/dev/video0, girada)
 y HP del portátil 2 (pc2-camara /dev/video0, por SSH en MJPEG). Cada vista lleva una cruz
 central, tercios y los fps reales; si una cámara no da imagen sale «SIN IMAGEN».
-Tecla q o Esc: cerrar (libera las cámaras para grabar).
+Tecla q, Esc o la X de la ventana: cerrar (libera las cámaras para grabar).
 
 Uso: python3 vista_camaras.py
 """
@@ -117,6 +117,9 @@ def main():
         p = [panel(c) for c in camaras]
         cv2.imshow("Cuadrar camaras", np.vstack([np.hstack(p[:2]), np.hstack(p[2:])]))
         if cv2.waitKey(50) & 0xFF in (ord("q"), 27):
+            break
+        # 20-oct: cerrar la ventana con la X también termina el programa y libera las cámaras.
+        if cv2.getWindowProperty("Cuadrar camaras", cv2.WND_PROP_VISIBLE) < 1:
             break
     for c in camaras:
         c.vivo = False

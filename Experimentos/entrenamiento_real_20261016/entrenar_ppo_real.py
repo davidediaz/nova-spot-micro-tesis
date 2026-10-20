@@ -115,7 +115,39 @@ def marcha_paso(control_dt):
     return np.asarray(muestras)
 
 
+# 20-oct: tercera marcha, «trote», claramente distinta del gateo: las patas diagonales se
+# mueven a la vez (FL+RR, luego FR+RL), dos en el aire y dos apoyadas, factor de apoyo 0,5.
+TROTE_CICLO_S = 1.4
+PARES_TROTE = {"FL": 0.0, "RR": 0.0, "FR": 0.5, "RL": 0.5}
+
+
+def marcha_trote(control_dt):
+    """Muestras articulares (rad) del trote: oscilación cosenoidal de medio ciclo por par diagonal."""
+    a = np.deg2rad(FEMUR_AMP_DEG)
+    n = round(TROTE_CICLO_S / control_dt)
+    muestras = []
+    for k in range(n):
+        ciclo = k / n
+        q = np.tile(STAND, 4).astype(float)
+        for pata, desfase in PARES_TROTE.items():
+            fase = (ciclo + desfase) % 1.0
+            if fase < 0.5:                       # en el aire: avanza y levanta
+                t = fase / 0.5
+                o = a * (-1.0 + 2.0 * (1.0 - np.cos(np.pi * t)) / 2.0)
+                lift = np.deg2rad(TIBIA_AMP_DEG) * np.sin(np.pi * t)
+            else:                                # apoyada: retrocede a velocidad constante
+                t = (fase - 0.5) / 0.5
+                o, lift = a * (1.0 - 2.0 * t), 0.0
+            b = LEG_JOINT_BASE[pata]
+            q[b + 1] = STAND[1] - o
+            q[b + 2] = STAND[2] - lift
+        muestras.append(q)
+    return np.asarray(muestras)
+
+
 def generar_marcha(control_dt):
+    if MARCHA == "trote":
+        return marcha_trote(control_dt)
     return marcha_paso(control_dt) if MARCHA == "paso" else marcha_b(control_dt)
 
 
@@ -142,6 +174,7 @@ class NovaRealEnv(NovaMujocoResidualEnv):
         self.mascara = np.array([0.0 if j in SIN_RESIDUAL else 1.0 for j in JOINTS])
         self.zona_muerta = np.deg2rad(float(actuador.get("zona_muerta_grados", 0.0)))
         self.idx_sensadas = [JOINTS.index(j) for j in SENSADAS]
+        self.idx_coxas = [JOINTS.index(j) for j in JOINTS if "coxa" in j]
         if "front_right_tibia_joint" in SIN_RESIDUAL:
             # Tibia 1 (FR) sin PWM: actuador sin rigidez, solo amortiguamiento.
             act = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_ACTUATOR, "front_right_tibia_act")
@@ -229,6 +262,15 @@ class NovaRealEnv(NovaMujocoResidualEnv):
         for _ in range(self.sim_substeps):
             mujoco.mj_step(self.model, self.data)
         reward = self._reward(residual, before_x)
+        # 20-oct (v11): en el robot la PPO del paso daba correcciones bruscas que los servos no
+        # siguen y sacudía el cuerpo (coxas desviadas). Se penalizan el cambio del residual
+        # (en unidades del cambio máximo por paso) y la desviación de las coxas (grados²).
+        pesos = getattr(self, "pesos", {})
+        if pesos.get("suavidad"):
+            reward -= pesos["suavidad"] * float(np.sum((delta * self.mascara / 0.02) ** 2))
+        if pesos.get("coxas"):
+            err = np.degrees(self.data.qpos[self.qpos_ids][self.idx_coxas] - self.data.ctrl[self.idx_coxas])
+            reward -= pesos["coxas"] * float(np.mean(err ** 2))
         # 19-oct (v10): giro del cuerpo en cada ciclo completo. Sin IMU la política no ve el
         # rumbo; penalizar el giro por ciclo evita que se curve en caminatas largas.
         w_ciclo = getattr(self, "pesos", {}).get("giro_ciclo", 0.0)
@@ -294,7 +336,10 @@ def main():
     p.add_argument("--w-lateral", type=float, default=0.0)
     p.add_argument("--w-giro", type=float, default=0.0)
     p.add_argument("--w-giro-ciclo", type=float, default=0.0, help="penalización por grado² de giro en cada ciclo")
-    p.add_argument("--marcha", choices=("gateo", "paso"), default="gateo")
+    p.add_argument("--w-suavidad", type=float, default=0.0, help="penalización del cambio del residual (v11)")
+    p.add_argument("--w-coxas", type=float, default=0.0, help="penalización de la desviación de las coxas en grados² (v11)")
+    p.add_argument("--marcha", choices=("gateo", "paso", "trote"), default="gateo")
+    p.add_argument("--ciclo-trote", type=float, default=1.4, help="duración del ciclo del trote (s)")
     p.add_argument("--ciclo-paso", type=float, default=2.4, help="duración del ciclo del paso (s)")
     p.add_argument("--ciclos-episodio", type=int, default=6, help="ciclos de marcha por episodio")
     p.add_argument("--lr", type=float, default=3e-4, help="tasa de aprendizaje")
@@ -309,6 +354,8 @@ def main():
     a = p.parse_args()
     global SENSADAS, SIN_RESIDUAL, MARCHA, PASO_CICLO_S
     MARCHA, PASO_CICLO_S = a.marcha, a.ciclo_paso
+    global TROTE_CICLO_S
+    TROTE_CICLO_S = a.ciclo_trote
     global ALEATORIZAR
     ALEATORIZAR = a.aleatorizar
     if a.completo:
@@ -317,7 +364,7 @@ def main():
     global FEMUR_AMP_DEG, TIBIA_AMP_DEG, FASE_MOV_S
     FEMUR_AMP_DEG, TIBIA_AMP_DEG, FASE_MOV_S = a.femur, a.tibia, a.fase
     NovaRealEnv.pesos = dict(avance=a.w_avance, actitud=a.w_actitud, lateral=a.w_lateral, giro=a.w_giro,
-                             giro_ciclo=a.w_giro_ciclo)
+                             giro_ciclo=a.w_giro_ciclo, suavidad=a.w_suavidad, coxas=a.w_coxas)
     out = a.output / f"semilla_{a.seed}"
     out.mkdir(parents=True, exist_ok=True)
     env = NovaRealEnv(actuador, seed=a.seed, control_dt=a.dt, episode_cycles=a.ciclos_episodio)
@@ -341,7 +388,7 @@ def main():
         continuado_desde=str(a.continuar) if a.continuar else None, ciclos_episodio=a.ciclos_episodio,
         ppo=dict(lr=a.lr, target_kl=a.target_kl, n_steps=a.n_steps), eval_seeds=a.eval_seeds, control_dt=a.dt,
         marcha=dict(tipo=a.marcha, femur_deg=a.femur, tibia_deg=a.tibia, fase_s=a.fase,
-                    ciclo_paso_s=a.ciclo_paso), pesos=NovaRealEnv.pesos,
+                    ciclo_paso_s=a.ciclo_paso, ciclo_trote_s=a.ciclo_trote), pesos=NovaRealEnv.pesos,
         actuador=actuador, hardware_transfer=False,
         observacion=list(SENSADAS) + ["sin_fase", "cos_fase", "residual_previo x12"],
         sin_residual=sorted(SIN_RESIDUAL), aleatorizar_actuador=a.aleatorizar,

@@ -2,16 +2,16 @@
   "sesiones": [
     "caminata.csv"
   ],
-  "retardo_s": 0.099,
+  "retardo_s": 0.066,
   "ganancia": 1.008,
   "articulaciones": {
     "front_left_femur_joint": {
       "nombre": "front_left_femur_joint",
-      "r": -0.997,
+      "r": -0.975,
       "retardo_s": 0.099,
-      "ganancia": 1.014,
+      "ganancia": 1.005,
       "fiable": true,
-      "muestras": 1848,
+      "muestras": 5494,
       "rango_servo_alcanzado": [
         84.9,
         120.4
@@ -24,11 +24,11 @@
     },
     "rear_left_femur_joint": {
       "nombre": "rear_left_femur_joint",
-      "r": -0.996,
+      "r": -0.969,
       "retardo_s": 0.099,
-      "ganancia": 1.005,
+      "ganancia": 1.013,
       "fiable": true,
-      "muestras": 1848,
+      "muestras": 5494,
       "rango_servo_alcanzado": [
         83.3,
         116.6
@@ -41,11 +41,11 @@
     },
     "front_left_tibia_joint": {
       "nombre": "front_left_tibia_joint",
-      "r": -0.985,
+      "r": -0.989,
       "retardo_s": 0.066,
       "ganancia": 1.0,
       "fiable": true,
-      "muestras": 1848,
+      "muestras": 5494,
       "rango_servo_alcanzado": [
         61.2,
         82.9
@@ -57,21 +57,21 @@
     },
     "rear_right_tibia_joint": {
       "nombre": "rear_right_tibia_joint",
-      "r": -0.976,
+      "r": -0.904,
       "retardo_s": 0.066,
-      "ganancia": 1.003,
+      "ganancia": 0.957,
       "fiable": true,
-      "muestras": 1848,
+      "muestras": 5494,
       "nota": "sensor C11 inservible; se asume nominal",
       "sensor": "C11"
     },
     "rear_left_tibia_joint": {
       "nombre": "rear_left_tibia_joint",
-      "r": -0.978,
+      "r": -0.923,
       "retardo_s": 0.099,
-      "ganancia": 0.982,
+      "ganancia": 0.973,
       "fiable": true,
-      "muestras": 1848,
+      "muestras": 5494,
       "nota": "corregido 16-oct: en identificacion aislada sigue la orden (ganancia 1.0); el 0.04 de v1 era un error",
       "cuentas_por_grado": 2.522,
       "histeresis_grados": 1.51,
@@ -81,30 +81,21 @@
     },
     "front_right_femur_joint": {
       "nombre": "front_right_femur_joint",
-      "r": -0.996,
+      "r": -0.993,
       "retardo_s": 0.066,
       "fiable": true,
       "ganancia": 0.995,
       "sensor": "C8",
-      "muestras": 1848
+      "muestras": 5494
     },
     "rear_right_femur_joint": {
       "nombre": "rear_right_femur_joint",
-      "r": -0.996,
-      "retardo_s": 0.099,
+      "r": -0.973,
+      "retardo_s": 0.066,
       "fiable": true,
-      "ganancia": 1.008,
+      "ganancia": 1.005,
       "sensor": "C9",
-      "muestras": 1848
-    },
-    "front_right_tibia_joint": {
-      "nombre": "front_right_tibia_joint",
-      "r": -0.996,
-      "retardo_s": 0.099,
-      "fiable": true,
-      "ganancia": 1.0,
-      "sensor": "ENC_T1",
-      "muestras": 1848
+      "muestras": 5494
     }
   },
   "tibia1_sin_pwm": true,
@@ -114,7 +105,7 @@
     "coxa3": 55,
     "coxa4": 150
   },
-  "periodo_control_s": 0.03300000000000014,
+  "periodo_control_s": 0.03300000000000125,
   "fuente_v2": [
     "ronda1_11.csv",
     "ronda1_37.csv",
