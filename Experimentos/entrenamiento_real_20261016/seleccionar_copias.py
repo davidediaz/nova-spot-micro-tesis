@@ -58,9 +58,11 @@ def evaluar(trabajo):
     torch.set_num_threads(1)
     from stable_baselines3 import PPO
     import entrenar_ppo_real as E
-    ruta, marcha, ciclos, semillas = trabajo
-    E.MARCHA, E.PASO_CICLO_S = marcha, 2.0
-    E.FEMUR_AMP_DEG, E.TIBIA_AMP_DEG, E.FASE_MOV_S = 15.0, 10.0, 0.5
+    ruta, m, ciclos, semillas = trabajo
+    # 20-oct: parámetros de la marcha tomados del metadata del entrenamiento (vale para el trote).
+    E.MARCHA = m["tipo"]
+    E.PASO_CICLO_S, E.TROTE_CICLO_S = m.get("ciclo_paso_s", 2.0), m.get("ciclo_trote_s", 1.0)
+    E.FEMUR_AMP_DEG, E.TIBIA_AMP_DEG, E.FASE_MOV_S = m["femur_deg"], m["tibia_deg"], m.get("fase_s", 0.5)
     E.NovaRealEnv.pesos = dict(avance=10.0, actitud=30.0, lateral=20.0, giro=10.0)
     E.SENSADAS, E.SIN_RESIDUAL = E.SENSADAS_COMPLETO, E.SIN_RESIDUAL_COMPLETO
     actuador = json.loads((HERE / "actuadores_reales_v5.json").read_text())
@@ -80,7 +82,7 @@ def pasos(ruta):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--marcha", choices=("gateo", "paso"), required=True)
+    ap.add_argument("--marcha", choices=("gateo", "paso", "trote"), required=True)
     ap.add_argument("--carpeta", type=Path, required=True)
     ap.add_argument("--ciclos", type=int, default=60)
     ap.add_argument("--semillas", type=int, default=2)
@@ -89,7 +91,9 @@ def main():
     a = ap.parse_args()
     rutas = sorted(str(p) for p in a.carpeta.glob("semilla_*/intermedias/policy_*_steps.zip"))
     rutas += sorted(str(p) for p in a.carpeta.glob("semilla_*/policy.zip"))
-    trabajos = [("base", a.marcha, a.ciclos, a.semillas)] + [(r, a.marcha, a.ciclos, a.semillas) for r in rutas]
+    meta = json.loads(sorted(a.carpeta.glob("semilla_*/metadata.json"))[0].read_text())
+    m = dict(meta["marcha"], tipo=a.marcha)
+    trabajos = [("base", m, a.ciclos, a.semillas)] + [(r, m, a.ciclos, a.semillas) for r in rutas]
     with Pool(a.procesos) as pool:
         resultados = dict(pool.imap_unordered(evaluar, trabajos))
     base = resultados.pop("base")
@@ -115,12 +119,12 @@ def main():
         destino = HERE / "ppo_v10_robot" / f"{a.carpeta.name}_{mejor['semilla']}_{mejor['pasos'] // 1000}k"
         destino.mkdir(parents=True, exist_ok=True)
         shutil.copy(mejor["copia"], destino / "policy.zip")
-        md = json.loads((HERE / "ppo_v6/semilla_11/metadata.json").read_text())
+        md = dict(meta)
         md.pop("actuador", None)
         md.update(seed=mejor["semilla"], timesteps=mejor["pasos"], origen=mejor["copia"],
                   evaluacion_3min={k: mejor[k] for k in ("avance_m", "deriva_m", "roll_rms_deg", "pitch_rms_deg",
                                                           "inclinacion_max_deg", "coxas_rms_deg", "suavidad")},
-                  marcha=dict(tipo=a.marcha, femur_deg=15.0, tibia_deg=10.0, fase_s=0.5, ciclo_paso_s=2.0))
+                  marcha=m)
         (destino / "metadata.json").write_text(json.dumps(md, indent=2, ensure_ascii=False))
         print("Elegida:", destino)
 

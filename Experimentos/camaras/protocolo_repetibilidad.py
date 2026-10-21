@@ -56,6 +56,8 @@ def main():
             args = ["--duracion-s", str(a.duracion_s), "--dt", "0.03", "--tibia", "10", "--marcha", marcha]
             if marcha == "paso":
                 args += ["--ciclo-paso", "2.0"]
+            if marcha == "trote":                       # 20-oct: trote de 1,0 s, fémur ±12°, tibia 12°
+                args += ["--ciclo-trote", "1.0", "--femur", "12", "--tibia", "12"]
             if politica:
                 args += ["--politica", politica]
             print(time.strftime("%H:%M:%S"), "ronda", ronda + 1, carpeta, flush=True)
