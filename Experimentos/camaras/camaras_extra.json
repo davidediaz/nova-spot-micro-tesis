@@ -1,13 +1,64 @@
 {
   "nota": "Cámaras locales adicionales (20-oct). La principal (HP de este PC, /dev/video1) y la del portátil 2 (pc2-camara /dev/video0) se configuran en grabar_caminata.py. 'previo' son ajustes v4l2-ctl antes de grabar.",
   "camaras": [
-    {"nombre": "logitech", "dispositivo": "/dev/video3",
-     "entrada": ["-input_format", "yuyv422", "-video_size", "640x480", "-framerate", "30"],
-     "salida": ["-c:v", "mjpeg", "-q:v", "4"],
-     "previo": ["exposure_dynamic_framerate=0"]},
-    {"nombre": "celular", "dispositivo": "/dev/video0",
-     "entrada": ["-framerate", "30"],
-     "salida": ["-vf", "transpose=1,scale=720:1280", "-c:v", "mjpeg", "-q:v", "5"],
-     "previo": []}
+    {
+      "nombre": "logitech",
+      "dispositivo": "/dev/video3",
+      "entrada": [
+        "-input_format",
+        "yuyv422",
+        "-video_size",
+        "640x480",
+        "-framerate",
+        "30"
+      ],
+      "salida": [
+        "-c:v",
+        "mjpeg",
+        "-q:v",
+        "4"
+      ],
+      "previo": [
+        "exposure_dynamic_framerate=0"
+      ]
+    },
+    {
+      "nombre": "celular",
+      "dispositivo": "/dev/video0",
+      "entrada": [
+        "-framerate",
+        "30"
+      ],
+      "salida": [
+        "-vf",
+        "transpose=1,scale=720:1280",
+        "-c:v",
+        "mjpeg",
+        "-q:v",
+        "5"
+      ],
+      "previo": []
+    },
+    {
+      "nombre": "tablet",
+      "dispositivo": "http://192.168.0.105:4747/video",
+      "formato": "",
+      "entrada": [
+        "-reconnect",
+        "1",
+        "-reconnect_streamed",
+        "1",
+        "-reconnect_delay_max",
+        "2"
+      ],
+      "salida": [
+        "-c:v",
+        "mjpeg",
+        "-q:v",
+        "5"
+      ],
+      "previo": [],
+      "nota": "tablet debajo del robot (vista desde abajo), DroidCam por Wi-Fi; solo admite una conexión"
+    }
   ]
 }

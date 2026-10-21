@@ -63,7 +63,9 @@ def main():
             d = carpeta / f"extra_{c['nombre']}"; d.mkdir()
             for ajuste in c.get("previo", []):
                 subprocess.run(["v4l2-ctl", "-d", c["dispositivo"], "-c", ajuste], capture_output=True)
-            proc = subprocess.Popen(["ffmpeg", "-hide_banner", "-loglevel", "error", "-f", "v4l2", *c["entrada"],
+            # 20-oct: "formato" permite fuentes que no son v4l2 (la tablet por HTTP de DroidCam).
+            formato = ["-f", c.get("formato", "v4l2")] if c.get("formato", "v4l2") else []
+            proc = subprocess.Popen(["ffmpeg", "-hide_banner", "-loglevel", "error", *formato, *c["entrada"],
                                      "-use_wallclock_as_timestamps", "1", "-i", c["dispositivo"], *c["salida"],
                                      "-copyts", str(d / "video.mkv")], stdin=subprocess.PIPE)
             extras.append((c["nombre"], d, proc))

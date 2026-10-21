@@ -27,11 +27,15 @@ def salud(carpeta, duracion):
     if not diag.exists():
         return "sin diagnóstico (caminata sin datos)"
     d = json.loads(diag.read_text())
+    # 20-oct: el trote es rápido y los servos van retrasados (r ≈ 0,88-0,91 también en la base):
+    # su umbral es 0,8; el del gateo y el paso sigue en 0,9.
+    cfg = carpeta / "caminata.config.json"
+    umbral = 0.8 if cfg.exists() and json.loads(cfg.read_text()).get("marcha") == "trote" else 0.9
     if d["duracion_s"] < 0.9 * duracion:
         return f"caminata cortada a los {d['duracion_s']:.0f} s"
     for n in ("femur1", "femur2", "femur3", "femur4"):
         a = d["articulaciones"].get(n, {})
-        if a.get("caido") or a.get("r_medio", 0) < 0.9:
+        if a.get("caido") or a.get("r_medio", 0) < umbral:
             return f"{n} no sigue la orden (r={a.get('r_medio')}): posible bus I2C bloqueado"
     return None
 
@@ -43,12 +47,13 @@ def main():
     ap.add_argument("--duracion-s", type=float, default=180)
     ap.add_argument("--pausa-s", type=float, default=30)
     ap.add_argument("--condicion", action="append", required=True,
-                    help="nombre:marcha:política (política vacía = base)")
+                    help="nombre:marcha:política[:argumentos extra] (política vacía = base)")
     a = ap.parse_args()
-    condiciones = [c.split(":", 2) for c in a.condicion]
+    # nombre:marcha:política[:argumentos extra separados por espacios] (20-oct: p. ej. «--apertura 8»)
+    condiciones = [(c.split(":", 3) + [""])[:4] for c in a.condicion]
     for ronda in range(a.repeticiones):
         orden = condiciones[ronda % len(condiciones):] + condiciones[:ronda % len(condiciones)]
-        for nombre, marcha, politica in orden:
+        for nombre, marcha, politica, extra in orden:
             carpeta = f"rep_{a.sesion}_{nombre}_r{ronda + 1}"
             if (AQUI / "grabaciones" / carpeta).exists():
                 print("ya existe, se salta:", carpeta, flush=True)
@@ -60,6 +65,7 @@ def main():
                 args += ["--ciclo-trote", "1.0", "--femur", "12", "--tibia", "12"]
             if politica:
                 args += ["--politica", politica]
+            args += extra.split()
             print(time.strftime("%H:%M:%S"), "ronda", ronda + 1, carpeta, flush=True)
             r = subprocess.run([sys.executable, str(AQUI / "grabar_caminata.py"), "--nombre", carpeta, "--", *args],
                                capture_output=True, text=True)

@@ -1,0 +1,9 @@
+{
+  "nota": "20-oct: corrección del punto neutro de cada fémur (+ = pie hacia delante), calibrada automáticamente con las cámaras laterales (calibrar_postura_auto.py): patas de cada lado paralelas.",
+  "femur_offset_deg": {
+    "1": 1.0,
+    "2": -3.0,
+    "3": -1.0,
+    "4": 3.0
+  }
+}

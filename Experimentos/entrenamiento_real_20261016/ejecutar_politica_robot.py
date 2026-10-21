@@ -38,6 +38,9 @@ CUENTAS_POR_GRADO = 2.45
 SENSORES = ["C5", "C6", "C9", "C1", "C3", "C2", "C10", "C11", "ENC_T2",
              "C0", "C8", "ENC_T1", "ENC_F1", "ENC_F4"]
 CALIBRACION = HERE / "sensores_robot.json"
+_cal_postura = HERE / "calibracion_postura.json"
+CAL_POSTURA = (__import__("json").loads(_cal_postura.read_text()).get("femur_offset_deg", {})
+               if _cal_postura.exists() else {})
 RETARDO_PASOS = 3            # 87 ms de retardo de los servos a 30 ms por paso
 SIGNO = {"femur": SIGNO_FEMUR, "tibia": SIGNO_TIBIA}
 NUM_PATA = {v: k for k, v in PATA.items()}
@@ -52,7 +55,9 @@ def a_grados_servo(q):
         jt = JOINTS.index(f"{PATA[pata]}_tibia_joint")
         o = -(q[jf] - STAND[1])          # fémur adelante (rad)
         lift = -(q[jt] - STAND[2])       # elevación de tibia (rad)
-        out[3 + pata] = round(BASE[3 + pata] + SIGNO_FEMUR[pata] * np.rad2deg(o))
+        # 20-oct: corrección del punto neutro de cada fémur (calibracion_postura.json, + = adelante).
+        o_cal = np.rad2deg(o) + CAL_POSTURA.get(str(pata), 0.0)
+        out[3 + pata] = round(BASE[3 + pata] + SIGNO_FEMUR[pata] * o_cal)
         out[7 + pata] = round(BASE[7 + pata] + SIGNO_TIBIA[pata] * np.rad2deg(lift))
     return out
 
@@ -128,6 +133,7 @@ def main():
     p.add_argument("--fase", type=float)
     p.add_argument("--marcha", choices=("gateo", "paso", "trote"))
     p.add_argument("--ciclo-trote", type=float)
+    p.add_argument("--apertura", type=float, help="apertura delante-detrás de los fémures (°)")
     p.add_argument("--ciclo-paso", type=float)
     a = p.parse_args()
     global DT
@@ -150,6 +156,7 @@ def main():
             E.MARCHA = m.get("tipo", E.MARCHA)
             E.PASO_CICLO_S = m.get("ciclo_paso_s", E.PASO_CICLO_S)
             E.TROTE_CICLO_S = m.get("ciclo_trote_s", E.TROTE_CICLO_S)
+            E.APERTURA_DEG = m.get("apertura_deg", E.APERTURA_DEG)
             sensadas = [o for o in md.get("observacion", sensadas) if o.endswith("_joint")]
             sin_residual = set(md.get("sin_residual", sin_residual))
     if a.dt:
@@ -160,6 +167,7 @@ def main():
     if a.marcha: E.MARCHA = a.marcha
     if a.ciclo_paso: E.PASO_CICLO_S = a.ciclo_paso
     if a.ciclo_trote: E.TROTE_CICLO_S = a.ciclo_trote
+    if a.apertura is not None: E.APERTURA_DEG = a.apertura
     print(f"Periodo de control: {DT*1000:.0f} ms | {E.MARCHA} fémur {E.FEMUR_AMP_DEG}° tibia {E.TIBIA_AMP_DEG}° fase {E.FASE_MOV_S} s")
     nominal = E.generar_marcha(DT)
     stand = np.tile(STAND, 4).astype(float)

@@ -74,7 +74,7 @@ def marcha_b(control_dt):
                     o, lift = inicio[pata] - (2 * a / 3) * t, 0.0
                 offset[pata] = o
                 b = LEG_JOINT_BASE[pata]
-                q[b + 1] = STAND[1] - o        # fémur adelante = q menor
+                q[b + 1] = STAND[1] - (o + apertura(pata))   # fémur adelante = q menor
                 q[b + 2] = STAND[2] - lift     # tibia flexiona al levantar
             muestras.append(q)
     return np.asarray(muestras)
@@ -85,6 +85,15 @@ def marcha_b(control_dt):
 # hacia atrás a velocidad constante) y oscila el 25 % restante en el orden
 # FL -> RR -> FR -> RL. La duración del ciclo es PASO_CICLO_S.
 LIMITE_CAMBIO_RAD = np.deg2rad(3.0)
+# 20-oct: «apertura» delante-detrás. Las patas de un mismo lado se acercaban bajo el centro
+# del cuerpo (la 1 y la 3 llegaban a chocar): las delanteras oscilan alrededor de un punto
+# adelantado APERTURA_DEG y las traseras de uno atrasado lo mismo.
+APERTURA_DEG = 0.0
+
+
+def apertura(pata):
+    """Desplazamiento neutro del fémur (rad, positivo = adelante) según la pata."""
+    return np.deg2rad(APERTURA_DEG) * (1.0 if pata in ("FL", "FR") else -1.0)
 # 19-oct (v7): variación por episodio del actuador y de los sensores (--aleatorizar).
 ALEATORIZAR = False
 MARCHA = "gateo"
@@ -110,7 +119,7 @@ def marcha_paso(control_dt):
                 o = a * (-1.0 + 2.0 * (1.0 - np.cos(np.pi * t)) / 2.0)
                 lift = np.deg2rad(TIBIA_AMP_DEG) * np.sin(np.pi * t)
             b = LEG_JOINT_BASE[pata]
-            q[b + 1] = STAND[1] - o
+            q[b + 1] = STAND[1] - (o + apertura(pata))
             q[b + 2] = STAND[2] - lift
         muestras.append(q)
     return np.asarray(muestras)
@@ -140,7 +149,7 @@ def marcha_trote(control_dt):
                 t = (fase - 0.5) / 0.5
                 o, lift = a * (1.0 - 2.0 * t), 0.0
             b = LEG_JOINT_BASE[pata]
-            q[b + 1] = STAND[1] - o
+            q[b + 1] = STAND[1] - (o + apertura(pata))
             q[b + 2] = STAND[2] - lift
         muestras.append(q)
     return np.asarray(muestras)
@@ -340,6 +349,7 @@ def main():
     p.add_argument("--w-suavidad", type=float, default=0.0, help="penalización del cambio del residual (v11)")
     p.add_argument("--w-coxas", type=float, default=0.0, help="penalización de la desviación de las coxas en grados² (v11)")
     p.add_argument("--marcha", choices=("gateo", "paso", "trote"), default="gateo")
+    p.add_argument("--apertura", type=float, default=0.0, help="apertura delante-detrás de los fémures (°)")
     p.add_argument("--ciclo-trote", type=float, default=1.4, help="duración del ciclo del trote (s)")
     p.add_argument("--ciclo-paso", type=float, default=2.4, help="duración del ciclo del paso (s)")
     p.add_argument("--ciclos-episodio", type=int, default=6, help="ciclos de marcha por episodio")
@@ -355,8 +365,8 @@ def main():
     a = p.parse_args()
     global SENSADAS, SIN_RESIDUAL, MARCHA, PASO_CICLO_S
     MARCHA, PASO_CICLO_S = a.marcha, a.ciclo_paso
-    global TROTE_CICLO_S
-    TROTE_CICLO_S = a.ciclo_trote
+    global TROTE_CICLO_S, APERTURA_DEG
+    TROTE_CICLO_S, APERTURA_DEG = a.ciclo_trote, a.apertura
     global ALEATORIZAR
     ALEATORIZAR = a.aleatorizar
     if a.completo:
@@ -389,7 +399,7 @@ def main():
         continuado_desde=str(a.continuar) if a.continuar else None, ciclos_episodio=a.ciclos_episodio,
         ppo=dict(lr=a.lr, target_kl=a.target_kl, n_steps=a.n_steps), eval_seeds=a.eval_seeds, control_dt=a.dt,
         marcha=dict(tipo=a.marcha, femur_deg=a.femur, tibia_deg=a.tibia, fase_s=a.fase,
-                    ciclo_paso_s=a.ciclo_paso, ciclo_trote_s=a.ciclo_trote), pesos=NovaRealEnv.pesos,
+                    ciclo_paso_s=a.ciclo_paso, ciclo_trote_s=a.ciclo_trote, apertura_deg=a.apertura), pesos=NovaRealEnv.pesos,
         actuador=actuador, hardware_transfer=False,
         observacion=list(SENSADAS) + ["sin_fase", "cos_fase", "residual_previo x12"],
         sin_residual=sorted(SIN_RESIDUAL), aleatorizar_actuador=a.aleatorizar,
