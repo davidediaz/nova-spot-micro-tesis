@@ -87,7 +87,8 @@ def main():
                 return 2
             # 20-oct: análisis de video de cada caminata antes de la siguiente y compresión a
             # H.264 (≈12 veces menos espacio; se comprueba antes de sustituir el original).
-            for programa in ("analizar_video_patas.py", "comprimir_videos.py"):
+            # 21-oct: también la identificación de cada pata por colores (antes de comprimir).
+            for programa in ("analizar_video_patas.py", "analizar_colores_patas.py", "comprimir_videos.py"):
                 r = subprocess.run([sys.executable, "-I", str(AQUI / programa), str(AQUI / "grabaciones" / carpeta)],
                                    capture_output=True, text=True)
                 for l in r.stdout.splitlines():

@@ -31,7 +31,9 @@ from entrenar_ppo_real import STAND, JOINTS  # noqa: E402
 # Patas: 1=FR, 2=FL, 3=RR, 4=RL. Base y signos de la caminata `b` del firmware.
 BASE = [159, 45, 61, 82, 110, 100, 100, 100, 100, 80, 100, 70]  # 19-oct: equilibrio nuevo de coxas
 SIGNO_FEMUR = {1: -1, 2: 1, 3: -1, 4: 1}
-SIGNO_TIBIA = {1: -1, 2: -1, 3: -1, 4: -1}
+# 21-oct: las tibias izquierdas (2 y 4) giran al revés que las derechas: medido con las cintas de
+# de colores (al pedir «doblar» se estiraban). Antes las cuatro tenían −1.
+SIGNO_TIBIA = {1: -1, 2: 1, 3: -1, 4: 1}
 PATA = {1: "front_right", 2: "front_left", 3: "rear_right", 4: "rear_left"}
 CUENTAS_POR_GRADO = 2.45
 # Campos de la respuesta R del modo @ (19-oct, v6), en orden.
@@ -41,6 +43,9 @@ CALIBRACION = HERE / "sensores_robot.json"
 _cal_postura = HERE / "calibracion_postura.json"
 CAL_POSTURA = (__import__("json").loads(_cal_postura.read_text()).get("femur_offset_deg", {})
                if _cal_postura.exists() else {})
+# 21-oct: corrección también de las tibias (+ = doblar más la rodilla), medida con las cintas de colores.
+CAL_TIBIA = (__import__("json").loads(_cal_postura.read_text()).get("tibia_offset_deg", {})
+             if _cal_postura.exists() else {})
 RETARDO_PASOS = 3            # 87 ms de retardo de los servos a 30 ms por paso
 SIGNO = {"femur": SIGNO_FEMUR, "tibia": SIGNO_TIBIA}
 NUM_PATA = {v: k for k, v in PATA.items()}
@@ -58,7 +63,7 @@ def a_grados_servo(q):
         # 20-oct: corrección del punto neutro de cada fémur (calibracion_postura.json, + = adelante).
         o_cal = np.rad2deg(o) + CAL_POSTURA.get(str(pata), 0.0)
         out[3 + pata] = round(BASE[3 + pata] + SIGNO_FEMUR[pata] * o_cal)
-        out[7 + pata] = round(BASE[7 + pata] + SIGNO_TIBIA[pata] * np.rad2deg(lift))
+        out[7 + pata] = round(BASE[7 + pata] + SIGNO_TIBIA[pata] * (np.rad2deg(lift) + CAL_TIBIA.get(str(pata), 0.0)))
     return out
 
 

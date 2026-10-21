@@ -110,12 +110,15 @@ def camaras_de(raiz):
 
 def main():
     raiz = Path(sys.argv[1])
+    solo = set(sys.argv[2].split(",")) if len(sys.argv) > 2 else None    # 21-oct: p. ej. «logitech,general»
     filas = list(csv.DictReader((raiz / "caminata.csv").open()))
     t0 = float((raiz / "caminata.inicio.txt").read_text())
     tc = t0 + np.array([float(f["t"]) for f in filas])
     ordenes = {p: np.array([float(f[c]) for f in filas]) for p, c in FEMUR.items()}
     salida = {}
     for nombre, sub in camaras_de(raiz):
+        if solo and nombre not in solo:
+            continue
         if not (sub / "video.inicio.txt").exists():
             continue
         ini = float((sub / "video.inicio.txt").read_text())
