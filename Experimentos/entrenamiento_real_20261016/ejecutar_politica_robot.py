@@ -52,6 +52,13 @@ NUM_PATA = {v: k for k, v in PATA.items()}
 DT = 0.02  # se reemplaza por control_dt del metadata.json de la política
 
 
+# 21-oct: topes del firmware (movimiento_suspendido_11_servos.ino, TOPE_MIN/TOPE_MAX por canal PCA),
+# en el orden de índices del firmware (0-3 coxas, 4-7 fémures, 8-11 tibias: CH8, CH9, CH10, CH14).
+# El firmware recorta igual; aquí se recorta para que el registro refleje la orden que se aplica.
+TOPE_MIN = [105, 10, 25, 60, 30, 45, 40, 25, 25, 25, 11, 15]
+TOPE_MAX = [170, 85, 90, 105, 140, 135, 160, 135, 160, 90, 160, 105]
+
+
 def a_grados_servo(q):
     """Ángulos del modelo (rad, orden JOINTS) -> 12 grados de servo del firmware."""
     out = list(BASE)
@@ -64,7 +71,7 @@ def a_grados_servo(q):
         o_cal = np.rad2deg(o) + CAL_POSTURA.get(str(pata), 0.0)
         out[3 + pata] = round(BASE[3 + pata] + SIGNO_FEMUR[pata] * o_cal)
         out[7 + pata] = round(BASE[7 + pata] + SIGNO_TIBIA[pata] * (np.rad2deg(lift) + CAL_TIBIA.get(str(pata), 0.0)))
-    return out
+    return [int(min(max(v, lo), hi)) for v, lo, hi in zip(out, TOPE_MIN, TOPE_MAX)]
 
 
 def delta_modelo(nombre, valores, ref, cal):

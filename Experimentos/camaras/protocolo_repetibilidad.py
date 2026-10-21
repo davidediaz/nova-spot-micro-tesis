@@ -88,11 +88,14 @@ def main():
             # 20-oct: análisis de video de cada caminata antes de la siguiente y compresión a
             # H.264 (≈12 veces menos espacio; se comprueba antes de sustituir el original).
             # 21-oct: también la identificación de cada pata por colores (antes de comprimir).
-            for programa in ("analizar_video_patas.py", "analizar_colores_patas.py", "comprimir_videos.py"):
-                r = subprocess.run([sys.executable, "-I", str(AQUI / programa), str(AQUI / "grabaciones" / carpeta)],
-                                   capture_output=True, text=True)
-                for l in r.stdout.splitlines():
-                    print("   ", l.strip(), flush=True)
+            # 21-oct (tarde): los análisis van en segundo plano, con prioridad baja, mientras el robot hace
+            # la siguiente caminata (la comprobación de salud sí se espera). Resultados en analisis.log.
+            g = AQUI / "grabaciones" / carpeta
+            subprocess.Popen(["nice", "-n", "10", "bash", "-c",
+                              " && ".join(f"{sys.executable} -I {AQUI / prog} {g} >> {g / 'analisis.log'} 2>&1"
+                                          for prog in ("analizar_video_patas.py", "analizar_colores_patas.py",
+                                                       "comprimir_videos.py"))],
+                             stdin=subprocess.DEVNULL, start_new_session=True)
             time.sleep(a.pausa_s)
     subprocess.run([sys.executable, "-I", str(AQUI / "catalogo_caminatas.py")])
     return 0
