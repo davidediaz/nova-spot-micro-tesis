@@ -1,0 +1,19 @@
+{
+  "vuelta": 1,
+  "candidatas": {
+    "gateo": [
+      "ppo_v10_robot/ppo_v14_gateo_semilla_43_1700k",
+      "ppo_v10_robot/ppo_ciclo1_gateo_semilla_401_2701k"
+    ],
+    "trote": [
+      "ppo_v10_robot/ppo_v15_trote_semilla_307_100k"
+    ]
+  },
+  "puntuacion": {
+    "gateo_base": 1.8705555555555557,
+    "gateo_ppo1": 1.5205555555555557,
+    "trote_base": 1.6893333333333331,
+    "trote_ppo1": 1.6746666666666665,
+    "trote_ppo2": 2.028111111111111
+  }
+}
