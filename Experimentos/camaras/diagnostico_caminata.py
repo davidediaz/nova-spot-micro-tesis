@@ -57,7 +57,7 @@ def sensores(carpeta):
         c = CAL[nombre]
         s = col(c["campo"])
         perdidas = s < 0
-        if perdidas.mean() > 0.5:          # más de la mitad perdidas: sensor caído en esta caminata
+        if perdidas.mean() > 0.5 or c.get("sin_sensor"):   # caído en esta caminata o marcado sin sensor (21-oct)
             res["articulaciones"][corto] = dict(sensor=c["campo"], caido=True, lecturas_perdidas=int(len(s)))
             continue
         if perdidas.any():

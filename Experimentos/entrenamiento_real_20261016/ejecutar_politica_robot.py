@@ -204,7 +204,9 @@ def main():
     ref = {n: int(x) for n, x in zip(SENSORES, r[2:])}
     # 19-oct: si el sensor de una articulación observada no responde, se estima con su
     # orden retrasada 87 ms (los servos siguen la orden con r > 0,99 y ~1° de error).
-    estimadas = [n for n in sensadas if ref.get(cal[n]["campo"], -1) < 0
+    # 21-oct: «sin_sensor» en sensores_robot.json = sensor que da lecturas pero no sigue la articulación
+    # (tibia 3, C11 fijo): también se estima con la orden retrasada.
+    estimadas = [n for n in sensadas if cal[n].get("sin_sensor") or ref.get(cal[n]["campo"], -1) < 0
                  and ref.get(cal[n].get("respaldo", {}).get("campo"), -1) < 0]
     for n in estimadas:
         print(f"AVISO: el sensor {cal[n]['campo']} de {n} no responde; se usa la orden retrasada como estimación.")
