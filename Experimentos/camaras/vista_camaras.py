@@ -102,24 +102,77 @@ def panel(cam):
     return img
 
 
+def local_ffmpeg(dispositivo, entrada, ancho, alto):
+    """Cámara local leída con ffmpeg (Logitech y General Webcam cuelgan a OpenCV con la ventana abierta)."""
+    def abrir(cam):
+        dec = subprocess.Popen(["ffmpeg", "-hide_banner", "-loglevel", "error", "-f", "v4l2", *entrada, "-i", dispositivo,
+                                "-vf", f"scale={ancho}:{alto}", "-f", "rawvideo", "-pix_fmt", "bgr24", "-"], stdout=subprocess.PIPE, stdin=subprocess.DEVNULL)
+        n = ancho * alto * 3
+        while cam.vivo:
+            d = dec.stdout.read(n)
+            if len(d) < n:
+                break
+            cam.guardar(np.frombuffer(d, np.uint8).reshape(alto, ancho, 3))
+        dec.kill()
+    return abrir
+
+
+def windows(alias, ffmpeg_exe, dispositivo):
+    """Cámara del PC con Windows: H.264 por SSH (la Wi-Fi no da para MJPEG 720p), decodificado aquí."""
+    def abrir(cam):
+        p = subprocess.Popen(["ssh", "-o", "BatchMode=yes", "-o", "ConnectTimeout=5", alias,
+                              f'"{ffmpeg_exe}" -hide_banner -loglevel error -f dshow -rtbufsize 300M -vcodec mjpeg '
+                              f'-video_size 1280x720 -framerate 30 -i video="{dispositivo}" -c:v libx264 -preset ultrafast '
+                              f'-tune zerolatency -g 30 -b:v 2500k -pix_fmt yuv420p -f mpegts -'],
+                             stdout=subprocess.PIPE, stdin=subprocess.DEVNULL)
+        dec = subprocess.Popen(["ffmpeg", "-hide_banner", "-loglevel", "error", "-fflags", "nobuffer", "-f", "mpegts",
+                                "-i", "pipe:0", "-vf", "scale=960:540", "-f", "rawvideo", "-pix_fmt", "bgr24", "-"],
+                               stdin=p.stdout, stdout=subprocess.PIPE)
+        p.stdout.close()
+        n = 960 * 540 * 3
+        while cam.vivo:
+            d = dec.stdout.read(n)
+            if len(d) < n:
+                break
+            cam.guardar(np.frombuffer(d, np.uint8).reshape(540, 960, 3))
+        dec.kill(); p.kill()
+        subprocess.run(["ssh", "-o", "BatchMode=yes", alias, "taskkill /IM ffmpeg.exe /F"], capture_output=True)
+    return abrir
+
+
+FFMPEG_WIN = (r"C:\Users\rapio\AppData\Local\Microsoft\WinGet\Packages\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe"
+              r"\ffmpeg-9.0.2-full_build\bin\ffmpeg.exe")
+
+
 def main():
+    # 21-oct: cinco cámaras; las USB por su ruta fija (/dev/v4l/by-id), que no cambia al reconectarlas.
     camaras = [
-        Camara("1 HP este PC (frente)", local("/dev/video1", 1280, 720, mjpg=True)),
-        Camara("2 Logitech (lado izquierdo: patas 2 y 4)", local("/dev/video3", 640, 480)),
-        Camara("3 Celular (delante-derecha)", local("/dev/video0"), girar=True),
-        Camara("4 HP portatil 2 (lado derecho: patas 1 y 3)", remota("pc2-camara", "/dev/video0")),
+        Camara("1 HP de este PC", local_ffmpeg("/dev/v4l/by-id/usb-Quanta_HP_Wide_Vision_HD_Camera_0001-video-index0",
+                                                     ["-input_format", "mjpeg", "-video_size", "1280x720", "-framerate", "30"], 960, 540)),
+        Camara("2 Logitech C170", local_ffmpeg("/dev/v4l/by-id/usb-_Webcam_C170-video-index0",
+                                                     ["-input_format", "yuyv422", "-video_size", "640x480", "-framerate", "30"], 640, 480)),
+        Camara("3 General Webcam USB", local_ffmpeg("/dev/v4l/by-id/usb-GENERAL_GENERAL_WEBCAM_JH0319_20200710_v012-video-index0",
+                                                          ["-input_format", "mjpeg", "-video_size", "1280x720", "-framerate", "30"], 960, 540)),
+        Camara("4 Portatil 2 (Ethernet)", remota("pc2-camara", "/dev/video0")),
+        Camara("5 PC Windows (Wi-Fi)", windows("pc-windows", FFMPEG_WIN, "HP Wide Vision HD Camera")),
     ]
     for c in camaras:
         c.start()
     cv2.namedWindow("Cuadrar camaras", cv2.WINDOW_NORMAL)
-    cv2.resizeWindow("Cuadrar camaras", 2 * ANCHO, 2 * ALTO)
+    cv2.resizeWindow("Cuadrar camaras", 2 * ANCHO, 4 * ALTO // 3)
+    vista = False
     while True:
         p = [panel(c) for c in camaras]
-        cv2.imshow("Cuadrar camaras", np.vstack([np.hstack(p[:2]), np.hstack(p[2:])]))
+        p.append(np.zeros_like(p[0]))                     # sexta casilla vacía
+        cv2.imshow("Cuadrar camaras", np.vstack([np.hstack(p[:3]), np.hstack(p[3:])]))
         if cv2.waitKey(50) & 0xFF in (ord("q"), 27):
             break
         # 20-oct: cerrar la ventana con la X también termina el programa y libera las cámaras.
-        if cv2.getWindowProperty("Cuadrar camaras", cv2.WND_PROP_VISIBLE) < 1:
+        # 21-oct: solo cuenta como cerrada si la ventana ya llegó a verse (al arrancar aún no lo está).
+        visible = cv2.getWindowProperty("Cuadrar camaras", cv2.WND_PROP_VISIBLE)
+        if visible >= 1:
+            vista = True
+        elif vista:
             break
     for c in camaras:
         c.vivo = False

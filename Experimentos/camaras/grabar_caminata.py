@@ -33,6 +33,23 @@ def primer_fotograma(video):
     return float(json.loads(salida)["packets"][0]["pts_time"])
 
 
+def desfase_windows(alias, n=5):
+    """Hora de Windows − hora local (s): «echo %TIME%» por SSH (centésimas), la de menor ida y vuelta.
+    Windows usa su reloj CMOS sin sincronizar, así que se mide en cada caminata."""
+    import datetime
+    medidas = []
+    for _ in range(n):
+        t1 = time.time()
+        r = subprocess.run(["ssh", "-o", "BatchMode=yes", "-o", "ConnectTimeout=5", alias, "echo %TIME%"],
+                           capture_output=True, text=True, timeout=15).stdout.strip().replace(",", ".")
+        t2 = time.time()
+        h, m, sg = r.split(":")
+        ref = datetime.datetime.fromtimestamp((t1 + t2) / 2)
+        hora = ref.replace(hour=int(h), minute=int(m), second=0, microsecond=0).timestamp() + float(sg)
+        medidas.append((t2 - t1, hora - (t1 + t2) / 2))
+    return min(medidas)[1]
+
+
 def main():
     if "--" in sys.argv:
         i = sys.argv.index("--"); propios, resto = sys.argv[1:i], sys.argv[i + 1:]
@@ -45,6 +62,8 @@ def main():
                    help="alias SSH del segundo portátil ('' para grabar solo con este PC)")
     p.add_argument("--dispositivo-remoto", default="/dev/video0")
     p.add_argument("--sin-extras", action="store_true", help="no grabar las cámaras de camaras_extra.json")
+    p.add_argument("--ejecutor", type=Path, default=EJECUTOR,
+                   help="programa que mueve el robot (21-oct: identificar_patas_robot.py para identificar patas)")
     a = p.parse_args(propios)
     carpeta = AQUI / "grabaciones" / a.nombre
     carpeta.mkdir(parents=True, exist_ok=False)
@@ -60,7 +79,27 @@ def main():
     cfg_extra = AQUI / "camaras_extra.json"
     if cfg_extra.exists() and not a.sin_extras:
         for c in json.loads(cfg_extra.read_text())["camaras"]:
+            # 21-oct: cámaras desactivadas o no conectadas se saltan sin detener la grabación.
+            if not c.get("activa", True):
+                continue
+            if c.get("dispositivo", "").startswith("/dev/") and not Path(c["dispositivo"]).exists():
+                print(f"AVISO: la cámara {c['nombre']} ({c['dispositivo']}) no está conectada; se salta.", flush=True)
+                continue
             d = carpeta / f"extra_{c['nombre']}"; d.mkdir()
+            if c.get("ssh"):
+                # 21-oct: cámara de un PC remoto (Windows): graba en su disco con la hora de su
+                # reloj (H.264, poco peso) y al final se trae; aquí se mide el desfase de relojes.
+                SSHX = ["-o", "BatchMode=yes", "-o", "ConnectTimeout=5", "-o", "ServerAliveInterval=5"]
+                try:
+                    subprocess.run(["ssh", *SSHX, c["ssh"], c["parar"]], capture_output=True, timeout=20)
+                    (d / "desfase.txt").write_text(f"{desfase_windows(c['ssh']):.6f}\n")
+                    proc = subprocess.Popen(["ssh", *SSHX, c["ssh"], c["remoto"]], stdin=subprocess.PIPE,
+                                            stderr=open(d / "remoto.log", "w"))
+                    extras.append((c["nombre"], d, proc, c))
+                except (subprocess.SubprocessError, OSError, ValueError) as e:
+                    print(f"AVISO: la cámara {c['nombre']} ({c['ssh']}) no arrancó: {e}", flush=True)
+                    (d / "error.txt").write_text(f"{e}\n")
+                continue
             for ajuste in c.get("previo", []):
                 subprocess.run(["v4l2-ctl", "-d", c["dispositivo"], "-c", ajuste], capture_output=True)
             # 20-oct: "formato" permite fuentes que no son v4l2 (la tablet por HTTP de DroidCam).
@@ -68,7 +107,7 @@ def main():
             proc = subprocess.Popen(["ffmpeg", "-hide_banner", "-loglevel", "error", *formato, *c["entrada"],
                                      "-use_wallclock_as_timestamps", "1", "-i", c["dispositivo"], *c["salida"],
                                      "-copyts", str(d / "video.mkv")], stdin=subprocess.PIPE)
-            extras.append((c["nombre"], d, proc))
+            extras.append((c["nombre"], d, proc, None))
     remoto = None
     SSH = ["-o", "BatchMode=yes", "-o", "ConnectTimeout=5", "-o", "ServerAliveInterval=5", "-o", "ServerAliveCountMax=3"]
     if a.remota and subprocess.run(["ssh", *SSH, a.remota, "true"], capture_output=True).returncode != 0:
@@ -95,8 +134,8 @@ def main():
         raise SystemExit("La cámara no arrancó (¿la está usando otro programa?).")
     try:
         caminata = carpeta / "caminata.csv"
-        r = subprocess.run([str(PYTHON), "-I", str(EJECUTOR), *resto, "--salida", str(caminata)],
-                           cwd=EJECUTOR.parent)
+        r = subprocess.run([str(PYTHON), "-I", str(a.ejecutor), *resto, "--salida", str(caminata)],
+                           cwd=a.ejecutor.parent)
         time.sleep(2.0)
     finally:
         ff.stdin.write(b"q"); ff.stdin.flush()
@@ -106,10 +145,27 @@ def main():
             ff.terminate()
         # 19-oct: hora real del primer fotograma (la cámara tarda ~0,3-0,4 s en arrancar).
         (carpeta / "video.inicio.txt").write_text(f"{primer_fotograma(video):.6f}\n")
-        for nombre, d, proc in extras:
+        for nombre, d, proc, remoto_extra in extras:
             try:
-                proc.stdin.write(b"q"); proc.stdin.flush(); proc.wait(timeout=15)
-            except (OSError, subprocess.TimeoutExpired):
+                if remoto_extra is None:
+                    proc.stdin.write(b"q"); proc.stdin.flush(); proc.wait(timeout=15)
+                else:
+                    c = remoto_extra
+                    proc.stdin.write(b"q"); proc.stdin.flush()
+                    try:
+                        proc.wait(timeout=15)
+                    except subprocess.TimeoutExpired:
+                        subprocess.run(["ssh", "-o", "BatchMode=yes", c["ssh"], c["parar"]], capture_output=True, timeout=20)
+                        proc.terminate()
+                    subprocess.run(["scp", "-q", "-o", "BatchMode=yes", f"{c['ssh']}:{c['archivo']}", str(d / "video.mkv")],
+                                   check=True, timeout=600)
+                    ini = primer_fotograma(d / "video.mkv") - float((d / "desfase.txt").read_text())
+                    (d / "video.inicio.txt").write_text(f"{ini:.6f}\n")
+                    for f in ("caminata.csv", "caminata.inicio.txt", "caminata.config.json"):
+                        if (carpeta / f).exists():
+                            (d / f).write_bytes((carpeta / f).read_bytes())
+                    continue
+            except (OSError, subprocess.SubprocessError):
                 proc.terminate()
             try:
                 (d / "video.inicio.txt").write_text(f"{primer_fotograma(d / 'video.mkv'):.6f}\n")

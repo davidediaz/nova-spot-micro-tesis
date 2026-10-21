@@ -1,9 +1,9 @@
 {
-  "nota": "Cámaras locales adicionales (20-oct). La principal (HP de este PC, /dev/video1) y la del portátil 2 (pc2-camara /dev/video0) se configuran en grabar_caminata.py. 'previo' son ajustes v4l2-ctl antes de grabar.",
+  "nota": "21-oct: 5 cámaras = HP de este PC (/dev/video1, principal) + portátil 2 (pc2-camara, en grabar_caminata.py) + logitech + general (USB nueva) + windows (PC con Windows por SSH). Celular y tablet desactivados ('activa': false).",
   "camaras": [
     {
       "nombre": "logitech",
-      "dispositivo": "/dev/video3",
+      "dispositivo": "/dev/v4l/by-id/usb-_Webcam_C170-video-index0",
       "entrada": [
         "-input_format",
         "yuyv422",
@@ -23,6 +23,32 @@
       ]
     },
     {
+      "nombre": "general",
+      "dispositivo": "/dev/v4l/by-id/usb-GENERAL_GENERAL_WEBCAM_JH0319_20200710_v012-video-index0",
+      "entrada": [
+        "-input_format",
+        "mjpeg",
+        "-video_size",
+        "1280x720",
+        "-framerate",
+        "30"
+      ],
+      "salida": [
+        "-c:v",
+        "copy"
+      ],
+      "previo": [],
+      "nota": "GENERAL WEBCAM USB (1b3f:2247), conectada el 21-oct"
+    },
+    {
+      "nombre": "windows",
+      "ssh": "pc-windows",
+      "remoto": "\"C:\\Users\\rapio\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.exe\" -hide_banner -loglevel error -y -f dshow -rtbufsize 300M -use_wallclock_as_timestamps 1 -vcodec mjpeg -video_size 1280x720 -framerate 30 -i video=\"HP Wide Vision HD Camera\" -c:v libx264 -preset ultrafast -crf 23 -pix_fmt yuv420p -copyts C:\\Users\\rapio\\cam_win.mkv",
+      "parar": "taskkill /IM ffmpeg.exe /F",
+      "nota": "PC con Windows (David-Diaz, usuario rapio, 192.168.0.108), cámara HP Wide Vision HD, enviada por SSH",
+      "archivo": "C:/Users/rapio/cam_win.mkv"
+    },
+    {
       "nombre": "celular",
       "dispositivo": "/dev/video0",
       "entrada": [
@@ -37,19 +63,19 @@
         "-q:v",
         "5"
       ],
-      "previo": []
+      "previo": [],
+      "activa": false
     },
     {
       "nombre": "tablet",
-      "dispositivo": "http://192.168.0.105:4747/video",
-      "formato": "",
+      "dispositivo": "/dev/video10",
       "entrada": [
-        "-reconnect",
-        "1",
-        "-reconnect_streamed",
-        "1",
-        "-reconnect_delay_max",
-        "2"
+        "-input_format",
+        "yuv420p",
+        "-video_size",
+        "1280x720",
+        "-framerate",
+        "30"
       ],
       "salida": [
         "-c:v",
@@ -58,7 +84,8 @@
         "5"
       ],
       "previo": [],
-      "nota": "tablet debajo del robot (vista desde abajo), DroidCam por Wi-Fi; solo admite una conexión"
+      "nota": "Galaxy Tab S10 FE (SM-X520), DroidCam OBS por USB/ADB; entrada de DroidCam en v4l2loopback /dev/video10. Requiere que el cliente droidcam-cli esté activo",
+      "activa": false
     }
   ]
 }
