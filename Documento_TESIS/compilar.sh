@@ -14,4 +14,6 @@ if grep -qE "LaTeX Warning: (Reference|Citation).*undefined" build/Thesis.log; t
     echo "AVISO: quedan referencias o citas sin resolver (ver build/Thesis.log)"
 fi
 cp build/Thesis.pdf Documento_TESIS_PRELIMINAR.pdf
+# Thesis.pdf es el archivo que se suele abrir en el visor: se mantiene igual a la última compilación.
+cp build/Thesis.pdf Thesis.pdf
 printf 'PDF generado: %s\n' "$(pwd)/Documento_TESIS_PRELIMINAR.pdf"
