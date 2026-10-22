@@ -28,9 +28,9 @@ supervisor.
 \begin{tikzpicture}[
 node distance=1.1cm and 1.35cm,
 block/.style={rectangle,draw,rounded corners,fill=blue!12,
-text width=3.15cm,minimum height=1.1cm,align=center,font=\small},
+text width=3.7cm,minimum height=1.3cm,align=center,font=\small},
 data/.style={rectangle,draw,rounded corners,fill=green!12,
-text width=3.15cm,minimum height=1.1cm,align=center,font=\small},
+text width=3.7cm,minimum height=1.3cm,align=center,font=\small},
 arrow/.style={-latex,semithick}]
 \node[block] (cmd) {Orden de marcha};
 \node[block,right=of cmd] (gait) {Controlador de\\marcha e IK};
@@ -38,17 +38,17 @@ arrow/.style={-latex,semithick}]
 \node[data,below=of gait] (phase) {Fase y contactos\\previstos};
 \node[data,below=of sim] (sensors) {Pose, articulaciones,\\IMU y contactos};
 \node[block,below=of phase] (analysis) {Métricas, estabilidad\\y comparación};
-\node[block,left=of analysis] (safety) {Supervisor de seguridad};
+\node[block,left=of analysis] (safety) {Supervisor\\de seguridad};
 \node[data,right=of analysis] (bag) {rosbag2, CSV,\\gráficas e informes};
 \draw[arrow] (cmd) -- (gait);
 \draw[arrow] (gait) -- (sim);
 \draw[arrow] (gait) -- (phase);
 \draw[arrow] (sim) -- (sensors);
 \draw[arrow] (phase) -- (analysis);
-\draw[arrow] (sensors) -- (analysis);
+\draw[arrow] (sensors.south) -- ++(0,-0.55) -| ([xshift=1.2cm]analysis.north);
 \draw[arrow] (analysis) -- (safety);
 \draw[arrow] (analysis) -- (bag);
-\draw[arrow] (safety) |- (cmd);
+\draw[arrow] (safety.north) -- (cmd.south);
 \end{tikzpicture}%
 }
 \caption{Arquitectura funcional implementada para generación, simulación,
@@ -64,33 +64,34 @@ I$^2$C o un barrido limitado como validación del robot completo.
 \centering
 \resizebox{0.96\textwidth}{!}{%
 \begin{tikzpicture}[
-node distance=0.9cm and 1.15cm,
+node distance=1.0cm and 0.9cm,
 done/.style={rectangle,draw,rounded corners,fill=green!16,
-text width=3.0cm,minimum height=1.05cm,align=center,font=\small},
+text width=3.4cm,minimum height=1.3cm,align=center,font=\small},
 pending/.style={rectangle,draw,dashed,rounded corners,fill=orange!14,
-text width=3.0cm,minimum height=1.05cm,align=center,font=\small},
-guard/.style={diamond,draw,fill=red!10,aspect=2.0,align=center,font=\small},
+text width=3.4cm,minimum height=1.3cm,align=center,font=\small},
+guard/.style={diamond,draw,fill=red!10,aspect=2.2,inner sep=1pt,align=center,font=\small},
 arrow/.style={-latex,semithick}]
 \node[done] (ros) {ROS~2, SSH y DDS\\verificados};
-\node[done,right=of ros] (i2c) {Raspberry Pi\\PCA9685 en 0x40};
-\node[pending,right=of i2c] (oe) {Fusible, OE y\\parada física};
-\node[guard,below=of oe] (gate) {¿Seguridad\\aprobada?};
-\node[pending,left=of gate] (cal) {Calibración\\CH0--CH11};
-\node[pending,left=of cal] (suspended) {Una pata y robot\\suspendido};
-\node[pending,below=of suspended] (ground) {Postura, paso y\\gateo con soporte};
-\node[pending,right=of ground] (sensors) {IMU, potencia,\\contactos y ángulos};
+\node[done,right=of ros] (i2c) {Raspberry Pi y\\PCA9685 en 0x40};
+\node[done,right=of i2c] (cal) {Calibración\\CH0--CH11};
+\node[done,right=of cal] (suspended) {Marchas con el\\robot suspendido};
+\node[guard,below=of suspended] (gate) {¿Seguridad\\aprobada?};
+\node[pending,left=of gate] (oe) {Fusible, OE y\\parada física};
+\node[pending,left=of oe] (ground) {Postura y marchas\\con soporte};
+\node[pending,left=of ground] (sensors) {IMU, potencia,\\contactos y ángulos};
 \draw[arrow] (ros) -- (i2c);
-\draw[arrow] (i2c) -- (oe);
-\draw[arrow] (oe) -- (gate);
-\draw[arrow] (gate) -- node[above,font=\scriptsize]{sí} (cal);
+\draw[arrow] (i2c) -- (cal);
 \draw[arrow] (cal) -- (suspended);
-\draw[arrow] (suspended) -- (ground);
+\draw[arrow] (suspended) -- (gate);
+\draw[arrow] (oe) -- (gate);
+\draw[arrow] (gate.south) -- ++(0,-0.45) -| node[pos=0.25,below,font=\scriptsize]{sí} (ground.south);
 \draw[arrow] (ground) -- (sensors);
 \end{tikzpicture}%
 }
 \caption{Arquitectura de transición segura desde la plataforma computacional
-verificada hasta la validación física pendiente. Los bloques discontinuos no
-se presentan como resultados terminados. Fuente: elaboración propia.}
+verificada hasta la validación física pendiente. Los bloques verdes se
+completaron (los ensayos suspendidos, con la interfaz de E/S); los
+discontinuos no se presentan como resultados terminados. Fuente: elaboración propia.}
 \label{fig:arquitectura-fisica-segura}
 \end{figure}
 
