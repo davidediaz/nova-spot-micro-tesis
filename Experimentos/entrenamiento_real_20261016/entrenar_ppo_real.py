@@ -183,6 +183,8 @@ class NovaRealEnv(NovaMujocoResidualEnv):
                 self.ganancia[JOINTS.index(nombre)] = datos["ganancia"]
         self.mascara = np.array([0.0 if j in SIN_RESIDUAL else 1.0 for j in JOINTS])
         self.zona_muerta = np.deg2rad(float(actuador.get("zona_muerta_grados", 0.0)))
+        if actuador.get("retardo_pasos_rango"):
+            self.rango_retardo = tuple(int(x) for x in actuador["retardo_pasos_rango"])
         self.idx_sensadas = [JOINTS.index(j) for j in SENSADAS]
         self.idx_coxas = [JOINTS.index(j) for j in JOINTS if "coxa" in j]
         if "front_right_tibia_joint" in SIN_RESIDUAL:
@@ -228,7 +230,9 @@ class NovaRealEnv(NovaMujocoResidualEnv):
             # Retardo de 60-120 ms, ganancia +/-5 % por servo y desfase de sensor +/-1°.
             if not hasattr(self, "ganancia_nominal"):
                 self.ganancia_nominal, self.retardo_nominal = self.ganancia.copy(), self.retardo_pasos
-            self.retardo_pasos = int(self.rng.integers(2, 5))
+            # 21-oct: rango de retardo medido en el robot (actualizar_modelo_real.py); si no hay, 2-4 pasos.
+            lo, hi = getattr(self, "rango_retardo", (2, 4))
+            self.retardo_pasos = int(self.rng.integers(lo, hi + 1))
             self.ganancia = self.ganancia_nominal * self.rng.uniform(0.95, 1.05, 12)
             self.sesgo_sensor = np.deg2rad(self.rng.uniform(-1.0, 1.0, len(self.idx_sensadas)))
         self.cola = deque([self.data.ctrl.copy()] * self.retardo_pasos)

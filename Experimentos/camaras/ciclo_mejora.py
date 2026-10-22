@@ -36,7 +36,7 @@ MARCHAS = {
                   entrenar="--marcha trote --ciclo-trote 1.0 --femur 12 --tibia 12 --apertura 5 --ciclos-episodio 12 "
                            "--w-avance 20 --w-suavidad 0.2"),
 }
-COMUN = ("--completo --aleatorizar --lr 1e-4 --target-kl 0.03 --n-steps 2048 --actuador actuadores_reales_v5.json "
+COMUN = ("--completo --aleatorizar --lr 1e-4 --target-kl 0.03 --n-steps 2048 --actuador {actuador} "
          "--dt 0.03 --w-actitud 30 --w-lateral 20 --w-giro 10 --w-giro-ciclo 5 --w-coxas 1.0")
 SEMILLAS = [401, 409, 419, 421]
 
@@ -59,11 +59,24 @@ def puntuar(sesion):
     return {c: sum(v) / len(v) for c, v in acum.items()}
 
 
-def entrenar(marcha, desde, vuelta):
+def actualizar_modelo(sesion, vuelta):
+    """21-oct: el robot enseña a la simulación. Mide retardo, holgura y residuo de cada articulación en
+    las caminatas de la vuelta y genera actuadores_ciclo<N>.json para entrenar la siguiente."""
+    caminatas = sorted(str(d) for d in (AQUI / "grabaciones").glob(f"rep_{sesion}_*") if "fallo" not in d.name)
+    r = subprocess.run([str(PY), "-I", "actualizar_modelo_real.py", "--nombre", f"ciclo{vuelta}", *caminatas],
+                       capture_output=True, text=True, cwd=ENT)
+    for l in r.stdout.splitlines():
+        if l.startswith("modelo") or l.startswith("brecha"):
+            log(l)
+    f = ENT / f"actuadores_ciclo{vuelta}.json"
+    return f.name if f.exists() else "actuadores_reales_v5.json"
+
+
+def entrenar(marcha, desde, vuelta, actuador):
     salida = f"ppo_ciclo{vuelta}_{marcha}"
     procs = []
     for s in SEMILLAS:
-        cmd = (f"{PY} -I entrenar_ppo_real.py {COMUN} {MARCHAS[marcha]['entrenar']} --timesteps 1000000 "
+        cmd = (f"{PY} -I entrenar_ppo_real.py {COMUN.format(actuador=actuador)} {MARCHAS[marcha]['entrenar']} --timesteps 1000000 "
                f"--seed {s} --continuar {desde} --output {salida}")
         procs.append(subprocess.Popen(["nice", "-n", "5", "bash", "-c", cmd + f" > log_{salida}_{s}.txt 2>&1"],
                                       cwd=ENT, env={**__import__('os').environ, "OMP_NUM_THREADS": "1", "MKL_NUM_THREADS": "1"}))
@@ -108,6 +121,8 @@ def main():
         punt = puntuar(sesion)
         log("puntuación en el robot (° medios, menor = mejor): " +
             ", ".join(f"{c} {v:.2f}" for c, v in sorted(punt.items())))
+        actuador = actualizar_modelo(sesion, vuelta)
+        log(f"entrenamiento con el modelo del actuador medido en el robot: {actuador}")
         ganadoras, procs = {}, []
         for marcha in MARCHAS:
             ppos = {c: v for c, v in punt.items() if c.startswith(f"{marcha}_ppo")}
@@ -117,7 +132,7 @@ def main():
             ganadoras[marcha] = cand[marcha][int(mejor.split("ppo")[1]) - 1]
             base = punt.get(f"{marcha}_base")
             log(f"{marcha}: mejor PPO en el robot {ganadoras[marcha]} ({ppos[mejor]:.2f}°; base {base:.2f}°)")
-            salida, p = entrenar(marcha, f"{ganadoras[marcha]}/policy.zip", vuelta)
+            salida, p = entrenar(marcha, f"{ganadoras[marcha]}/policy.zip", vuelta, actuador)
             procs.append((marcha, salida, p))
         for marcha, salida, p in procs:
             for x in p:

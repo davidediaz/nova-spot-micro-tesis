@@ -75,15 +75,20 @@ def main():
             if r.returncode != 0:
                 print("  ERROR:", r.stderr.strip().splitlines()[-3:], flush=True)
                 return 1
-            subprocess.run([sys.executable, "-I", str(AQUI / "diagnostico_caminata.py"), str(AQUI / "grabaciones" / carpeta)],
-                           capture_output=True)
+            # 21-oct: hasta 3 intentos (con el PC cargado por los análisis en segundo plano llegó a fallar).
+            for _intento in range(3):
+                subprocess.run([sys.executable, "-I", str(AQUI / "diagnostico_caminata.py"), str(AQUI / "grabaciones" / carpeta)],
+                               capture_output=True)
+                if (AQUI / "grabaciones" / carpeta / "diagnostico.json").exists():
+                    break
+                time.sleep(5)
             # 20-oct: comprobación de salud. Una caminata corta o con fémures que no siguen la orden
             # indica fallo del bus I2C o de la alimentación: se detiene el protocolo.
             problema = salud(AQUI / "grabaciones" / carpeta, a.duracion_s)
             if problema:
                 print("  DETENIDO:", problema, flush=True)
                 (AQUI / "grabaciones" / carpeta / "invalida.txt").write_text(problema + "\n")
-                (AQUI / "grabaciones" / carpeta).rename(AQUI / "grabaciones" / f"{carpeta}_fallo")
+                (AQUI / "grabaciones" / carpeta).rename(AQUI / "grabaciones" / f"{carpeta}_fallo_{time.strftime('%H%M%S')}")  # 21-oct: sin chocar con fallos anteriores
                 return 2
             # 20-oct: análisis de video de cada caminata antes de la siguiente y compresión a
             # H.264 (≈12 veces menos espacio; se comprueba antes de sustituir el original).

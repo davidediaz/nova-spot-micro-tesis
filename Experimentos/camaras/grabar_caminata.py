@@ -33,6 +33,35 @@ def primer_fotograma(video):
     return float(json.loads(salida)["packets"][0]["pts_time"])
 
 
+# 21-oct: imagen en vivo de cada cámara durante la grabación (2 por segundo, 640 px) en vivo/,
+# para verlas con vista_vivo.py mientras el robot camina (la grabación ocupa las cámaras).
+VIVO = AQUI / "vivo"
+VIVO_LOCAL = ["-vf", "fps=2,scale=640:-1", "-update", "1", "-y"]
+VIVO_REMOTO = "-vf fps=2,scale=640:-1 -c:v mjpeg -q:v 6 -f image2pipe -"
+
+
+def lector_vivo(tubo, destino):
+    """Lee JPEG seguidos de un tubo y deja el último en destino (escritura atómica)."""
+    import threading
+
+    def bucle():
+        buf = b""
+        while True:
+            d = tubo.read(65536)
+            if not d:
+                break
+            buf += d
+            fin = buf.rfind(b"\xff\xd9")
+            ini = buf.rfind(b"\xff\xd8", 0, fin) if fin >= 0 else -1
+            if ini >= 0:
+                tmp = destino.with_suffix(".tmp")
+                tmp.write_bytes(buf[ini:fin + 2]); tmp.replace(destino)
+                buf = buf[fin + 2:]
+            elif len(buf) > 4_000_000:
+                buf = b""
+    threading.Thread(target=bucle, daemon=True).start()
+
+
 def desfase_windows(alias, n=5):
     """Hora de Windows − hora local (s): «echo %TIME%» por SSH (centésimas), la de menor ida y vuelta.
     Windows usa su reloj CMOS sin sincronizar, así que se mide en cada caminata."""
@@ -68,10 +97,11 @@ def main():
     carpeta = AQUI / "grabaciones" / a.nombre
     carpeta.mkdir(parents=True, exist_ok=False)
     video = carpeta / "video.mkv"
+    VIVO.mkdir(exist_ok=True)
     ff = subprocess.Popen(
         ["ffmpeg", "-hide_banner", "-loglevel", "error", "-f", "v4l2", "-input_format", "mjpeg",
          "-video_size", "1280x720", "-framerate", "30", "-use_wallclock_as_timestamps", "1",
-         "-i", a.dispositivo, "-c:v", "copy", "-copyts", str(video)],
+         "-i", a.dispositivo, "-c:v", "copy", "-copyts", str(video), *VIVO_LOCAL, str(VIVO / "1_hp_pc.jpg")],
         stdin=subprocess.PIPE)
     t_video = time.time()
     (carpeta / "video.lanzamiento.txt").write_text(f"{t_video:.6f}\n")
@@ -93,8 +123,9 @@ def main():
                 try:
                     subprocess.run(["ssh", *SSHX, c["ssh"], c["parar"]], capture_output=True, timeout=20)
                     (d / "desfase.txt").write_text(f"{desfase_windows(c['ssh']):.6f}\n")
-                    proc = subprocess.Popen(["ssh", *SSHX, c["ssh"], c["remoto"]], stdin=subprocess.PIPE,
-                                            stderr=open(d / "remoto.log", "w"))
+                    proc = subprocess.Popen(["ssh", *SSHX, c["ssh"], c["remoto"] + " " + VIVO_REMOTO], stdin=subprocess.PIPE,
+                                            stdout=subprocess.PIPE, stderr=open(d / "remoto.log", "w"))
+                    lector_vivo(proc.stdout, VIVO / f"{c['nombre']}.jpg")
                     extras.append((c["nombre"], d, proc, c))
                 except (subprocess.SubprocessError, OSError, ValueError) as e:
                     print(f"AVISO: la cámara {c['nombre']} ({c['ssh']}) no arrancó: {e}", flush=True)
@@ -106,7 +137,8 @@ def main():
             formato = ["-f", c.get("formato", "v4l2")] if c.get("formato", "v4l2") else []
             proc = subprocess.Popen(["ffmpeg", "-hide_banner", "-loglevel", "error", *formato, *c["entrada"],
                                      "-use_wallclock_as_timestamps", "1", "-i", c["dispositivo"], *c["salida"],
-                                     "-copyts", str(d / "video.mkv")], stdin=subprocess.PIPE)
+                                     "-copyts", str(d / "video.mkv"), *VIVO_LOCAL, str(VIVO / f"{c['nombre']}.jpg")],
+                                    stdin=subprocess.PIPE)
             extras.append((c["nombre"], d, proc, None))
     remoto = None
     SSH = ["-o", "BatchMode=yes", "-o", "ConnectTimeout=5", "-o", "ServerAliveInterval=5", "-o", "ServerAliveCountMax=3"]
@@ -127,8 +159,9 @@ def main():
              f"pkill -INT -f 'ffmpeg.*/tmp/cam_remota.mkv'; sleep 1; "   # 20-oct: grabación anterior colgada
              f"date +%s.%N > /tmp/cam_remota.inicio.txt; exec ffmpeg -hide_banner -loglevel error -f v4l2 "
              f"-input_format mjpeg -video_size 1280x720 -framerate 30 -use_wallclock_as_timestamps 1 "
-             f"-i {a.dispositivo_remoto} -c:v copy -copyts -y /tmp/cam_remota.mkv"],
-            stdin=subprocess.PIPE)
+             f"-i {a.dispositivo_remoto} -c:v copy -copyts -y /tmp/cam_remota.mkv {VIVO_REMOTO}"],
+            stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+        lector_vivo(remoto.stdout, VIVO / "portatil2.jpg")
     time.sleep(2.0)
     if ff.poll() is not None:
         raise SystemExit("La cámara no arrancó (¿la está usando otro programa?).")
