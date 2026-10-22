@@ -20,7 +20,7 @@ Objetivo & Resultado demostrable & Evidencia principal & Estado y faltante \\
 \midrule
 \endhead
 OE1 & Doce articulaciones ejecutadas en el robot suspendido, con topes, límite de cambio y realimentación de diez. & Capítulo~\ref{cap:plataforma-fisica}, registros de caminatas, firmware y nueve escenarios del supervisor. & Parcial; seguridad eléctrica, alimentación separada y migración del bucle a la Raspberry~Pi. \\
-OE2 & Modelo nominal con geometría medida y actuador identificado. & Capítulo 7, \path{nova_sm3_real.xml} y modelos del actuador. & Parcial; identificar masas, inercias y fricción. \\
+OE2 & Modelo nominal con geometría medida y actuador identificado. & Capítulo~\ref{cap:modelo}, \path{nova_sm3_real.xml} y modelos del actuador. & Parcial; identificar masas, inercias y fricción. \\
 OE3 & Políticas PPO residuales entrenadas con el actuador real y seleccionadas en el robot; mejora del 15--19~\% en gateo. & Capítulo~\ref{cap:ppo-fisico}, Tabla~\ref{tab:ciclo-mejora} y políticas en \path{ppo_v10_robot/}. & Parcial; efecto sobre la locomoción apoyada sin medir. \\
 OE4 & Seguimiento articular y repetibilidad medidos en el robot suspendido; margen nominal en simulación. & Diagnósticos por caminata, Tabla~\ref{tab:repetibilidad-fisica}. & Parcial; margen de estabilidad físico con el robot apoyado e IMU. \\
 \bottomrule
@@ -54,6 +54,112 @@ actualización del modelo del actuador y reentrenamiento;
 \item \path{Experimentos/camaras/calibrar_postura_colores.py}: ajuste de la
 postura base del robot a la de la simulación con las cámaras.
 \end{itemize}
+
+\section{Lista de materiales}
+\label{sec:lista-materiales}
+
+La Tabla~\ref{tab:lista-materiales} recoge los componentes de la plataforma.
+«En uso» indica que se empleó en los ensayos de octubre de 2026; «inventario»,
+que está disponible en el laboratorio pero aún no se ha integrado; y «adquirir»,
+que se propone comprarlo para completar la arquitectura de la
+Figura~\ref{fig:esquema-propuesto}. Las especificaciones de los servomotores son
+las de la ficha suministrada; en los ensayos se comportaron como servos de
+posición de $180^\circ$.
+
+\begin{longtable}{p{0.27\textwidth}p{0.05\textwidth}p{0.42\textwidth}p{0.13\textwidth}}
+\caption{Lista de materiales de la plataforma y estado de cada componente.}\label{tab:lista-materiales}\\
+\toprule
+Componente & Cant. & Función y especificación & Estado \\
+\midrule
+\endfirsthead
+\toprule
+Componente & Cant. & Función y especificación & Estado \\
+\midrule
+\endhead
+\multicolumn{4}{l}{\textit{Control}} \\
+Raspberry~Pi~4 Model~B & 1 & Controlador embebido; Ubuntu~22.04, ROS~2, I$^2$C y GPIO a 3,3~V & en uso \\
+Microcontrolador auxiliar & 1 & Interfaz de E/S por USB durante los ensayos de octubre & en uso \\
+Controlador PWM PCA9685 & 1 & 16 canales, 12 bits, 50~Hz; dirección 0x40 & en uso \\
+\multicolumn{4}{l}{\textit{Actuación}} \\
+Servomotor MG996R & 12 & 4,8--6,6~V; 11~kgf$\cdot$cm a 6~V; 0,15~s/$60^\circ$; 55~g & en uso \\
+\multicolumn{4}{l}{\textit{Sensores}} \\
+Potenciómetro de eje & 10 & Realimentación de coxas, fémures y tibias 3 y 4 & en uso \\
+Encoder magnético AS5600 & 12 & 12 bits, dirección 0x36; varios con imán débil & en uso \\
+Multiplexor I$^2$C TCA9548A & 2 & Direcciones 0x70 y 0x71 para los AS5600 & en uso \\
+Multiplexor analógico CD74HC4067 & 1 & 16 entradas para los potenciómetros & en uso \\
+Convertidor ADS1115 & 1 & 16 bits, I$^2$C 0x48; lectura de los potenciómetros desde la Raspberry & adquirir \\
+IMU BNO055 & 1 & Orientación del cuerpo (I$^2$C 0x28) para los ensayos apoyados & inventario \\
+Monitor INA228 con derivador & 1 & Tensión, corriente y energía de los servos; dirección configurada distinta de 0x40 & adquirir \\
+\multicolumn{4}{l}{\textit{Alimentación y seguridad}} \\
+Fuente de los servos & 1 & 6~V regulada; corriente a dimensionar con el INA228 (orientativo: 20~A o más) & en uso \\
+Fuente de la Raspberry & 1 & 5,1~V y 3~A, USB-C; se registró bajo voltaje con la actual & adquirir \\
+Regulador LM2596 & 1 & Reductor para la electrónica auxiliar a 5~V & inventario \\
+Fusible y portafusible & 1 & En la línea de los servos & adquirir \\
+Parada de emergencia & 1 & Seta con contacto que corta la línea de los servos & adquirir \\
+Bornera de masa común & 1 & Punto único de masa para servos y electrónica & adquirir \\
+Conectores con traba & --- & JST-XH o similares para sensores y servos (los Dupont se soltaron en los ensayos) & adquirir \\
+\multicolumn{4}{l}{\textit{Instrumentación de ensayo}} \\
+Cámaras & 5 & Integrada del PC, Logitech C170, webcam USB y cámaras de dos portátiles & en uso \\
+Marcadores ArUco y arnés & --- & Medición de la pose del cuerpo y sujeción en los ensayos apoyados & adquirir \\
+\bottomrule
+\end{longtable}
+
+\section{Esquema eléctrico propuesto}
+
+La Figura~\ref{fig:esquema-propuesto} propone el esquema de la plataforma con la
+Raspberry~Pi como único controlador. Recoge las lecciones de los ensayos: la
+electrónica y los servos tienen fuentes separadas y una masa común en un solo
+punto; la línea de los servos lleva fusible, parada de emergencia y medición de
+corriente; los potenciómetros se alimentan a 3,3~V para quedar dentro del rango
+del ADS1115; y todos los dispositivos I$^2$C tienen direcciones distintas (el
+INA228 debe configurarse fuera de 0x40, que es la del PCA9685). Los GPIO
+indicados son una propuesta que debe confirmarse al cablear.
+
+\begin{figure}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[
+node distance=0.8cm and 1.1cm,
+bl/.style={rectangle,draw,rounded corners,fill=blue!10,text width=3.1cm,minimum height=1.0cm,align=center,font=\footnotesize},
+se/.style={rectangle,draw,rounded corners,fill=green!12,text width=3.1cm,minimum height=1.0cm,align=center,font=\footnotesize},
+pw/.style={rectangle,draw,rounded corners,fill=orange!15,text width=3.1cm,minimum height=1.0cm,align=center,font=\footnotesize},
+nu/.style={rectangle,draw,dashed,rounded corners,fill=gray!8,text width=3.1cm,minimum height=1.0cm,align=center,font=\footnotesize},
+bus/.style={-,thick,blue!60!black},
+pwr/.style={-latex,thick,orange!80!black},
+sig/.style={-latex,semithick}]
+\node[bl] (rpi) {Raspberry~Pi~4\\I$^2$C1: GPIO2 (SDA), GPIO3 (SCL)};
+\node[bl,right=2.2cm of rpi] (pca) {PCA9685 (0x40)\\OE $\leftarrow$ GPIO4};
+\node[bl,right=of pca] (servo) {12 servos MG996R};
+\node[se,below=of pca] (tca) {TCA9548A 0x70 y 0x71};
+\node[se,right=of tca] (as) {12 encoders AS5600 (0x36)};
+\node[nu,below=of tca] (ads) {ADS1115 (0x48) \textit{(adquirir)}};
+\node[se,right=of ads] (mux) {CD74HC4067\\S0--S3 $\leftarrow$ GPIO17, 27, 22, 23};
+\node[se,right=of mux] (pot) {10 potenciómetros (3,3~V)};
+\node[se,below=of ads] (imu) {IMU BNO055 (0x28)};
+\node[nu,right=of imu] (ina) {INA228 \textit{(adquirir)}, dirección $\neq$ 0x40};
+\node[pw,above=of servo] (fs) {Fuente servos 6~V};
+\node[pw,above=of pca] (fus) {Fusible + parada de emergencia};
+\node[pw,above=of rpi] (frpi) {Fuente 5,1~V / 3~A};
+\node[pw,below=of rpi] (gnd) {Masa común (punto único: electrónica y servos)};
+\draw[bus] (rpi.east) -- node[above,font=\scriptsize]{bus I$^2$C 3,3~V} (pca.west);
+\draw[bus] ([xshift=1.1cm]rpi.east) |- (tca.west);
+\draw[bus] ([xshift=1.1cm]rpi.east) |- (ads.west);
+\draw[bus] ([xshift=1.1cm]rpi.east) |- (imu.west);
+\draw[bus] (imu.east) -- (ina.west);
+\draw[sig] (pca) -- node[above,font=\scriptsize]{PWM} (servo);
+\draw[sig] (as) -- (tca);
+\draw[sig] (pot) -- (mux);
+\draw[sig] (mux) -- node[below,font=\scriptsize]{SIG$\rightarrow$A0} (ads);
+\draw[pwr] (fs) -- (fus);
+\draw[pwr] (fus.south) -- node[right,font=\scriptsize]{V+ (a través del INA228)} (fus.south |- pca.north);
+\draw[pwr] (frpi) -- (rpi);
+\draw[-,dashed] (gnd) -- (rpi);
+\end{tikzpicture}}
+\caption{Esquema eléctrico propuesto con la Raspberry~Pi como controlador
+(bloques discontinuos: componentes por adquirir). Azul: bus I$^2$C; naranja:
+alimentación; negro: señales.}
+\label{fig:esquema-propuesto}
+\end{figure}
 
 \section{Comandos mínimos de reproducción}
 
