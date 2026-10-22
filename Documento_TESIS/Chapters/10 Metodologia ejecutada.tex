@@ -23,6 +23,84 @@ configuración. Hay herramientas y evidencia parcial en simulación; la aprobaci
 de criterios y la validación integral permanecen pendientes. Las pruebas
 provocadas del supervisor verifican su reacción y no sustituyen estas tres pruebas.
 
+\section{Plan metodológico del anteproyecto}
+
+El anteproyecto definió una arquitectura de control de dos niveles: una marcha
+nominal generada por una máquina de estados finitos, con trayectorias de los
+pies y referencias articulares, y una política de aprendizaje por refuerzo que
+solo produce correcciones pequeñas y acotadas sobre esas referencias, sin
+controlar el PWM y subordinada a un supervisor independiente. El desarrollo se
+organizó en ocho fases secuenciales con retroalimentación, de modo que cada
+etapa superara sus verificaciones antes de avanzar a pruebas de mayor riesgo
+para el hardware (figura~\ref{fig:metodologia_fases}).
+
+\begin{figure}[H]
+\centering
+\resizebox{0.96\textwidth}{!}{%
+\begin{tikzpicture}[
+    node distance=0.65cm,
+    block/.style={rectangle, draw, fill=blue!20, text width=10em,
+        text centered, rounded corners, minimum height=3.5em},
+    arrow/.style={-latex, thick}
+]
+\node (f1) [block] {1. Caracterización de la plataforma};
+\node (f2) [block, right=of f1] {2. Modelado y simulación};
+\node (f3) [block, right=of f2] {3. Electrónica y seguridad};
+\node (f4) [block, right=of f3] {4. Marcha nominal};
+\node (f5) [block, below=of f4] {5. Aprendizaje por refuerzo};
+\node (f6) [block, left=of f5] {6. Transferencia al robot};
+\node (f7) [block, left=of f6] {7. Validación comparativa};
+\node (f8) [block, left=of f7] {8. Análisis y documentación};
+\draw[arrow] (f1) -- (f2);
+\draw[arrow] (f2) -- (f3);
+\draw[arrow] (f3) -- (f4);
+\draw[arrow] (f4) -- (f5);
+\draw[arrow] (f5) -- (f6);
+\draw[arrow] (f6) -- (f7);
+\draw[arrow] (f7) -- (f8);
+\draw[-latex, dashed] (f7.north) .. controls +(up:1.2cm) and +(down:1.2cm) .. (f4.south);
+\draw[-latex, dashed] (f6.north) .. controls +(up:1.0cm) and +(down:1.0cm) .. (f3.south);
+\end{tikzpicture}%
+}
+\caption{Fases de desarrollo y ciclos de retroalimentación planteados en el
+anteproyecto. Fuente: elaboración propia.}
+\label{fig:metodologia_fases}
+\end{figure}
+
+La tabla~\ref{tab:fases-plan-ejecucion} resume lo que cada fase preveía y cómo
+se ejecutó. La transferencia progresiva prevista (sin servos, servo individual,
+pata suspendida, cuatro patas suspendidas, postura con soporte, transferencia de
+peso, un paso, ciclo completo y marcha continua) se cumplió hasta las cuatro
+patas con el robot suspendido; los pasos con apoyo quedaron pendientes. La
+validación preveía al menos diez ciclos válidos por marcha y condición, con
+margen de estabilidad estática, inclinación, desplazamiento, desviación lateral,
+longitud y tiempo de paso, repetibilidad y fallos; con el robot suspendido solo
+fueron medibles el seguimiento articular y la repetibilidad. El anteproyecto ya
+advertía que el seguimiento articular exigía medir la posición real, porque el
+PCA9685 no realimenta; esa fue la razón para instrumentar las articulaciones con
+potenciómetros y encoders.
+
+\begin{table}[H]
+\centering
+\small
+\caption{Fases del anteproyecto frente a la ejecución.}
+\label{tab:fases-plan-ejecucion}
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.2\textwidth}>{\raggedright\arraybackslash}p{0.33\textwidth}>{\raggedright\arraybackslash}p{0.37\textwidth}}
+\toprule
+\textbf{Fase} & \textbf{Resultado esperado} & \textbf{Ejecución} \\
+\midrule
+1. Caracterización & Ficha técnica, parámetros geométricos e inerciales, inventario y riesgos & Geometría medida y aplicada al modelo; masas parciales; inercias no identificadas. \\
+2. Modelado y simulación & Modelo validado y simulación de pie con referencias articulares & Cinemática, jacobianos y dinámica nominal; URDF/SDF con ROS~2 y Gazebo, MJCF en MuJoCo. \\
+3. Electrónica y seguridad & Diagramas, presupuesto energético, calibración y protocolos de encendido y emergencia & Calibración articular y esquema propuesto; fuente, fusible y parada de emergencia pendientes. \\
+4. Marcha nominal & Postura, paso y gateo sin aprendizaje como referencia & Gateo y paso en simulación y en el robot suspendido; trote añadido en la fase física. \\
+5. Aprendizaje por refuerzo & MDP, protocolo reproducible y política correctiva validada en simulación & PPO residual con aleatorización de dominio, semillas registradas y actuador identificado (capítulo~\ref{cap:ppo-fisico}). \\
+6. Transferencia & Marcha nominal y corregida ejecutadas con seguridad en el robot & Ejecutadas con el robot suspendido; topes del firmware y apagado de salidas. \\
+7. Validación comparativa & Comparación estadística con y sin capa aprendida & Repetibilidad y ciclo de mejora en suspensión; menos de diez repeticiones por condición. \\
+8. Análisis y documentación & Informe reproducible y documentación técnica & Este documento, repositorio y anexos de reproducción. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \section{Trazabilidad y control de versiones}
 
 El código y la documentación se mantuvieron en un repositorio Git. Para cada
