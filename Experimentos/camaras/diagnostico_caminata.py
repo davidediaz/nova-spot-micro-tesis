@@ -149,8 +149,10 @@ def camara(video, inicio, t_orden, vel_orden):
         k = int(np.argmax(perfil))
         mejor = (float(lags[k]), float(perfil[k]))
         energia = energia[:, patas].mean(axis=1)
-    else:
+    elif energia.ndim == 2 and len(energia):
         energia = energia.mean(axis=1)
+    else:                                   # 21-oct: sin fotogramas útiles en la caminata
+        energia = np.zeros(len(ts))
     muestras_marc = max(1, n // 15)
     return dict(
         fotogramas=n, fps_real=float(1000 / np.median(huecos)) if len(huecos) else 0.0,
@@ -199,9 +201,16 @@ def main():
     for nombre, sub in camaras_dir:
         if (sub / "video.mkv").exists():
             inicio = float((sub / "video.inicio.txt").read_text())
+            # 21-oct: si una cámara falla, se anota y el diagnóstico de sensores sigue.
+        try:
             res[nombre], camaras[nombre] = camara(sub / "video.mkv", inicio, series["t_abs"], series["velocidad_orden"])
+        except Exception as e:
+            res[nombre] = dict(error=f"{type(e).__name__}: {e}")
     (carpeta / "diagnostico.json").write_text(json.dumps(res, indent=2, ensure_ascii=False))
-    figura(carpeta, res, series, camaras)
+    try:
+        figura(carpeta, res, series, camaras)
+    except Exception as e:                  # 21-oct: la figura no debe impedir el diagnóstico
+        print(f"AVISO: figura no generada ({type(e).__name__}: {e})")
     p = res["periodo_ms"]
     print(f"{carpeta.name}: {res['duracion_s']:.0f} s, {res['ciclos']} ciclos | periodo {p['mediana']:.1f} ms "
           f"(p99 {p['p99']:.0f}, máx {p['maximo']:.0f}, >40 ms: {p['pasos_mas_de_40ms']}) | "
