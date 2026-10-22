@@ -1,0 +1,299 @@
+\chapter{Plataforma física, instrumentación y adquisición}
+\label{cap:plataforma-fisica}
+
+Este capítulo describe el robot real tal como se operó entre el 15 y el 21 de
+octubre de 2026: su electrónica, el firmware, la instrumentación articular, el
+sistema de cámaras y el protocolo de ensayos. Es la base sobre la que se
+ejecutaron las marchas nominales y las políticas PPO de los capítulos
+siguientes. En todos los ensayos el robot estuvo suspendido de una barra, con
+las patas sin apoyo, para poder probar marchas y políticas sin riesgo de caída.
+
+\section{Arquitectura física}
+
+La Figura~\ref{fig:arquitectura-fisica} resume la cadena de control. Un PC con
+Ubuntu ejecuta el bucle de control (marcha nominal, política PPO, saturaciones y
+registro) y se comunica por USB serie a 115\,200 baudios con un Arduino Uno. El
+Uno genera las doce señales de los servomotores a través de un controlador PWM
+PCA9685 y lee los sensores articulares: potenciómetros mediante un
+multiplexor analógico y encoders magnéticos mediante dos multiplexores I$^2$C.
+Los servomotores MG996R se alimentan con una fuente externa; su masa se une a la
+del Uno.
+
+\begin{figure}[H]
+\centering
+\resizebox{0.98\textwidth}{!}{%
+\begin{tikzpicture}[
+node distance=1.0cm and 1.5cm,
+block/.style={rectangle,draw,rounded corners,fill=blue!12,
+text width=3.0cm,minimum height=1.0cm,align=center,font=\small},
+sens/.style={rectangle,draw,rounded corners,fill=green!12,
+text width=3.0cm,minimum height=1.0cm,align=center,font=\small},
+arrow/.style={-latex,semithick}]
+\node[block] (pc) {PC: bucle de control 30~ms, PPO, registro};
+\node[block,right=of pc] (uno) {Arduino Uno: firmware, topes, telemetría};
+\node[block,right=of uno] (pca) {PCA9685 (0x40, 50~Hz)};
+\node[block,right=of pca] (servo) {12 servos MG996R};
+\node[sens,below=of uno] (mux) {MUX analógico CD74HC4067};
+\node[sens,below=of pca] (tca) {TCA9548A 0x70 y 0x71};
+\node[sens,below=of servo] (enc) {Encoders AS5600};
+\node[sens,below=of enc] (pot) {Potenciómetros};
+\node[sens,below=of pc] (cam) {5 cámaras sincronizadas};
+\draw[arrow] (pc) -- node[above,font=\scriptsize]{USB serie} (uno);
+\draw[arrow] (uno) -- node[above,font=\scriptsize]{I$^2$C} (pca);
+\draw[arrow] (pca) -- node[above,font=\scriptsize]{PWM} (servo);
+\draw[arrow] (enc) -- node[above,font=\scriptsize]{I$^2$C} (tca);
+\draw[arrow] (tca) -- node[right,font=\scriptsize]{I$^2$C} (uno);
+\draw[arrow] (pot) -| node[pos=0.25,below,font=\scriptsize]{analógico} (mux);
+\draw[arrow] (mux) -- node[left,font=\scriptsize]{A0} (uno);
+\draw[arrow] (cam) -- (pc);
+\end{tikzpicture}}
+\caption{Arquitectura física de control y medición del robot.}
+\label{fig:arquitectura-fisica}
+\end{figure}
+
+Se intentó trasladar el control a la Raspberry Pi~4 del proyecto
+(18 de octubre): se reprodujo el firmware en Python y se exportó una política PPO
+a NumPy, con coincidencia de $\pm0{,}5^\circ$ frente al PC. No se adoptó porque
+la Raspberry no tiene entradas analógicas (sin un convertidor ADS1115 no lee los
+potenciómetros) y registró bajo voltaje en todos sus arranques, con dos
+arranques fallidos. El control quedó en el PC con el Uno como interfaz.
+
+\section{Mapa de articulaciones}
+
+El PCA9685 trabaja a 50~Hz y convierte el ángulo de cada servo (0 a $180^\circ$)
+en un ancho de pulso lineal. La Tabla~\ref{tab:mapa-articulaciones} recoge el
+canal, la posición base de la marcha y los topes de seguridad de cada
+articulación, medidos por el operador con $10^\circ$ de margen respecto al límite
+mecánico. Los topes se aplican en el firmware a cualquier orden y, desde el 21
+de octubre, también en el programa del PC.
+
+\begin{table}[H]
+\centering
+\caption{Canales, posición base y topes de cada articulación (grados de servo), 21 de octubre de 2026.}
+\label{tab:mapa-articulaciones}
+\small
+\begin{tabular}{llrrr}
+\toprule
+Articulación & Canal PCA & Base & Tope mínimo & Tope máximo \\
+\midrule
+Coxa 1 (delantera derecha) & CH0 & 159 & 105 & 170 \\
+Coxa 2 (delantera izquierda) & CH1 & 45 & 10 & 85 \\
+Coxa 3 (trasera derecha) & CH2 & 61 & 25 & 90 \\
+Coxa 4 (trasera izquierda) & CH3 & 82 & 60 & 105 \\
+Fémur 1 & CH4 & 110 & 30 & 140 \\
+Fémur 2 & CH5 & 100 & 45 & 135 \\
+Fémur 3 & CH6 & 100 & 40 & 160 \\
+Fémur 4 & CH7 & 100 & 25 & 135 \\
+Tibia 1 & CH8 & 100 & 25 & 160 \\
+Tibia 2 & CH9 & 80 & 25 & 90 \\
+Tibia 3 & CH10 & 100 & 11 & 160 \\
+Tibia 4 & CH14 & 70 & 15 & 105 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Las coxas permanecen fijas en su posición de equilibrio durante todas las
+marchas y nunca se dejan sin señal al terminar, porque la coxa 2 cede por su
+propio peso. La equivalencia entre los ángulos del modelo y los grados de servo
+usa un signo por articulación: los fémures y las tibias de cada lado están
+montados en espejo. El signo de las tibias izquierdas se corrigió el 21 de
+octubre (capítulo~\ref{cap:ppo-fisico}).
+
+\section{Firmware del controlador}
+
+El firmware del Uno (\path{movimiento_suspendido_11_servos.ino}) ofrece tres
+modos de operación relevantes:
+\begin{itemize}
+    \item \textbf{Reposo con telemetría}: arranca con las salidas apagadas y
+    transmite cada 100~ms una trama \texttt{DATA} con el estado de los servos y
+    las dieciséis entradas del multiplexor analógico.
+    \item \textbf{Caminata en lazo abierto} (orden \texttt{b}): ejecuta el gateo
+    nominal en el propio Uno. Fue la primera marcha física y la referencia para
+    identificar el actuador.
+    \item \textbf{Transmisión continua} (orden \texttt{@}): el PC envía en cada
+    paso una línea con los doce ángulos y el Uno responde con todas las
+    lecturas de sensores. Es el modo de las marchas nominales y de las políticas
+    PPO desde el PC.
+\end{itemize}
+Como protecciones, el firmware recorta cada orden a los topes de su canal,
+limita el cambio de cada articulación a $3^\circ$ por línea, apaga todas las
+salidas con la orden \texttt{x} y usa un tiempo máximo en el bus I$^2$C para no
+quedar bloqueado si una línea se queda fija. El bit de respuesta a la dirección
+común del PCA9685 se desactivó, porque coincidía con la dirección 0x70 del
+primer multiplexor I$^2$C.
+
+\section{Bucle de control en el PC}
+
+El programa \path{ejecutar_politica_robot.py} repite cada 30~ms: cálculo de la
+fase y de la referencia nominal; lectura de los sensores de la respuesta
+anterior; construcción de la observación; evaluación de la política (si la hay);
+saturaciones; conversión a grados de servo; envío; y registro en un archivo CSV
+con la hora, la fase, las órdenes, la referencia nominal, todas las lecturas y la
+corrección aplicada. El periodo real medido es de 33~ms. Cada caminata guarda
+también su configuración completa (marcha, amplitudes, apertura, política y
+calibración) para poder reproducirla.
+
+La temporización resultó crítica: con el PC cargado por el análisis de video y
+los entrenamientos, una caminata llegó a tener 714 pasos con más de 40~ms de
+retraso y el seguimiento de los fémures empeoró de forma aparente. Desde el 21
+de octubre el bucle de control se ejecuta en dos núcleos reservados, la red
+neuronal en un solo hilo y todo lo demás en los núcleos restantes con
+prioridad mínima; con el PC entrenando a la vez, el número de pasos tardíos
+quedó en cero.
+
+\section{Instrumentación articular}
+
+\subsection{Sensores}
+
+Cada articulación puede medirse con dos tipos de sensor:
+\begin{itemize}
+    \item \textbf{Potenciómetros} acoplados al eje, leídos por el convertidor de
+    10 bits del Uno a través del multiplexor CD74HC4067 (entradas C0 a C15). Su
+    relación con el ángulo es lineal, con un error RMS de 0,4 a $1{,}1^\circ$ y
+    una histéresis de 0,6 a $1{,}5^\circ$.
+    \item \textbf{Encoders magnéticos AS5600} de 12 bits, todos en la dirección
+    0x36, conectados a través de dos multiplexores I$^2$C TCA9548A (0x70 y 0x71).
+\end{itemize}
+Las coxas se miden con los potenciómetros C0 a C3. La cobertura de fémures y
+tibias, con su sensor principal y su respaldo, está en la
+Tabla~\ref{tab:sensores-articulaciones} del capítulo~\ref{cap:ppo-fisico}. El
+potenciómetro C0 de la coxa 1 se usa además como referencia para compensar los
+desplazamientos comunes a todas las entradas analógicas.
+
+\subsection{Calibración}
+
+La escala de cada sensor (cuentas por grado de servo) y su retardo se
+identifican con las propias caminatas: se ajusta, articulación por
+articulación, la relación entre la orden y la lectura con el retardo que mejor la
+explica (\path{identificar_sensores_v6.py}). La escala inicial de los
+potenciómetros era de $\approx2{,}5$ cuentas por grado; en la postura de
+trabajo adoptada el 21 de octubre pasó a 3,2--3,7, por la no linealidad del
+conjunto fuera del intervalo calibrado, y se recalibró. Una articulación cuyo
+sensor da lecturas que no siguen el movimiento se marca como «sin sensor» y se
+estima con la orden retrasada.
+
+\subsection{Fallos de instrumentación encontrados}
+
+La instrumentación fue la principal fuente de interrupciones. Los fallos
+encontrados y su solución fueron:
+\begin{itemize}
+    \item \textbf{Bus I$^2$C del Uno} (19 y 20 de octubre): un cable de SDA
+    suelto; SDA y SCL invertidos en el PCA9685; un multiplexor TCA9548A sin
+    alimentación que unía las dos líneas; y SDA conectada a masa a $0{,}10$~V,
+    que se liberó al reajustar los cables. Varios encoders de las tibias se
+    sospecharon de cortocircuitar SDA con el movimiento.
+    \item \textbf{Masa común degradada} (20 de octubre): con los servos activos
+    todos los potenciómetros saltaban cientos de cuentas a la vez. Tras reforzar
+    la masa entre servos y Uno, el desplazamiento común máximo bajó de 478 a
+    18--40 cuentas.
+    \item \textbf{Imanes débiles} en varios AS5600 (coxas 2 y 4, fémures 2 y 3,
+    tibia 3) y dos encoders sin respuesta, por lo que esas articulaciones usan
+    el potenciómetro.
+    \item \textbf{Tibia 1}: su encoder no dio lecturas válidas en ninguna caminata
+    diagnosticada (79 de 79).
+    \item \textbf{Tibia 3}: su potenciómetro (C11) dejó de responder el 21 de
+    octubre; con la cámara se comprobó que el servo sí se movía.
+    \item \textbf{Reinicio del Uno} durante un trote (21 de octubre), compatible
+    con una caída de tensión en los picos de corriente de los servos.
+\end{itemize}
+Para que estos fallos no se confundieran con el comportamiento de una política,
+cada caminata pasa por una comprobación de salud
+(sección~\ref{sec:protocolo-fisico}) y se conservan y documentan los ensayos
+inválidos.
+
+\section{Identificación del actuador}
+
+El modelo del actuador que usa la simulación se identificó con el robot en cuatro
+etapas:
+\begin{enumerate}
+    \item \textbf{Caminatas nominales} (16 de octubre): retardo de $\approx100$~ms
+    y ganancias de 0,88 a 0,98.
+    \item \textbf{Escalones y senoides}: zona muerta de 0,5 a $1^\circ$, retardo
+    de 65 a 85~ms y buen seguimiento hasta 1~Hz.
+    \item \textbf{Barrido de rango} de $\pm40^\circ$ con los sensores: relación
+    lineal, histéresis de 0,6 a $1{,}5^\circ$ y saturación de los fémures 2 y 4
+    por encima de $135^\circ$ y de la tibia 4 por encima de $105^\circ$, que
+    fijaron los topes del firmware.
+    \item \textbf{Actualización en cada vuelta del ciclo de mejora}
+    (21 de octubre): retardo de 99~ms en todas las articulaciones medidas,
+    histéresis de 0,6 a $1{,}5^\circ$ y un error que el modelo no explica de
+    $1{,}8^\circ$.
+\end{enumerate}
+La ganancia del actuador se confirmó con la cámara: el fémur mejor visible
+recorrió $1{,}08$ veces el ángulo ordenado.
+
+\section{Sistema de cámaras}
+
+\subsection{Configuración}
+
+El sistema de visión creció de una a cinco cámaras. En su configuración final
+(21 de octubre) lo forman:
+\begin{itemize}
+    \item la cámara integrada del PC (vista frontal, 1280$\times$720 a 30~fps);
+    \item una Logitech C170 (lado derecho, 640$\times$480);
+    \item una webcam USB General (lado izquierdo, 1280$\times$720, $\approx$20~fps);
+    \item la cámara de un segundo portátil con Linux (vista trasera), conectado
+    por Ethernet;
+    \item la cámara de un PC con Windows colocada bajo el robot, también por
+    Ethernet.
+\end{itemize}
+Antes se usaron un teléfono y una tableta con DroidCam, que se descartaron
+porque por Wi-Fi no superaban 4 a 15~fps y se desconectaban.
+
+\subsection{Sincronización}
+
+Cada fotograma se marca con la hora del reloj del equipo que lo captura. Las
+cámaras remotas graban en su propio disco y el video se trae al terminar la
+caminata; al empezar, se mide la diferencia entre su reloj y el del PC de
+control por SSH, quedándose con la medida de menor tiempo de ida y vuelta (el
+reloj del PC con Windows iba $\approx0{,}5$~s por detrás). Así todas las cámaras
+y los sensores comparten la misma escala de tiempo. El video del PC con Windows
+se comprime en H.264 en origen, porque por la red su MJPEG a 1280$\times$720
+llegaba a solo 7~fps.
+
+\subsection{Análisis}
+
+Tras cada caminata se ejecutan automáticamente tres análisis:
+\begin{itemize}
+    \item \textbf{Movimiento por patas}: una regresión, píxel a píxel, del brillo
+    frente a las órdenes de los fémures identifica qué zona de la imagen
+    corresponde a cada pata, sin marcadores. De ella se obtienen, por ciclo, la
+    correlación con la orden, la amplitud y su estabilidad, y el movimiento que
+    las órdenes no explican (vibración, choques o personas en la escena).
+    \item \textbf{Identificación por colores}: cada pieza lleva una cinta de un
+    color (fémur rojo, tibia verde, pie amarillo y una marca roja en la suela
+    vista desde abajo). Cada mancha se asigna a la pata cuya orden explica mejor
+    su movimiento; una prueba en la que cada pata se mueve sola elimina la
+    ambigüedad propia del gateo, en el que todas las patas hacen el mismo
+    movimiento desfasado.
+    \item \textbf{Compresión} de los videos MJPEG a H.264 ($\approx12$ veces
+    menos espacio), comprobando antes de borrar el original que el número de
+    fotogramas y la hora inicial coinciden.
+\end{itemize}
+Las cámaras sirvieron para tres comprobaciones que los sensores no podían hacer:
+confirmar que la tibia 3 se movía aunque su sensor no respondiera, medir la
+ganancia real del actuador y comparar la postura del robot con la de la
+simulación (capítulo~\ref{cap:ppo-fisico}).
+
+\section{Protocolo de ensayos físicos}
+\label{sec:protocolo-fisico}
+
+Los ensayos siguen el programa \path{protocolo_repetibilidad.py}:
+\begin{enumerate}
+    \item Para cada condición (marcha nominal o política) se hacen varias
+    repeticiones de 3~min (unos 60 ciclos de gateo o 166 de trote), en orden
+    alternado entre rondas.
+    \item Cada caminata se graba con todas las cámaras y sus sensores.
+    \item Tras cada caminata se calcula su diagnóstico (seguimiento, desviación
+    de las coxas, temporización y calidad de cada cámara) y se aplica una
+    comprobación de salud: si la caminata se cortó o algún fémur no siguió su
+    orden ($r<0{,}90$ en gateo y $r<0{,}80$ en trote), el protocolo se detiene y
+    la caminata se marca como inválida. Desde el 21 de octubre se avisa también
+    cuando más del 3~\% de los pasos llegan con retraso.
+    \item Los análisis de video y la compresión se ejecutan en segundo plano
+    mientras el robot hace la siguiente caminata, con pausas de 2~min entre
+    caminatas para que los servos se enfríen.
+\end{enumerate}
+Todas las caminatas se catalogan con su fecha, condición, diagnóstico y estado,
+lo que permite reconstruir cualquier resultado a partir de los registros
+originales.
