@@ -78,7 +78,7 @@ def entrenar(marcha, desde, vuelta, actuador):
     for s in SEMILLAS:
         cmd = (f"{PY} -I entrenar_ppo_real.py {COMUN.format(actuador=actuador)} {MARCHAS[marcha]['entrenar']} --timesteps 1000000 "
                f"--seed {s} --continuar {desde} --output {salida}")
-        procs.append(subprocess.Popen(["nice", "-n", "5", "bash", "-c", cmd + f" > log_{salida}_{s}.txt 2>&1"],
+        procs.append(subprocess.Popen(["nice", "-n", "5", "taskset", "-c", "2-11", "bash", "-c", cmd + f" > log_{salida}_{s}.txt 2>&1"],
                                       cwd=ENT, env={**__import__('os').environ, "OMP_NUM_THREADS": "1", "MKL_NUM_THREADS": "1"}))
     return salida, procs
 
@@ -112,7 +112,7 @@ def main():
             for i, c in enumerate(cand[marcha]):
                 conds += ["--condicion", f"{marcha}_ppo{i + 1}:{marcha}:{c}/policy.zip"]
         r = subprocess.run([sys.executable, "protocolo_repetibilidad.py", "--sesion", sesion, "--repeticiones", "2",
-                            "--duracion-s", "180", "--pausa-s", "10", *conds],
+                            "--duracion-s", "180", "--pausa-s", "120", *conds],
                            cwd=AQUI, stdout=open(AQUI / f"protocolo_{sesion}.log", "a"), stderr=subprocess.STDOUT)
         log(f"protocolo terminado (código {r.returncode})")
         if r.returncode != 0:
@@ -144,7 +144,7 @@ def main():
         cand = {m: [ganadoras[m]] + ([nuevas[m]] if nuevas.get(m) and nuevas[m] != ganadoras[m] else [])
                 for m in ganadoras}
         ESTADO.write_text(json.dumps(dict(vuelta=vuelta, candidatas=cand, puntuacion=punt), indent=2))
-        subprocess.run(["git", "add", "-A", "Experimentos/camaras/ciclo_mejora.log", "Experimentos/camaras/ciclo_mejora.json",
+        subprocess.run(["git", "add", "-A", "Experimentos/camaras/ciclo_mejora.json",
                         f"Experimentos/camaras/repetibilidad_{sesion}.csv"], cwd=RAIZ)
         subprocess.run(["git", "commit", "-q", "-m", f"Ciclo de mejora en el robot: vuelta {vuelta}\n\n"
                         "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"], cwd=RAIZ)

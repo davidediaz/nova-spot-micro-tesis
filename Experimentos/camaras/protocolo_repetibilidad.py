@@ -14,6 +14,7 @@ Uso: protocolo_repetibilidad.py --sesion 20261019 --repeticiones 3 \\
 """
 import argparse
 import json
+import os
 import subprocess
 import sys
 import time
@@ -31,6 +32,10 @@ def salud(carpeta, duracion):
     # su umbral es 0,8; el del gateo y el paso sigue en 0,9.
     cfg = carpeta / "caminata.config.json"
     umbral = 0.8 if cfg.exists() and json.loads(cfg.read_text()).get("marcha") == "trote" else 0.9
+    # 21-oct: si muchos pasos llegan tarde, el seguimiento bajo es del PC (carga), no del robot.
+    tarde = d["periodo_ms"]["pasos_mas_de_40ms"] / max(1, d.get("pasos", 5400))
+    if tarde > 0.03:
+        print(f"   AVISO: temporización irregular ({100 * tarde:.1f} % de pasos > 40 ms): PC cargado", flush=True)
     if d["duracion_s"] < 0.9 * duracion:
         return f"caminata cortada a los {d['duracion_s']:.0f} s"
     for n in ("femur1", "femur2", "femur3", "femur4"):
@@ -96,7 +101,7 @@ def main():
             # 21-oct (tarde): los análisis van en segundo plano, con prioridad baja, mientras el robot hace
             # la siguiente caminata (la comprobación de salud sí se espera). Resultados en analisis.log.
             g = AQUI / "grabaciones" / carpeta
-            subprocess.Popen(["nice", "-n", "10", "bash", "-c",
+            subprocess.Popen(["nice", "-n", "19", "taskset", "-c", f"2-{os.cpu_count() - 1}", "bash", "-c",
                               " && ".join(f"{sys.executable} -I {AQUI / prog} {g} >> {g / 'analisis.log'} 2>&1"
                                           for prog in ("analizar_video_patas.py", "analizar_colores_patas.py",
                                                        "comprimir_videos.py"))],

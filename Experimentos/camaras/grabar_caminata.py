@@ -15,6 +15,7 @@ Uso:
 """
 import argparse
 import json
+import os
 import subprocess
 import sys
 import time
@@ -94,6 +95,12 @@ def main():
     p.add_argument("--ejecutor", type=Path, default=EJECUTOR,
                    help="programa que mueve el robot (21-oct: identificar_patas_robot.py para identificar patas)")
     a = p.parse_args(propios)
+    # 21-oct: núcleos 0-1 reservados para el bucle de control del robot; este programa y sus ffmpeg en el resto.
+    NUCLEOS_CONTROL = {0, 1}
+    try:
+        os.sched_setaffinity(0, set(range(os.cpu_count())) - NUCLEOS_CONTROL)
+    except (AttributeError, OSError):
+        pass
     carpeta = AQUI / "grabaciones" / a.nombre
     carpeta.mkdir(parents=True, exist_ok=False)
     video = carpeta / "video.mkv"
@@ -167,7 +174,8 @@ def main():
         raise SystemExit("La cámara no arrancó (¿la está usando otro programa?).")
     try:
         caminata = carpeta / "caminata.csv"
-        r = subprocess.run([str(PYTHON), "-I", str(a.ejecutor), *resto, "--salida", str(caminata)],
+        r = subprocess.run(["taskset", "-c", ",".join(map(str, sorted(NUCLEOS_CONTROL))),
+                            str(PYTHON), "-I", str(a.ejecutor), *resto, "--salida", str(caminata)],
                            cwd=a.ejecutor.parent)
         time.sleep(2.0)
     finally:

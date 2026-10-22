@@ -155,6 +155,9 @@ def main():
                     "rear_right_coxa_joint", "front_right_tibia_joint"}
     if a.politica:
         from stable_baselines3 import PPO
+        # 21-oct: la red en un solo hilo (con varios competía con cámaras y análisis y el bucle de 33 ms llegaba tarde).
+        import torch
+        torch.set_num_threads(1)
         modelo = PPO.load(a.politica, device="cpu")
         meta = a.politica.with_name("metadata.json")
         if meta.exists():
