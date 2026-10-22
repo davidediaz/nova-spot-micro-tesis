@@ -386,6 +386,11 @@ def main():
     if a.continuar:
         model = PPO.load(a.continuar, env=env, device="cpu",
                          custom_objects=dict(learning_rate=a.lr, target_kl=a.target_kl))
+        # 22-oct: PPO.load restaura la semilla guardada en la política y reinicia con ella el entorno y
+        # la red, así que varias «semillas» que continuaban la misma política daban ejecuciones idénticas
+        # (campañas ciclo1/ciclo2). Se impone la semilla pedida.
+        model.set_random_seed(a.seed)
+        model.seed = a.seed
     else:
         model = PPO("MlpPolicy", env, seed=a.seed, verbose=0, n_steps=a.n_steps, batch_size=256,
                     learning_rate=a.lr, target_kl=a.target_kl)

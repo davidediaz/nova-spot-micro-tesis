@@ -5,7 +5,7 @@
 \section{Matriz objetivo--evidencia}
 
 La Tabla~\ref{tab:matriz-objetivos-anexo} resume el estado verificable con los cuatro objetivos suministrados el 7 de
-septiembre de 2026. ``Parcial'' no significa incumplimiento oculto: identifica
+septiembre de 2026, actualizado con la fase física hasta el 21 de octubre de 2026. ``Parcial'' no significa incumplimiento oculto: identifica
 el producto disponible y la evidencia que todavía falta para cerrar el
 objetivo en el prototipo físico.
 
@@ -19,10 +19,10 @@ Objetivo & Resultado demostrable & Evidencia principal & Estado y faltante \\
 Objetivo & Resultado demostrable & Evidencia principal & Estado y faltante \\
 \midrule
 \endhead
-OE1 & Hardware y software integrados parcialmente; respuesta inicial de doce servos. & ROS~2, registros Raspberry/PCA9685 y nueve escenarios del supervisor. & Parcial; resolver sobrecarga, protección, calibración y ejecución física. \\
-OE2 & Modelos cinemático y dinámico nominales implementados y verificados. & Capítulo 7, código, sensibilidad y gráficas. & Parcial; contrastar parámetros físicos y validar el modelo. \\
-OE3 & Estrategia residual PPO entrenada y evaluada con cinco semillas. & Modelos, curvas, bolsas y diagnóstico de escala cero. & Parcial; no se ha demostrado la estabilidad y continuidad requeridas. \\
-OE4 & Margen nominal disponible; seguimiento y repetibilidad medidos en simulación. & Monitor de estabilidad, errores articulares y comparación entre ensayos. & Parcial; completar y analizar las tres pruebas del objetivo bajo protocolo común. \\
+OE1 & Doce articulaciones ejecutadas en el robot suspendido, con topes, límite de cambio y realimentación de diez. & Capítulo~\ref{cap:plataforma-fisica}, registros de caminatas, firmware y nueve escenarios del supervisor. & Parcial; seguridad eléctrica, alimentación separada y migración del bucle a la Raspberry~Pi. \\
+OE2 & Modelo nominal con geometría medida y actuador identificado. & Capítulo 7, \path{nova_sm3_real.xml} y modelos del actuador. & Parcial; identificar masas, inercias y fricción. \\
+OE3 & Políticas PPO residuales entrenadas con el actuador real y seleccionadas en el robot; mejora del 15--19~\% en gateo. & Capítulo~\ref{cap:ppo-fisico}, Tabla~\ref{tab:ciclo-mejora} y políticas en \path{ppo_v10_robot/}. & Parcial; efecto sobre la locomoción apoyada sin medir. \\
+OE4 & Seguimiento articular y repetibilidad medidos en el robot suspendido; margen nominal en simulación. & Diagnósticos por caminata, Tabla~\ref{tab:repetibilidad-fisica}. & Parcial; margen de estabilidad físico con el robot apoyado e IMU. \\
 \bottomrule
 \end{longtable}
 
@@ -46,7 +46,13 @@ aislados del supervisor;
 \item \path{Experimentos/PROTOCOLO_PERTURBACIONES_GAZEBO.md}: condiciones para
 fricción, empujes, ruido y retardos;
 \item \path{Experimentos/PROTOCOLO_PPO_RESIDUAL.md}: contrato y campaña de la
-capa aprendida.
+capa aprendida;
+\item \path{Experimentos/camaras/protocolo_repetibilidad.py}: ensayos físicos
+con orden alternado, comprobación de salud y análisis tras cada caminata;
+\item \path{Experimentos/camaras/ciclo_mejora.py}: ciclo de prueba en el robot,
+actualización del modelo del actuador y reentrenamiento;
+\item \path{Experimentos/camaras/calibrar_postura_colores.py}: ajuste de la
+postura base del robot a la de la simulación con las cámaras.
 \end{itemize}
 
 \section{Comandos mínimos de reproducción}
@@ -79,6 +85,40 @@ primero el keyframe \texttt{stand}. Las rutas exactas de bolsa,
 configuración y hashes se toman del registro de cada ensayo, nunca de una bolsa
 con marca \texttt{ENSAYO\_INVALIDO.md}.
 
+\section{Comandos de la fase física}
+
+Entrenamiento de una semilla con el actuador real (ejemplo de gateo, desde
+\path{Experimentos/entrenamiento_real_20261016}):
+
+\begin{verbatim}
+python -I entrenar_ppo_real.py --completo --aleatorizar \
+  --marcha gateo --femur 15 --tibia 10 --apertura 8 \
+  --timesteps 3000000 --lr 1e-4 --target-kl 0.03 --n-steps 2048 \
+  --actuador actuadores_reales_v5.json --dt 0.03 \
+  --w-avance 10 --w-actitud 30 --w-lateral 20 --w-giro 10 \
+  --w-giro-ciclo 5 --w-suavidad 0.3 --w-coxas 1.0 \
+  --seed 13 --output ppo_v14_gateo
+\end{verbatim}
+
+Selección de la mejor copia de una campaña y prueba en el robot (desde
+\path{Experimentos/camaras}):
+
+\begin{verbatim}
+python -I ../entrenamiento_real_20261016/seleccionar_copias.py \
+  --marcha gateo --carpeta ppo_v14_gateo --semillas 2
+python3 protocolo_repetibilidad.py --sesion <nombre> --repeticiones 3 \
+  --duracion-s 180 --pausa-s 120 \
+  --condicion "gateo_base:gateo::--apertura 8" \
+  --condicion "gateo_ppo:gateo:<política>/policy.zip"
+python3 analizar_repetibilidad.py --sesion <nombre>
+python3 ciclo_mejora.py --vueltas 2
+\end{verbatim}
+
+Las figuras de la fase física se regeneran con
+\path{Documento_TESIS/generar_figuras_ppo_fisico.py}. Los videos no se versionan
+por su tamaño; los registros de sensores, diagnósticos, análisis de video y
+catálogos (\path{grabaciones/catalogo.csv} y \path{grabaciones/ciclos.csv}) sí.
+
 \section{Reglas de integridad y repetición}
 
 Cada resultado debe conservar fecha, versión, parámetros, marcadores de inicio
@@ -97,8 +137,13 @@ reemplaza campañas dinámicas extensas ni validación física.
 
 El orden F0--F4 se conserva en el plan de validación física fechado el 2 de
 septiembre y versionado en la carpeta \path{Raspberry}. La
-secuencia obligatoria es: ensamble y caracterización sin energía; seguridad
+secuencia prevista es: ensamble y caracterización sin energía; seguridad
 eléctrica y OE; calibración canal por canal; integración suspendida y luego con
-soporte; instrumentación y contraste del modelo. Ninguna etapa autoriza PPO o
-marcha física si la anterior permanece abierta.
+soporte; instrumentación y contraste del modelo. En la fase de octubre se
+ejecutaron la calibración, la integración suspendida y la instrumentación, y las
+políticas PPO se ejecutaron solo con el robot suspendido, aunque la seguridad
+eléctrica seguía abierta; esa condición la mitigaron los topes por
+articulación, el límite de cambio por paso y la orden de apagado del firmware.
+La integración con soporte y la marcha sobre el suelo requieren cerrar antes la
+seguridad eléctrica y la alimentación.
 \endgroup

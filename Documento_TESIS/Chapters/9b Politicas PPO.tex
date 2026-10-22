@@ -223,9 +223,10 @@ trote & 20/10 & trote & 11, 23, 37, 53, 61, 71, 83, 97 & 3,0 M & Primera PPO del
 v13 & 20/10 & gateo & 73, 89, 107, 127, 149, 163, 181, 199, 223, 251 & 3,0 M & Postura abierta $8^\circ$ y tibia $14^\circ$; pesos por defecto ($w_{\text{av}}=18$, $w_{\text{act}}=8$, sin $w_{\text{lat}}$ ni $w_{\text{giro}}$). Evaluadas solo en simulación. \\
 v14 & 21/10 & gateo, trote & gateo 13, 29, 41, 43, 67; trote 19, 31, 37, 47, 89 & 3,0 M & Postura abierta; continúan copias de 0,9 M. Elegida gateo: semilla 43 (1,7 M). Ninguna de trote supera la base. \\
 v15 & 21/10 & trote & 19, 211, 223, 241, 263, 281, 307 & 3--5 M & $w_{\text{av}}=20$, $w_{\text{suav}}=0{,}1$. Elegida: semilla 307 (0,1 M). \\
-ciclo 1 & 21/10 & gateo, trote & 401, 409, 419, 421 & +1 M & Continúan las ganadoras en el robot. Elegida gateo: semilla 401 (2,7 M). \\
-ciclo 2 & 21/10 & gateo, trote & 401, 409, 419, 421 & +1 M & Actuador medido en el robot en la vuelta anterior. Elegida gateo: semilla 401 (2,4 M). \\
+ciclo 1 & 21/10 & gateo, trote & 401$^{\dagger}$ & +1 M & Continúan las ganadoras en el robot. Elegida gateo: copia de 2,7 M. \\
+ciclo 2 & 21/10 & gateo, trote & 401$^{\dagger}$ & +1 M & Actuador medido en el robot en la vuelta anterior. Elegida gateo: copia de 2,4 M. \\
 \bottomrule
+\multicolumn{6}{p{0.95\textwidth}}{\footnotesize $^{\dagger}$ Se lanzaron con las semillas 401, 409, 419 y 421, pero las cuatro ejecuciones resultaron idénticas: al continuar desde una política guardada, la biblioteca restaura la semilla almacenada en ella e ignora la indicada. Cada una de estas campañas equivale a una sola ejecución. El error se corrigió el 22 de octubre de 2026 (se impone la semilla pedida tras cargar la política).}
 \end{tabular}
 \end{table}
 
@@ -238,7 +239,20 @@ pasos, porque al seguir entrenando la política ganaba avance a costa de
 inclinación o de suavidad. Tercero, las continuaciones heredan lo aprendido: las
 semillas que partían de una política previa alcanzaban en pocos cientos de miles
 de pasos una recompensa que las semillas nuevas tardaban millones de pasos en
-lograr.
+lograr. La Figura~\ref{fig:curvas-semillas} muestra estos patrones en tres
+campañas.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Resultados/ppo_curvas_semillas.png}
+\caption{Recompensa media por episodio durante el entrenamiento, una línea por
+semilla, en tres campañas: gateo v14 (continuación desde copias de 0,9~M pasos),
+trote v15 (la semilla 19 continúa una política previa hasta 5~M pasos) y primer
+trote (8 semillas desde cero). Cada panel tiene su propia escala vertical, porque
+los pesos de la recompensa difieren entre campañas. Curvas suavizadas con una
+media móvil de 15 puntos.}
+\label{fig:curvas-semillas}
+\end{figure}
 
 \section{Selección de copias}
 
@@ -352,9 +366,12 @@ cuatro pasos por vuelta:
     del actuador nuevo, con el intervalo de retardo medido para la
     aleatorización.
     \item \textbf{Reentrenamiento}: la política ganadora de cada marcha se sigue
-    entrenando con cuatro semillas nuevas (401, 409, 419 y 421) durante $10^6$
-    pasos con ese modelo, y su mejor copia se convierte en candidata de la
-    vuelta siguiente.
+    entrenando durante $10^6$ pasos con ese modelo, y su mejor copia se
+    convierte en candidata de la vuelta siguiente. Se previeron cuatro semillas
+    por marcha (401, 409, 419 y 421), pero por el error descrito en la
+    Tabla~\ref{tab:campanas-ppo} las cuatro dieron la misma ejecución, de modo
+    que en las vueltas realizadas cada marcha se reentrenó, en la práctica, con
+    una sola semilla.
 \end{enumerate}
 De este modo la selección se decide con el robot real y no con la simulación, y
 las discrepancias medidas en el robot se trasladan al entrenamiento. Una
