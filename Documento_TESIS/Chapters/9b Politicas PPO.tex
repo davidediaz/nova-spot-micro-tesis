@@ -267,13 +267,13 @@ del robot lee para reproducir exactamente la misma configuración.
 
 \subsection{Programa de control y realimentación}
 
-En el robot, la política se ejecuta en el PC con
-\path{ejecutar_politica_robot.py}. En cada paso de 30~ms el programa calcula la
+En el robot, la política se ejecuta con el programa de control
+\path{ejecutar_politica_robot.py} (en el PC durante los ensayos de octubre). En cada paso de 30~ms el programa calcula la
 referencia nominal, construye la observación con los sensores, evalúa la red
 (media de la gaussiana, sin muestreo), aplica las saturaciones, convierte los
 ángulos del modelo a grados de servo con la calibración de cada articulación y
-envía las doce órdenes al Arduino Uno por puerto serie (modo de transmisión
-continua del firmware); el Uno responde con todas las lecturas de sensores.
+envía las doce órdenes a la interfaz de E/S (modo de transmisión continua del
+firmware), que responde con todas las lecturas de sensores.
 
 Cada articulación usa una cadena de fuentes de realimentación: su sensor
 principal (potenciómetro leído a través del multiplexor analógico, o encoder

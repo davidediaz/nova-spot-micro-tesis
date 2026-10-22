@@ -20,13 +20,31 @@ duraron menos de 0,09~s y ninguna superó el criterio de persistencia de
 se concluyó que el patrón físico simulado todavía no coincide con la secuencia
 ideal de contactos.
 
-Los resultados descritos corresponden al estado verificable del proyecto. La
-caracterización física completa, la seguridad eléctrica, la calibración de los
-doce servomotores y la comparación final con una política de aprendizaje por
-refuerzo permanecen en desarrollo y no se presentan como logros terminados.
+En la fase física, el robot se operó suspendido con una arquitectura basada en
+una Raspberry~Pi~4, un controlador PWM PCA9685 y sensores articulares
+(potenciómetros y encoders magnéticos), registrados junto con hasta cinco
+cámaras sincronizadas.
+Con esos datos se identificó el actuador real (retardo de unos 99~ms,
+histéresis de 0,6 a $1{,}5^\circ$) y se midió la geometría del robot, y con
+ambos se entrenaron políticas PPO residuales en MuJoCo para dos marchas, gateo y
+trote, con entre cuatro y diez semillas por configuración. Un ciclo automático
+de prueba en el robot, actualización del modelo y reentrenamiento seleccionó las
+políticas con el robot real: la política de gateo redujo entre un 15 y un 19~\%
+el error medio de seguimiento y de desviación de las coxas frente a la marcha
+nominal en dos vueltas completas, y la de trote un 19~\% en una de ellas. La
+comparación con cámaras reveló y permitió corregir errores de la interfaz
+robot--modelo, como el sentido invertido de dos articulaciones y una postura
+base distinta de la simulada.
+
+Estos resultados se obtuvieron con el robot suspendido: miden el seguimiento de
+las órdenes y la estabilidad de las coxas, no el avance ni la estabilidad sobre
+el suelo. La validación de la locomoción apoyada, con medición de la
+orientación del cuerpo, y la realimentación de dos tibias sin sensor operativo
+permanecen pendientes y no se presentan como logros terminados.
 
 \textbf{Palabras clave:} robot cuadrúpedo, locomoción, ROS~2, Gazebo, MuJoCo,
-contacto, estabilidad, aprendizaje por refuerzo.
+contacto, estabilidad, aprendizaje por refuerzo, PPO, transferencia
+simulación--realidad.
 
 \chapter*{Abstract}
 \addcontentsline{toc}{chapter}{Abstract}
@@ -39,9 +57,20 @@ experiments demonstrated repeatable crawl and step trajectories in simulation.
 A 24-cycle experiment separated raw from debounced foot-contact observations.
 Rear-foot interruptions remained below 0.09~s and never met the 0.12~s
 persistence criterion; therefore, simulated forward motion did not demonstrate
-sustained rear-foot flight. Physical characterization, electrical safety,
-twelve-servo calibration, and the final reinforcement-learning comparison are
-still in progress and are not reported as completed results.
+sustained rear-foot flight.
+
+In the physical phase, the suspended robot was operated with an architecture
+based on a Raspberry Pi~4 and a PCA9685 PWM controller, with joint sensors
+(potentiometers and magnetic encoders) and up to five synchronized cameras. These data were used
+to identify the real actuator (about 99~ms delay) and the robot geometry, and
+residual PPO policies were trained in MuJoCo for crawl and trot gaits with four
+to ten seeds per configuration. An automatic loop of on-robot testing, model
+update and retraining selected policies on the real robot: the crawl policy
+reduced the mean tracking and hip-deviation error by 15--19~\% relative to the
+nominal gait in two complete rounds, and the trot policy by 19~\% in one round.
+These results were obtained with the robot suspended; they measure command
+tracking and hip stability, not locomotion on the ground, which remains to be
+validated.
 
 \textbf{Keywords:} quadruped robot, locomotion, ROS~2, Gazebo, MuJoCo,
-contact, stability, reinforcement learning.
+contact, stability, reinforcement learning, PPO, sim-to-real transfer.

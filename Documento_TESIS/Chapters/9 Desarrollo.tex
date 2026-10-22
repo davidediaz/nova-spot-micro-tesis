@@ -72,7 +72,7 @@ text width=3.0cm,minimum height=1.05cm,align=center,font=\small},
 guard/.style={diamond,draw,fill=red!10,aspect=2.0,align=center,font=\small},
 arrow/.style={-latex,semithick}]
 \node[done] (ros) {ROS~2, SSH y DDS\\verificados};
-\node[done,right=of ros] (i2c) {Arduino / Raspberry\\PCA9685 en 0x40};
+\node[done,right=of ros] (i2c) {Raspberry Pi\\PCA9685 en 0x40};
 \node[pending,right=of i2c] (oe) {Fusible, OE y\\parada física};
 \node[guard,below=of oe] (gate) {¿Seguridad\\aprobada?};
 \node[pending,left=of gate] (cal) {Calibración\\CH0--CH11};
