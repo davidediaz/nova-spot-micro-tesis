@@ -648,6 +648,66 @@ porque su causa cambia la lectura de los resultados:
     ensayos.
 \end{itemize}
 
+\subsection{Inventario de entrenamientos y ensayos}
+\label{sec:inventario}
+
+Las tablas~\ref{tab:inventario-entrenamientos} y~\ref{tab:inventario-ensayos}
+se generan automáticamente a partir de las carpetas de experimentos
+(anexo de comandos), de modo que se actualizan sin contar a mano.
+
+\input{Chapters/datos/inventario_resultados}
+
+En total se realizaron \InvTotal{} entrenamientos PPO: \InvSimulacion{} en la
+fase de simulación con el modelo nominal y \InvReal{} con el modelo del robot
+real, de los cuales \InvRealDistintas{} son ejecuciones distintas y
+\InvEnCurso{} seguían en curso al generar las tablas. En el robot suspendido se
+grabaron \InvGrabaciones{} sesiones de vídeo y sensores, de las cuales
+\InvCaminatasValidas{} son caminatas de comparación válidas y
+\InvCaminatasFallo{} se descartaron por la comprobación de salud
+(sección~\ref{sec:resultados-robot-fisico}). Se llevaron al robot doce
+políticas PPO: de gateo, la v4 (semilla 37, antes de instalar las cámaras), la
+v6 y la v10 (semilla 11), la v12 (semilla 41), la v14 (semilla 43) y las dos del
+ciclo de mejora (semilla 401); de paso, la v10 y la v11 (semilla 71), y de trote,
+la de la primera campaña (semilla 37) y dos de la v15 (semillas 307 y 211).
+
+\subsection{Mejores políticas por marcha}
+
+La Tabla~\ref{tab:mejores-politicas} reúne la mejor política de cada marcha
+según su comparación con la marcha nominal dentro de la misma sesión.
+
+\begin{table}[H]
+\centering
+\small
+\caption{Mejor política PPO de cada marcha en el robot suspendido (puntuación en grados, menor es mejor).}
+\label{tab:mejores-politicas}
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.1\textwidth}>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.55\textwidth}}
+\toprule
+Marcha & Política & Resultado frente a la marcha nominal \\
+\midrule
+Gateo & v14, semilla 43 (1,7~M pasos) & Menor puntuación en las vueltas 1 (1,52 frente a 1,87) y 2 (1,26 frente a 1,49) del ciclo; empate en la vuelta 3 (1,63 frente a 1,66, con una repetición nominal). \\
+Trote & v15, semilla 307 (0,1~M pasos) & Empate en la vuelta 1 (1,67 frente a 1,69) y mejora en la vuelta 2 (1,92 frente a 2,36). \\
+Paso & Ninguna aceptada & Las v10 (1,76 frente a 1,55) y v11 (1,69 frente a 1,59) quedaron por detrás. La candidata es la v16 (Tabla~\ref{tab:campanas-ppo}), pendiente de ensayo. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+La única sesión en que la v14 de gateo quedó por detrás de la marcha nominal
+(21 de octubre por la mañana, 4,56 frente a 3,44$^\circ$) es la que se excluye
+por las tibias fijas contra los topes y la escala sin recalibrar. Aun así, con
+dos o tres repeticiones por condición el orden entre políticas próximas puede
+cambiar de una sesión a otra.
+
+\subsection{Ensayos pendientes}
+
+Para cerrar la comparación faltan: el ensayo del paso v16 frente al paso
+nominal (cinco repeticiones por condición); completar al menos diez
+repeticiones válidas por marcha y condición, como fijó el plan metodológico
+(unas 45 a 50 caminatas adicionales con el robot suspendido), y los ensayos
+apoyados en el suelo con la IMU y el margen de estabilidad estática, que
+requieren antes la parada de emergencia y el fusible de la línea de los servos.
+No se prevén nuevas campañas de semillas salvo para refinar una política de
+paso que supere a la marcha nominal en el robot.
+
 \subsection{Alcance de estos resultados}
 
 Los resultados muestran que la política PPO de gateo, ejecutada en el robot

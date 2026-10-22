@@ -205,7 +205,7 @@ entrenando con la configuración nueva.
 
 \begin{table}[H]
 \centering
-\caption{Campañas PPO con el actuador real, 16 a 21 de octubre de 2026.}
+\caption{Campañas PPO con el actuador real, 16 a 22 de octubre de 2026.}
 \label{tab:campanas-ppo}
 \scriptsize
 \setlength{\tabcolsep}{3pt}
@@ -226,6 +226,7 @@ v14 & 21/10 & gateo, trote & gateo 13, 29, 41, 43, 67; trote 19, 31, 37, 47, 89 
 v15 & 21/10 & trote & 19, 211, 223, 241, 263, 281, 307 & 3--5 M & $w_{\text{av}}=20$, $w_{\text{suav}}=0{,}1$. Elegida: semilla 307 (0,1 M). \\
 ciclo 1 & 21/10 & gateo, trote & 401$^{\dagger}$ & +1 M & Continúan las ganadoras en el robot. Elegida gateo: copia de 2,7 M. \\
 ciclo 2 & 21/10 & gateo, trote & 401$^{\dagger}$ & +1 M & Actuador medido en el robot en la vuelta anterior. Elegida gateo: copia de 2,4 M. \\
+v16 & 22/10 & paso & continuación: 503, 509, 521, 523; desde cero: 541, 547, 557, 563 & 6,4 M / 3,0 M & Retoma el paso con el actuador medido (ciclo 2) y la postura corregida ($8^\circ$); las continuaciones parten de la v11 semilla 71 (4,9 M). En curso; la semilla 563 alcanzó la mayor recompensa ($\approx-32$ frente a $-125$ a $-150$). \\
 \bottomrule
 \multicolumn{6}{p{0.95\textwidth}}{\footnotesize $^{\dagger}$ Se lanzaron con las semillas 401, 409, 419 y 421, pero las cuatro ejecuciones resultaron idénticas: al continuar desde una política guardada, la biblioteca restaura la semilla almacenada en ella e ignora la indicada. Cada una de estas campañas equivale a una sola ejecución. El error se corrigió el 22 de octubre de 2026 (se impone la semilla pedida tras cargar la política).}
 \end{tabular}
