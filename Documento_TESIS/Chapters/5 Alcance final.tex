@@ -3,8 +3,9 @@
 El proyecto abordó la reactivación progresiva del robot cuadrúpedo Nova Spot
 Micro mediante modelado, simulación, control de locomoción, preparación
 electrónica y entrenamiento y evaluación de una capa correctiva de aprendizaje por refuerzo.
-El sistema se limitó a postura y locomoción de baja velocidad tipo paso y gateo
-sobre una superficie plana y bajo condiciones controladas.
+El sistema se limitó a postura y locomoción de baja velocidad tipo gateo, paso
+y trote, evaluadas en simulación y en el robot físico suspendido, bajo
+condiciones controladas.
 
 \section{Componentes desarrollados}
 
@@ -16,8 +17,15 @@ supervisor, fase de marcha, contacto, IMU y margen de estabilidad nominal.
 \item Se implementaron y evaluaron en simulación postura, marcha paso y gateo.
 El galope se conservó únicamente como experimento opcional, deshabilitado por
 defecto y excluido de los criterios principales.
-\item Se preparó la Raspberry Pi, se verificó comunicación DDS e I$^2$C y se
-realizaron pruebas progresivas del PCA9685 sin autorizar una marcha física.
+\item Se preparó la Raspberry Pi como controlador embebido, se verificó
+comunicación DDS e I$^2$C y se realizaron pruebas progresivas del PCA9685.
+\item Se instrumentaron las articulaciones con potenciómetros y encoders
+magnéticos, se identificó el actuador real y se ejecutaron marchas nominales y
+políticas PPO en el robot suspendido, con registro sincronizado de sensores y
+hasta cinco cámaras.
+\item Se entrenaron y seleccionaron políticas PPO residuales con el actuador
+identificado, mediante un ciclo que evalúa las candidatas en el robot y
+actualiza el modelo con sus datos.
 \item Se definieron el protocolo, las métricas, las cantidades experimentales y
 las semillas para la comparación final.
 \end{itemize}
@@ -29,16 +37,19 @@ entorno ni locomoción rápida sobre terreno irregular. La política aprendida n
 comandará directamente PWM ni sustituirá límites articulares, saturaciones o el
 supervisor independiente.
 
-El modelo actual se consideró nominal computable porque no se completó la
-identificación física de geometría, masas, fricción, holgura y actuadores. El
-margen de estabilidad calculado en simulación no se presentó como medición
-física. Tampoco se reportó seguimiento articular real, ya que el PCA9685 no
-proporciona realimentación de posición.
+Se identificaron la geometría de las patas y el actuador (retardo, zona
+muerta, histéresis y saturación), pero no las masas, inercias ni la fricción, por
+lo que el modelo sigue considerándose nominal computable y no un gemelo
+digital. El margen de estabilidad calculado en simulación no se presentó como
+medición física. El seguimiento articular real se midió con los sensores
+añadidos, salvo en dos tibias sin sensor operativo, que se estimaron con la
+orden.
 
-El entrenamiento PPO fue ejecutado, pero la estrategia evaluada no demostró
-la mejora requerida y no fue aceptada para transferencia. La seguridad eléctrica,
-calibración, ejecución física y validación del modelo siguen abiertas para
-OE1 y OE2. OE3 requiere demostrar estabilidad y continuidad del control aprendido
+La primera estrategia PPO, entrenada con el modelo nominal, no demostró la
+mejora requerida y no fue aceptada para transferencia. Las estrategias
+posteriores, entrenadas con el actuador identificado, sí se ejecutaron en el
+robot suspendido. La seguridad eléctrica y la alimentación (separación entre
+electrónica y servos) siguen abiertas para OE1. OE3 requiere demostrar estabilidad y continuidad del control aprendido
 en paso y gateo. OE4 exige completar la Prueba de Margen de Estabilidad Estática,
 la Prueba de Seguimiento de Posición Articular y la Prueba de Repetibilidad del
 Patrón de Marcha; la evidencia parcial en simulación no cierra su evaluación integral.
@@ -47,8 +58,9 @@ Patrón de Marcha; la evidencia parcial en simulación no cierra su evaluación 
 
 Se obtuvieron código versionado, modelos de simulación, documentación
 matemática, controladores nominales, pruebas automatizadas, bolsas de datos,
-analizadores, informes y un protocolo experimental. La entrega final deberá
-añadir la caracterización física completa, diagramas y validación de seguridad,
-calibraciones, una estrategia aprendida validada, conjuntos de datos físicos y comparación
-estadística final. La separación evita presentar productos esperados como si
+analizadores, informes, un protocolo experimental, un conjunto de datos físicos
+(caminatas con sensores y video sincronizados), políticas PPO seleccionadas en
+el robot y su comparación con la marcha nominal. Quedan abiertas la validación
+de seguridad eléctrica, la locomoción apoyada con medición de la orientación
+del cuerpo y una comparación estadística con más repeticiones. La separación evita presentar productos esperados como si
 hubieran sido obtenidos.

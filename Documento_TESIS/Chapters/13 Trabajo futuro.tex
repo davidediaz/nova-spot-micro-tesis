@@ -10,9 +10,12 @@ tesis.
 \section{Plataforma física instrumentada}
 
 Una primera línea consiste en consolidar la plataforma como banco experimental
-instrumentado. La adquisición de posición articular mediante los doce AS5600
-permitiría implementar seguimiento cerrado de cada articulación, estimar
-velocidades articulares y registrar holgura, retardo y repetibilidad. La
+instrumentado. La realimentación articular de esta tesis (potenciómetros y
+encoders) ya permite medir seguimiento, retardo, holgura y repetibilidad, pero
+dos tibias quedaron sin sensor operativo y varios encoders tienen imanes débiles.
+Completar la cobertura con un sensor fiable por articulación y migrar el bucle de
+control a la Raspberry~Pi, con un convertidor ADS1115 para los potenciómetros y
+una fuente adecuada, cerraría la arquitectura embebida prevista. La
 incorporación posterior de una IMU, sensores de contacto en los pies y medición
 de tensión y corriente permitiría observar la orientación corporal, el apoyo y
 el esfuerzo eléctrico durante la locomoción. Con esta instrumentación, la
@@ -52,9 +55,10 @@ experimentos comparables sin alterar la arquitectura cinemática de base.
 
 El generador cinemático actual puede extenderse desde postura, paso y gateo
 hacia transiciones suaves entre marchas, cambios de dirección, giro sobre el
-sitio, retroceso y regulación de velocidad. Una vez caracterizada la respuesta
-de las articulaciones, también podrían explorarse marchas más rápidas, como el
-trote, y estrategias de recuperación ante pequeñas perturbaciones. Estas
+sitio, retroceso y regulación de velocidad. El trote ya se implementó y se
+ejecutó con el robot suspendido; su ensayo sobre el suelo, junto con marchas más
+rápidas y estrategias de recuperación ante pequeñas perturbaciones, requiere
+antes una alimentación capaz de sostener sus picos de corriente. Estas
 extensiones deberían conservar límites articulares, velocidad acotada,
 supervisión independiente y criterios de parada, de modo que el aumento de
 movilidad no comprometa la seguridad de la plataforma.
@@ -69,7 +73,10 @@ orientación, contacto y estimadores de estado. La aleatorización de parámetro
 la adaptación de dominio y la comparación contra una referencia nominal
 permitirían estudiar qué correcciones mejoran el desempeño sin reemplazar las
 capas deterministas de seguridad. Esta línea es adecuada para evaluar
-transferencia simulación--real de manera incremental y trazable.
+transferencia simulación--real de manera incremental y trazable. El siguiente
+paso natural del ciclo de mejora de esta tesis es llevarlo al robot apoyado,
+con una IMU que permita medir avance e inclinación, y sustituir el modelo
+analítico del actuador por uno aprendido de los propios datos del robot.
 
 \section{Percepción, navegación y autonomía}
 

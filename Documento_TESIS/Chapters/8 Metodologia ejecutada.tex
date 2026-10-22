@@ -123,6 +123,21 @@ El ensayo es la unidad independiente; los ciclos no se tratarán como réplicas.
 Las semillas de entrenamiento se fijaron en 11, 23, 37, 53 y 71, y los
 escenarios de evaluación emparejada en 101, 202, 303, 404 y 505.
 
-Esta comparación no se ejecutó aún. Antes deben cerrarse la caracterización
-física, la seguridad eléctrica, la calibración de los doce servos, la marcha
-nominal física y el entrenamiento reproducible de las políticas.
+Esta comparación, prevista sobre el suelo, no se ejecutó aún. En su lugar se
+realizó una comparación con el robot suspendido, descrita en el
+capítulo~\ref{cap:plataforma-fisica}: varias repeticiones de 3~min por
+condición, en orden alternado, con comprobación de salud tras cada caminata. Las
+semillas de entrenamiento se ampliaron más allá de las cinco congeladas
+(capítulo~\ref{cap:ppo-fisico}), y la selección final de las políticas se
+hizo con los datos del robot.
+
+\section{Fase experimental en el robot físico}
+
+La fase física siguió una progresión de menor a mayor riesgo: pruebas por canal
+del PCA9685; identificación de cada articulación y de sus sensores; marcha
+nominal en lazo abierto con el robot suspendido; identificación del actuador con
+esas caminatas; entrenamiento de políticas con el actuador identificado;
+ejecución de las políticas en el robot suspendido; y, por último, un ciclo de
+mejora que alterna pruebas en el robot, actualización del modelo y
+reentrenamiento. En cada paso, los datos del robot (sensores y cámaras) se usaron
+para detectar diferencias con la simulación antes de avanzar al siguiente.

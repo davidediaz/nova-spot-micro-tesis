@@ -35,7 +35,9 @@ la marcha nominal y la misma marcha nominal con corrección aprendida. El
 funcionamiento se juzga mediante margen de estabilidad estática, seguimiento de
 posición articular y repetibilidad del patrón de marcha, de modo que una mejora
 solo puede aceptarse si conserva continuidad, estabilidad y repetibilidad bajo
-las mismas condiciones experimentales. Las campañas ejecutadas hasta el momento
-permiten documentar modelos, simulación, supervisión y resultados negativos de
-PPO residual; no autorizan todavía afirmar una mejora aprendida ni transferirla
-al prototipo físico.
+las mismas condiciones experimentales. Las primeras campañas, en simulación,
+documentaron modelos, supervisión y un resultado negativo de PPO residual. Las
+campañas posteriores, con un modelo del actuador identificado en el robot real,
+llevaron las políticas al prototipo físico suspendido, donde la política de gateo
+mejoró el seguimiento y la estabilidad de las coxas frente a la marcha nominal.
+La validación de la locomoción apoyada en el suelo sigue pendiente.
