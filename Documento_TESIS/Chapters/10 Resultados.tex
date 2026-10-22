@@ -497,3 +497,151 @@ masa reducida 10~\%. La criba no incluye contacto ni movimiento del cuerpo; los
 ensayos de fricción de suelo, empujes, ruido y retardos quedan definidos en el
 protocolo de perturbaciones Gazebo y pendientes de implementar con inyectores
 reproducibles.
+
+\section{Evaluación de las políticas PPO en el robot físico suspendido}
+\label{sec:resultados-robot-fisico}
+
+Esta sección reúne las pruebas de las políticas del
+capítulo~\ref{cap:ppo-fisico} en el robot real entre el 19 y el 21 de octubre de
+2026. En todas el robot estuvo suspendido, sin apoyar las patas en el suelo, y
+se registraron los sensores articulares a 30~Hz y entre cuatro y cinco cámaras
+sincronizadas.
+
+\subsection{Métricas}
+
+Para cada caminata de 3~min se calculan, a partir de los sensores:
+\begin{itemize}
+    \item el \textbf{error de seguimiento} de cada fémur y tibia: error RMS entre
+    la orden y la posición medida, tras compensar el retardo (grados);
+    \item la \textbf{desviación de las coxas}: diferencia media entre la posición
+    medida de cada coxa y su orden fija (grados);
+    \item la \textbf{correlación} $r$ entre orden y posición medida, usada como
+    comprobación de salud (umbral de 0,90 en gateo y paso y de 0,80 en trote);
+    \item la \textbf{puntuación} de una condición: media de los errores y
+    desviaciones anteriores; menor es mejor;
+    \item la \textbf{repetibilidad}: coeficiente de variación (CV) de cada
+    métrica entre las repeticiones de una misma condición.
+\end{itemize}
+Cada caminata completa es una réplica; los ciclos de una caminata no se tratan
+como réplicas independientes. Las condiciones se ejecutaron en orden alternado
+entre rondas para no favorecer a ninguna por el calentamiento de los servos.
+
+\subsection{Sesiones de repetibilidad}
+
+La Tabla~\ref{tab:repetibilidad-fisica} resume las sesiones con tres
+repeticiones por condición. Dentro de un mismo día las repeticiones fueron muy
+parecidas (CV del 2 al 11~\% el 20 de octubre), pero entre días el nivel
+cambió: el 20 de octubre las coxas se desviaron $\approx1{,}0$--$1{,}4^\circ$
+frente a $\approx0{,}5^\circ$ el 19, en todas las condiciones. Por eso las
+comparaciones entre la marcha nominal y PPO se hacen siempre dentro de una
+misma sesión.
+
+\begin{table}[H]
+\centering
+\caption{Puntuación media en el robot (grados) y CV entre repeticiones, tres repeticiones por condición.}
+\label{tab:repetibilidad-fisica}
+\small
+\begin{tabular}{llrrl}
+\toprule
+Sesión & Condición & Puntuación ($^\circ$) & CV (\%) & Política \\
+\midrule
+19/10 & Gateo nominal & 1,04 & 23,2 & --- \\
+19/10 & Gateo PPO & 0,99 & 39,3 & v10 semilla 11 \\
+19/10 & Paso nominal & 0,99 & 30,4 & --- \\
+19/10 & Paso PPO & 1,14 & 29,4 & v10 semilla 71 \\
+\midrule
+20/10 & Gateo nominal & 1,31 & 8,0 & --- \\
+20/10 & Gateo PPO & 1,29 & 3,7 & v10 semilla 11 \\
+20/10 & Paso nominal & 1,55 & 3,9 & --- \\
+20/10 & Paso PPO & 1,76 & 10,7 & v10 semilla 71 \\
+\midrule
+20/10 tarde & Paso nominal & 1,59 & 2,4 & --- \\
+20/10 tarde & Paso PPO & 1,69 & 3,5 & v11 semilla 71 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+En estas sesiones el gateo PPO igualó o mejoró ligeramente a la marcha nominal
+y fue más repetible (CV del 3,7~\% frente al 8,0~\% el 20 de octubre), mientras
+que el paso PPO quedó por detrás de la marcha nominal; la versión 11, con las
+penalizaciones de suavidad y de coxas, redujo esa diferencia (de $0{,}21$ a
+$0{,}10^\circ$) sin eliminarla. Estas tres sesiones son anteriores a la
+corrección del signo de las tibias izquierdas, de la postura base y de la escala
+de los sensores, por lo que no son comparables en valor absoluto con las
+siguientes. La sesión del 21 de octubre por la mañana se excluye: en ella las
+tibias 2 y 4 quedaron fijas contra los topes del firmware y la escala de los
+potenciómetros aún no se había recalibrado, de modo que sus errores
+($3$--$4^\circ$) no reflejan el seguimiento real.
+
+\subsection{Ciclo de mejora en el robot}
+
+Tras las correcciones del 21 de octubre se ejecutaron tres vueltas del ciclo de
+mejora, con dos repeticiones por condición, Tabla~\ref{tab:ciclo-mejora}.
+
+\begin{table}[H]
+\centering
+\caption{Puntuación en el robot (grados, menor es mejor) en las vueltas del ciclo de mejora.}
+\label{tab:ciclo-mejora}
+\small
+\begin{tabular}{lrrrrr}
+\toprule
+Vuelta & Gateo nominal & Gateo PPO v14 & Gateo PPO nueva & Trote nominal & Trote PPO \\
+\midrule
+1 & 1,87 & \textbf{1,52} & --- & 1,69 & \textbf{1,67} \\
+2 & 1,49 & \textbf{1,26} & 1,31 & 2,36 & \textbf{1,92} \\
+3$^{*}$ & 1,66 & 1,63 & \textbf{1,24} & 1,32 & --- \\
+\bottomrule
+\multicolumn{6}{p{0.9\textwidth}}{\footnotesize $^{*}$ Vuelta 3 incompleta: el gateo nominal, la PPO nueva
+y el trote nominal tienen una repetición válida cada uno, y el trote PPO se
+interrumpió por un reinicio del controlador.
+Gateo PPO v14: semilla 43 (1,7~M pasos). Gateo PPO nueva: vuelta 2, semilla 401
+de la campaña ciclo~1 (2,7~M); vuelta 3, semilla 401 de la campaña ciclo~2
+(2,4~M), la primera entrenada con el actuador medido en el robot en el propio
+ciclo. Trote PPO: v15 semilla 307 (0,1~M); en la vuelta 1 compitió también la
+semilla 211 de la v15 (3,0~M), con 2,03$^\circ$.}
+\end{tabular}
+\end{table}
+
+En las tres vueltas la política PPO de gateo obtuvo una puntuación menor que la
+marcha nominal ($-19$~\% en la vuelta 1 y $-15$~\% en la vuelta 2), y la
+política entrenada con el actuador medido en el robot obtuvo la menor
+puntuación de todo el ciclo ($1{,}24^\circ$), aunque con una sola repetición
+válida. En el trote, la PPO empató con la marcha nominal en la vuelta 1 y la
+mejoró en la vuelta 2 ($-19$~\%). La actualización del modelo del actuador con
+las caminatas de la vuelta 2 midió un retardo de 99~ms en todas las
+articulaciones con sensor, una histéresis de 0,6 a $1{,}5^\circ$ y un error que
+el modelo no explica de $1{,}8^\circ$ de media (brecha robot--modelo).
+
+\subsection{Ensayos inválidos y su interpretación}
+
+Se conservan y explican los ensayos detenidos por la comprobación de salud,
+porque su causa cambia la lectura de los resultados:
+\begin{itemize}
+    \item \textbf{Temporización.} Dos caminatas de trote PPO del 21 de octubre
+    (19:34 y 19:51) dieron $r=0{,}68$--$0{,}76$ en los fémures 2 a 4. Tuvieron
+    448 y 714 pasos con más de 40~ms de retraso, frente a 0 o 1 en la
+    repetición válida ($r=0{,}96$--$0{,}97$) hecha con el PC descargado. No
+    indican un fallo del robot ni del bus I²C, sino un bucle de control
+    retrasado por la carga del PC; tras reservar núcleos para el control
+    (capítulo~\ref{cap:ppo-fisico}) no se repitió.
+    \item \textbf{Reinicio del controlador.} Un trote PPO de la vuelta 3 se
+    interrumpió a los 45~s porque el Arduino dejó de responder; su contador
+    interno confirmó un reinicio en ese instante, compatible con una caída de
+    tensión durante los picos de corriente del trote.
+    \item \textbf{Desgaste.} Al final de la jornada del 21 de octubre, sin pasos
+    tardíos, los fémures 2 a 4 siguieron la orden con $r=0{,}88$--$0{,}93$
+    frente a $0{,}97$--$0{,}99$ por la mañana, tras unas doce horas de
+    ensayos.
+\end{itemize}
+
+\subsection{Alcance de estos resultados}
+
+Los resultados muestran que la política PPO de gateo, ejecutada en el robot
+físico, sigue la marcha con menor error y desvía menos las coxas que la marcha
+nominal, de forma repetida en varias sesiones y vueltas. No muestran una mejora
+de la locomoción: con el robot suspendido no se midieron avance, desvío ni
+inclinación del cuerpo, que son los objetivos para los que se diseñó la
+recompensa. Las dos tibias sin sensor (1 y 3) se evaluaron con la orden como
+estimación, el número de repeticiones por condición es pequeño (dos o tres) y
+la vuelta 3 quedó incompleta. La validación sobre el suelo, con medición del
+movimiento del cuerpo, sigue pendiente.
