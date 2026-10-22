@@ -15,8 +15,10 @@ Gateo nominal & Cinco ensayos, 191 ciclos de régimen; 0,023955 m/ciclo y 0,0055
 Marcha paso & Dos ensayos nominales; cerca de 0,02167 m/ciclo y 5,76 s/ciclo. & Gazebo; MuJoCo cubre cadencia y articulaciones. \\
 Contacto trasero & Precarga 2,0: dos ensayos de 18 ciclos con 18/18 vuelos filtrados por pata trasera. & Candidato confirmado solo en simulación. \\
 Supervisor & Nueve escenarios provocados emitieron motivo, activación y \texttt{stand}. & Integración ROS~2; no corte eléctrico. \\
-PPO residual & Cinco semillas y barrido de escala; ninguna escala positiva cumplió el criterio conjunto. & Resultado negativo; transferencia bloqueada. \\
-Modelo & 52.111 configuraciones exploradas; postura nominal con $\sigma_{\min}=0{,}038037$ m/rad. & Modelo nominal aún no identificado físicamente. \\
+PPO residual (modelo nominal) & Cinco semillas y barrido de escala; ninguna escala positiva cumplió el criterio conjunto. & Resultado negativo en simulación; transferencia bloqueada. \\
+Modelo & 52.111 configuraciones exploradas; postura nominal con $\sigma_{\min}=0{,}038037$ m/rad. Geometría de patas y actuador identificados en el robot. & Masas, inercias y fricción sin identificar. \\
+Marchas en el robot & Gateo y trote nominales ejecutados con el robot suspendido; repeticiones de 3~min con CV entre 2 y 11~\% en una misma sesión. & Robot suspendido; sin medición de avance ni inclinación. \\
+PPO con actuador real & Políticas seleccionadas en el robot; gateo $-15$ a $-19$~\% de error frente a la marcha nominal en dos vueltas, trote $-19$~\% en una. & Seguimiento y estabilidad de coxas; locomoción apoyada sin medir. \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -129,8 +131,10 @@ la nueva política MuJoCo. La sincronización por fase opera aproximadamente en
 tiempo real; la corrida se detuvo en 500 pasos y no produjo una política final.
 La adaptación de paso en Gazebo no se inició. El resultado extendido queda por
 tanto como evidencia adicional de simulación MuJoCo, no autoriza transferencia
-al robot y no modifica la conclusión de que PPO permanece pendiente de
-aceptación.
+al robot y no modifica la conclusión de que esta política, entrenada con el
+modelo nominal, no se acepta. Las políticas entrenadas después con el actuador
+identificado sí se ejecutaron en el robot
+(sección~\ref{sec:resultados-robot-fisico}).
 
 \begin{figure}[p]
 \centering

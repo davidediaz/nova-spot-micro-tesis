@@ -23,7 +23,7 @@ La capa correctiva pasó por cuatro entornos, cada uno más cercano al robot:
     reentrenamiento extendido, con mejora de avance en simulación pero sin
     modelo identificado del actuador.
     \item \textbf{MuJoCo con el actuador real} (desde el 16 de octubre): entorno
-    \texttt{NovaRealEnv} (\path{Experimentos/entrenamiento_real_20261016/entrenar_ppo_real.py}).
+    \texttt{NovaRealEnv} (programa \path{entrenar_ppo_real.py}).
     La marcha nominal es la misma que ejecuta el robot, el actuador se
     identifica con sus sensores y la observación se limita a lo que el robot
     puede medir. Es el entorno de todas las campañas de este capítulo.
@@ -208,7 +208,8 @@ entrenando con la configuración nueva.
 \caption{Campañas PPO con el actuador real, 16 a 21 de octubre de 2026.}
 \label{tab:campanas-ppo}
 \scriptsize
-\begin{tabular}{p{0.11\textwidth}p{0.06\textwidth}p{0.07\textwidth}p{0.2\textwidth}p{0.08\textwidth}p{0.36\textwidth}}
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{p{0.1\textwidth}p{0.06\textwidth}p{0.07\textwidth}p{0.19\textwidth}p{0.08\textwidth}p{0.4\textwidth}}
 \toprule
 Versión & Fecha & Marcha & Semillas & Pasos & Cambio principal y resultado \\
 \midrule
@@ -301,7 +302,7 @@ análisis posterior.
 \centering
 \caption{Fuentes de realimentación por articulación al 21 de octubre de 2026.}
 \label{tab:sensores-articulaciones}
-\small
+\footnotesize
 \begin{tabular}{llll}
 \toprule
 Articulación & Principal & Respaldo & Estado \\

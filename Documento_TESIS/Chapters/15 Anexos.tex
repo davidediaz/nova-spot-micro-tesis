@@ -59,6 +59,7 @@ postura base del robot a la de la simulación con las cámaras.
 
 La construcción y las pruebas deterministas se ejecutan desde la raíz:
 
+{\footnotesize
 \begin{verbatim}
 source /opt/ros/humble/setup.bash
 colcon build --packages-select \
@@ -66,14 +67,17 @@ colcon build --packages-select \
 source install/setup.bash
 python3 -m pytest -q src/nova_gait_controller/test
 \end{verbatim}
+}
 
 Los nueve escenarios dinámicos del supervisor se reproducen con:
 
+{\footnotesize
 \begin{verbatim}
 ROS_DOMAIN_ID=93 \
 Experimentos/ejecutar_pruebas_dinamicas_supervisor.sh \
   /tmp/pruebas_dinamicas_supervisor
 \end{verbatim}
+}
 
 La línea base se lanza con \texttt{demo.launch.py}; antes de grabar se debe
 comprobar instancia única mediante \texttt{ros2 node list | sort | uniq -c} y
@@ -90,6 +94,7 @@ con marca \texttt{ENSAYO\_INVALIDO.md}.
 Entrenamiento de una semilla con el actuador real (ejemplo de gateo, desde
 \path{Experimentos/entrenamiento_real_20261016}):
 
+{\footnotesize
 \begin{verbatim}
 python -I entrenar_ppo_real.py --completo --aleatorizar \
   --marcha gateo --femur 15 --tibia 10 --apertura 8 \
@@ -99,10 +104,12 @@ python -I entrenar_ppo_real.py --completo --aleatorizar \
   --w-giro-ciclo 5 --w-suavidad 0.3 --w-coxas 1.0 \
   --seed 13 --output ppo_v14_gateo
 \end{verbatim}
+}
 
 Selección de la mejor copia de una campaña y prueba en el robot (desde
 \path{Experimentos/camaras}):
 
+{\footnotesize
 \begin{verbatim}
 python -I ../entrenamiento_real_20261016/seleccionar_copias.py \
   --marcha gateo --carpeta ppo_v14_gateo --semillas 2
@@ -113,6 +120,7 @@ python3 protocolo_repetibilidad.py --sesion <nombre> --repeticiones 3 \
 python3 analizar_repetibilidad.py --sesion <nombre>
 python3 ciclo_mejora.py --vueltas 2
 \end{verbatim}
+}
 
 Las figuras de la fase física se regeneran con
 \path{Documento_TESIS/generar_figuras_ppo_fisico.py}. Los videos no se versionan
