@@ -35,6 +35,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--salida", type=Path, default=HERE / f"revision_sensores_{time.strftime('%Y%m%d_%H%M%S')}.csv")
     ap.add_argument("--amplitud", type=float, default=8.0, help="amplitud de fémures y tibias (°); coxas 5/8 de ella")
+    ap.add_argument("--completo", action="store_true",
+                    help="26-oct: lee los 16 canales del MUX (M0-M15) y los 16 encoders posibles (E70_0-E71_7)")
     a, _ = ap.parse_known_args()
     E.APERTURA_DEG = 8.0
     stand = np.tile(E.STAND, 4).astype(float)
@@ -50,8 +52,10 @@ def main():
             esperado[canal] = [c["campo"]] + ([c["respaldo"]["campo"]] if "respaldo" in c else []) + \
                 (["(sin_sensor)"] if c.get("sin_sensor") else [])
 
+    campos = R.SENSORES + ([f"M{c}" for c in range(16)] +
+                           [f"E{0x70 if c < 8 else 0x71:x}_{c % 8}" for c in range(16)] if a.completo else [])
     fd = R.abrir("/dev/ttyACM0"); lec = R.Lector(fd)
-    time.sleep(2.0); os.read(fd, 4096); os.write(fd, b"@")
+    time.sleep(2.0); os.read(fd, 4096); os.write(fd, b"$" if a.completo else b"@")
     while True:
         l = lec.linea(timeout=8.0)
         if l is None:
@@ -63,7 +67,8 @@ def main():
     def enviar(g, canal):
         os.write(fd, ("S," + ",".join(map(str, g)) + "\n").encode())
         r = lec.linea(timeout=0.3)
-        v = [int(x) for x in r.split(",")[2:]] if r and r.startswith("R,") else [-2] * len(R.SENSORES)
+        v = [int(x) for x in r.split(",")[2:]] if r and r.startswith("R,") else []
+        v = (v + [-2] * len(campos))[:len(campos)]
         filas.append([time.time(), canal, *g, *v])
         time.sleep(DT)
 
@@ -89,7 +94,7 @@ def main():
 
     with a.salida.open("w", newline="") as f:
         w = csv.writer(f)
-        w.writerow(["t", "canal_movido", *[f"orden_{i}" for i in range(12)], *R.SENSORES])
+        w.writerow(["t", "canal_movido", *[f"orden_{i}" for i in range(12)], *campos])
         w.writerows(filas)
     d = np.array(filas, float)
     sens = d[:, 14:]
@@ -100,7 +105,9 @@ def main():
         m = d[:, 1] == canal
         orden = d[m, 2 + canal]
         mejor = {}
-        for j, campo in enumerate(R.SENSORES):
+        for j, campo in enumerate(campos):
+            if a.completo and j < len(R.SENSORES):
+                continue                              # en modo completo se miran solo M* y E*
             x = sens[m, j]
             if (x < 0).mean() > 0.2 or np.ptp(x) == 0:
                 continue
@@ -109,7 +116,7 @@ def main():
                 if np.std(o) == 0 or np.std(s) == 0:
                     continue
                 r = np.corrcoef(o, s)[0, 1]
-                tipo = "enc" if campo.startswith("ENC") else "pot"
+                tipo = "enc" if campo.startswith("E") else "pot"
                 if abs(r) > abs(mejor.get(tipo, (0, 0, ""))[0]):
                     mejor[tipo] = (r, np.polyfit(o, s, 1)[0], campo)
         celdas = []
@@ -127,11 +134,11 @@ def main():
             estado = "OK"
         pata = canal % 4 + 1
         lineas.append(f"| {NOMBRE[canal // 4]} {pata} | {canal} | {', '.join(esp) or '—'} | {celdas[0]} | {celdas[1]} | {estado} |")
-    perdidas = {c: (sens[:, j] < 0).mean() for j, c in enumerate(R.SENSORES)}
+    perdidas = {c: (sens[:, j] < 0).mean() for j, c in enumerate(campos)}
     ruido = {c: np.std(sens[reposo, j][sens[reposo, j] >= 0]) if (sens[reposo, j] >= 0).any() else np.nan
-             for j, c in enumerate(R.SENSORES)}
+             for j, c in enumerate(campos)}
     lineas += ["", "| Campo | Lecturas perdidas | Ruido en reposo (desv. típica) |", "|---|---|---|"]
-    lineas += [f"| {c} | {perdidas[c] * 100:.0f} % | {ruido[c]:.1f} |" for c in R.SENSORES]
+    lineas += [f"| {c} | {perdidas[c] * 100:.0f} % | {ruido[c]:.1f} |" for c in campos]
     texto = "\n".join(lineas)
     a.salida.with_suffix(".md").write_text(texto + "\n")
     print(texto)
