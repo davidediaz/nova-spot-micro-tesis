@@ -7,7 +7,7 @@
       "campo": "ENC_T1",
       "k": 1.103
     },
-    "nota_respaldo": "26-oct: el cable del encoder de la tibia 1 (TCA 0x70/0, campo ENC_T1) se conectó al encoder del fémur 2; r=0,97 con la orden del canal 5."
+    "nota_respaldo": "26-oct: encoder del fémur 2 en TCA 0x70/4 (campo ENC_T1 del modo @); r=0,97 con la orden del canal 5."
   },
   "rear_left_femur_joint": {
     "campo": "C6",
