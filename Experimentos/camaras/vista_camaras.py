@@ -8,7 +8,9 @@ Tecla q, Esc o la X de la ventana: cerrar (libera las cámaras para grabar).
 
 Uso: python3 vista_camaras.py
 """
+import fcntl
 import subprocess
+import sys
 import threading
 import time
 
@@ -145,6 +147,13 @@ FFMPEG_WIN = (r"C:\Users\rapio\AppData\Local\Microsoft\WinGet\Packages\Gyan.FFmp
 
 
 def main():
+    # 26-oct: una sola ventana a la vez; dos copias se quitaban las cámaras entre sí (y la de Windows).
+    global _cerrojo
+    _cerrojo = open("/tmp/vista_camaras.lock", "w")
+    try:
+        fcntl.flock(_cerrojo, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except BlockingIOError:
+        sys.exit("vista_camaras.py ya está abierta; ciérrala (tecla q) antes de abrir otra.")
     # 21-oct: cinco cámaras; las USB por su ruta fija (/dev/v4l/by-id), que no cambia al reconectarlas.
     camaras = [
         Camara("1 HP de este PC", local_ffmpeg("/dev/v4l/by-id/usb-Quanta_HP_Wide_Vision_HD_Camera_0001-video-index0",
