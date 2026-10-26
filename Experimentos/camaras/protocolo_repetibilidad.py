@@ -23,7 +23,7 @@ from pathlib import Path
 AQUI = Path(__file__).resolve().parent
 
 
-def salud(carpeta, duracion):
+def salud(carpeta, duracion, umbral_fijo=None):
     diag = carpeta / "diagnostico.json"
     if not diag.exists():
         return "sin diagnóstico (caminata sin datos)"
@@ -32,6 +32,9 @@ def salud(carpeta, duracion):
     # su umbral es 0,8; el del gateo y el paso sigue en 0,9.
     cfg = carpeta / "caminata.config.json"
     umbral = 0.8 if cfg.exists() and json.loads(cfg.read_text()).get("marcha") == "trote" else 0.9
+    # 26-oct: --umbral-salud lo fija a mano (fémur 4 con potenciómetro ruidoso tras recablear: r ≈ 0,83-0,88).
+    if umbral_fijo is not None:
+        umbral = umbral_fijo
     # 21-oct: si muchos pasos llegan tarde, el seguimiento bajo es del PC (carga), no del robot.
     tarde = d["periodo_ms"]["pasos_mas_de_40ms"] / max(1, d.get("pasos", 5400))
     if tarde > 0.03:
@@ -48,6 +51,7 @@ def salud(carpeta, duracion):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--sesion", required=True)
+    ap.add_argument("--umbral-salud", type=float, help="r mínimo de los fémures (por defecto 0,9; trote 0,8)")
     ap.add_argument("--repeticiones", type=int, default=3)
     ap.add_argument("--duracion-s", type=float, default=180)
     ap.add_argument("--pausa-s", type=float, default=30)
@@ -89,7 +93,7 @@ def main():
                 time.sleep(5)
             # 20-oct: comprobación de salud. Una caminata corta o con fémures que no siguen la orden
             # indica fallo del bus I2C o de la alimentación: se detiene el protocolo.
-            problema = salud(AQUI / "grabaciones" / carpeta, a.duracion_s)
+            problema = salud(AQUI / "grabaciones" / carpeta, a.duracion_s, a.umbral_salud)
             if problema:
                 print("  DETENIDO:", problema, flush=True)
                 (AQUI / "grabaciones" / carpeta / "invalida.txt").write_text(problema + "\n")
