@@ -115,7 +115,7 @@ ServoPrueba servo[NUM_SERVOS] = {
   {"Femur 2", 5, 100,  4, true},
   {"Femur 3", 6, 100,  4, true},
   {"Femur 4", 7, 100, -4, true},
-  {"Tibia 1", 8, 100,  4, true},  // 19-oct: servo reparado por el operador; vuelve a usarse.
+  {"Tibia 1",12, 100,  4, true},  // 26-oct: el operador la paso de CH8 a CH12 (CH8 no la movia).
   {"Tibia 2", 9,  80,  0, false}, // 19-oct: el operador la paso a CH9.
   {"Tibia 3",10, 100,  4, true},  // 19-oct: el operador la paso a CH10.
   {"Tibia 4",14,  70, -4, false}, // 19-oct: el operador la tiene en CH14 (CH11 y CH12 vacios).
@@ -134,10 +134,11 @@ int limitarAngulo(int angulo) {
 // Protegen cualquier orden del firmware. Canales sin articulacion: 0-180.
 // 19-oct: CH9 = tibia 2, CH10 = tibia 3, CH14 = tibia 4; CH11 y CH12 vacios. Coxa 4 (CH3) con topes
 // provisionales 60-105 hasta medir sus limites tras el reajuste.
-const byte TOPE_MIN[16] = {105, 10, 25,  60,  30, 45, 40, 25,  25, 25,  11,  0,   0,   0,  15,   0};
+// 26-oct: tibia 1 en CH12 con los topes que tenia en CH8 (25-160).
+const byte TOPE_MIN[16] = {105, 10, 25,  60,  30, 45, 40, 25,  25, 25,  11,  0,  25,   0,  15,   0};
 // 16-oct (barrido de rango con sensores): F2 y F4 dejan de seguir la orden por
 // encima de ~135 y T4 por encima de ~105; se limitan ahi.
-const byte TOPE_MAX[16] = {170, 85, 90, 105, 140,135,160,135, 160, 90, 160,180, 180, 180, 105, 180};
+const byte TOPE_MAX[16] = {170, 85, 90, 105, 140,135,160,135, 160, 90, 160,180, 160, 180, 105, 180};
 
 void escribirServo(byte canal, int angulo) {
   angulo = limitarAngulo(angulo);
@@ -1168,6 +1169,46 @@ void sostenerCoxasEquilibrio() {
 // Si no llega una linea en 300 ms, o llega 'X', sostiene coxas y apaga el resto.
 
 // 19-oct: lectura del AS5600 detras de un TCA9548A (crudo 0-4095, -1 si falla).
+// 26-oct: escaneo I2C detras de cada canal de los TCA9548A (orden '^'). Por canal lista las
+// direcciones que responden (ACK por SDn/SCn); si hay un AS5600 (0x36) da STATUS (MD iman
+// detectado, ML debil, MH fuerte), AGC, MAGNITUDE y RAW ANGLE.
+int leerRegistro16(byte dir, byte reg) {
+  Wire.beginTransmission(dir); Wire.write(reg);
+  if (Wire.endTransmission(false) != 0 || Wire.requestFrom(dir, (uint8_t)2) != 2) return -1;
+  return ((Wire.read() << 8) | Wire.read());
+}
+void escanearI2C() {
+  const byte tcas[2] = {0x70, 0x71};
+  for (byte t = 0; t < 2; ++t) {
+    for (byte c = 0; c < 8; ++c) {
+      Wire.beginTransmission(tcas[t]); Wire.write(1 << c);
+      byte e = Wire.endTransmission();
+      Serial.print(F("I2C,0x")); Serial.print(tcas[t], HEX); Serial.print(','); Serial.print(c);
+      if (e != 0) { Serial.println(F(",TCA_SIN_RESPUESTA")); continue; }
+      for (byte a = 1; a < 127; ++a) {
+        if (a == 0x70 || a == 0x71) continue;
+        Wire.beginTransmission(a);
+        if (Wire.endTransmission() == 0) { Serial.print(F(",0x")); Serial.print(a, HEX); }
+      }
+      Wire.beginTransmission(0x36);
+      if (Wire.endTransmission() == 0) {
+        int st = leerRegistro16(0x36, 0x0B) >> 8;
+        Wire.beginTransmission(0x36); Wire.write(0x1A); Wire.endTransmission(false);
+        Wire.requestFrom((uint8_t)0x36, (uint8_t)1); int agc = Wire.available() ? Wire.read() : -1;
+        Serial.print(F(",MD=")); Serial.print((st >> 5) & 1);
+        Serial.print(F(",ML=")); Serial.print((st >> 4) & 1);
+        Serial.print(F(",MH=")); Serial.print((st >> 3) & 1);
+        Serial.print(F(",AGC=")); Serial.print(agc);
+        Serial.print(F(",MAG=")); Serial.print(leerRegistro16(0x36, 0x1B) & 0x0FFF);
+        Serial.print(F(",RAW=")); Serial.print(leerRegistro16(0x36, 0x0C) & 0x0FFF);
+      }
+      Serial.println();
+    }
+    Wire.beginTransmission(tcas[t]); Wire.write(0); Wire.endTransmission();
+  }
+  Serial.println(F("FIN_I2C"));
+}
+
 int leerAS5600(byte tca, byte canal) {
   Wire.beginTransmission(tca); Wire.write(1 << canal);
   if (Wire.endTransmission() != 0) return -1;
@@ -1179,7 +1220,11 @@ int leerAS5600(byte tca, byte canal) {
   Wire.beginTransmission(tca); Wire.write(0); Wire.endTransmission();
   return raw;
 }
+// 26-oct: diagnostico completo (orden '$'): ademas de los campos normales, la respuesta R
+// agrega los 16 canales del MUX de potenciometros y los 16 encoders posibles (TCA 0x70/0-7 y 0x71/0-7).
+bool diagCompleto = false;
 void terminarStreaming(const __FlashStringHelper *motivo) {
+  diagCompleto = false;
   for (byte i = 4; i < NUM_SERVOS; ++i) pca.setPWM(servo[i].canal, 0, 4096);
   estadoActual = "HOLD_EQUILIBRIO";
   muestrasMux = 8;
@@ -1234,10 +1279,15 @@ void modoStreaming() {
     // al final para no mover los campos anteriores.
     Serial.print(','); Serial.print(leerCanalMux(0));
     Serial.print(','); Serial.print(leerCanalMux(8));
-    Serial.print(','); Serial.print(leerAS5600(0x70, 0));
+    // 26-oct: el campo ENC_T1 lee ahora el encoder del fémur 2, conectado por el operador en 0x70/4.
+    Serial.print(','); Serial.print(leerAS5600(0x70, 4));
     // 19-oct: encoders de respaldo de femur 1 (0x70/1) y femur 4 (0x71/5).
     Serial.print(','); Serial.print(leerAS5600(0x70, 1));
     Serial.print(','); Serial.print(leerAS5600(0x71, 5));
+    if (diagCompleto) {
+      for (byte c = 0; c < 16; ++c) { Serial.print(','); Serial.print(leerCanalMux(c)); }
+      for (byte c = 0; c < 16; ++c) { Serial.print(','); Serial.print(leerAS5600(c < 8 ? 0x70 : 0x71, c % 8)); }
+    }
     Serial.println();
   }
 }
@@ -1381,6 +1431,11 @@ void loop() {
   } else if (orden == '%') {
     identificarMapaCompleto();
   } else if (orden == '@') {
+    modoStreaming();
+  } else if (orden == '^') {
+    escanearI2C();
+  } else if (orden == '$') {
+    diagCompleto = true;
     modoStreaming();
   } else if (orden == '#') {
     sostenerCoxasEquilibrio();
