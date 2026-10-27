@@ -25,16 +25,20 @@ import entrenar_ppo_real as E  # noqa: E402
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--marcha", choices=("gateo", "paso", "trote"), default="trote")
+    ap.add_argument("--marcha", choices=("gateo", "paso", "trote", "galope", "carrera"), default="trote")
     ap.add_argument("--politica", type=Path)
     ap.add_argument("--suspendido", action="store_true")
     ap.add_argument("--ciclos", type=int, default=30)
+    ap.add_argument("--ciclo", type=float, help="duración del ciclo (s) de paso, trote, galope o carrera")
     ap.add_argument("--apertura", type=float, help="apertura delante-detrás (°); por defecto la del robot")
     a = ap.parse_args()
     E.MARCHA = a.marcha
-    E.APERTURA_DEG = a.apertura if a.apertura is not None else (5.0 if a.marcha == "trote" else 8.0)
+    rapida = a.marcha in ("trote", "galope", "carrera")
+    E.APERTURA_DEG = a.apertura if a.apertura is not None else (5.0 if rapida else 8.0)
     E.PASO_CICLO_S, E.TROTE_CICLO_S = 2.0, 1.0
-    E.FEMUR_AMP_DEG, E.TIBIA_AMP_DEG = (12.0, 12.0) if a.marcha == "trote" else (15.0, 10.0)
+    E.FEMUR_AMP_DEG, E.TIBIA_AMP_DEG = (12.0, 12.0) if rapida else (15.0, 10.0)
+    if a.ciclo:
+        E.TROTE_CICLO_S = E.PASO_CICLO_S = a.ciclo
     E.SENSADAS, E.SIN_RESIDUAL = E.SENSADAS_COMPLETO, E.SIN_RESIDUAL_COMPLETO
     E.NovaRealEnv.pesos = dict(avance=10.0, actitud=30.0, lateral=20.0, giro=10.0)
     actuador = json.loads((HERE / "actuadores_ciclo2.json").read_text())

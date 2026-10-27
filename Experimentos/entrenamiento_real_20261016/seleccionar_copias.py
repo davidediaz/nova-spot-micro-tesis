@@ -83,7 +83,7 @@ def pasos(ruta):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--marcha", choices=("gateo", "paso", "trote"), required=True)
+    ap.add_argument("--marcha", choices=("gateo", "paso", "trote", "galope", "carrera"), required=True)
     ap.add_argument("--carpeta", type=Path, required=True)
     ap.add_argument("--ciclos", type=int, default=60)
     ap.add_argument("--semillas", type=int, default=2)

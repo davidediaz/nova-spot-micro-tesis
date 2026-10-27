@@ -155,9 +155,48 @@ def marcha_trote(control_dt):
     return np.asarray(muestras)
 
 
+# 27-oct: galope y carrera (pedido del operador). Marchas cíclicas definidas por el desfase de cada pata y
+# la fracción del ciclo que pasa apoyada; la duración del ciclo es TROTE_CICLO_S (--ciclo-trote).
+# Galope transverso: las patas de cada par aterrizan casi juntas (desfase 0,1), primero las traseras.
+# Carrera: trote rápido con fase aérea (pares diagonales, cada pata apoyada menos de la mitad del ciclo).
+# Elegidos en simulación (27-oct, 40 ciclos, 2 semillas): galope con apoyo 0,40, ciclo 0,8 s, fémur 16° y
+# tibia 14° avanza 2,18 m (deriva 0,96 m; otras secuencias y apoyos no avanzan); carrera con apoyo 0,45,
+# ciclo 0,8 s, fémur 12° y tibia 12° avanza 2,92 m (deriva 0,07 m). Ninguna cae.
+DESFASE_GALOPE = {"RL": 0.0, "RR": 0.1, "FR": 0.5, "FL": 0.6}
+APOYO_GALOPE = 0.40
+APOYO_CARRERA = 0.45
+
+
+def marcha_ciclica(control_dt, desfases, apoyo):
+    """Muestras articulares (rad): apoyo con el fémur hacia atrás a velocidad constante y oscilación
+    cosenoidal hacia adelante con la tibia levantada (como el trote, con otra fracción de apoyo)."""
+    a = np.deg2rad(FEMUR_AMP_DEG)
+    n = round(TROTE_CICLO_S / control_dt)
+    muestras = []
+    for k in range(n):
+        q = np.tile(STAND, 4).astype(float)
+        for pata, desfase in desfases.items():
+            fase = (k / n + desfase) % 1.0
+            if fase < apoyo:
+                o, lift = a * (1.0 - 2.0 * fase / apoyo), 0.0
+            else:
+                t = (fase - apoyo) / (1.0 - apoyo)
+                o = a * (-1.0 + (1.0 - np.cos(np.pi * t)))
+                lift = np.deg2rad(TIBIA_AMP_DEG) * np.sin(np.pi * t)
+            b = LEG_JOINT_BASE[pata]
+            q[b + 1] = STAND[1] - (o + apertura(pata))
+            q[b + 2] = STAND[2] - lift
+        muestras.append(q)
+    return np.asarray(muestras)
+
+
 def generar_marcha(control_dt):
     if MARCHA == "trote":
         return marcha_trote(control_dt)
+    if MARCHA == "galope":
+        return marcha_ciclica(control_dt, DESFASE_GALOPE, APOYO_GALOPE)
+    if MARCHA == "carrera":
+        return marcha_ciclica(control_dt, PARES_TROTE, APOYO_CARRERA)
     return marcha_paso(control_dt) if MARCHA == "paso" else marcha_b(control_dt)
 
 
@@ -352,7 +391,7 @@ def main():
     p.add_argument("--w-giro-ciclo", type=float, default=0.0, help="penalización por grado² de giro en cada ciclo")
     p.add_argument("--w-suavidad", type=float, default=0.0, help="penalización del cambio del residual (v11)")
     p.add_argument("--w-coxas", type=float, default=0.0, help="penalización de la desviación de las coxas en grados² (v11)")
-    p.add_argument("--marcha", choices=("gateo", "paso", "trote"), default="gateo")
+    p.add_argument("--marcha", choices=("gateo", "paso", "trote", "galope", "carrera"), default="gateo")
     p.add_argument("--apertura", type=float, default=0.0, help="apertura delante-detrás de los fémures (°)")
     p.add_argument("--ciclo-trote", type=float, default=1.4, help="duración del ciclo del trote (s)")
     p.add_argument("--ciclo-paso", type=float, default=2.4, help="duración del ciclo del paso (s)")
