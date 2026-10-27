@@ -33,8 +33,8 @@ BASE = [159, 45, 61, 82, 110, 100, 100, 100, 100, 80, 100, 70]  # 19-oct: equili
 SIGNO_FEMUR = {1: -1, 2: 1, 3: -1, 4: 1}
 # 21-oct: las tibias izquierdas (2 y 4) giran al revés que las derechas: medido con las cintas de
 # de colores (al pedir «doblar» se estiraban). Antes las cuatro tenían −1.
-# 27-oct: vuelven a −1. Con +1, al ordenar «levantar» las tibias 2 y 4 se estiraban y el pie arrastraba
-# (operador y prueba probar_tibias.py con cámaras). La postura de apoyo no cambia: CAL_TIBIA de 2 y 4 se invirtió.
+# 27-oct: tibias 2 y 4 con la dirección invertida (−1) a pedido del operador: con +1 se veían «hacia atrás» y
+# arrastraban; los offsets de calibracion_postura.json son los originales, así que cambian apoyo y movimiento.
 SIGNO_TIBIA = {1: -1, 2: -1, 3: -1, 4: -1}
 PATA = {1: "front_right", 2: "front_left", 3: "rear_right", 4: "rear_left"}
 CUENTAS_POR_GRADO = 2.45
