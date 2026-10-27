@@ -168,6 +168,11 @@ APOYO_CARRERA = 0.45
 # 27-oct (operador): en el galope las coxas también se mueven: cada una se abre COXA_AMP_DEG hacia afuera
 # mientras su pata está en el aire (+q = afuera en las cuatro patas del modelo) y vuelve al apoyar.
 COXA_AMP_DEG = 0.0
+# Ganancia de la coxa de cada pata (calibracion_postura.json, «ganancia_coxa» por número de pata 1-4): la misma
+# marcha en simulación y en el robot (27-oct: coxa 2 fija y coxa 4 a la mitad, rebotaban al apoyar).
+_cal = HERE / "calibracion_postura.json"
+GANANCIA_COXA = json.loads(_cal.read_text()).get("ganancia_coxa", {}) if _cal.exists() else {}
+NUM_PATA_LETRAS = {"FR": "1", "FL": "2", "RR": "3", "RL": "4"}
 
 
 def marcha_ciclica(control_dt, desfases, apoyo):
@@ -190,7 +195,8 @@ def marcha_ciclica(control_dt, desfases, apoyo):
             q[b + 1] = STAND[1] - (o + apertura(pata))
             q[b + 2] = STAND[2] - lift
             if fase >= apoyo:
-                q[b] = STAND[0] + np.deg2rad(COXA_AMP_DEG) * np.sin(np.pi * (fase - apoyo) / (1.0 - apoyo))
+                q[b] = STAND[0] + np.deg2rad(COXA_AMP_DEG) * GANANCIA_COXA.get(NUM_PATA_LETRAS[pata], 1.0) \
+                    * np.sin(np.pi * (fase - apoyo) / (1.0 - apoyo))
         muestras.append(q)
     return np.asarray(muestras)
 
