@@ -135,10 +135,11 @@ int limitarAngulo(int angulo) {
 // 19-oct: CH9 = tibia 2, CH10 = tibia 3, CH14 = tibia 4; CH11 y CH12 vacios. Coxa 4 (CH3) con topes
 // provisionales 60-105 hasta medir sus limites tras el reajuste.
 // 26-oct: tibia 1 en CH12 con los topes que tenia en CH8 (25-160).
-const byte TOPE_MIN[16] = {105, 10, 25,  60,  30, 45, 40, 25,  25, 25,  11,  0,  25,   0,  15,   0};
+const byte TOPE_MIN[16] = {105, 10, 25,  60,  30, 45, 40, 25,  25,  0,  11,  0,  25,   0,   0,   0};  // 27-oct EXPERIMENTAL
 // 16-oct (barrido de rango con sensores): F2 y F4 dejan de seguir la orden por
 // encima de ~135 y T4 por encima de ~105; se limitan ahi.
-const byte TOPE_MAX[16] = {170, 85, 90, 105, 140,135,160,135, 160, 90, 160,180, 160, 180, 105, 180};
+// 27-oct (PRUEBA): tope de la tibia 2 (CH9) subido de 90 a 110 a pedido del operador; revertir tras la prueba.
+const byte TOPE_MAX[16] = {170, 85, 90, 105, 140,135,160,135, 160,180, 160,180, 160, 180, 180, 180};  // 27-oct EXPERIMENTAL: T2 (CH9) y T4 (CH14) sin tope
 
 void escribirServo(byte canal, int angulo) {
   angulo = limitarAngulo(angulo);
@@ -1300,7 +1301,7 @@ void modoStreaming() {
     if (cuenta != NUM_SERVOS) continue;
     ultimo = millis();
     for (byte i = 4; i < NUM_SERVOS; ++i) {
-      int lim = 45;  // 16-oct: los topes absolutos de escribirServo() protegen el rango
+      int lim = (i >= 8) ? 180 : 45;  // 27-oct EXPERIMENTAL: tibias sin el límite de ±45° alrededor de la base
       int obj = constrain(valores[i], servo[i].base - lim, servo[i].base + lim);
       obj = constrain(obj, ordenActual[i] - 3, ordenActual[i] + 3);
       ordenActual[i] = obj;

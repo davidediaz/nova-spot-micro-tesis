@@ -60,8 +60,9 @@ DT = 0.02  # se reemplaza por control_dt del metadata.json de la política
 # 21-oct: topes del firmware (movimiento_suspendido_11_servos.ino, TOPE_MIN/TOPE_MAX por canal PCA),
 # en el orden de índices del firmware (0-3 coxas, 4-7 fémures, 8-11 tibias: CH8, CH9, CH10, CH14).
 # El firmware recorta igual; aquí se recorta para que el registro refleje la orden que se aplica.
-TOPE_MIN = [105, 10, 25, 60, 30, 45, 40, 25, 25, 25, 11, 15]
-TOPE_MAX = [170, 85, 90, 105, 140, 135, 160, 135, 160, 90, 160, 105]
+# 27-oct EXPERIMENTAL: tibias 2 (índice 9) y 4 (índice 11) sin tope, igual que el firmware experimental.
+TOPE_MIN = [105, 10, 25, 60, 30, 45, 40, 25, 25, 0, 11, 0]
+TOPE_MAX = [170, 85, 90, 105, 140, 135, 160, 135, 160, 180, 160, 180]
 
 
 def a_grados_servo(q):
