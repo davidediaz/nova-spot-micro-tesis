@@ -61,7 +61,8 @@ def local(dispositivo, ancho=None, alto=None, mjpg=False):
 
 def remota(alias, dispositivo):
     def abrir(cam):
-        p = subprocess.Popen(["ssh", "-o", "BatchMode=yes", "-o", "ConnectTimeout=5", alias,
+        # 27-oct: -nostdin; sin él, ffmpeg en Windows se quedaba a veces colgado sin enviar imagen.
+        p = subprocess.Popen(["ssh", "-n", "-o", "BatchMode=yes", "-o", "ConnectTimeout=5", alias,
                               f"exec ffmpeg -hide_banner -loglevel error -f v4l2 -input_format mjpeg "
                               f"-video_size 1280x720 -framerate 30 -i {dispositivo} -c:v copy -f mjpeg -"],
                              stdout=subprocess.PIPE, stdin=subprocess.DEVNULL)
@@ -122,8 +123,9 @@ def local_ffmpeg(dispositivo, entrada, ancho, alto):
 def windows(alias, ffmpeg_exe, dispositivo):
     """Cámara del PC con Windows: H.264 por SSH (la Wi-Fi no da para MJPEG 720p), decodificado aquí."""
     def abrir(cam):
-        p = subprocess.Popen(["ssh", "-o", "BatchMode=yes", "-o", "ConnectTimeout=5", alias,
-                              f'"{ffmpeg_exe}" -hide_banner -loglevel error -f dshow -rtbufsize 300M -vcodec mjpeg '
+        # 27-oct: -nostdin; sin él, ffmpeg en Windows se quedaba a veces colgado sin enviar imagen.
+        p = subprocess.Popen(["ssh", "-n", "-o", "BatchMode=yes", "-o", "ConnectTimeout=5", alias,
+                              f'"{ffmpeg_exe}" -nostdin -hide_banner -loglevel error -f dshow -rtbufsize 300M -vcodec mjpeg '
                               f'-video_size 1280x720 -framerate 30 -i video="{dispositivo}" -c:v libx264 -preset ultrafast '
                               f'-tune zerolatency -g 30 -b:v 2500k -pix_fmt yuv420p -f mpegts -'],
                              stdout=subprocess.PIPE, stdin=subprocess.DEVNULL)
