@@ -33,12 +33,17 @@ BASE = [159, 45, 61, 82, 110, 100, 100, 100, 100, 80, 100, 70]  # 19-oct: equili
 SIGNO_FEMUR = {1: -1, 2: 1, 3: -1, 4: 1}
 # 21-oct: las tibias izquierdas (2 y 4) giran al revés que las derechas: medido con las cintas de
 # de colores (al pedir «doblar» se estiraban). Antes las cuatro tenían −1.
-SIGNO_TIBIA = {1: -1, 2: 1, 3: -1, 4: 1}
+# 27-oct: vuelven a −1. Con +1, al ordenar «levantar» las tibias 2 y 4 se estiraban y el pie arrastraba
+# (operador y prueba probar_tibias.py con cámaras). La postura de apoyo no cambia: CAL_TIBIA de 2 y 4 se invirtió.
+SIGNO_TIBIA = {1: -1, 2: -1, 3: -1, 4: -1}
 PATA = {1: "front_right", 2: "front_left", 3: "rear_right", 4: "rear_left"}
 CUENTAS_POR_GRADO = 2.45
 # Campos de la respuesta R del modo @ (19-oct, v6), en orden.
 SENSORES = ["C5", "C6", "C9", "C1", "C3", "C2", "C10", "C11", "ENC_T2",
-             "C0", "C8", "ENC_T1", "ENC_F1", "ENC_F4"]
+             "C0", "C8", "ENC_T1", "ENC_F1", "ENC_F4",
+             # 27-oct: IMU BNO055 (guiñada, roll, pitch en 1/16°; aceleración lineal en cm/s²; calibración);
+             # -1 si no hay IMU o el firmware es anterior.
+             "IMU_H", "IMU_R", "IMU_P", "IMU_AX", "IMU_AY", "IMU_AZ", "IMU_CAL"]
 CALIBRACION = HERE / "sensores_robot.json"
 _cal_postura = HERE / "calibracion_postura.json"
 CAL_POSTURA = (__import__("json").loads(_cal_postura.read_text()).get("femur_offset_deg", {})

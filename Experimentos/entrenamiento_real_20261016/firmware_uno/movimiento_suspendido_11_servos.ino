@@ -1221,6 +1221,43 @@ int leerAS5600(byte tca, byte canal) {
   return raw;
 }
 // 26-oct: diagnostico completo (orden '$'): ademas de los campos normales, la respuesta R
+
+// 27-oct: IMU BNO055 (0x28, bus I2C principal). Si responde se pone en modo NDOF (fusion de
+// acelerometro, giroscopo y magnetometro) y la respuesta R agrega, tras ENC_F4:
+// guinada, roll y pitch en 1/16 de grado, aceleracion lineal x, y, z en cm/s2 y el estado de
+// calibracion (CALIB_STAT). Sin IMU los 7 campos valen -1.
+const byte BNO = 0x28;
+bool hayIMU = false;
+bool escribirBNO(byte reg, byte v) {
+  Wire.beginTransmission(BNO); Wire.write(reg); Wire.write(v);
+  return Wire.endTransmission() == 0;
+}
+void iniciarIMU() {
+  Wire.beginTransmission(BNO);
+  hayIMU = Wire.endTransmission() == 0;
+  if (!hayIMU) return;
+  escribirBNO(0x3D, 0x00); delay(25);      // OPR_MODE = CONFIG
+  escribirBNO(0x3E, 0x00); delay(10);      // PWR_MODE = normal
+  escribirBNO(0x3B, 0x00);                 // UNIT_SEL: m/s2, grados
+  escribirBNO(0x3D, 0x0C); delay(25);      // OPR_MODE = NDOF
+}
+void imprimirIMU() {
+  int v[6] = {-1, -1, -1, -1, -1, -1};
+  int cal = -1;
+  if (hayIMU) {
+    Wire.beginTransmission(BNO); Wire.write(0x1A);
+    if (Wire.endTransmission(false) == 0 && Wire.requestFrom(BNO, (uint8_t)6) == 6)
+      for (byte k = 0; k < 3; ++k) { byte lo = Wire.read(); v[k] = (int16_t)((Wire.read() << 8) | lo); }
+    Wire.beginTransmission(BNO); Wire.write(0x28);
+    if (Wire.endTransmission(false) == 0 && Wire.requestFrom(BNO, (uint8_t)6) == 6)
+      for (byte k = 3; k < 6; ++k) { byte lo = Wire.read(); v[k] = (int16_t)((Wire.read() << 8) | lo); }
+    Wire.beginTransmission(BNO); Wire.write(0x35);
+    if (Wire.endTransmission(false) == 0 && Wire.requestFrom(BNO, (uint8_t)1) == 1) cal = Wire.read();
+  }
+  for (byte k = 0; k < 6; ++k) { Serial.print(','); Serial.print(v[k]); }
+  Serial.print(','); Serial.print(cal);
+}
+
 // agrega los 16 canales del MUX de potenciometros y los 16 encoders posibles (TCA 0x70/0-7 y 0x71/0-7).
 bool diagCompleto = false;
 void terminarStreaming(const __FlashStringHelper *motivo) {
@@ -1241,6 +1278,7 @@ void modoStreaming() {
   }
   delay(500);
   capturarReferenciaCoxas();
+  iniciarIMU();
   estadoActual = "STREAM";
   muestrasMux = 4;
   Serial.println(F("STREAM_LISTO"));
@@ -1284,6 +1322,7 @@ void modoStreaming() {
     // 19-oct: encoders de respaldo de femur 1 (0x70/1) y femur 4 (0x71/5).
     Serial.print(','); Serial.print(leerAS5600(0x70, 1));
     Serial.print(','); Serial.print(leerAS5600(0x71, 5));
+    imprimirIMU();
     if (diagCompleto) {
       for (byte c = 0; c < 16; ++c) { Serial.print(','); Serial.print(leerCanalMux(c)); }
       for (byte c = 0; c < 16; ++c) { Serial.print(','); Serial.print(leerAS5600(c < 8 ? 0x70 : 0x71, c % 8)); }

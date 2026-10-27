@@ -99,13 +99,15 @@ def main():
         resultados = dict(pool.imap_unordered(evaluar, trabajos))
     base = resultados.pop("base")
     filas = []
-    for ruta, m in resultados.items():
-        valida = m["avance_m"] > base["avance_m"] and m["deriva_m"] <= a.deriva_max and m["caidas"] == 0
+    # 27-oct: la variable del bucle se llamaba «m» y pisaba los parámetros de marcha; la metadata de las
+    # copias elegidas guardaba las métricas en «marcha» y el ejecutor no aplicaba la apertura.
+    for ruta, r in resultados.items():
+        valida = r["avance_m"] > base["avance_m"] and r["deriva_m"] <= a.deriva_max and r["caidas"] == 0
         # 20-oct: también cuentan las coxas (respecto a la base) y la suavidad de la corrección.
-        punt = (m["deriva_m"] / 0.1 + m["roll_rms_deg"] + m["pitch_rms_deg"] - m["avance_m"] / base["avance_m"]
-                + 2.0 * (m["coxas_rms_deg"] / base["coxas_rms_deg"] - 1.0) + m["suavidad"])
+        punt = (r["deriva_m"] / 0.1 + r["roll_rms_deg"] + r["pitch_rms_deg"] - r["avance_m"] / base["avance_m"]
+                + 2.0 * (r["coxas_rms_deg"] / base["coxas_rms_deg"] - 1.0) + r["suavidad"])
         filas.append(dict(copia=ruta, semilla=Path(ruta).parts[-3] if "intermedias" in ruta else Path(ruta).parts[-2],
-                          pasos=pasos(ruta), valida=valida, puntuacion=round(punt, 3), **{k: round(v, 4) for k, v in m.items()}))
+                          pasos=pasos(ruta), valida=valida, puntuacion=round(punt, 3), **{k: round(v, 4) for k, v in r.items()}))
     filas.sort(key=lambda f: (not f["valida"], f["puntuacion"]))
     with (HERE / f"seleccion_{a.marcha}.csv").open("w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=list(filas[0])); w.writeheader(); w.writerows(filas)

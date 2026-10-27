@@ -16,6 +16,7 @@ Uso:
 import argparse
 import json
 import os
+import shlex
 import subprocess
 import sys
 import time
@@ -80,6 +81,26 @@ def desfase_windows(alias, n=5):
     return min(medidas)[1]
 
 
+def caminata_en_pi(alias, argumentos, carpeta):
+    """27-oct: ejecuta caminar.py en la Raspberry y trae su registro a la carpeta, con la hora de inicio
+    pasada al reloj de este PC (caminata.inicio.txt), igual que el ejecutor local."""
+    SSHX = ["-o", "BatchMode=yes", "-o", "ConnectTimeout=10", "-o", "ServerAliveInterval=5"]
+    t1 = time.time()
+    hora_pi = float(subprocess.check_output(["ssh", *SSHX, alias, "date +%s.%N"], timeout=20).decode())
+    desfase = hora_pi - (t1 + time.time()) / 2
+    (carpeta / "pi.desfase.txt").write_text(f"{desfase:.6f}\n")
+    cmd = "cd ~/nova_caminata_pi && python3 caminar.py " + " ".join(shlex.quote(x) for x in argumentos)
+    r = subprocess.run(["ssh", *SSHX, alias, cmd])
+    ultimo = subprocess.check_output(["ssh", *SSHX, alias, "ls -t ~/nova_caminata_pi/registros/*.csv | head -1"],
+                                     timeout=20).decode().strip()
+    subprocess.run(["scp", "-q", *SSHX, f"{alias}:{ultimo}", str(carpeta / "caminata.csv")], check=True, timeout=120)
+    subprocess.run(["scp", "-q", *SSHX, f"{alias}:{ultimo[:-4]}.config.json", str(carpeta / "caminata.config.json")],
+                   check=True, timeout=120)
+    cfg = json.loads((carpeta / "caminata.config.json").read_text())
+    (carpeta / "caminata.inicio.txt").write_text(f"{cfg['inicio_epoch'] - desfase:.6f}\n")
+    return r
+
+
 def main():
     if "--" in sys.argv:
         i = sys.argv.index("--"); propios, resto = sys.argv[1:i], sys.argv[i + 1:]
@@ -92,9 +113,16 @@ def main():
                    help="alias SSH del segundo portátil ('' para grabar solo con este PC)")
     p.add_argument("--dispositivo-remoto", default="/dev/video0")
     p.add_argument("--sin-extras", action="store_true", help="no grabar las cámaras de camaras_extra.json")
+    # 27-oct: caminatas en el piso con solo dos cámaras (diagonales) y la marcha ejecutada en la Raspberry.
+    p.add_argument("--solo-camaras", help="lista separada por comas: hp, portatil2, logitech, general, windows")
+    p.add_argument("--remoto-pi", help="alias SSH de la Raspberry: ejecuta caminar.py de ~/nova_caminata_pi "
+                                       "con los argumentos tras «--» y trae su registro")
     p.add_argument("--ejecutor", type=Path, default=EJECUTOR,
                    help="programa que mueve el robot (21-oct: identificar_patas_robot.py para identificar patas)")
     a = p.parse_args(propios)
+    solo = set(a.solo_camaras.split(",")) if a.solo_camaras else None
+    if solo is not None and "portatil2" not in solo:
+        a.remota = ""
     # 21-oct: núcleos 0-1 reservados para el bucle de control del robot; este programa y sus ffmpeg en el resto.
     NUCLEOS_CONTROL = {0, 1}
     try:
@@ -111,7 +139,7 @@ def main():
         subprocess.Popen([sys.executable, str(AQUI / "vista_vivo.py")], cwd=AQUI, start_new_session=True,
                          env={**os.environ, "DISPLAY": os.environ.get("DISPLAY", ":1")},
                          stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    ff = subprocess.Popen(
+    ff = None if solo is not None and "hp" not in solo else subprocess.Popen(
         ["ffmpeg", "-hide_banner", "-loglevel", "error", "-f", "v4l2", "-input_format", "mjpeg",
          "-video_size", "1280x720", "-framerate", "30", "-use_wallclock_as_timestamps", "1",
          "-i", a.dispositivo, "-c:v", "copy", "-copyts", str(video), *VIVO_LOCAL, str(VIVO / "1_hp_pc.jpg")],
@@ -123,7 +151,7 @@ def main():
     if cfg_extra.exists() and not a.sin_extras:
         for c in json.loads(cfg_extra.read_text())["camaras"]:
             # 21-oct: cámaras desactivadas o no conectadas se saltan sin detener la grabación.
-            if not c.get("activa", True):
+            if not c.get("activa", True) or (solo is not None and c["nombre"] not in solo):
                 continue
             if c.get("dispositivo", "").startswith("/dev/") and not Path(c["dispositivo"]).exists():
                 print(f"AVISO: la cámara {c['nombre']} ({c['dispositivo']}) no está conectada; se salta.", flush=True)
@@ -176,22 +204,26 @@ def main():
             stdin=subprocess.PIPE, stdout=subprocess.PIPE)
         lector_vivo(remoto.stdout, VIVO / "portatil2.jpg")
     time.sleep(2.0)
-    if ff.poll() is not None:
+    if ff is not None and ff.poll() is not None:
         raise SystemExit("La cámara no arrancó (¿la está usando otro programa?).")
     try:
         caminata = carpeta / "caminata.csv"
-        r = subprocess.run(["taskset", "-c", ",".join(map(str, sorted(NUCLEOS_CONTROL))),
-                            str(PYTHON), "-I", str(a.ejecutor), *resto, "--salida", str(caminata)],
-                           cwd=a.ejecutor.parent)
+        if a.remoto_pi:
+            r = caminata_en_pi(a.remoto_pi, resto, carpeta)
+        else:
+            r = subprocess.run(["taskset", "-c", ",".join(map(str, sorted(NUCLEOS_CONTROL))),
+                                str(PYTHON), "-I", str(a.ejecutor), *resto, "--salida", str(caminata)],
+                               cwd=a.ejecutor.parent)
         time.sleep(2.0)
     finally:
-        ff.stdin.write(b"q"); ff.stdin.flush()
-        try:
-            ff.wait(timeout=10)
-        except subprocess.TimeoutExpired:
-            ff.terminate()
-        # 19-oct: hora real del primer fotograma (la cámara tarda ~0,3-0,4 s en arrancar).
-        (carpeta / "video.inicio.txt").write_text(f"{primer_fotograma(video):.6f}\n")
+        if ff is not None:
+            ff.stdin.write(b"q"); ff.stdin.flush()
+            try:
+                ff.wait(timeout=10)
+            except subprocess.TimeoutExpired:
+                ff.terminate()
+            # 19-oct: hora real del primer fotograma (la cámara tarda ~0,3-0,4 s en arrancar).
+            (carpeta / "video.inicio.txt").write_text(f"{primer_fotograma(video):.6f}\n")
         for nombre, d, proc, remoto_extra in extras:
             try:
                 if remoto_extra is None:

@@ -17,14 +17,13 @@
   ],
   "control_dt": 0.03,
   "marcha": {
-    "avance_m": 6.133840024094592,
-    "deriva_m": 0.08241688147568005,
-    "roll_rms_deg": 1.4859935726244924,
-    "pitch_rms_deg": 1.0841896164061673,
-    "inclinacion_max_deg": 3.4422398685542674,
-    "coxas_rms_deg": 0.7552572672599851,
-    "suavidad": 3.8305956212374612,
-    "caidas": 0
+    "tipo": "trote",
+    "femur_deg": 12.0,
+    "tibia_deg": 12.0,
+    "fase_s": 0.5,
+    "ciclo_paso_s": 2.4,
+    "ciclo_trote_s": 1.0,
+    "apertura_deg": 5.0
   },
   "pesos": {
     "avance": 20.0,
@@ -67,5 +66,15 @@
     "inclinacion_max_deg": 2.6657,
     "coxas_rms_deg": 1.0195,
     "suavidad": 0.0435
+  },
+  "evaluacion_marcha_dañada_27oct": {
+    "avance_m": 6.133840024094592,
+    "deriva_m": 0.08241688147568005,
+    "roll_rms_deg": 1.4859935726244924,
+    "pitch_rms_deg": 1.0841896164061673,
+    "inclinacion_max_deg": 3.4422398685542674,
+    "coxas_rms_deg": 0.7552572672599851,
+    "suavidad": 3.8305956212374612,
+    "caidas": 0
   }
 }
