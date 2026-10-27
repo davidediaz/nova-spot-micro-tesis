@@ -1,5 +1,5 @@
 {
-  "nota": "21-oct: corrección de la postura base respecto a la simulación (fémur: + = pie adelante; tibia: + = rodilla más doblada), medida con las cintas de colores por calibrar_postura_colores.py. 21-oct tarde: tibias 2 y 4 limitadas por los topes del firmware (CH9 ≤ 90°, CH14 ≤ 105°) dejando 14° para levantar el pie. 27-oct (EXPERIMENTAL, operador): apoyo de la tibia 2 en 174° y de la tibia 4 en 144° de servo (SIGNO −1: offsets −94 y −74); topes de CH9 y CH14 abiertos (0-180).",
+  "nota": "21-oct: corrección de la postura base respecto a la simulación (fémur: + = pie adelante; tibia: + = rodilla más doblada), medida con las cintas de colores por calibrar_postura_colores.py. 21-oct tarde: tibias 2 y 4 limitadas por los topes del firmware (CH9 ≤ 90°, CH14 ≤ 105°) dejando 14° para levantar el pie. 27-oct (EXPERIMENTAL, operador): apoyo de la tibia 2 en 174° y de la tibia 4 en 144° de servo; su movimiento al dar el paso va en sentido contrario al de las tibias 1 y 3 (SIGNO_TIBIA +1, offsets +94 y +74); topes de CH9 y CH14 abiertos (0-180).",
   "femur_offset_deg": {
     "1": -20.1,
     "2": -28.1,
@@ -8,8 +8,8 @@
   },
   "tibia_offset_deg": {
     "1": 60.0,
-    "2": -94.0,
+    "2": 94.0,
     "3": 17.9,
-    "4": -74.0
+    "4": 74.0
   }
 }
