@@ -108,7 +108,7 @@ struct ServoPrueba {
 
 ServoPrueba servo[NUM_SERVOS] = {
   {"Coxa 1",  0, 159, -5, false}, // 19-oct: equilibrio nuevo 159 (antes 150) // BLOQUEADA: C0=93, fuera de la calibracion local; no ordenar a ciegas
-  {"Coxa 2",  1,  45,  5, true},  // 16-oct: operador indica que 40 queda muy abajo -> 45
+  {"Coxa 2",  1,  48,  5, true},  // 27-oct: 45 -> 48, el operador veía la pata 2 caída;  // 16-oct: operador indica que 40 queda muy abajo -> 45
   {"Coxa 3",  2,  64,  5, true},  // 27-oct: 61 -> 64, el operador la veía caída  // 19-oct: 72 y 65 chocaban la pata 3 con la 1; 57 no
   {"Coxa 4",  3,  82, -5, true},  // 19-oct: equilibrio colocado a mano por el operador (C2=379)
   {"Femur 1", 4, 110, -4, true},
@@ -931,6 +931,11 @@ bool ejecutarPasoParcialEnAire() {
 // (ADC sube cuando el angulo baja, ~-2.4 cuentas/grado), con limite +/-6.
 const byte COXA_IDX[3] = {1, 2, 3};
 const byte COXA_MUX[3] = {1, 3, 2};
+// 27-oct: en el modo '+' la caída por peso de las coxas 2-4 se sigue corrigiendo: corrCoxa[k] se ajusta
+// con el potenciómetro solo mientras la coxa está en su base (pata apoyada, cuando carga el peso) y se suma
+// siempre a la orden de la marcha (la coxa 2 se caía en el galope sin esta corrección).
+int corrCoxa[3] = {0, 0, 0};
+int pedidoCoxa[4] = {0, 0, 0, 0};
 int coxaRefAdc[3];
 float coxaFiltro[3];
 unsigned long ultimaCorreccionCoxasMs = 0;
@@ -974,6 +979,28 @@ void corregirCoxas() {
       ordenActual[i] = nuevo;
       escribirServo(servo[i].canal, nuevo);
     }
+  }
+}
+void corregirCoxasLibres() {
+  int comun = leerCanalMux(0) - refComunC0;
+  if (abs(comun) > 80) comun = 0;
+  for (byte k = 0; k < 3; ++k) {
+    int adc = leerCanalMux(COXA_MUX[k]);
+    if (adc < 30 || adc > 950) continue;
+    adc -= comun;
+    if (abs(adc - coxaFiltro[k]) > 40) continue;
+    coxaFiltro[k] = 0.85f * coxaFiltro[k] + 0.15f * adc;
+  }
+  if (millis() - ultimaCorreccionCoxasMs < 200) return;
+  ultimaCorreccionCoxasMs = millis();
+  for (byte k = 0; k < 3; ++k) {
+    byte i = COXA_IDX[k];
+    if (coxaRefAdc[k] < 30 || coxaRefAdc[k] > 950) continue;
+    if (pedidoCoxa[i] != servo[i].base) continue;      // solo con la pata apoyada
+    float err = coxaFiltro[k] - coxaRefAdc[k];
+    if (err > 4) corrCoxa[k] += 1;
+    else if (err < -4) corrCoxa[k] -= 1;
+    corrCoxa[k] = constrain(corrCoxa[k], -6, 6);
   }
 }
 // 16-oct: 40 ms (0,8 s/fase) -> 25 ms (0,5 s/fase) tras medir seguimiento de F2/F4.
@@ -1268,6 +1295,7 @@ bool coxasLibres = false;
 void terminarStreaming(const __FlashStringHelper *motivo) {
   diagCompleto = false;
   coxasLibres = false;
+  for (byte k = 0; k < 3; ++k) corrCoxa[k] = 0;
   for (byte i = 4; i < NUM_SERVOS; ++i) pca.setPWM(servo[i].canal, 0, 4096);
   estadoActual = "HOLD_EQUILIBRIO";
   muestrasMux = 8;
@@ -1307,12 +1335,17 @@ void modoStreaming() {
     ultimo = millis();
     for (byte i = coxasLibres ? 0 : 4; i < NUM_SERVOS; ++i) {
       int lim = 45;  // 16-oct: los topes absolutos de escribirServo() protegen el rango
-      int obj = constrain(valores[i], servo[i].base - lim, servo[i].base + lim);
+      int pedido = valores[i];
+      if (i < 4) {
+        pedidoCoxa[i] = valores[i];
+        for (byte k = 0; k < 3; ++k) if (COXA_IDX[k] == i) pedido += corrCoxa[k];
+      }
+      int obj = constrain(pedido, servo[i].base - lim, servo[i].base + lim);
       obj = constrain(obj, ordenActual[i] - 3, ordenActual[i] + 3);
       ordenActual[i] = obj;
       escribirServo(servo[i].canal, obj);
     }
-    if (!coxasLibres) corregirCoxas();
+    if (coxasLibres) corregirCoxasLibres(); else corregirCoxas();
     Serial.print(F("R,")); Serial.print(millis());
     // 16-oct: se anaden C10 y C11 al final de la respuesta.
     const byte canales[8] = {5, 6, 9, 1, 3, 2, 10, 11};

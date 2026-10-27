@@ -29,7 +29,7 @@ from entrenar_ppo_real import STAND, JOINTS  # noqa: E402
 
 # Índices del firmware: 0-3 coxas (patas 1..4), 4-7 fémures, 8-11 tibias.
 # Patas: 1=FR, 2=FL, 3=RR, 4=RL. Base y signos de la caminata `b` del firmware.
-BASE = [159, 45, 64, 82, 110, 100, 100, 100, 100, 166, 100, 144]  # 19-oct: equilibrio nuevo de coxas
+BASE = [159, 48, 64, 82, 110, 100, 100, 100, 100, 166, 100, 144]  # 19-oct: equilibrio nuevo de coxas
 SIGNO_FEMUR = {1: -1, 2: 1, 3: -1, 4: 1}
 # 21-oct: las tibias izquierdas (2 y 4) giran al revés que las derechas: medido con las cintas de
 # de colores (al pedir «doblar» se estiraban). Antes las cuatro tenían −1.
