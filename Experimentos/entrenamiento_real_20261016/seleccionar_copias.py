@@ -64,6 +64,7 @@ def evaluar(trabajo):
     E.PASO_CICLO_S, E.TROTE_CICLO_S = m.get("ciclo_paso_s", 2.0), m.get("ciclo_trote_s", 1.0)
     E.FEMUR_AMP_DEG, E.TIBIA_AMP_DEG, E.FASE_MOV_S = m["femur_deg"], m["tibia_deg"], m.get("fase_s", 0.5)
     E.APERTURA_DEG = m.get("apertura_deg", 0.0)      # 20-oct: postura abierta delante-detrás
+    E.COXA_AMP_DEG = m.get("coxa_deg", 0.0)          # 27-oct: coxas del galope
     E.NovaRealEnv.pesos = dict(avance=10.0, actitud=30.0, lateral=20.0, giro=10.0)
     E.SENSADAS, E.SIN_RESIDUAL = E.SENSADAS_COMPLETO, E.SIN_RESIDUAL_COMPLETO
     actuador = json.loads((HERE / "actuadores_reales_v5.json").read_text())

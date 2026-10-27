@@ -1262,8 +1262,12 @@ void imprimirIMU() {
 
 // agrega los 16 canales del MUX de potenciometros y los 16 encoders posibles (TCA 0x70/0-7 y 0x71/0-7).
 bool diagCompleto = false;
+// 27-oct: con la orden '+' el modo de caminata también aplica las órdenes de las coxas (galope) y no las
+// fija con corregirCoxas(); los topes absolutos de escribirServo() siguen protegiéndolas.
+bool coxasLibres = false;
 void terminarStreaming(const __FlashStringHelper *motivo) {
   diagCompleto = false;
+  coxasLibres = false;
   for (byte i = 4; i < NUM_SERVOS; ++i) pca.setPWM(servo[i].canal, 0, 4096);
   estadoActual = "HOLD_EQUILIBRIO";
   muestrasMux = 8;
@@ -1301,14 +1305,14 @@ void modoStreaming() {
     while (tok && cuenta < NUM_SERVOS) { valores[cuenta++] = atoi(tok); tok = strtok(NULL, ","); }
     if (cuenta != NUM_SERVOS) continue;
     ultimo = millis();
-    for (byte i = 4; i < NUM_SERVOS; ++i) {
+    for (byte i = coxasLibres ? 0 : 4; i < NUM_SERVOS; ++i) {
       int lim = 45;  // 16-oct: los topes absolutos de escribirServo() protegen el rango
       int obj = constrain(valores[i], servo[i].base - lim, servo[i].base + lim);
       obj = constrain(obj, ordenActual[i] - 3, ordenActual[i] + 3);
       ordenActual[i] = obj;
       escribirServo(servo[i].canal, obj);
     }
-    corregirCoxas();
+    if (!coxasLibres) corregirCoxas();
     Serial.print(F("R,")); Serial.print(millis());
     // 16-oct: se anaden C10 y C11 al final de la respuesta.
     const byte canales[8] = {5, 6, 9, 1, 3, 2, 10, 11};
@@ -1475,6 +1479,9 @@ void loop() {
     modoStreaming();
   } else if (orden == '^') {
     escanearI2C();
+  } else if (orden == '+') {
+    coxasLibres = true;
+    modoStreaming();
   } else if (orden == '$') {
     diagCompleto = true;
     modoStreaming();

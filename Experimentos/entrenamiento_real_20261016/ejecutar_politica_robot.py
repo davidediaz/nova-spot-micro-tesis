@@ -33,7 +33,9 @@ BASE = [159, 45, 64, 82, 110, 100, 100, 100, 100, 166, 100, 144]  # 19-oct: equi
 SIGNO_FEMUR = {1: -1, 2: 1, 3: -1, 4: 1}
 # 21-oct: las tibias izquierdas (2 y 4) giran al revés que las derechas: medido con las cintas de
 # de colores (al pedir «doblar» se estiraban). Antes las cuatro tenían −1.
-SIGNO_TIBIA = {1: -1, 2: 1, 3: -1, 4: 1}   # 27-oct (operador): tibias 2 y 4 con el movimiento invertido; apoyo 174°/144° en calibracion_postura.json
+SIGNO_TIBIA = {1: -1, 2: 1, 3: -1, 4: 1}
+# 27-oct: sentido de cada servo de coxa para abrir la pata hacia afuera (+q del modelo); medido con probar_coxas.py.
+SIGNO_COXA = {1: 1, 2: 1, 3: 1, 4: 1}   # 27-oct (operador): tibias 2 y 4 con el movimiento invertido; apoyo 174°/144° en calibracion_postura.json
 PATA = {1: "front_right", 2: "front_left", 3: "rear_right", 4: "rear_left"}
 CUENTAS_POR_GRADO = 2.45
 # Campos de la respuesta R del modo @ (19-oct, v6), en orden.
@@ -70,6 +72,9 @@ def a_grados_servo(q):
     """Ángulos del modelo (rad, orden JOINTS) -> 12 grados de servo del firmware."""
     out = list(BASE)
     for pata in (1, 2, 3, 4):
+        # 27-oct: coxas del galope (en las demás marchas q coxa = STAND[0] y queda la base).
+        jc = JOINTS.index(f"{PATA[pata]}_coxa_joint")
+        out[pata - 1] = round(BASE[pata - 1] + SIGNO_COXA[pata] * np.rad2deg(q[jc] - STAND[0]))
         jf = JOINTS.index(f"{PATA[pata]}_femur_joint")
         jt = JOINTS.index(f"{PATA[pata]}_tibia_joint")
         o = -(q[jf] - STAND[1])          # fémur adelante (rad)
@@ -156,6 +161,7 @@ def main():
     p.add_argument("--marcha", choices=("gateo", "paso", "trote", "galope", "carrera"))
     p.add_argument("--ciclo-trote", type=float)
     p.add_argument("--apertura", type=float, help="apertura delante-detrás de los fémures (°)")
+    p.add_argument("--coxa", type=float, help="galope y carrera: apertura de la coxa al levantar la pata (°)")
     p.add_argument("--ciclo-paso", type=float)
     a = p.parse_args()
     global DT
@@ -182,6 +188,7 @@ def main():
             E.PASO_CICLO_S = m.get("ciclo_paso_s", E.PASO_CICLO_S)
             E.TROTE_CICLO_S = m.get("ciclo_trote_s", E.TROTE_CICLO_S)
             E.APERTURA_DEG = m.get("apertura_deg", E.APERTURA_DEG)
+            E.COXA_AMP_DEG = m.get("coxa_deg", E.COXA_AMP_DEG)
             sensadas = [o for o in md.get("observacion", sensadas) if o.endswith("_joint")]
             sin_residual = set(md.get("sin_residual", sin_residual))
     if a.dt:
@@ -193,6 +200,7 @@ def main():
     if a.ciclo_paso: E.PASO_CICLO_S = a.ciclo_paso
     if a.ciclo_trote: E.TROTE_CICLO_S = a.ciclo_trote
     if a.apertura is not None: E.APERTURA_DEG = a.apertura
+    if a.coxa is not None: E.COXA_AMP_DEG = a.coxa
     print(f"Periodo de control: {DT*1000:.0f} ms | {E.MARCHA} fémur {E.FEMUR_AMP_DEG}° tibia {E.TIBIA_AMP_DEG}° fase {E.FASE_MOV_S} s")
     nominal = E.generar_marcha(DT)
     stand = np.tile(STAND, 4).astype(float)
@@ -204,7 +212,8 @@ def main():
     lec = Lector(fd)
     time.sleep(2.0)                      # reinicio del Uno al abrir el puerto
     os.read(fd, 4096)
-    os.write(fd, b"@")
+    # 27-oct: con coxas en movimiento se usa el modo '+' del firmware (aplica las órdenes de las coxas).
+    os.write(fd, b"+" if E.COXA_AMP_DEG > 0 else b"@")
     while True:
         l = lec.linea(timeout=8.0)
         if l is None:

@@ -165,6 +165,9 @@ def marcha_trote(control_dt):
 DESFASE_GALOPE = {"RL": 0.0, "RR": 0.1, "FR": 0.5, "FL": 0.6}
 APOYO_GALOPE = 0.40
 APOYO_CARRERA = 0.45
+# 27-oct (operador): en el galope las coxas también se mueven: cada una se abre COXA_AMP_DEG hacia afuera
+# mientras su pata está en el aire (+q = afuera en las cuatro patas del modelo) y vuelve al apoyar.
+COXA_AMP_DEG = 0.0
 
 
 def marcha_ciclica(control_dt, desfases, apoyo):
@@ -186,6 +189,8 @@ def marcha_ciclica(control_dt, desfases, apoyo):
             b = LEG_JOINT_BASE[pata]
             q[b + 1] = STAND[1] - (o + apertura(pata))
             q[b + 2] = STAND[2] - lift
+            if fase >= apoyo:
+                q[b] = STAND[0] + np.deg2rad(COXA_AMP_DEG) * np.sin(np.pi * (fase - apoyo) / (1.0 - apoyo))
         muestras.append(q)
     return np.asarray(muestras)
 
@@ -393,6 +398,7 @@ def main():
     p.add_argument("--w-coxas", type=float, default=0.0, help="penalización de la desviación de las coxas en grados² (v11)")
     p.add_argument("--marcha", choices=("gateo", "paso", "trote", "galope", "carrera"), default="gateo")
     p.add_argument("--apertura", type=float, default=0.0, help="apertura delante-detrás de los fémures (°)")
+    p.add_argument("--coxa", type=float, default=0.0, help="galope y carrera: apertura de la coxa al levantar la pata (°)")
     p.add_argument("--ciclo-trote", type=float, default=1.4, help="duración del ciclo del trote (s)")
     p.add_argument("--ciclo-paso", type=float, default=2.4, help="duración del ciclo del paso (s)")
     p.add_argument("--ciclos-episodio", type=int, default=6, help="ciclos de marcha por episodio")
@@ -408,8 +414,8 @@ def main():
     a = p.parse_args()
     global SENSADAS, SIN_RESIDUAL, MARCHA, PASO_CICLO_S
     MARCHA, PASO_CICLO_S = a.marcha, a.ciclo_paso
-    global TROTE_CICLO_S, APERTURA_DEG
-    TROTE_CICLO_S, APERTURA_DEG = a.ciclo_trote, a.apertura
+    global TROTE_CICLO_S, APERTURA_DEG, COXA_AMP_DEG
+    TROTE_CICLO_S, APERTURA_DEG, COXA_AMP_DEG = a.ciclo_trote, a.apertura, a.coxa
     global ALEATORIZAR
     ALEATORIZAR = a.aleatorizar
     if a.completo:
@@ -447,7 +453,7 @@ def main():
         continuado_desde=str(a.continuar) if a.continuar else None, ciclos_episodio=a.ciclos_episodio,
         ppo=dict(lr=a.lr, target_kl=a.target_kl, n_steps=a.n_steps), eval_seeds=a.eval_seeds, control_dt=a.dt,
         marcha=dict(tipo=a.marcha, femur_deg=a.femur, tibia_deg=a.tibia, fase_s=a.fase,
-                    ciclo_paso_s=a.ciclo_paso, ciclo_trote_s=a.ciclo_trote, apertura_deg=a.apertura), pesos=NovaRealEnv.pesos,
+                    ciclo_paso_s=a.ciclo_paso, ciclo_trote_s=a.ciclo_trote, apertura_deg=a.apertura, coxa_deg=a.coxa), pesos=NovaRealEnv.pesos,
         actuador=actuador, hardware_transfer=False,
         observacion=list(SENSADAS) + ["sin_fase", "cos_fase", "residual_previo x12"],
         sin_residual=sorted(SIN_RESIDUAL), aleatorizar_actuador=a.aleatorizar,
