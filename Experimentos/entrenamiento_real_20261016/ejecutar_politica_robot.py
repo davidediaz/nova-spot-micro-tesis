@@ -29,7 +29,7 @@ from entrenar_ppo_real import STAND, JOINTS  # noqa: E402
 
 # Índices del firmware: 0-3 coxas (patas 1..4), 4-7 fémures, 8-11 tibias.
 # Patas: 1=FR, 2=FL, 3=RR, 4=RL. Base y signos de la caminata `b` del firmware.
-BASE = [159, 45, 61, 82, 110, 100, 100, 100, 100, 80, 100, 70]  # 19-oct: equilibrio nuevo de coxas
+BASE = [159, 45, 64, 82, 110, 100, 100, 100, 100, 166, 100, 144]  # 19-oct: equilibrio nuevo de coxas
 SIGNO_FEMUR = {1: -1, 2: 1, 3: -1, 4: 1}
 # 21-oct: las tibias izquierdas (2 y 4) giran al revés que las derechas: medido con las cintas de
 # de colores (al pedir «doblar» se estiraban). Antes las cuatro tenían −1.
@@ -61,9 +61,9 @@ DT = 0.02  # se reemplaza por control_dt del metadata.json de la política
 # 21-oct: topes del firmware (movimiento_suspendido_11_servos.ino, TOPE_MIN/TOPE_MAX por canal PCA),
 # en el orden de índices del firmware (0-3 coxas, 4-7 fémures, 8-11 tibias: CH8, CH9, CH10, CH14).
 # El firmware recorta igual; aquí se recorta para que el registro refleje la orden que se aplica.
-# 27-oct EXPERIMENTAL: tibias 2 (índice 9) y 4 (índice 11) sin tope, igual que el firmware experimental.
-TOPE_MIN = [105, 10, 25, 60, 30, 45, 40, 25, 25, 0, 11, 0]
-TOPE_MAX = [170, 85, 90, 105, 140, 135, 160, 135, 160, 180, 160, 180]
+# 27-oct: topes de las tibias 2 (155-180) y 4 (130-175) alrededor de su apoyo nuevo; coxa 3 en 64 (antes 61).
+TOPE_MIN = [105, 10, 25, 60, 30, 45, 40, 25, 18, 155, 11, 130]   # 27-oct: tibia 1 hasta 18
+TOPE_MAX = [170, 85, 90, 105, 140, 135, 160, 135, 160, 180, 160, 175]
 
 
 def a_grados_servo(q):

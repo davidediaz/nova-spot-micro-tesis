@@ -2773,3 +2773,34 @@ Pendiente para usar la Pi sin Arduino:
   limitado a 2 el 27-oct). v16 r3 inválida (coxas 80°, saltos del MUX). En las articulaciones con sensor
   fiable (fémures 1 y 3, tibias 2 y 4) la v16 no mejora a la nominal (diferencias de ±0,4°).
 - Siguiente acción: asegurar conexiones (masa y 5 V del MUX, conectores con traba) y repetir el paso v16.
+
+### 27 de octubre de 2026 — postura de trabajo nueva y repositorio para la Raspberry
+
+**Postura y movimiento aprobados por el operador (base de trabajo desde ahora):**
+
+| Articulación | Apoyo (servo) | Recorrido al dar el paso | Cambio |
+|---|---|---|---|
+| Coxa 3 | 64° | fija | antes 61° (se veía caída) |
+| Tibia 1 | 40° | 40 → 20° (ganancia 2,0) | tope mínimo 25 → 18 |
+| Tibia 2 | 166° (BASE) | 166 → 180° (ganancia 1,4) | antes apoyo 76° y movimiento contrario |
+| Tibia 3 | 82° | 82 → 66° (ganancia 1,6) | más recorrido |
+| Tibia 4 | 144° (BASE) | 144 → 162° (ganancia 1,8) | antes apoyo 91° y movimiento contrario |
+
+- Las tibias 2 y 4 se mueven en sentido de servo opuesto al de la 1 y la 3 (`SIGNO_TIBIA = {1: −1, 2: +1, 3: −1, 4: +1}`);
+  su apoyo es ahora su BASE en firmware y ejecutor (`BASE = [159, 45, 64, 82, 110, 100, 100, 100, 100, 166, 100, 144]`),
+  con offsets de tibia 0. `ganancia_tibia` en `calibracion_postura.json` amplía el movimiento de cada tibia; la lectura de
+  sensores se divide por la misma ganancia, así la política PPO ve el ángulo del modelo.
+- Topes nuevos: tibia 2 (CH9) 155-180, tibia 4 (CH14) 130-175, tibia 1 (CH12) desde 18.
+- Se llegó a esta postura con `sostener_tibias.py` (tibias sostenidas en ángulos pedidos, cambio en vivo) y caminatas de
+  60 s de gateo, trote y paso grabadas con 5 cámaras (`grabaciones/*_tibiasrec_1112`, `gateo_postura_final*`).
+- **Consecuencia:** todas las caminatas del robot anteriores al 27-oct tenían las tibias 2 y 4 en otra postura y moviéndose
+  al revés; además gateo v14 y trote v15 se ejecutaban sin la apertura de fémures (metadata dañada por
+  `seleccionar_copias.py`, corregido y reparado). Las comparaciones PPO/nominal anteriores deben repetirse.
+
+**Otros cambios del día:**
+- Firmware: IMU BNO055 (0x28; 7 campos tras ENC_F4 en la respuesta R), modo `$` (16 canales MUX + 16 encoders), `^` (escaneo I²C).
+- `grabar_caminata.py`: `--solo-camaras` y `--remoto-pi` (caminata en la Raspberry por SSH, registro traído y sincronizado).
+- `analizar_video_patas.py` limitado a 2 procesos (la noche anterior dejó al PC sin memoria).
+- Repositorio nuevo `~/Documentos/nova_caminata_pi` (git propio): caminar.py, analizar.py, marchas idénticas al
+  entrenamiento, políticas gateo v14, trote v15 y paso v16 en NumPy, CLAUDE.md para Claude en la Pi. Pendiente de copiar
+  a la Raspberry (no aparecía en la red).
