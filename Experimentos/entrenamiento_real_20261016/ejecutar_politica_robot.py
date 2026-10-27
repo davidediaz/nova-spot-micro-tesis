@@ -54,6 +54,9 @@ CAL_TIBIA = (__import__("json").loads(_cal_postura.read_text()).get("tibia_offse
 # 27-oct (operador): ganancia del movimiento de cada tibia al dar el paso (más recorrido en las tibias 2 y 4).
 GANANCIA_TIBIA = (__import__("json").loads(_cal_postura.read_text()).get("ganancia_tibia", {})
                   if _cal_postura.exists() else {})
+# 27-oct: ganancia del movimiento de cada coxa en el galope (la coxa 2 a la mitad).
+GANANCIA_COXA = (__import__("json").loads(_cal_postura.read_text()).get("ganancia_coxa", {})
+                 if _cal_postura.exists() else {})
 RETARDO_PASOS = 3            # 87 ms de retardo de los servos a 30 ms por paso
 SIGNO = {"femur": SIGNO_FEMUR, "tibia": SIGNO_TIBIA}
 NUM_PATA = {v: k for k, v in PATA.items()}
@@ -74,7 +77,8 @@ def a_grados_servo(q):
     for pata in (1, 2, 3, 4):
         # 27-oct: coxas del galope (en las demás marchas q coxa = STAND[0] y queda la base).
         jc = JOINTS.index(f"{PATA[pata]}_coxa_joint")
-        out[pata - 1] = round(BASE[pata - 1] + SIGNO_COXA[pata] * np.rad2deg(q[jc] - STAND[0]))
+        out[pata - 1] = round(BASE[pata - 1] + SIGNO_COXA[pata] * np.rad2deg(q[jc] - STAND[0])
+                              * GANANCIA_COXA.get(str(pata), 1.0))
         jf = JOINTS.index(f"{PATA[pata]}_femur_joint")
         jt = JOINTS.index(f"{PATA[pata]}_tibia_joint")
         o = -(q[jf] - STAND[1])          # fémur adelante (rad)
