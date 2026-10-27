@@ -2759,3 +2759,17 @@ Pendiente para usar la Pi sin Arduino:
 ### 22 de octubre de 2026: tesis actualizada y error de semillas
 - Tesis (`Documento_TESIS`, 112 páginas): PPO a detalle en el marco teórico, capítulos nuevos «Plataforma física, instrumentación y adquisición» (9a) y «Entrenamiento de las políticas PPO para el robot físico» (9b), resultados en el robot suspendido, figuras `ppo_curvas_semillas.png` y `ppo_ciclo_robot.png` (`generar_figuras_ppo_fisico.py`), y resumen, alcance, metodología, discusión, conclusiones, trabajo futuro y anexos actualizados. Arquitectura presentada con la Raspberry Pi 4; el Uno solo como «interfaz de E/S auxiliar» en los ensayos de octubre. `compilar.sh` hace pdflatex + biber + pdflatex ×2 (latexmk elegía bibtex).
 - **Error encontrado:** al continuar un entrenamiento (`--continuar`), `PPO.load` restauraba la semilla guardada en la política e ignoraba `--seed`; las 4 semillas (401, 409, 419, 421) de `ppo_ciclo1_*` y `ppo_ciclo2_*` dieron ejecuciones idénticas (una sola ejecución en la práctica). Corregido en `entrenar_ppo_real.py` (`model.set_random_seed(a.seed)` tras cargar) y verificado. Las campañas v11, v12, v14 y v15 continuaban políticas distintas y no se ven afectadas.
+
+### 26 y 27 de octubre de 2026 — sensores, paso v16 y v17
+
+- Revisión articulación por articulación (`revisar_sensores.py`, modo `$` del firmware con 16 canales del
+  MUX y 16 encoders; escaneo I²C con `^`). Tibia 1: servo intermitente (pasado de CH8 a CH12), potenciómetro
+  M7 en 0, encoder vivo en 0x70/0. Encoder del fémur 2 en 0x70/4 (campo ENC_T1). Conexiones flojas: en cada
+  manipulación fallaban sensores distintos (fémures 2-4, encoders 0x71/4-5); el bus I²C se cortó dos veces.
+- Paso v16: elegida semilla 563 a 1,6 M (simulación: deriva 0,021 m frente a 0,391 m nominal, avance −12 %).
+  Paso v17 (4 semillas continuando la 563): ninguna la supera (mejor 2,50 frente a 2,45).
+- Robot (sesión `paso_v16d`, protección de salud desactivada a pedido del operador): 3 repeticiones válidas
+  por condición; la ronda 4 se cortó a los 3 s por falta de memoria (análisis de video con 5 procesos;
+  limitado a 2 el 27-oct). v16 r3 inválida (coxas 80°, saltos del MUX). En las articulaciones con sensor
+  fiable (fémures 1 y 3, tibias 2 y 4) la v16 no mejora a la nominal (diferencias de ±0,4°).
+- Siguiente acción: asegurar conexiones (masa y 5 V del MUX, conectores con traba) y repetir el paso v16.

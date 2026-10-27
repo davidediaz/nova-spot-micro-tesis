@@ -166,7 +166,9 @@ def main():
     grupos = TROTE if marcha == "trote" else FEMUR
     salida = {"marcha": marcha, "grupos": "pares diagonales" if grupos is TROTE else "patas"}
     from multiprocessing import Pool
-    with Pool(len(camaras)) as pool:        # una cámara por proceso
+    # 27-oct: como máximo 2 cámaras a la vez (~1,5 GB cada una); con 5 a la vez el PC se quedó sin
+    # memoria y cortó la caminata siguiente (26-oct, rep_paso_v16d_paso_v16_r4).
+    with Pool(min(2, len(camaras))) as pool:
         resultados = pool.starmap(analizar_camara, [(n, sub, raiz, filas, ciclos, grupos) for n, sub in camaras])
     for (nombre, sub), r in zip(camaras, resultados):
         if r is None:
