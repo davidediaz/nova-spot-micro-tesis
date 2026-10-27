@@ -105,6 +105,12 @@ def main():
     carpeta.mkdir(parents=True, exist_ok=False)
     video = carpeta / "video.mkv"
     VIVO.mkdir(exist_ok=True)
+    # 26-oct: el operador quiere ver las cámaras en vivo cada vez que el robot se mueve: se abre
+    # vista_vivo.py (si ya está abierta, la nueva copia sale sola por su cerrojo).
+    if os.environ.get("DISPLAY") or Path("/tmp/.X11-unix/X1").exists():
+        subprocess.Popen([sys.executable, str(AQUI / "vista_vivo.py")], cwd=AQUI, start_new_session=True,
+                         env={**os.environ, "DISPLAY": os.environ.get("DISPLAY", ":1")},
+                         stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     ff = subprocess.Popen(
         ["ffmpeg", "-hide_banner", "-loglevel", "error", "-f", "v4l2", "-input_format", "mjpeg",
          "-video_size", "1280x720", "-framerate", "30", "-use_wallclock_as_timestamps", "1",

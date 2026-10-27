@@ -8,6 +8,8 @@ quedan quietas (se marca «sin caminata»). Tecla q o Esc: cerrar.
 
 Uso: python3 vista_vivo.py
 """
+import fcntl
+import sys
 import time
 from pathlib import Path
 
@@ -46,6 +48,13 @@ def panel(archivo, titulo):
 
 
 def main():
+    # 26-oct: una sola ventana; grabar_caminata.py la abre sola si no está abierta.
+    global _cerrojo
+    _cerrojo = open("/tmp/vista_vivo.lock", "w")
+    try:
+        fcntl.flock(_cerrojo, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except BlockingIOError:
+        sys.exit(0)
     VIVO.mkdir(exist_ok=True)
     cv2.namedWindow("Camaras en vivo (caminatas)", cv2.WINDOW_NORMAL)
     cv2.resizeWindow("Camaras en vivo (caminatas)", 3 * ANCHO * 3 // 4, 2 * ALTO * 3 // 4)
