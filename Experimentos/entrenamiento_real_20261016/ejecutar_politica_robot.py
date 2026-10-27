@@ -49,6 +49,9 @@ CAL_POSTURA = (__import__("json").loads(_cal_postura.read_text()).get("femur_off
 # 21-oct: corrección también de las tibias (+ = doblar más la rodilla), medida con las cintas de colores.
 CAL_TIBIA = (__import__("json").loads(_cal_postura.read_text()).get("tibia_offset_deg", {})
              if _cal_postura.exists() else {})
+# 27-oct (operador): ganancia del movimiento de cada tibia al dar el paso (más recorrido en las tibias 2 y 4).
+GANANCIA_TIBIA = (__import__("json").loads(_cal_postura.read_text()).get("ganancia_tibia", {})
+                  if _cal_postura.exists() else {})
 RETARDO_PASOS = 3            # 87 ms de retardo de los servos a 30 ms por paso
 SIGNO = {"femur": SIGNO_FEMUR, "tibia": SIGNO_TIBIA}
 NUM_PATA = {v: k for k, v in PATA.items()}
@@ -74,7 +77,8 @@ def a_grados_servo(q):
         # 20-oct: corrección del punto neutro de cada fémur (calibracion_postura.json, + = adelante).
         o_cal = np.rad2deg(o) + CAL_POSTURA.get(str(pata), 0.0)
         out[3 + pata] = round(BASE[3 + pata] + SIGNO_FEMUR[pata] * o_cal)
-        out[7 + pata] = round(BASE[7 + pata] + SIGNO_TIBIA[pata] * (np.rad2deg(lift) + CAL_TIBIA.get(str(pata), 0.0)))
+        out[7 + pata] = round(BASE[7 + pata] + SIGNO_TIBIA[pata] * (np.rad2deg(lift) * GANANCIA_TIBIA.get(str(pata), 1.0)
+                                                                + CAL_TIBIA.get(str(pata), 0.0)))
     return [int(min(max(v, lo), hi)) for v, lo, hi in zip(out, TOPE_MIN, TOPE_MAX)]
 
 
@@ -102,6 +106,8 @@ def delta_modelo(nombre, valores, ref, cal):
     d_servo = d / c["k"]
     pata = NUM_PATA[nombre.rsplit("_", 2)[0]]
     tipo = "femur" if "femur" in nombre else "tibia"
+    if tipo == "tibia":
+        d_servo /= GANANCIA_TIBIA.get(str(pata), 1.0)   # 27-oct: la política ve el ángulo del modelo, sin la ganancia
     return -d_servo / SIGNO[tipo][pata]           # fémur: adelante = q menor; tibia: elevar = q menor
 
 
