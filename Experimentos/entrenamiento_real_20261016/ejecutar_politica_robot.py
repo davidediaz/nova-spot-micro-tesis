@@ -35,7 +35,7 @@ SIGNO_FEMUR = {1: -1, 2: 1, 3: -1, 4: 1}
 # de colores (al pedir «doblar» se estiraban). Antes las cuatro tenían −1.
 SIGNO_TIBIA = {1: -1, 2: 1, 3: -1, 4: 1}
 # 27-oct: sentido de cada servo de coxa para abrir la pata hacia afuera (+q del modelo); medido con probar_coxas.py.
-SIGNO_COXA = {1: 1, 2: 1, 3: 1, 4: 1}   # 27-oct (operador): tibias 2 y 4 con el movimiento invertido; apoyo 174°/144° en calibracion_postura.json
+SIGNO_COXA = {1: -1, 2: 1, 3: 1, 4: -1}   # medido 27-oct con la cámara frontal (prueba_coxas_20261027)   # 27-oct (operador): tibias 2 y 4 con el movimiento invertido; apoyo 174°/144° en calibracion_postura.json
 PATA = {1: "front_right", 2: "front_left", 3: "rear_right", 4: "rear_left"}
 CUENTAS_POR_GRADO = 2.45
 # Campos de la respuesta R del modo @ (19-oct, v6), en orden.
