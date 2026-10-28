@@ -6,15 +6,17 @@ cd "$(dirname "$0")"
 PY=../../.venv-mujoco/bin/python
 MAX=10
 COMUN="--completo --aleatorizar --lr 1e-4 --target-kl 0.03 --n-steps 2048 --actuador actuadores_ciclo2.json --dt 0.03 \
---w-actitud 30 --w-lateral 20 --w-giro 10 --w-giro-ciclo 5 --w-suavidad 0.3 --w-coxas 1.0"
+--w-actitud 30 --w-giro 10 --w-giro-ciclo 5 --w-suavidad 0.3 --w-coxas 1.0"
 R=ppo_v10_robot
 
 # nombre | marcha | argumentos de la marcha | semillas continuando:copia:pasos | semillas desde cero:pasos
+# 27-oct (noche): v24, la simulación ya incluye las ganancias de las tibias (mismo movimiento que el robot).
 CAMPANAS=(
-"ppo_v22_paso|paso|--ciclo-paso 2.0 --femur 15 --tibia 10 --apertura 8 --w-avance 20|3001,3007,3011:$R/ppo_v16_paso_semilla_563_1600k/policy.zip:1500000|3013,3019,3023:3000000"
-"ppo_v22_gateo|gateo|--femur 15 --tibia 10 --apertura 8 --w-avance 10|3101,3109:$R/ppo_v14_gateo_semilla_43_1700k/policy.zip:1500000|3119,3121:3000000"
-"ppo_v22_trote|trote|--ciclo-trote 1.0 --femur 12 --tibia 12 --apertura 5 --ciclos-episodio 12 --w-avance 10|3203,3209:$R/ppo_v15_trote_semilla_307_100k/policy.zip:2000000|3217,3221:3000000"
-"ppo_v22_carrera|carrera|--ciclo-trote 0.8 --femur 12 --tibia 12 --apertura 5 --ciclos-episodio 12 --w-avance 10|3301,3307:$R/ppo_v18_carrera_semilla_743_1100k/policy.zip:1500000|3313,3319:3000000"
+"ppo_v24_gateo|gateo|--femur 15 --tibia 10 --apertura 8 --w-avance 10 --w-lateral 20|4001,4003:$R/ppo_v22_gateo_semilla_3101_2700k/policy.zip:1500000|4007,4009:3000000"
+"ppo_v24_paso|paso|--ciclo-paso 2.0 --femur 15 --tibia 10 --apertura 8 --w-avance 20 --w-lateral 20|4101,4103:$R/ppo_v22_paso_semilla_3013_100k/policy.zip:1500000|4107,4109:3000000"
+"ppo_v24_trote|trote|--ciclo-trote 1.0 --femur 12 --tibia 12 --apertura 5 --ciclos-episodio 12 --w-avance 10 --w-lateral 20|4201,4203:$R/ppo_v15_trote_semilla_307_100k/policy.zip:1500000|4207,4209:3000000"
+"ppo_v24_carrera|carrera|--ciclo-trote 0.8 --femur 12 --tibia 12 --apertura 5 --ciclos-episodio 12 --w-avance 10 --w-lateral 20|4301,4303:$R/ppo_v22_carrera_semilla_3307_1200k/policy.zip:1500000|4307,4309:3000000"
+"ppo_v24_galope|galope|--ciclo-trote 0.8 --femur 16 --tibia 14 --apertura 5 --coxa 8 --ciclos-episodio 12 --w-avance 10 --w-lateral 30|4401,4403:$R/ppo_v21_galope_semilla_827_100k/policy.zip:1500000|4407,4409:3000000"
 )
 
 esperar_hueco() { while [ "$(pgrep -fc 'entrenar_ppo_real.py')" -ge "$MAX" ]; do sleep 30; done; }

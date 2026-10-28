@@ -75,7 +75,7 @@ def marcha_b(control_dt):
                 offset[pata] = o
                 b = LEG_JOINT_BASE[pata]
                 q[b + 1] = STAND[1] - (o + apertura(pata))   # fémur adelante = q menor
-                q[b + 2] = STAND[2] - lift     # tibia flexiona al levantar
+                q[b + 2] = STAND[2] - lift * ganancia_tibia(pata)     # tibia flexiona al levantar
             muestras.append(q)
     return np.asarray(muestras)
 
@@ -89,6 +89,17 @@ LIMITE_CAMBIO_RAD = np.deg2rad(3.0)
 # del cuerpo (la 1 y la 3 llegaban a chocar): las delanteras oscilan alrededor de un punto
 # adelantado APERTURA_DEG y las traseras de uno atrasado lo mismo.
 APERTURA_DEG = 0.0
+
+
+# 27-oct: ganancia del movimiento de cada tibia (calibracion_postura.json, «ganancia_tibia» por número de pata),
+# aplicada en la marcha para que la simulación entrene el mismo movimiento que hace el robot (antes solo se
+# aplicaba al convertir a grados de servo y las tibias 2 y 4 del robot se movían 1,4-2,3 veces más que en la
+# simulación).
+def ganancia_tibia(pata):
+    cal = Path(__file__).resolve().parent / "calibracion_postura.json"
+    if not hasattr(ganancia_tibia, "g"):
+        ganancia_tibia.g = json.loads(cal.read_text()).get("ganancia_tibia", {}) if cal.exists() else {}
+    return float(ganancia_tibia.g.get({"FR": "1", "FL": "2", "RR": "3", "RL": "4"}[pata], 1.0))
 
 
 def apertura(pata):
@@ -120,7 +131,7 @@ def marcha_paso(control_dt):
                 lift = np.deg2rad(TIBIA_AMP_DEG) * np.sin(np.pi * t)
             b = LEG_JOINT_BASE[pata]
             q[b + 1] = STAND[1] - (o + apertura(pata))
-            q[b + 2] = STAND[2] - lift
+            q[b + 2] = STAND[2] - lift * ganancia_tibia(pata)
         muestras.append(q)
     return np.asarray(muestras)
 
@@ -150,7 +161,7 @@ def marcha_trote(control_dt):
                 o, lift = a * (1.0 - 2.0 * t), 0.0
             b = LEG_JOINT_BASE[pata]
             q[b + 1] = STAND[1] - (o + apertura(pata))
-            q[b + 2] = STAND[2] - lift
+            q[b + 2] = STAND[2] - lift * ganancia_tibia(pata)
         muestras.append(q)
     return np.asarray(muestras)
 
@@ -193,7 +204,7 @@ def marcha_ciclica(control_dt, desfases, apoyo):
                 lift = np.deg2rad(TIBIA_AMP_DEG) * np.sin(np.pi * t)
             b = LEG_JOINT_BASE[pata]
             q[b + 1] = STAND[1] - (o + apertura(pata))
-            q[b + 2] = STAND[2] - lift
+            q[b + 2] = STAND[2] - lift * ganancia_tibia(pata)
             if fase >= apoyo:
                 q[b] = STAND[0] + np.deg2rad(COXA_AMP_DEG) * GANANCIA_COXA.get(NUM_PATA_LETRAS[pata], 1.0) \
                     * np.sin(np.pi * (fase - apoyo) / (1.0 - apoyo))
