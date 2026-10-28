@@ -2824,3 +2824,10 @@ Pendiente para usar la Pi sin Arduino:
 | Galope | v21 s827 0,1 M | 90 % | 1,94 / 1,90 m | 0,33 / 0,34 m |
 
 - En el robot (27-oct, 19:39) el bus I²C volvió a cortarse: pendiente reconectar para probar estas políticas.
+
+### 27-oct, 23:50 — pausa de la cola v24 (apagado del PC)
+
+Terminadas: gateo y paso (4/4 semillas), trote 2/4. Pendientes desde su última copia: carrera 4301 y 4303 (2,6 M de
+2,7 M), 4307 y 4309 (1,3 M de 3 M), trote 4207 (1,5 M) y 4209 (1,4 M de 3 M); galope sin empezar. Retomar con
+`Experimentos/entrenamiento_real_20261016/reanudar_v24.sh` (continúa, selecciona y mide la viabilidad de las 5 marchas).
+Bus I²C del robot cortado desde las 19:39: reconectar SDA, SCL, 5 V y GND antes de las pruebas físicas.
