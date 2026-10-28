@@ -2804,3 +2804,23 @@ Pendiente para usar la Pi sin Arduino:
 - Repositorio nuevo `~/Documentos/nova_caminata_pi` (git propio): caminar.py, analizar.py, marchas idénticas al
   entrenamiento, políticas gateo v14, trote v15 y paso v16 en NumPy, CLAUDE.md para Claude en la Pi. Pendiente de copiar
   a la Raspberry (no aparecía en la red).
+
+### 27 de octubre de 2026 (noche) — galope, carrera y viabilidad
+
+- Marchas nuevas: galope transverso (apoyo 0,40, ciclo 0,8 s, fémur 16°, tibia 14°; coxas traseras se abren 4° al
+  levantar, delanteras fijas: con la coxa 2 moviéndose cedía y la 4 a 8° rebotaba; con una delantera fija y la otra
+  moviéndose el galope retrocedía en simulación) y carrera (pares diagonales con apoyo 0,45, ciclo 0,8 s).
+- Firmware: modo `+` (coxas con órdenes) con corrección de caída por peso calculada con la pata apoyada.
+- `evaluar_viabilidad.py`: % de 20 episodios (semillas 1001-1020, aleatorización de dominio y actuador) en que la
+  política no cae, avanza ≥ 90 % de la nominal, se desvía menos que ella o < 0,5 m e inclina < 15°.
+- Mejores políticas por viabilidad (copias en `ppo_v10_robot/`):
+
+| Marcha | Política | Viabilidad | Avance / nominal | Deriva / nominal |
+|---|---|---|---|---|
+| Gateo | v22 s3101 2,7 M | 100 % | 1,04 / 0,99 m | 0,03 / 0,05 m |
+| Trote | v15 s307 0,1 M (v22 s3203 0,2 M) | 100 % | 1,94 / 1,90 m (1,86) | 0,06 / 0,09 m (0,04) |
+| Paso | v22 s3013 0,1 M (peso de avance 20) | 100 % | 1,24 / 1,25 m | 0,04 / 0,12 m |
+| Carrera | v22 s3307 1,2 M | 100 % | 1,93 / 1,76 m | 0,08 / 0,08 m |
+| Galope | v21 s827 0,1 M | 90 % | 1,94 / 1,90 m | 0,33 / 0,34 m |
+
+- En el robot (27-oct, 19:39) el bus I²C volvió a cortarse: pendiente reconectar para probar estas políticas.
