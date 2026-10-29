@@ -42,7 +42,7 @@ Son dos redes:
 
 - tanh comprime cada valor entre −1 y 1.
 - En el robot solo se usa el actor; el crítico solo sirve para entrenar.
-- Origen: red por defecto (`MlpPolicy`) de Stable-Baselines3 2.3.2, con unos 10 000 pesos.
+- Origen: red por defecto (`MlpPolicy`) de Stable-Baselines3 2.3.2, con unos 12 100 parámetros (actor ≈ 6 400, crítico ≈ 5 700).
 
 ## 3. Espacio de estados (22 números)
 

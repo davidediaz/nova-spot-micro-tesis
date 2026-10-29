@@ -424,6 +424,8 @@ def main():
     p.add_argument("--n-steps", type=int, default=1024)
     p.add_argument("--continuar", type=Path, help="policy.zip desde la que seguir entrenando")
     p.add_argument("--guardar-cada", type=int, default=100_000, help="pasos entre copias intermedias")
+    p.add_argument("--registrar-perdidas", action="store_true",
+                   help="29-oct: guarda en perdidas.csv las pérdidas de PPO de cada actualización")
     p.add_argument("--aleatorizar", action="store_true",
                    help="varía retardo, ganancia y desfase de sensores en cada episodio (v7)")
     p.add_argument("--completo", action="store_true",
@@ -445,6 +447,10 @@ def main():
     out = a.output / f"semilla_{a.seed}"
     out.mkdir(parents=True, exist_ok=True)
     env = NovaRealEnv(actuador, seed=a.seed, control_dt=a.dt, episode_cycles=a.ciclos_episodio)
+    if a.registrar_perdidas:
+        # 29-oct: monitor.csv con la recompensa cruda de cada episodio (para graficar ruido y convergencia).
+        from stable_baselines3.common.monitor import Monitor
+        env = Monitor(env, filename=str(out / "monitor"))
     if a.continuar:
         model = PPO.load(a.continuar, env=env, device="cpu",
                          custom_objects=dict(learning_rate=a.lr, target_kl=a.target_kl))
@@ -456,6 +462,10 @@ def main():
     else:
         model = PPO("MlpPolicy", env, seed=a.seed, verbose=0, n_steps=a.n_steps, batch_size=256,
                     learning_rate=a.lr, target_kl=a.target_kl)
+    if a.registrar_perdidas:
+        # 29-oct: pérdida total, de la política, del crítico, entropía, KL y varianza explicada por actualización.
+        from stable_baselines3.common.logger import configure
+        model.set_logger(configure(str(out), ["csv"]))
     from stable_baselines3.common.callbacks import CallbackList, CheckpointCallback
     copias = CheckpointCallback(save_freq=a.guardar_cada, save_path=str(out / "intermedias"), name_prefix="policy")
     model.learn(total_timesteps=a.timesteps, reset_num_timesteps=not a.continuar,
