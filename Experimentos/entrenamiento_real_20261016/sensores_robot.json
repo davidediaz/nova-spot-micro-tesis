@@ -20,7 +20,8 @@
   },
   "front_left_tibia_joint": {
     "campo": "ENC_T2",
-    "k": -0.5921
+    "k": -1.15,
+    "nota_k": "28-oct: k -0.5921 -> -1.15, regresión encoder vs orden retrasada en paso/trote/carrera de 60 s (-1.23/-1.10/-1.13, r=0.96-0.97). El valor anterior duplicaba la amplitud medida de la tibia 2."
   },
   "front_right_femur_joint": {
     "campo": "C8",

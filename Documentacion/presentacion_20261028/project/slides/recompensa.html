@@ -1,0 +1,23 @@
+<section id="recompensa" data-transition="fade" style="background:#F6F5F0;color:#2A3442;font-family:'IBM Plex Sans', Arial, sans-serif;padding:112px 128px 160px;display:flex;flex-direction:column;gap:32px">
+<p style="font-size:24px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#B4521C">El agente</p>
+<h2 style="font-family:'Source Serif 4', Georgia, serif;font-size:64px;font-weight:600;line-height:1.1;color:#15233B">Función de recompensa por paso</h2>
+<div style="background:#FFFFFF;padding:36px 48px;border-radius:16px;display:flex;flex-direction:column;gap:18px">
+<p style="font-family:'Source Serif 4', Georgia, serif;font-size:38px;color:#15233B">rₜ = 1 + wav·Δx − wact·(φ² + ϑ²) − 25·(h − 0,235)² − 0,25·‖eq‖² − 0,04·‖Δq‖²</p>
+<p style="font-family:'Source Serif 4', Georgia, serif;font-size:38px;color:#15233B">      − wlat·y² − wgiro·ψ² − wsuav·Σⱼ( (Δqₜ,ⱼ − Δqₜ₋₁,ⱼ) / 0,02 )² − wcox·ē²coxa</p>
+<p style="font-family:'Source Serif 4', Georgia, serif;font-size:38px;color:#15233B">Al cerrar cada ciclo:   − wgc · (Δψciclo)²</p>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:40px">
+<ul style="font-size:26px;line-height:1.5">
+<li>Δx: avance del cuerpo en el paso (m)</li>
+<li>φ, ϑ: alabeo y cabeceo (rad); h: altura (m)</li>
+<li>eq: error respecto a la marcha base</li>
+</ul>
+<ul style="font-size:26px;line-height:1.5">
+<li>y, ψ: desvío lateral y giro acumulados</li>
+<li>ē²coxa: desviación cuadrática media de las coxas (°²)</li>
+<li>Δψciclo: giro de cada ciclo (°)</li>
+</ul>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#6A7383">Nova Spot Micro · El agente · Ecuación de la tesis (recompensa con el actuador real)</p>
+<aside>Premia seguir de pie y avanzar; castiga inclinarse, salirse de la altura de trabajo, alejarse de la marcha base, corregir mucho, desviarse, girar, corregir de golpe y que las coxas se muevan. El término por ciclo existe porque, sin IMU, la política no ve el rumbo y tendía a curvarse en caminatas largas.</aside>
+</section>

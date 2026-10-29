@@ -1,0 +1,14 @@
+<section id="ident-actuador" data-transition="fade" style="background:#F6F5F0;color:#2A3442;font-family:'IBM Plex Sans', Arial, sans-serif;padding:112px 128px 160px;display:flex;flex-direction:column;gap:36px">
+<p style="font-size:24px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#B4521C">Actuador identificado</p>
+<h2 style="font-family:'Source Serif 4', Georgia, serif;font-size:64px;font-weight:600;line-height:1.1;color:#15233B">El servo real, medido en el robot en cuatro etapas</h2>
+<table style="font-size:26px;color:#2A3442">
+<tr><th style="width:26%">Etapa</th><th style="width:44%">Ensayo</th><th style="width:30%">Resultado</th></tr>
+<tr><td>1 · 16-oct</td><td>Caminatas nominales registradas con los sensores</td><td>Retardo ≈ 100 ms; ganancia 0,88–0,98</td></tr>
+<tr><td>2 · Escalones y senoides</td><td>±1, ±2, ±6, ±12°; senoides de 0,5, 1 y 2 Hz por articulación</td><td>Zona muerta 0,5–1°; retardo 65–85 ms; a 2 Hz ganancia 0,74–0,92</td></tr>
+<tr><td>3 · Barrido de rango</td><td>±40° con los sensores</td><td>Lineal; histéresis 0,6–1,5°; saturación que fijó los topes</td></tr>
+<tr><td>4 · Ciclo de mejora (21-oct)</td><td>10 caminatas de gateo y trote</td><td>Retardo 99 ms (66–99 ms); error no explicado 1,8°</td></tr>
+</table>
+<p style="font-size:27px;line-height:1.4">Resultado (archivo de actuador): <b>retardo 99 ms</b>, rango 1–4 pasos de 30 ms; <b>zona muerta 0,42°</b>; <b>ganancia por articulación</b>; límite de 3° por orden. La cámara confirmó que el motor recorre 1,08 veces lo ordenado.</p>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#6A7383">Nova Spot Micro · Actuador y marchas · actuadores_ciclo2.json</p>
+<aside>Este es el paso que diferencia el trabajo de la primera etapa: en lugar de un servo ideal, la simulación usa el comportamiento medido del servo de hobby (retardo, zona muerta y ganancia que cae a frecuencias altas). La identificación se repite con los datos de cada vuelta del ciclo de mejora.</aside>
+</section>

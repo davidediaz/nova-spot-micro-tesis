@@ -1,0 +1,21 @@
+<section id="cin-directa" data-transition="fade" style="background:#EAEEF2;color:#2A3442;font-family:'IBM Plex Sans', Arial, sans-serif;padding:112px 128px 160px;display:flex;flex-direction:column;gap:36px">
+<p style="font-size:24px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#B4521C">Modelo matemático</p>
+<h2 style="font-family:'Source Serif 4', Georgia, serif;font-size:64px;font-weight:600;line-height:1.1;color:#15233B">Cinemática directa de una pata</h2>
+<div style="display:grid;grid-template-columns:1fr 640px;gap:48px">
+<div style="background:#FFFFFF;padding:40px 48px;border-radius:16px;display:flex;flex-direction:column;gap:18px">
+<p style="font-family:'Source Serif 4', Georgia, serif;font-size:32px;color:#4A5568">Con  a = sᵢ·qc   y   Q = qf + qt :</p>
+<p style="font-family:'Source Serif 4', Georgia, serif;font-size:42px;color:#15233B">x = − lf·sin qf − lt·sin Q</p>
+<p style="font-family:'Source Serif 4', Georgia, serif;font-size:42px;color:#15233B">zp = − lf·cos qf − lt·cos Q</p>
+<p style="font-family:'Source Serif 4', Georgia, serif;font-size:42px;color:#15233B">y = cos(a)·sᵢ·lc − sin(a)·zp</p>
+<p style="font-family:'Source Serif 4', Georgia, serif;font-size:42px;color:#15233B">z = sin(a)·sᵢ·lc + cos(a)·zp</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:20px">
+<h3 style="font-size:32px;font-weight:600;color:#2F5D8C">Ejemplo verificado</h3>
+<p style="font-size:26px;line-height:1.45">Postura nominal [qc, qf, qt] = [0,10; 0,42; −0,84] rad, con [lc, lf, lt] = [0,090; 0,105; 0,132] m:</p>
+<p style="font-family:'Source Serif 4', Georgia, serif;font-size:34px;color:#15233B"><b>p</b>FL = [0,0110; 0,1112; −0,2063] m</p>
+<p style="font-size:26px;line-height:1.45">Es el punto neutro de las trayectorias cartesianas. Implementado en <i>forward_leg</i>.</p>
+</div>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#6A7383">Nova Spot Micro · Modelo matemático · lc, lf, lt: longitudes de coxa, fémur y tibia</p>
+<aside>Posición del pie respecto a la cadera. Primero se resuelve el plano sagital (fémur y tibia, con Q la suma de ángulos) y luego se rota por la coxa. Las longitudes de este ejemplo son las nominales del modelo de referencia; las medidas en el robot (108 y 155 mm) se usan en el modelo de MuJoCo del entrenamiento.</aside>
+</section>

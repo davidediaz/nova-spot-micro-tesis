@@ -1,0 +1,17 @@
+<section id="dinamica" data-transition="fade" style="background:#EAEEF2;color:#2A3442;font-family:'IBM Plex Sans', Arial, sans-serif;padding:112px 128px 160px;display:flex;flex-direction:column;gap:32px">
+<p style="font-size:24px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#B4521C">Modelo matemático</p>
+<h2 style="font-family:'Source Serif 4', Georgia, serif;font-size:64px;font-weight:600;line-height:1.1;color:#15233B">Dinámica de base flotante</h2>
+<div style="background:#FFFFFF;padding:36px 48px;border-radius:16px;display:flex;flex-direction:column;gap:18px">
+<p style="font-family:'Source Serif 4', Georgia, serif;font-size:44px;color:#15233B">M(q) q̈ + C(q, q̇) q̇ + g(q) + τf = Sᵀ τ + Jcᵀ λ</p>
+<p style="font-family:'Source Serif 4', Georgia, serif;font-size:36px;color:#15233B">K = ½ Σₖ [ mₖ vₖᵀ vₖ + ωₖᵀ Rₖ Iₖ Rₖᵀ ωₖ ] ,   U = Σₖ mₖ g zₖ</p>
+<p style="font-family:'Source Serif 4', Georgia, serif;font-size:36px;color:#15233B">Mab = ∂²K / ∂q̇a ∂q̇b ,   ga = ∂U / ∂qa</p>
+<p style="font-family:'Source Serif 4', Georgia, serif;font-size:36px;color:#15233B">Por pata:  τᵢ = Mᵢ q̈ᵢ + cᵢ + gᵢ + τf,ᵢ − Jᵢᵀ fᵢ</p>
+</div>
+<ul style="font-size:26px;line-height:1.5">
+<li>S selecciona las 12 articulaciones actuadas; λ son las fuerzas de contacto</li>
+<li>Ejemplo nominal: autovalores de Mᵢ (0,00227; 0,00759; 0,00911) kg·m², todos positivos</li>
+<li>Verificado: simetría, definición positiva, Coriolis nulo a velocidad cero y pares finitos</li>
+</ul>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#6A7383">Nova Spot Micro · Modelo matemático · Masas e inercias del modelo de referencia, sin identificar</p>
+<aside>La matriz de masa y el vector de gravedad salen de la energía cinética y potencial (formulación de Lagrange). Estas pruebas verifican las propiedades internas del modelo, no la exactitud de los pares físicos del ejemplar, cuyas masas e inercias no se identificaron.</aside>
+</section>

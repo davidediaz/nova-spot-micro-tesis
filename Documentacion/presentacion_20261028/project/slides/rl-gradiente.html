@@ -1,0 +1,20 @@
+<section id="rl-gradiente" data-transition="fade" style="background:#15233B;color:#F6F5F0;font-family:'IBM Plex Sans', Arial, sans-serif;padding:112px 128px 160px;display:flex;flex-direction:column;gap:34px">
+<p style="font-size:24px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#F0A46E">Aprendizaje por refuerzo</p>
+<h2 style="font-family:'Source Serif 4', Georgia, serif;font-size:64px;font-weight:600;line-height:1.1;color:#F6F5F0">Gradiente de la política y arquitectura actor-crítico</h2>
+<div style="background:#22324F;padding:36px 48px;border-radius:16px;display:flex;flex-direction:column;gap:20px">
+<p style="font-family:'Source Serif 4', Georgia, serif;font-size:42px">∇θ J(θ) = 𝔼ₜ [ ∇θ log πθ( aₜ | sₜ ) · Âₜ ]</p>
+<p style="font-family:'Source Serif 4', Georgia, serif;font-size:40px">πθ( a | s ) = 𝒩( μθ(s), diag(σ²) )</p>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:28px">
+<div style="background:#22324F;padding:30px 36px;border-radius:16px;display:flex;flex-direction:column;gap:10px">
+<h3 style="font-size:32px;font-weight:600;color:#F0A46E">Actor πθ</h3>
+<p style="font-size:26px;line-height:1.4;color:#C9D3E0">Da la media μ de una gaussiana; σ son parámetros aprendidos. Al entrenar se muestrea (exploración); en el robot se usa la media.</p>
+</div>
+<div style="background:#22324F;padding:30px 36px;border-radius:16px;display:flex;flex-direction:column;gap:10px">
+<h3 style="font-size:32px;font-weight:600;color:#F0A46E">Crítico Vφ</h3>
+<p style="font-size:26px;line-height:1.4;color:#C9D3E0">Estima el valor del estado; sirve para calcular la ventaja con menos varianza que el retorno observado.</p>
+</div>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#9FB0C6">Nova Spot Micro · Fundamentos</p>
+<aside>Los métodos basados en política ajustan directamente los parámetros de la política en la dirección que aumenta el retorno: suben la probabilidad de las acciones con ventaja positiva y bajan la de las negativas. Como las acciones son continuas, la política es una gaussiana diagonal.</aside>
+</section>

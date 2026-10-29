@@ -1,0 +1,16 @@
+<section id="observacion" data-transition="fade" style="background:#F6F5F0;color:#2A3442;font-family:'IBM Plex Sans', Arial, sans-serif;padding:112px 128px 160px;display:flex;flex-direction:column;gap:32px">
+<p style="font-size:24px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#B4521C">El agente</p>
+<h2 style="font-family:'Source Serif 4', Georgia, serif;font-size:64px;font-weight:600;line-height:1.1;color:#15233B">Espacio de estados: 22 valores propioceptivos</h2>
+<div style="background:#FFFFFF;padding:28px 40px;border-radius:16px">
+<p style="font-family:'Source Serif 4', Georgia, serif;font-size:38px;color:#15233B">sₜ = [ q̃ₜ − q*  ,  sin 2πφₜ ,  cos 2πφₜ ,  Δqₜ₋₁ / 0,08 ] ∈ ℝ²²</p>
+</div>
+<table style="font-size:26px;color:#2A3442">
+<tr><th style="width:36%">Componente</th><th style="width:12%">Tamaño</th><th style="width:52%">Origen</th></tr>
+<tr><td>Ángulo de fémures y tibias respecto a la postura de pie</td><td>8</td><td>Robot: potenciómetros y encoders. Simulación: con ruido de 1° y sesgo de ±1°</td></tr>
+<tr><td>Fase de la marcha</td><td>2</td><td>Reloj de la marcha base; seno y coseno porque el ciclo se repite</td></tr>
+<tr><td>Corrección del paso anterior</td><td>12</td><td>La propia red, normalizada por 0,08 rad</td></tr>
+</table>
+<p style="font-size:27px;line-height:1.4"><b>Sin IMU ni coxas:</b> la red solo ve lo que el robot mide. La inclinación del cuerpo se usa en la recompensa, que solo existe en la simulación. Versiones 2 a 5: 17 valores, con 3 articulaciones observadas.</p>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#6A7383">Nova Spot Micro · El agente · q*: postura de pie del modelo</p>
+<aside>La observación se limitó a lo que el robot puede medir, para que la misma política funcione en el robot sin cambios. Cuando se entrenaron las primeras versiones, solo tres articulaciones tenían sensor fiable; desde la versión 6 se observan las ocho de fémur y tibia.</aside>
+</section>

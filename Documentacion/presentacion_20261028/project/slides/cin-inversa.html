@@ -1,0 +1,22 @@
+<section id="cin-inversa" data-transition="fade" style="background:#EAEEF2;color:#2A3442;font-family:'IBM Plex Sans', Arial, sans-serif;padding:112px 128px 160px;display:flex;flex-direction:column;gap:36px">
+<p style="font-size:24px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#B4521C">Modelo matemático</p>
+<h2 style="font-family:'Source Serif 4', Georgia, serif;font-size:64px;font-weight:600;line-height:1.1;color:#15233B">Cinemática inversa: del punto del pie a los ángulos</h2>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:40px">
+<div style="background:#FFFFFF;padding:36px 44px;border-radius:16px;display:flex;flex-direction:column;gap:16px">
+<h3 style="font-size:30px;font-weight:600;color:#2F5D8C">1. Coxa</h3>
+<p style="font-family:'Source Serif 4', Georgia, serif;font-size:38px;color:#15233B">zp = −√( y² + z² − lc² )</p>
+<p style="font-family:'Source Serif 4', Georgia, serif;font-size:38px;color:#15233B">a = atan2(z, y) − atan2(zp, sᵢ·lc)</p>
+<p style="font-family:'Source Serif 4', Georgia, serif;font-size:38px;color:#15233B">qc = sᵢ·a</p>
+</div>
+<div style="background:#FFFFFF;padding:36px 44px;border-radius:16px;display:flex;flex-direction:column;gap:16px">
+<h3 style="font-size:30px;font-weight:600;color:#2F5D8C">2. Triángulo fémur–tibia</h3>
+<p style="font-family:'Source Serif 4', Georgia, serif;font-size:34px;color:#4A5568">d = −zp ,  b = −x ,  r² = b² + d²</p>
+<p style="font-family:'Source Serif 4', Georgia, serif;font-size:38px;color:#15233B">D = (r² − lf² − lt²) / (2·lf·lt)</p>
+<p style="font-family:'Source Serif 4', Georgia, serif;font-size:38px;color:#15233B">qt = −arccos D</p>
+<p style="font-family:'Source Serif 4', Georgia, serif;font-size:34px;color:#15233B">qf = atan2(b, d) − atan2(lt·sin qt, lf + lt·cos qt)</p>
+</div>
+</div>
+<p style="font-size:27px;line-height:1.4">La rama negativa de qt mantiene la rodilla flexionada. Referencias sin solución (|D| &gt; 1), fuera de límites o discontinuas se rechazan, no se saturan. Ida y vuelta FK→IK: error &lt; 10⁻¹² rad.</p>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#6A7383">Nova Spot Micro · Modelo matemático</p>
+<aside>Primero se elimina la rotación de la coxa y después se resuelve el triángulo formado por fémur y tibia con la ley del coseno. El controlador rechaza explícitamente las referencias imposibles en lugar de recortarlas en silencio.</aside>
+</section>

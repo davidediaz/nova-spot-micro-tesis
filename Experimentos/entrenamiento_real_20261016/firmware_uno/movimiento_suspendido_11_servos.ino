@@ -108,7 +108,7 @@ struct ServoPrueba {
 
 ServoPrueba servo[NUM_SERVOS] = {
   {"Coxa 1",  0, 159, -5, false}, // 19-oct: equilibrio nuevo 159 (antes 150) // BLOQUEADA: C0=93, fuera de la calibracion local; no ordenar a ciegas
-  {"Coxa 2",  1,  48,  5, true},  // 27-oct: 45 -> 48, el operador veía la pata 2 caída;  // 16-oct: operador indica que 40 queda muy abajo -> 45
+  {"Coxa 2",  1,  42,  5, true},  // 28-oct: 48 -> 42, ajustada en vivo con el operador (a 48 se veía subida); 27-oct: 45 -> 48, el operador veía la pata 2 caída;  // 16-oct: operador indica que 40 queda muy abajo -> 45
   {"Coxa 3",  2,  64,  5, true},  // 27-oct: 61 -> 64, el operador la veía caída  // 19-oct: 72 y 65 chocaban la pata 3 con la 1; 57 no
   {"Coxa 4",  3,  82, -5, true},  // 19-oct: equilibrio colocado a mano por el operador (C2=379)
   {"Femur 1", 4, 110, -4, true},

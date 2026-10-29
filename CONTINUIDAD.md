@@ -2831,3 +2831,22 @@ Terminadas: gateo y paso (4/4 semillas), trote 2/4. Pendientes desde su última 
 2,7 M), 4307 y 4309 (1,3 M de 3 M), trote 4207 (1,5 M) y 4209 (1,4 M de 3 M); galope sin empezar. Retomar con
 `Experimentos/entrenamiento_real_20261016/reanudar_v24.sh` (continúa, selecciona y mide la viabilidad de las 5 marchas).
 Bus I²C del robot cortado desde las 19:39: reconectar SDA, SCL, 5 V y GND antes de las pruebas físicas.
+
+## 28-oct-2026 (tarde) — pruebas en el robot suspendido, coxa 2 y calibración de la tibia 2
+
+- Cola v24 retomada 14:10, terminó 15:11. Viabilidad 100 %: paso v24 s4109 200k, trote v24 s4209 200k, carrera v24 s4309 200k (copiadas a ppo_v10_robot/). Gateo v24/v25/v26 ≤55 % (avanza <90 % de la nominal). Galope: la marcha base fémur 16/tibia 14 se caía 20/20 con las ganancias de tibia; barrido_nominal.py → fémur 18, tibia 7 (2,1 m sin caídas). Galope v25 65 %, v26 (w-avance 30) 85 %.
+- Bus I²C colgado por el encoder del fémur 2 (TCA 0x70 canal 4): desconectado, el bus queda estable.
+- Coxa 2: se caía hacia adentro al caminar; su potenciómetro C1 no sigue la coxa (fijo en ~646), así que el firmware no la corregía. Ajustada en vivo con el operador (sostener_coxas.py, modo +): base 48 → 42 en firmware y ejecutar_politica_robot.py. Firmware cargado con avrdude del sistema (arduino-cli snap no abre el puerto). Ya no se cae.
+- Tibia 2 (ENC_T2): k −0,5921 → −1,15 (regresión encoder–orden en 3 caminatas, r≈0,97); el valor viejo duplicaba la amplitud medida. comparar_sim_real.py --calibracion-actual.
+- Parecido sim–real (60 s, coxa 2 a 42, calibración nueva): paso 83 %, trote 70 % (fémur trasero derecho C9 con r=0,25 en esa toma), carrera 69 %. Forma r≈0,99; robot 60–130 ms atrasado; en carrera los fémures se mueven 1,2–1,8× más que en la simulación.
+- Servicio apagar-cuadrupedo instalado (systemd, envía «x» al apagar).
+
+### 28-oct-2026 (noche) — gateo y galope, presentación
+
+- Gateo v27 (wav 40, continúa v26 6007/6001): **100 % viable** con la semilla 7013 a 4,1 M (avance 0,99 m frente a 1,03 m; deriva 0,03 frente a 0,14). El PC se apagó a las 16:50 y 17:02 con el gateo en 4,1–4,2 M de 4,5 M; se evaluaron las copias guardadas (reanudar_v27.sh) y se copió metadata.json desde v26 6007.
+- Galope: v26 85 %, v27 90 % (7403 a 150 k), v28 90 % (8417 a 175 k; 8 semillas cortas desde v27). Techo del 90 % con esta marcha base; siguiente paso sería ajustar ciclo o desfases, no entrenar más igual.
+- Copias para el robot en ppo_v10_robot/: paso v24 4109 200k, trote v24 4209 200k, carrera v24 4309 200k (100 %), gateo v27 7013 4100k (100 %), galope v28 8417 175k (90 %).
+- Revisión completa de sensores (revisar_sensores.py --completo): encoder fémur 2 (0x70/4) vuelve a funcionar; potenciómetro de la tibia 3 responde en M12 (el firmware no lo transmite aún); coxa 2 (C1) no sigue la coxa.
+- COMO_FUNCIONA_LA_RED.md: explicación de la red, estados, acciones, recompensa, GAE y PPO.
+- Presentación completa (46 diapositivas) en Documentacion/presentacion_20261028/ y como artifact.
+- Pendiente: probar gateo y galope en el robot; caminatas en el piso con IMU y cámaras diagonales.

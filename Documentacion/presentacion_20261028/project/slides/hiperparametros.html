@@ -1,0 +1,19 @@
+<section id="hiperparametros" data-transition="fade" style="background:#F6F5F0;color:#2A3442;font-family:'IBM Plex Sans', Arial, sans-serif;padding:112px 128px 160px;display:flex;flex-direction:column;gap:30px">
+<p style="font-size:24px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#B4521C">El agente</p>
+<h2 style="font-family:'Source Serif 4', Georgia, serif;font-size:64px;font-weight:600;line-height:1.1;color:#15233B">Hiperparámetros de PPO</h2>
+<table style="font-size:25px;color:#2A3442">
+<tr><th style="width:32%">Hiperparámetro</th><th style="width:18%">Valor</th><th style="width:50%">Significado</th></tr>
+<tr><td>Tasa de aprendizaje</td><td>1·10⁻⁴</td><td>Paso del optimizador Adam (bajo para no estropear lo aprendido)</td></tr>
+<tr><td>Pasos por recolección N</td><td>2048</td><td>Datos por actualización (≈ 61 s simulados)</td></tr>
+<tr><td>Minilote</td><td>256</td><td>Muestras por paso de gradiente</td></tr>
+<tr><td>Épocas K</td><td>10</td><td>Pasadas sobre cada recolección</td></tr>
+<tr><td>γ / λ</td><td>0,99 / 0,95</td><td>Descuento y GAE</td></tr>
+<tr><td>Recorte ε</td><td>0,2</td><td>Cambio máximo de la razón ρ</td></tr>
+<tr><td>c₁ / c₂</td><td>0,5 / 0</td><td>Peso del crítico / entropía</td></tr>
+<tr><td>Norma máxima del gradiente</td><td>0,5</td><td>Recorte del gradiente</td></tr>
+<tr><td>KL objetivo</td><td>0,03</td><td>Corta las épocas si la política cambia mucho</td></tr>
+<tr><td>Copias intermedias</td><td>cada 25 k–100 k pasos</td><td>Para elegir después la mejor</td></tr>
+</table>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#6A7383">Nova Spot Micro · El agente · Fijados por nosotros: tasa, minilote y KL; el resto, valores por defecto de PPO</p>
+<aside>Con los valores por defecto, al seguir entrenando políticas que ya eran buenas el aprendizaje se volvía inestable; por eso se bajó la tasa a 1e-4, se usó un minilote de 256 y un freno de divergencia KL de 0,03.</aside>
+</section>

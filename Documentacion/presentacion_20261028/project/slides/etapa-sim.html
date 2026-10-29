@@ -1,0 +1,21 @@
+<section id="etapa-sim" data-transition="fade" style="background:#F6F5F0;color:#2A3442;font-family:'IBM Plex Sans', Arial, sans-serif;padding:112px 128px 160px;display:flex;flex-direction:column;gap:36px">
+<p style="font-size:24px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#B4521C">Primera etapa</p>
+<h2 style="font-family:'Source Serif 4', Georgia, serif;font-size:64px;font-weight:600;line-height:1.1;color:#15233B">Simulación con ROS 2, Gazebo y MuJoCo</h2>
+<div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:28px">
+<div style="display:flex;flex-direction:column;gap:12px;background:#FFFFFF;padding:36px;border:1px solid #DCD8CE;border-radius:16px">
+<h3 style="font-size:32px;font-weight:600;color:#2F5D8C">Software</h3>
+<p style="font-size:26px;line-height:1.4">ROS 2 Humble: descripción del robot (URDF/SDF y MJCF), controlador de marcha, nodo de métricas y supervisor de seguridad. 79 pruebas automáticas e integración continua.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px;background:#FFFFFF;padding:36px;border:1px solid #DCD8CE;border-radius:16px">
+<h3 style="font-size:32px;font-weight:600;color:#2F5D8C">Gateo y paso en Gazebo</h3>
+<p style="font-size:26px;line-height:1.4">Gateo cartesiano: 5 ensayos, 191 ciclos, 0,0240 m/ciclo (0,0055 m/s). Paso: ≈ 0,0217 m/ciclo con 5,76 s/ciclo.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px;background:#FFFFFF;padding:36px;border:1px solid #DCD8CE;border-radius:16px">
+<h3 style="font-size:32px;font-weight:600;color:#B4521C">Resultado negativo útil</h3>
+<p style="font-size:26px;line-height:1.4">PPO con modelo nominal del servo: −25,8 % de avance y +23,7 % de pitch frente a la marcha base. Bloqueó la transferencia y motivó identificar el actuador.</p>
+</div>
+</div>
+<p style="font-size:28px;line-height:1.4;color:#4A5568">Conclusión de la etapa: sin un modelo del servo medido en el robot, lo aprendido en simulación no mejora la marcha. Por eso se construyó el entorno con el actuador real.</p>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#6A7383">Nova Spot Micro · Plataforma y simulación</p>
+<aside>Esta etapa dejó el modelo, las herramientas y una conclusión importante: la PPO entrenada con un servo ideal empeoró la marcha en Gazebo. El supervisor se probó con nueve escenarios provocados que activaron la postura segura.</aside>
+</section>

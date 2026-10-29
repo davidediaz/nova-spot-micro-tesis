@@ -39,6 +39,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("caminata", type=Path)
     ap.add_argument("--figura", action="store_true")
+    ap.add_argument("--calibracion-actual", action="store_true",
+                    help="28-oct: usar sensores_robot.json de hoy en vez de la calibración guardada con la caminata")
     a = ap.parse_args()
     import csv
     import entrenar_ppo_real as E
@@ -94,7 +96,8 @@ def main():
     BINS = min(60, nominal_len)          # un intervalo por paso de control como máximo (trote: 33)
     # Robot: ángulo del modelo medido por el sensor de cada articulación (grados, respecto a la referencia).
     ref = cfg["referencias_sensores"]
-    R_cal = cfg.get("calibracion_sensores", json.loads(R.CALIBRACION.read_text()))
+    R_cal = (json.loads(R.CALIBRACION.read_text()) if a.calibracion_actual
+             else cfg.get("calibracion_sensores", json.loads(R.CALIBRACION.read_text())))
     rampa = round(1.0 / dt)
     filas = filas[rampa:]
     fase_r = np.array([float(f["fase"]) for f in filas])
