@@ -2850,3 +2850,12 @@ Bus I²C del robot cortado desde las 19:39: reconectar SDA, SCL, 5 V y GND antes
 - COMO_FUNCIONA_LA_RED.md: explicación de la red, estados, acciones, recompensa, GAE y PPO.
 - Presentación completa (46 diapositivas) en Documentacion/presentacion_20261028/ y como artifact.
 - Pendiente: probar gateo y galope en el robot; caminatas en el piso con IMU y cámaras diagonales.
+
+### 29-oct-2026 — explicaciones, gráficas de entrenamiento y presentaciones
+
+- Notas del orador de la presentación completa (https://claude.ai/artifact/RZ5pm312XNrX46RKTqrzYb) con la explicación de cada ecuación; parámetros de la red corregidos a ≈ 12 100 (actor ≈ 6 400).
+- entrenar_ppo_real.py --registrar-perdidas: guarda progress.csv (pérdidas de PPO por actualización) y monitor.csv (recompensa de cada episodio).
+- Campaña v30: las 5 marchas desde cero, 1 M de pasos, con registro (paso s4109, trote s4207, carrera s4309, gateo s4009, galope s6403). Paso, gateo y carrera convergen; trote casi; galope no converge en 1 M (varianza explicada ≈ 0).
+- graficas_recompensa_perdida.py: recompensa por episodio (cruda + tendencia) y 8 paneles de pérdidas por marcha, más recompensa de las 5 marchas. Copiadas a Documento_TESIS/Figures/Resultados (ppo_recompensa_<marcha>_episodios.png, ppo_perdidas_<marcha>.png); aún no están en el texto de la tesis.
+- Presentación resumida en línea de tiempo, 29 diapositivas, ecuaciones sin explicar y una sola tabla de resultados: https://claude.ai/artifact/HfRaeqjedTApv4aB1gmPgd (copia en Documentacion/presentacion_charla_20261029/).
+- El documento de tesis (PDF del 22-oct) sigue sin los resultados del 26 al 29-oct. Pendiente: actualizarlo; probar gateo y galope en el robot; caminatas en el piso; exportar las políticas nuevas a NumPy para la Raspberry.
