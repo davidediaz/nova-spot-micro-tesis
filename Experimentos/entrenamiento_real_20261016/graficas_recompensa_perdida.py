@@ -123,12 +123,29 @@ def episodios(monitor):
     return pasos, r
 
 
-def recompensa_cruda(carpeta, salida, semilla="4207"):
+def semilla_y_marcha(carpeta):
+    d = sorted(carpeta.glob("semilla_*"))[0]
+    meta = d / "metadata.json"
+    marcha = json.loads(meta.read_text())["marcha"]["tipo"] if meta.exists() else carpeta.name.split("_")[2]
+    return d.name.split("_")[1], ("de la " if marcha == "carrera" else "del ") + marcha
+
+
+def recompensa_cruda(carpeta, salida, semilla=None):
+    s0, marcha = semilla_y_marcha(carpeta)
+    semilla = semilla or s0
     pasos, r = episodios(carpeta / f"semilla_{semilla}" / "monitor.monitor.csv")
     fig, ax = plt.subplots(figsize=(11, 5.2))
     estilo(ax)
-    crudo_y_suave(ax, pasos / 1e6, r, COLORES[0], 50)
-    ax.set_title(f"Recompensa por episodio durante el entrenamiento del trote (semilla {semilla}, desde cero)",
+    ys = crudo_y_suave(ax, pasos / 1e6, r, COLORES[0], 50)
+    # Unos pocos episodios muy malos al inicio aplastan la escala: se recorta el eje al percentil 0,5.
+    piso = min(np.percentile(r, 0.5), ys.min())
+    fuera = int((r < piso).sum())
+    if fuera:
+        rango = r.max() - piso
+        ax.set_ylim(piso - 0.05 * rango, r.max() + 0.05 * rango)
+        ax.text(0.01, 0.02, f"Eje recortado: {fuera} episodios iniciales quedan por debajo (mínimo {r.min():.0f})",
+                transform=ax.transAxes, fontsize=8.5, color=TINTA2)
+    ax.set_title(f"Recompensa por episodio durante el entrenamiento {marcha} (semilla {semilla}, desde cero)",
                  loc="left", fontsize=12, color=TINTA)
     ax.set_xlabel("Pasos de entrenamiento (millones)", fontsize=10, color=TINTA2)
     ax.set_ylabel("Recompensa del episodio (puntos)", fontsize=10, color=TINTA2)
@@ -140,7 +157,9 @@ def recompensa_cruda(carpeta, salida, semilla="4207"):
     plt.close(fig)
 
 
-def perdidas(carpeta, salida, semilla="4207"):
+def perdidas(carpeta, salida, semilla=None):
+    s0, marcha = semilla_y_marcha(carpeta)
+    semilla = semilla or s0
     filas = {}
     for p in sorted(carpeta.glob("semilla_*/progress.csv")):
         with p.open() as f:
@@ -171,8 +190,7 @@ def perdidas(carpeta, salida, semilla="4207"):
     fig.legend(handles=[plt.Line2D([], [], color=COLORES[0], linewidth=0.8, alpha=0.35, label="Valor crudo (cada episodio o actualización, con ruido)"),
                         plt.Line2D([], [], color=COLORES[0], linewidth=2.2, label="Tendencia (media móvil)")],
                loc="lower center", ncol=2, frameon=False, fontsize=9.5, bbox_to_anchor=(0.5, 0.0))
-    marcha = carpeta.name.split("_")[2] if len(carpeta.name.split("_")) > 2 else carpeta.name
-    fig.suptitle(f"Pérdidas de PPO durante el entrenamiento del {marcha} (semilla {semilla}, desde cero, 1 M de pasos)",
+    fig.suptitle(f"Pérdidas de PPO durante el entrenamiento {marcha} (semilla {semilla}, desde cero, 1 M de pasos)",
                  x=0.01, ha="left", fontsize=13, color=TINTA)
     fig.tight_layout(rect=(0, 0.05, 1, 0.95))
     fig.savefig(salida / f"perdidas_{carpeta.name}.png", dpi=160, facecolor="#fcfcfb")
@@ -181,15 +199,15 @@ def perdidas(carpeta, salida, semilla="4207"):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--perdidas", type=Path)
+    ap.add_argument("--perdidas", type=Path, nargs="*", default=[])
     ap.add_argument("--salida", type=Path, default=HERE / "graficas")
     a = ap.parse_args()
     a.salida.mkdir(exist_ok=True)
     recompensa_5_marchas(a.salida)
-    if a.perdidas:
-        perdidas(HERE / a.perdidas, a.salida)
-        if (HERE / a.perdidas / "semilla_4207" / "monitor.monitor.csv").exists():
-            recompensa_cruda(HERE / a.perdidas, a.salida)
+    for c in a.perdidas:
+        perdidas(HERE / c, a.salida)
+        if list((HERE / c).glob("semilla_*/monitor.monitor.csv")):
+            recompensa_cruda(HERE / c, a.salida)
     print("Gráficas en", a.salida)
 
 
