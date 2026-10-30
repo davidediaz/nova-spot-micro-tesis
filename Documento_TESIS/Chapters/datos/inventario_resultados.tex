@@ -1,0 +1,54 @@
+% Generado por generar_inventario_resultados.py el 2026-10-22 17:50. No editar a mano.
+\newcommand{\InvSimulacion}{132}
+\newcommand{\InvReal}{131}
+\newcommand{\InvRealDistintas}{119}
+\newcommand{\InvTotal}{263}
+\newcommand{\InvEnCurso}{4}
+\newcommand{\InvIncompletas}{20}
+\newcommand{\InvCaminatasValidas}{75}
+\newcommand{\InvCaminatasFallo}{11}
+\newcommand{\InvGrabaciones}{137}
+\begin{table}[H]
+\centering
+\small
+\caption{Entrenamientos PPO realizados por fase y marcha.}
+\label{tab:inventario-entrenamientos}
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.15\textwidth}>{\raggedright\arraybackslash}p{0.47\textwidth}rrr}
+\toprule
+Marcha & Campañas (semillas) & Semillas & Distintas & En curso \\
+\midrule
+\multicolumn{5}{l}{\textit{Fase de simulación con el modelo nominal (septiembre)}} \\
+Todas & distribuida step s23 (80), entrenamiento ppo gazebo (1), entrenamiento ppo mujoco (1), ppo residual (10), reentrenamiento ppo completo (20), reentrenamiento ppo extendido (3), reentrenamiento ppo largo (2), step estabilidad w32 (5), step estabilidad xy w32 (5), step estabilidad xy48 w32 l64 (5) & 132 & --- & 0 \\
+\multicolumn{5}{l}{\textit{Fase con el modelo del robot real (octubre)}} \\
+Gateo & ciclo1 gateo (4), ciclo2 gateo (4), v10 gateo (5), v12 gateo (4), v13 gateo abierto (15), v14 gateo (5) & 37 & 31 & 0 \\
+Trote & ciclo1 trote (4), ciclo2 trote (4), trote (8), trote abierto (15), v14 trote (5), v15 trote (7) & 43 & 37 & 0 \\
+Paso & v10 paso (5), v11 paso (8), v16 paso (8) & 21 & 21 & 4 \\
+Versiones previas del entorno & ppo (5), v2 (5), v3 (5), v4 (5), v5 (5), v6 (5) & 30 & 30 & 0 \\
+\midrule
+\textbf{Total} & & \textbf{263} & & 4 \\
+\multicolumn{5}{p{0.9\textwidth}}{\footnotesize «Distintas» descuenta las semillas que repitieron la misma ejecución (campañas del ciclo de mejora, error corregido el 22 de octubre). 20 entrenamientos de octubre se detuvieron antes de su política final y se conservan solo con copias intermedias.} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\small
+\caption{Caminatas de comparación en el robot suspendido por sesión (repeticiones por condición).}
+\label{tab:inventario-ensayos}
+\begin{tabular}{l>{\raggedright\arraybackslash}p{0.7\textwidth}}
+\toprule
+Sesión & Condiciones (repeticiones analizadas) \\
+\midrule
+20261019 & gateo\_base (3), gateo\_ppo (3), paso\_base (3), paso\_ppo (3) \\
+20261020 & gateo\_base (3), gateo\_ppo (3), paso\_base (3), paso\_ppo (3) \\
+20261020v11 & paso\_base (3), paso\_v11 (3) \\
+20261021 & gateo\_base (3), gateo\_v14 (3), trote\_base (3) \\
+ciclo1 & gateo\_base (2), gateo\_ppo1 (2), trote\_base (2), trote\_ppo1 (2), trote\_ppo2 (2) \\
+ciclo2 & gateo\_base (2), gateo\_ppo1 (2), gateo\_ppo2 (2), trote\_base (2), trote\_ppo1 (2) \\
+ciclo3 & gateo\_ppo1 (2) \\
+\midrule
+\multicolumn{2}{p{0.9\textwidth}}{\footnotesize Caminatas de comparación grabadas: 75 válidas y 11 descartadas por la comprobación de salud; 51 grabaciones adicionales de calibración, cámaras y sincronía.} \\
+\bottomrule
+\end{tabular}
+\end{table}
