@@ -1,128 +1,88 @@
-# Control discreto del cuadrúpedo NovaSM3
+# Nova Spot Micro — locomoción de un robot cuadrúpedo con aprendizaje por refuerzo
 
-Este workspace controla las 12 articulaciones del modelo NovaSM3 mediante una
-máquina de estados finitos. El alcance principal incluye:
+Este es el repositorio de la tesis sobre el robot cuadrúpedo **Nova Spot Micro**. Contiene:
 
-- **Gateo (`crawl`)**: ciclo cartesiano de 24 referencias, con orden previsto
-  FL--RR--FR--RL.
-- **Marcha paso (`step`)**: ciclo cartesiano de 32 referencias con transferencia
-  lateral de peso, validado en Gazebo y MuJoCo.
+- el modelo del robot para los simuladores;
+- un controlador de marchas en ROS 2, para Gazebo y MuJoCo;
+- políticas PPO residuales: una red neuronal que corrige una marcha base;
+- el firmware de la interfaz de E/S, el programa de control del robot físico y los datos de todos los ensayos;
+- el documento de tesis.
 
-El **galope (`gallop`)** conserva cinco estados dinámicos únicamente como
-experimento opcional de simulación. Está deshabilitado por defecto, no forma
-parte de la validación principal y no está autorizado para hardware.
+## Estado al 9 de noviembre de 2026
 
-## Compilar
+Hay cinco marchas, cada una con su mejor política elegida. Todas se probaron en el robot físico **suspendido** de una
+barra, con 60 s de caminata y 4 o 5 cámaras sincronizadas.
 
-```bash
-cd ~/Documentos/Cuadrupedo
-source /opt/ros/humble/setup.bash
-source ~/nova_spot_ws/install/setup.bash
-colcon build --symlink-install
-source install/setup.bash
-```
+| Marcha | Política | Viabilidad en simulación | Parecido robot–simulación |
+|---|---|---|---|
+| Gateo | v27, semilla 7013 | 100 % | 90 % |
+| Paso | v24, semilla 4109 | 100 % | 85 % |
+| Carrera | v32, semilla 9301 | 95 % | 83 % |
+| Galope | v32, semilla 9407 | 60 % | 82 % |
+| Trote | v32, semilla 9209 | 60 % | 80 % |
 
-## Ejecutar
+Para el detalle, las limitaciones y cómo verificar los resultados, ver
+[`Experimentos/entrenamiento_real_20261016/politicas_elegidas_20261105/README.md`](Experimentos/entrenamiento_real_20261016/politicas_elegidas_20261105/README.md).
+La versión exacta de esas políticas está fijada con la etiqueta `politicas-elegidas-20261105`.
 
-```bash
-ros2 launch nova_gait_controller demo.launch.py
-```
+## Mapa de carpetas
 
-Para ejecutar el mismo cuadrúpedo y controlador en MuJoCo 3.9.0:
+| Carpeta | Qué contiene |
+|---|---|
+| [`Experimentos/`](Experimentos/README.md) | **Todo lo medido y entrenado.** Simulación (agosto–septiembre), entrenamiento PPO con el modelo del robot real y ensayos en el robot físico (octubre–noviembre). Cada subcarpeta tiene su informe. |
+| ↳ [`Experimentos/entrenamiento_real_20261016/`](Experimentos/entrenamiento_real_20261016/README.md) | Programas de entrenamiento, evaluación y ejecución en el robot. Campañas v2 a v33, políticas elegidas (`ppo_v10_robot/`) y gráficas. |
+| ↳ [`Experimentos/camaras/`](Experimentos/camaras/README.md) | Grabación sincronizada de cámaras y sensores, análisis de video y datos de cada caminata (`grabaciones/`). |
+| [`Documento_TESIS/`](Documento_TESIS/README.md) | Documento de tesis en LaTeX (`Thesis.tex`, `Chapters/`), con sus figuras, tablas generadas y `compilar.sh`. |
+| [`Documentacion/`](Documentacion/README.md) | Notas técnicas, protocolos, explicaciones matemáticas, presentaciones y gráficas para exponer. |
+| [`src/`](src/README.md) | Paquetes ROS 2: `nova_sm3_description` (modelo URDF y MJCF, mundos, lanzadores de Gazebo y MuJoCo) y `nova_gait_controller` (máquina de marchas, métricas y supervisor). |
+| [`Arduino/`](Arduino/README.md) | Firmware de la interfaz de E/S (PCA9685, multiplexores y sensores) y bocetos de prueba. El vigente es `movimiento_suspendido_11_servos/`. |
+| [`Raspberry/`](Raspberry/README.md) | Preparación de la Raspberry Pi 4 (controlador previsto), pruebas de hardware y documentación de conexiones. |
+| [`Caminata final/`](Caminata%20final/README.md) | Sesiones de caminata del 21-oct-2026 (ciclo de mejora, vuelta 3) con su informe. |
+| [`GRABACION_FINAL/`](GRABACION_FINAL/README.md) | Paquete final del 5-nov-2026: tesis en PDF y gráficas de convergencia. Los videos quedan solo en el PC. |
+| [`gif/`](gif/README.md) | Animaciones cortas: trote PPO en MuJoCo y gateo nominal en Gazebo. |
+| `Github/` | Página de seguimiento del proyecto (bitácora, cronograma y evidencias), publicada en la rama `gh-pages`. |
+| `ProyectoII_Clases/`, `Seguimiento/` | Material de clase y seguimiento del curso Proyecto de Grado II. |
+| `scripts/` | Utilidades: preparar y verificar la Raspberry Pi y ejemplos del modelo matemático. |
+| `CONTINUIDAD.md` | **Bitácora diaria** del proyecto: qué se hizo, con qué datos y qué quedó pendiente. Es el mejor punto de partida para retomar. |
 
-```bash
-ros2 launch nova_gait_controller mujoco_demo.launch.py
-```
+Los archivos sueltos de la raíz son informes de sesiones concretas (`INFORME_INTEGRAL_LECTURAS_*.md`,
+`ANEXO_METRICO_*.csv`), un esquema de medidas (`medidas_robot_fisico.svg`) y un visor web
+(`visor_interactivo.html`).
 
-Agrega `headless:=true` para simular sin abrir la ventana gráfica. El entorno
-Python independiente de MuJoCo está en `.venv-mujoco`.
-
-En otra terminal, selecciona una marcha:
-
-```bash
-ros2 topic pub --once /nova/gait_command std_msgs/msg/String "{data: gateo}"
-ros2 topic pub --once /nova/gait_command std_msgs/msg/String "{data: paso}"
-ros2 topic pub --once /nova/gait_command std_msgs/msg/String "{data: stand}"
-ros2 topic pub --once /nova/gait_command std_msgs/msg/String "{data: stop}"
-```
-
-Para una prueba opcional exclusivamente en Gazebo o MuJoCo:
-
-```bash
-ros2 param set /gait_controller enable_experimental_gallop true
-ros2 topic pub --once /nova/gait_command std_msgs/msg/String "{data: galope}"
-```
-
-El parámetro vuelve a `false` al reiniciar con la configuración normal.
-
-Los tiempos se ajustan en `src/nova_gait_controller/config/gaits.yaml`. Antes de
-usar estas marchas en hardware real deben calibrarse límites, sentido de cada
-servo, centro PWM, ganancias y detección de contacto.
-
-El gateo cartesiano dispone de estos parámetros seguros:
-
-- `crawl_phase_duration`: tiempo entre muestras; entre 0,08 y 1,0 s.
-- `crawl_samples`: muestras por ciclo; múltiplo de 4 entre 8 y 80.
-- `crawl_step_length`: longitud del paso; entre 0,002 y 0,040 m.
-- `crawl_step_height`: elevación del pie; entre 0,004 y 0,030 m.
-
-Los valores se validan al recibir el comando `gateo`. Si una configuración es
-inválida o produce un objetivo cinemático inalcanzable, el controlador rechaza
-la marcha y conserva la postura. La línea base probada en Gazebo es 24 muestras,
-0,18 s por muestra, paso de 0,018 m y elevación de 0,014 m.
-
-## Métricas y supervisor de simulación
-
-`demo.launch.py` inicia también `nova_metrics` y `nova_safety_supervisor`. Las
-muestras sincronizadas de pose 3D y las 12 articulaciones se publican en:
+## Empezar en otro PC
 
 ```bash
-ros2 topic echo /nova/metrics/json
-ros2 topic echo /nova/metrics/diagnostics
+git clone https://github.com/davidediaz/nova-spot-micro-tesis.git
+cd nova-spot-micro-tesis
+python3.10 -m venv .venv-mujoco
+.venv-mujoco/bin/pip install -r Experimentos/entrenamiento_real_20261016/politicas_elegidas_20261105/requirements.txt \
+    --extra-index-url https://download.pytorch.org/whl/cpu
+cd Experimentos/entrenamiento_real_20261016
+# Ver una política caminando en MuJoCo (ventana; --video x.mp4 para guardarla; --suspendido para verla colgada)
+../../.venv-mujoco/bin/python ver_politica_mujoco.py ppo_v10_robot/ppo_v32_trote_semilla_9209_650k
+# Comprobar los archivos y repetir la viabilidad de las 5 políticas
+PY=../../.venv-mujoco/bin/python politicas_elegidas_20261105/verificar.sh
 ```
 
-Los umbrales provisionales están en `config/monitoring.yaml`: altura entre
-0,16 y 0,32 m e inclinación absoluta máxima de 20 grados, con tres muestras
-inseguras consecutivas y ocho segundos de gracia al arrancar. Al activarse, el
-supervisor publica `stand` y enclava `/nova/safety/triggered`. Son valores para
-Gazebo, no criterios validados ni autorización para operar el robot físico.
+- **Gazebo:** el controlador ROS 2 (gateo y paso nominales) se compila y lanza como se explica en
+  [`src/README.md`](src/README.md). Las políticas PPO se entrenan y evalúan en MuJoCo; todavía no corren en Gazebo.
+- **Robot físico:** ver la sección «Cómo reproducirlo» del README de las políticas elegidas.
 
-`demo.launch.py` también inicia dos procesos de contacto. `contact_monitor`
-consolida los cuatro sensores de Gazebo en `/nova/foot_contacts` y
-`contact_comparator` publica la comparación con el plan en
-`/nova/contact_diagnostics`. El controlador publica la fase sincronizada en
-`/nova/gait_phase`. Esta comparación sigue siendo informativa y no detiene la
-marcha.
+## Qué no está en el repositorio
 
-Para registrar una prueba reproducible nueva:
+- **Videos de las cámaras.** Son pesados y en algunos aparecen personas. Están en el PC del laboratorio y en un
+  disco externo («Vidios tesis»).
+- **Copias intermedias de los entrenamientos** (`intermedias/`, cientos de MB). Sí están la política final, la
+  configuración y los registros de cada semilla.
+- **Entornos y compilaciones locales:** `.venv-mujoco/`, `build/`, `install/`, `log/` y los repositorios de
+  referencia (`referencias/`).
 
-```bash
-ros2 bag record /world/empty/dynamic_pose/info /joint_states \
-  /nova/metrics/json /nova/metrics/diagnostics /nova/safety/triggered \
-  /nova/gait_command /nova/gait_phase /nova/foot_contacts \
-  /nova/contact_diagnostics
-```
+## Ramas y etiquetas
 
-## Modelo matemático
-
-Además de FK/IK, el módulo `mathematical_model.py` implementa Jacobianos,
-matriz de masa, Coriolis, gravedad, dinámica inversa, transformación
-fuerza-par, centro de masa, actuadores MG996R, contacto con fricción y margen
-estático del polígono de apoyo. La formulación multicuerpo, parámetros,
-resultados nominales, supuestos y protocolo de identificación están en
-`Documentacion/MODELO_MATEMATICO_LATEX/main.pdf`. Es un modelo nominal
-computable: los parámetros físicos estimados deben medirse antes de llamarlo
-gemelo digital.
-
-## Estado experimental
-
-La cadencia corregida del gateo fue reproducida en dos ensayos independientes
-con ciclos de 4,32 s y diferencias menores al 0,2 % en las medias comparadas.
-La marcha paso completó dos ensayos de 12 ciclos en Gazebo y 12 ciclos en
-MuJoCo. La medición posterior de contactos mostró una limitación importante del
-gateo actual: coincidencia simultánea del 32,550 %, retardos en las patas
-delanteras y ausencia de despegue de las traseras. Por ello, el gateo camina y
-avanza, pero aún no cumple el patrón ideal de tres apoyos que declara su plan.
-
-El estado, las evidencias y el orden de trabajo vigentes están en
-`Seguimiento/Seguimiento.md` y `CONTINUIDAD.md`.
+| Nombre | Qué es |
+|---|---|
+| `main` | Versión principal y actualizada. |
+| `entrenamiento/ppo-robot-real-20261016` | Rama de trabajo desde octubre; se integra en `main`. |
+| `politicas-elegidas-20261105` | Etiqueta fija con las 5 políticas elegidas el 5-nov-2026. |
+| `gh-pages` | Página web de seguimiento. |
+| `resultados/mujoco-step-80-semillas-20260928` | Resultados de la campaña de 80 semillas de septiembre. |

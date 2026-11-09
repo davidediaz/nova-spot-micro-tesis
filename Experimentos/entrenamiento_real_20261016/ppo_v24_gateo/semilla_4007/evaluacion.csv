@@ -1,0 +1,11 @@
+condicion,semilla_eval,retorno,avance_m,deriva_lateral_m,inclinacion_max_rad,caida
+nominal,801,-132.79,0.7677,0.105,0.0776,False
+nominal,802,-87.5,0.7854,0.085,0.0744,False
+nominal,803,-103.0,0.7655,0.1,0.0834,False
+nominal,804,-47.6,0.7778,0.0697,0.0773,False
+nominal,805,-129.89,0.7638,0.1082,0.0853,False
+ppo,801,-98.62,0.6899,0.0201,0.0513,False
+ppo,802,-76.31,0.7196,0.0022,0.051,False
+ppo,803,-113.05,0.6861,0.0288,0.0539,False
+ppo,804,-142.92,0.6893,0.0473,0.0518,False
+ppo,805,-108.35,0.6729,0.0196,0.0518,False

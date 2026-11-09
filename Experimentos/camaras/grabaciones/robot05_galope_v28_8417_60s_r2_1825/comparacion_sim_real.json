@@ -1,0 +1,41 @@
+{
+  "parecido": 66.2,
+  "articulaciones": {
+    "front_left_femur_joint": {
+      "r": 0.992,
+      "amplitud": 1.22,
+      "desfase_ms": -90,
+      "parecido": 81.2
+    },
+    "front_left_tibia_joint": {
+      "r": 0.987,
+      "amplitud": 1.8,
+      "desfase_ms": -60,
+      "parecido": 54.8
+    },
+    "front_right_femur_joint": {
+      "r": 0.997,
+      "amplitud": 1.39,
+      "desfase_ms": -90,
+      "parecido": 71.8
+    },
+    "rear_left_femur_joint": {
+      "r": 0.913,
+      "amplitud": 0.76,
+      "desfase_ms": -90,
+      "parecido": 69.7
+    },
+    "rear_left_tibia_joint": {
+      "r": 0.861,
+      "amplitud": 0.63,
+      "desfase_ms": -210,
+      "parecido": 54.1
+    },
+    "rear_right_femur_joint": {
+      "r": 0.99,
+      "amplitud": 1.51,
+      "desfase_ms": -120,
+      "parecido": 65.5
+    }
+  }
+}

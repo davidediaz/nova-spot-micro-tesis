@@ -63,3 +63,15 @@ Experimentos/campana_ppo_escala_20260904/
 
 # Videos de las cámaras (pesados; quedan solo en este PC)
 Experimentos/camaras/grabaciones/**/*.mkv
+
+# 9-nov-2026: orden del repositorio
+# Copias intermedias de los entrenamientos (cientos de MB; quedan en el PC del laboratorio y en el PC 2)
+Experimentos/entrenamiento_real_20261016/ppo_*/semilla_*/intermedias/
+# Copias idénticas de caminata.csv dentro de cada cámara, e imágenes de las cámaras (pueden mostrar personas)
+Experimentos/camaras/grabaciones/*/remota/caminata.csv
+Experimentos/camaras/grabaciones/*/extra_*/caminata.csv
+Experimentos/camaras/grabaciones/**/*.jpg
+Experimentos/camaras/vivo/
+# Videos de evidencia (aparece una persona; repositorio público) y comprimidos duplicados
+GRABACION_FINAL/Videos_evidencia_5nov/*.mp4
+gif.zip

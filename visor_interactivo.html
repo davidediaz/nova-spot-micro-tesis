@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Visor interactivo del cuadrúpedo</title>
+<style>
+  :root { color-scheme: dark; --bg:#07111b; --panel:#101f2c; --panel2:#0c1823; --line:#263b4b; --text:#e7f0f7; --muted:#9cb2c3; --mint:#63e6be; --blue:#73b9ff; --amber:#ffc66d; }
+  * { box-sizing:border-box }
+  body { margin:0; background:radial-gradient(ellipse at 65% 25%,#142b3e 0,#07111b 55%); color:var(--text); font:15px/1.45 system-ui,-apple-system,Segoe UI,sans-serif; }
+  header { padding:22px clamp(16px,4vw,48px) 12px; max-width:1500px; margin:auto; }
+  h1 { margin:0 0 5px; font-size:clamp(23px,3vw,34px); letter-spacing:-.03em }
+  header p { margin:0;color:var(--muted) }
+  main { max-width:1500px; margin:auto; padding:12px clamp(12px,3vw,40px) 32px; display:grid; grid-template-columns:minmax(0,1fr) 330px; gap:16px; }
+  .view,.controls,.data { background:linear-gradient(145deg,rgba(18,35,49,.98),rgba(10,23,34,.98)); border:1px solid var(--line); border-radius:18px; box-shadow:0 18px 48px #0005; }
+  .view { min-height:640px; overflow:hidden; position:relative; }
+  canvas { width:100%; height:100%; min-height:640px; display:block; touch-action:none; cursor:grab; }
+  canvas:active { cursor:grabbing }
+  .hint { position:absolute;left:14px;bottom:12px;padding:8px 11px;border:1px solid #ffffff18;border-radius:10px;background:#07111bba;color:#bed0dd;font-size:12px;pointer-events:none }
+  .badge { position:absolute;right:14px;top:14px;padding:7px 10px;border-radius:999px;background:#07111bba;border:1px solid #ffffff1b;color:var(--mint);font-size:12px;font-weight:700 }
+  aside { display:flex;flex-direction:column;gap:14px; }
+  .controls,.data { padding:16px; }
+  h2 { font-size:15px; margin:0 0 12px; letter-spacing:.02em }
+  .actions { display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px }
+  button,select { font:inherit;color:var(--text);background:#172b3b;border:1px solid #345064;border-radius:10px;padding:10px;cursor:pointer }
+  button:hover { border-color:var(--mint) }
+  button.primary { background:var(--mint);color:#06231b;border-color:var(--mint);font-weight:750 }
+  label.range { display:block;padding:8px 0 5px;border-top:1px solid #ffffff0d }
+  .rangehead { display:flex;justify-content:space-between;gap:8px;font-size:13px }
+  .rangehead output { color:var(--mint);font-variant-numeric:tabular-nums;font-weight:700 }
+  input[type=range] { width:100%;accent-color:var(--mint);margin:8px 0 1px }
+  .selectrow { display:flex;align-items:center;gap:9px;margin:0 0 10px;color:var(--muted);font-size:13px }
+  .selectrow select { flex:1;padding:7px }
+  .data { display:grid;grid-template-columns:1fr 1fr;gap:9px }
+  .data h2 { grid-column:1/-1;margin-bottom:0 }
+  .metric { background:#07131d99;border:1px solid #ffffff0b;border-radius:11px;padding:10px }
+  .metric span { display:block;color:var(--muted);font-size:11px }
+  .metric strong { display:block;margin-top:3px;font-size:15px;font-variant-numeric:tabular-nums }
+  .note { grid-column:1/-1;color:var(--muted);font-size:11px;margin:3px 1px 0 }
+  footer { max-width:1500px;margin:auto;padding:0 clamp(16px,4vw,48px) 28px;color:var(--muted);font-size:12px }
+  @media(max-width:950px){main{grid-template-columns:1fr}.view,canvas{min-height:55vh}.controls{display:grid;grid-template-columns:1fr 1fr;gap:0 20px}.controls h2,.actions,.selectrow{grid-column:1/-1}}
+  @media(max-width:560px){main{padding:10px}.view,canvas{min-height:390px}.controls{display:block}.data{grid-template-columns:1fr 1fr}header{padding-top:16px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Cuadrúpedo · visor 3D interactivo</h1>
+  <p>Gira el modelo, anima las patas y explora cómo cambian las proporciones al modificar las medidas.</p>
+</header>
+<main>
+  <section class="view" aria-label="Modelo 3D">
+    <canvas id="scene" aria-label="Vista 3D interactiva del cuadrúpedo"></canvas>
+    <div class="badge" id="poseBadge">VISTA 3D · PAUSA</div>
+    <div class="hint">Arrastra para girar · rueda para acercar · doble clic para centrar</div>
+  </section>
+  <aside>
+    <section class="controls">
+      <h2>Movimiento y vista</h2>
+      <div class="actions">
+        <button class="primary" id="animate">▶ Animar</button>
+        <button id="reset">↺ Restablecer</button>
+      </div>
+      <div class="selectrow"><span>Marcha</span><select id="gait"><option value="gateo">Gateo alternado</option><option value="trote">Trote diagonal</option></select></div>
+      <div class="selectrow"><span>Velocidad</span><input id="speed" type="range" min="0.4" max="2.2" step="0.1" value="1"><output id="speedOut">1,0×</output></div>
+      <h2 style="margin-top:14px">Medidas editables · mm</h2>
+      <div id="sliders"></div>
+    </section>
+    <section class="data">
+      <h2>Dimensiones actuales</h2>
+      <div class="metric"><span>Cuerpo · largo × ancho × alto</span><strong id="bodyVal"></strong></div>
+      <div class="metric"><span>Centros de cadera · delante–atrás</span><strong id="hipXVal"></strong></div>
+      <div class="metric"><span>Centros de cadera · izquierda–derecha</span><strong id="hipYVal"></strong></div>
+      <div class="metric"><span>Coxa · cadera a eje femoral</span><strong id="coxaVal"></strong></div>
+      <div class="metric"><span>Fémur · eje a eje</span><strong id="femurVal"></strong></div>
+      <div class="metric"><span>Tibia · rodilla al pie</span><strong id="tibiaVal"></strong></div>
+      <div class="metric"><span>Pie · radio</span><strong id="footVal"></strong></div>
+      <div class="metric"><span>Masa de referencia simulada</span><strong id="massVal"></strong></div>
+      <p class="note">Masa indicada según los valores que compartiste; cambiar las longitudes no recalcula la masa. La pose es ilustrativa, no una simulación dinámica ni un archivo para fabricar piezas.</p>
+    </section>
+  </aside>
+</main>
+<footer>Referencia inicial: medidas de la simulación proporcionadas por ti. Las proporciones se dibujan en milímetros; la cámara es ortográfica y el esquema no sustituye la comprobación del robot físico.</footer>
+<script>
+(() => {
+  const initial = { bodyL:230, bodyW:120, bodyH:75, hipX:180, hipY:120, coxa:38.1, femur:107.95, tibia:135.89, foot:18 };
+  const specs = [
+    ['bodyL','Largo del cuerpo',150,300,1],['bodyW','Ancho del cuerpo',80,180,1],['bodyH','Alto del cuerpo',45,120,1],
+    ['hipX','Separación caderas delante–atrás',120,240,1],['hipY','Separación caderas izquierda–derecha',80,180,1],
+    ['coxa','Coxa',15,70,0.1],['femur','Fémur',60,160,0.1],['tibia','Tibia',70,190,0.1],['foot','Radio del pie',8,35,0.1]
+  ];
+  const val = {...initial}, canvas=document.getElementById('scene'), ctx=canvas.getContext('2d');
+  let yaw=-0.66, pitch=0.72, zoom=1, dragging=false, lastX=0,lastY=0, playing=false, start=0, phase=0, animId;
+  const sliders=document.getElementById('sliders');
+  const fmt=(n,d=1)=>Number(n).toLocaleString('es-CO',{minimumFractionDigits:d,maximumFractionDigits:d});
+  specs.forEach(([id,title,min,max,step])=>{
+    const row=document.createElement('label'); row.className='range'; row.innerHTML=`<span class="rangehead"><span>${title}</span><output id="o_${id}"></output></span><input id="s_${id}" type="range" min="${min}" max="${max}" step="${step}" value="${val[id]}">`;
+    sliders.appendChild(row);
+    const input=row.querySelector('input'); input.addEventListener('input',()=>{val[id]=Number(input.value);updateLabels();draw();});
+  });
+  function updateLabels(){
+    specs.forEach(([id,,,,step])=>document.getElementById('o_'+id).textContent=fmt(val[id],step<1?1:0));
+    document.getElementById('bodyVal').textContent=`${fmt(val.bodyL,0)} × ${fmt(val.bodyW,0)} × ${fmt(val.bodyH,0)}`;
+    document.getElementById('hipXVal').textContent=`${fmt(val.hipX,0)} mm`;
+    document.getElementById('hipYVal').textContent=`${fmt(val.hipY,0)} mm`;
+    document.getElementById('coxaVal').textContent=`${fmt(val.coxa)} mm`;
+    document.getElementById('femurVal').textContent=`${fmt(val.femur)} mm`;
+    document.getElementById('tibiaVal').textContent=`${fmt(val.tibia)} mm`;
+    document.getElementById('footVal').textContent=`${fmt(val.foot)} mm`;
+    document.getElementById('massVal').textContent='≈ 2,84 kg';
+  }
+  const add=(a,b)=>[a[0]+b[0],a[1]+b[1],a[2]+b[2]];
+  function project(p){
+    const cy=Math.cos(yaw),sy=Math.sin(yaw), cp=Math.cos(pitch),sp=Math.sin(pitch);
+    const x=cy*p[0]-sy*p[1], y=sy*p[0]+cy*p[1], z=p[2];
+    const py=cp*y-sp*z, depth=sp*y+cp*z;
+    return [canvas.clientWidth/2 + x*scale, canvas.clientHeight*0.52 - py*scale, depth];
+  }
+  let scale=1;
+  function line3(a,b,color,width){const A=project(a),B=project(b);ctx.beginPath();ctx.moveTo(A[0],A[1]);ctx.lineTo(B[0],B[1]);ctx.strokeStyle=color;ctx.lineWidth=width;ctx.lineCap='round';ctx.stroke();}
+  function poly3(points,color,stroke='#ffffff18'){const q=points.map(project);ctx.beginPath();ctx.moveTo(q[0][0],q[0][1]);q.slice(1).forEach(p=>ctx.lineTo(p[0],p[1]));ctx.closePath();ctx.fillStyle=color;ctx.fill();ctx.strokeStyle=stroke;ctx.lineWidth=1;ctx.stroke();}
+  function sphere(p,r,color){const P=project(p), rr=Math.max(3,r*scale);const g=ctx.createRadialGradient(P[0]-rr*.3,P[1]-rr*.35,1,P[0],P[1],rr);g.addColorStop(0,'#ffffff');g.addColorStop(.22,color);g.addColorStop(1,'#0a1722');ctx.beginPath();ctx.ellipse(P[0],P[1],rr,rr*.78,0,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();ctx.strokeStyle='#ffffff3c';ctx.lineWidth=1;ctx.stroke();}
+  function beam(a,b,color,thick){line3(a,b,'#02080d99',thick+3);line3(a,b,color,thick);const P=project(b);sphere(b,thick*.6,color);}
+  function body(z){
+    const x=val.bodyL/2,y=val.bodyW/2,h=val.bodyH/2;
+    const v=[[-x,-y,-h],[x,-y,-h],[x,y,-h],[-x,y,-h],[-x,-y,h],[x,-y,h],[x,y,h],[-x,y,h]].map(p=>[p[0],p[1],p[2]+z]);
+    // Faces are intentionally layered as a clean CAD-like shaded block.
+    poly3([v[0],v[1],v[2],v[3]],'#23384a');
+    poly3([v[1],v[2],v[6],v[5]],'#28465b');
+    poly3([v[2],v[3],v[7],v[6]],'#365b70');
+    poly3([v[4],v[5],v[6],v[7]],'#74b3c3');
+    // Front marker / orientation nose
+    poly3([[x-18,-18,z+h+1],[x-18,18,z+h+1],[x+5,0,z+h+1]],'#ffc66d');
+    return z;
+  }
+  function legModel(i,t,zBody){
+    const front=i<2, left=i%2===0, sx=front?1:-1, sy=left?1:-1;
+    const cycle=document.getElementById('gait').value==='trote' ? (i===0||i===3?0:.5) : [0,.5,.25,.75][i];
+    const s=playing?Math.sin(2*Math.PI*(t+cycle)):0;
+    const lift=playing?Math.max(0,s)*25:0;
+    const hip=[sx*val.hipX/2,sy*val.hipY/2,zBody-val.bodyH*.15];
+    const femurRoot=[hip[0],hip[1]+sy*val.coxa,hip[2]];
+    const theta=(front?1:-1)*(0.14+s*.27);
+    const knee=[femurRoot[0]+Math.sin(theta)*val.femur, femurRoot[1], femurRoot[2]-Math.cos(theta)*val.femur];
+    const shankTheta=theta+(front?1:-1)*(0.24+(playing?Math.max(0,s)*.3:0));
+    const footCenter=[knee[0]+Math.sin(shankTheta)*val.tibia, knee[1], knee[2]-Math.cos(shankTheta)*val.tibia+lift];
+    beam(hip,femurRoot,'#4c6577',Math.max(5,val.coxa*.32*scale));
+    sphere(hip,9,'#ffc66d');
+    beam(femurRoot,knee,'#f3c44f',Math.max(7,13*scale));
+    sphere(femurRoot,8,'#63e6be');
+    sphere(knee,8,'#63e6be');
+    beam(knee,footCenter,'#8094a4',Math.max(6,10*scale));
+    sphere(footCenter,val.foot,'#d8e5eb');
+  }
+  function grid(){
+    ctx.strokeStyle='#b7d8eb0b';ctx.lineWidth=1;const span=520, step=50;
+    for(let x=-span;x<=span;x+=step) line3([x,-span,0],[x,span,0],'#b7d8eb0b',1);
+    for(let y=-span;y<=span;y+=step) line3([-span,y,0],[span,y,0],'#b7d8eb0b',1);
+    line3([-span,0,0],[span,0,0],'#63e6be33',1);line3([0,-span,0],[0,span,0],'#73b9ff33',1);
+  }
+  function dimensionPanel(){
+    ctx.save();ctx.fillStyle='#08131dcc';ctx.strokeStyle='#ffffff22';ctx.lineWidth=1;
+    const x=16,y=16,w=Math.min(310,canvas.clientWidth-32),h=93;
+    ctx.beginPath();ctx.roundRect(x,y,w,h,12);ctx.fill();ctx.stroke();
+    ctx.font='600 12px system-ui';ctx.fillStyle='#b9cfdd';
+    ctx.fillText('COTAS PRINCIPALES · mm',x+13,y+21);
+    ctx.font='12px system-ui';ctx.fillStyle='#e9f4fa';
+    ctx.fillText(`Cuerpo ${fmt(val.bodyL,0)} × ${fmt(val.bodyW,0)} × ${fmt(val.bodyH,0)}`,x+13,y+43);
+    ctx.fillText(`Caderas ${fmt(val.hipX,0)} × ${fmt(val.hipY,0)} · coxa ${fmt(val.coxa)}`,x+13,y+63);
+    ctx.fillText(`Fémur ${fmt(val.femur)} · tibia ${fmt(val.tibia)} · pie r ${fmt(val.foot)}`,x+13,y+83);
+    ctx.restore();
+  }
+  function draw(t=0){
+    const dpr=Math.min(window.devicePixelRatio||1,2),w=canvas.clientWidth,h=canvas.clientHeight;
+    if(canvas.width!==Math.round(w*dpr)||canvas.height!==Math.round(h*dpr)){canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);}
+    ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);
+    const maxDim=Math.max(val.bodyL,val.bodyW,val.femur+val.tibia+val.coxa)*2.15;
+    scale=Math.min(w,h)*.72/maxDim*zoom;
+    const grad=ctx.createRadialGradient(w*.55,h*.48,10,w*.55,h*.48,Math.max(w,h)*.78);grad.addColorStop(0,'#142b3d');grad.addColorStop(1,'#08131e');ctx.fillStyle=grad;ctx.fillRect(0,0,w,h);
+    grid();
+    const zBody=val.femur+val.tibia+val.foot+val.bodyH*.5+6;
+    const z=zBody+(playing?Math.sin(t*2*Math.PI)*3:0);
+    // Back legs first, then front legs, to preserve a readable overlap.
+    [2,3,0,1].forEach(i=>legModel(i,t,z)); body(z);
+    dimensionPanel();
+    document.getElementById('poseBadge').textContent=`VISTA 3D · ${playing?document.getElementById('gait').selectedOptions[0].text.toUpperCase():'PAUSA'}`;
+  }
+  function animateFrame(ts){if(!playing)return; if(!start)start=ts; phase=(ts-start)/1000*Number(document.getElementById('speed').value);draw(phase);animId=requestAnimationFrame(animateFrame);}
+  document.getElementById('animate').addEventListener('click',()=>{playing=!playing;document.getElementById('animate').textContent=playing?'Ⅱ Pausar':'▶ Animar';start=0;if(playing)animId=requestAnimationFrame(animateFrame);else{cancelAnimationFrame(animId);draw(phase);}});
+  document.getElementById('gait').addEventListener('change',()=>draw(phase));
+  document.getElementById('speed').addEventListener('input',e=>document.getElementById('speedOut').textContent=fmt(e.target.value)+'×');
+  document.getElementById('reset').addEventListener('click',()=>{Object.assign(val,initial);specs.forEach(([id])=>document.getElementById('s_'+id).value=val[id]);yaw=-.66;pitch=.72;zoom=1;playing=false;phase=0;document.getElementById('animate').textContent='▶ Animar';updateLabels();draw();});
+  canvas.addEventListener('pointerdown',e=>{dragging=true;lastX=e.clientX;lastY=e.clientY;canvas.setPointerCapture(e.pointerId)});
+  canvas.addEventListener('pointermove',e=>{if(!dragging)return;yaw+=(e.clientX-lastX)*.009;pitch=Math.max(-.1,Math.min(1.42,pitch+(e.clientY-lastY)*.008));lastX=e.clientX;lastY=e.clientY;draw(phase)});
+  canvas.addEventListener('pointerup',()=>dragging=false);canvas.addEventListener('pointercancel',()=>dragging=false);
+  canvas.addEventListener('wheel',e=>{e.preventDefault();zoom=Math.max(.55,Math.min(2.5,zoom*(e.deltaY<0?1.08:.92)));draw(phase)},{passive:false});
+  canvas.addEventListener('dblclick',()=>{yaw=-.66;pitch=.72;zoom=1;draw(phase)});
+  window.addEventListener('resize',()=>draw(phase));updateLabels();draw();
+})();
+</script>
+</body>
+</html>

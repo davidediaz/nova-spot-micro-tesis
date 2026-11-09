@@ -1,0 +1,9 @@
+copia,marcha,viabilidad,episodios,avance_m,avance_nominal_m,deriva_m,deriva_nominal_m,caidas,caidas_nominal,inclinacion_max_deg
+ppo_v26_galope/semilla_6409/intermedias/policy_200000_steps.zip,galope,50.0,20,1.729,2.034,0.31,0.29,0,0,7.11
+ppo_v26_galope/semilla_6403/intermedias/policy_150000_steps.zip,galope,85.0,20,2.026,2.034,0.277,0.29,0,0,10.11
+ppo_v26_galope/semilla_6407/intermedias/policy_250000_steps.zip,galope,35.0,20,1.583,2.034,0.448,0.29,0,0,7.0
+ppo_v26_galope/semilla_6403/intermedias/policy_250000_steps.zip,galope,15.0,20,1.574,2.034,0.552,0.29,0,0,8.32
+ppo_v26_galope/semilla_6401/intermedias/policy_200000_steps.zip,galope,10.0,20,1.327,2.034,0.311,0.29,0,0,6.99
+ppo_v26_galope/semilla_6401/intermedias/policy_300000_steps.zip,galope,10.0,20,1.307,2.034,0.357,0.29,0,0,6.99
+ppo_v26_galope/semilla_6401/intermedias/policy_500000_steps.zip,galope,0.0,20,0.39,2.034,0.094,0.29,0,0,6.93
+ppo_v26_galope/semilla_6401/intermedias/policy_550000_steps.zip,galope,0.0,20,0.535,2.034,0.094,0.29,0,0,6.72

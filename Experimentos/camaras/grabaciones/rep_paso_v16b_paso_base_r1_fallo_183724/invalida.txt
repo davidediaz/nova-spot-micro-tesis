@@ -1,0 +1,1 @@
+femur4 no sigue la orden (r=0.877134430915955): posible bus I2C bloqueado

@@ -1,0 +1,6 @@
+copia,marcha,viabilidad,episodios,avance_m,avance_nominal_m,deriva_m,deriva_nominal_m,caidas,caidas_nominal,inclinacion_max_deg
+ppo_v24_carrera/semilla_4303/intermedias/policy_2100000_steps.zip,carrera,90.0,20,1.072,1.14,0.035,0.108,0,0,5.36
+ppo_v24_carrera/semilla_4303/intermedias/policy_2300000_steps.zip,carrera,95.0,20,1.087,1.14,0.031,0.108,0,0,5.46
+ppo_v24_carrera/semilla_4303/intermedias/policy_2200000_steps.zip,carrera,95.0,20,1.084,1.14,0.03,0.108,0,0,5.44
+ppo_v24_carrera/semilla_4303/intermedias/policy_2400000_steps.zip,carrera,95.0,20,1.087,1.14,0.029,0.108,0,0,5.46
+ppo_v24_carrera/semilla_4301/intermedias/policy_2700000_steps.zip,carrera,90.0,20,1.07,1.14,0.053,0.108,0,0,5.23

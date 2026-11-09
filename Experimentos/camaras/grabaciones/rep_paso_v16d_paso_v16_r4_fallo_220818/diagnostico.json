@@ -1,0 +1,203 @@
+{
+  "pasos": 64,
+  "duracion_s": 2.921,
+  "ciclos": 1,
+  "periodo_ms": {
+    "mediana": 36.00000000000003,
+    "p99": 164.13999999999984,
+    "maximo": 165.99999999999991,
+    "pasos_mas_de_40ms": 20
+  },
+  "desplazamiento_comun_C0": {
+    "maximo_cuentas": 62.0,
+    "por_ciclo": [
+      10.8
+    ]
+  },
+  "articulaciones": {
+    "femur1": {
+      "sensor": "C8",
+      "r_medio": 0.8849520108586257,
+      "r_minimo": 0.8849520108586257,
+      "error_rms_medio": 13.4799358995219,
+      "deriva_desfase_grados": 0.0,
+      "lecturas_perdidas": 0,
+      "por_ciclo": [
+        {
+          "r": 0.8849520108586257,
+          "error_rms": 13.4799358995219,
+          "desfase": 17.920717031289293,
+          "perdidas": 0
+        }
+      ]
+    },
+    "femur2": {
+      "sensor": "C5",
+      "r_medio": 0.6705297672920449,
+      "r_minimo": 0.6705297672920449,
+      "error_rms_medio": 7.159609160049914,
+      "deriva_desfase_grados": 0.0,
+      "lecturas_perdidas": 0,
+      "por_ciclo": [
+        {
+          "r": 0.6705297672920449,
+          "error_rms": 7.159609160049914,
+          "desfase": -10.63193262352169,
+          "perdidas": 0
+        }
+      ]
+    },
+    "femur3": {
+      "sensor": "C9",
+      "r_medio": -0.1719344422959024,
+      "r_minimo": -0.1719344422959024,
+      "error_rms_medio": 22.850482500206308,
+      "deriva_desfase_grados": 0.0,
+      "lecturas_perdidas": 0,
+      "por_ciclo": [
+        {
+          "r": -0.1719344422959024,
+          "error_rms": 22.850482500206308,
+          "desfase": 17.493316123079236,
+          "perdidas": 0
+        }
+      ]
+    },
+    "femur4": {
+      "sensor": "C6",
+      "r_medio": 0.5174753602132656,
+      "r_minimo": 0.5174753602132656,
+      "error_rms_medio": 6.996852424802718,
+      "deriva_desfase_grados": 0.0,
+      "lecturas_perdidas": 0,
+      "por_ciclo": [
+        {
+          "r": 0.5174753602132656,
+          "error_rms": 6.996852424802718,
+          "desfase": 5.6061794888844565,
+          "perdidas": 0
+        }
+      ]
+    },
+    "tibia1": {
+      "sensor": "ENC_T1",
+      "caido": true,
+      "lecturas_perdidas": 64
+    },
+    "tibia2": {
+      "sensor": "ENC_T2",
+      "r_medio": 0.981625339940324,
+      "r_minimo": 0.981625339940324,
+      "error_rms_medio": 0.8051411557323095,
+      "deriva_desfase_grados": 0.0,
+      "lecturas_perdidas": 0,
+      "por_ciclo": [
+        {
+          "r": 0.981625339940324,
+          "error_rms": 0.8051411557323095,
+          "desfase": -0.8426066667917593,
+          "perdidas": 0
+        }
+      ]
+    },
+    "tibia3": {
+      "sensor": "C11",
+      "caido": true,
+      "lecturas_perdidas": 64
+    },
+    "tibia4": {
+      "sensor": "C10",
+      "r_medio": 0.09704816678247083,
+      "r_minimo": 0.09704816678247083,
+      "error_rms_medio": 3.8524355139257884,
+      "deriva_desfase_grados": 0.0,
+      "lecturas_perdidas": 0,
+      "por_ciclo": [
+        {
+          "r": 0.09704816678247083,
+          "error_rms": 3.8524355139257884,
+          "desfase": -1.0352669994237378,
+          "perdidas": 0
+        }
+      ]
+    }
+  },
+  "coxas": {
+    "coxa2": {
+      "desviacion_media": 6.353741496598644,
+      "p95": 14.938775510204103,
+      "por_ciclo": [
+        6.353741496598644
+      ]
+    },
+    "coxa3": {
+      "desviacion_media": 6.435374149659865,
+      "p95": 14.367346938775512,
+      "por_ciclo": [
+        6.435374149659865
+      ]
+    },
+    "coxa4": {
+      "desviacion_media": 5.687074829931974,
+      "p95": 11.265306122448969,
+      "por_ciclo": [
+        5.687074829931974
+      ]
+    }
+  },
+  "camara1": {
+    "fotogramas": 590,
+    "fps_real": 15.151518654451927,
+    "huecos_mas_de_50ms": 538,
+    "hueco_maximo_ms": 802.9999732971191,
+    "brillo_medio": 56.224649021768165,
+    "nitidez_media": 349.9826153377806,
+    "retardo_movimiento_s": 0.0,
+    "correlacion_movimiento": 0.0,
+    "deteccion_marcadores": {}
+  },
+  "camara2": {
+    "fotogramas": 608,
+    "fps_real": 14.492752421330513,
+    "huecos_mas_de_50ms": 607,
+    "hueco_maximo_ms": 74.00012016296387,
+    "brillo_medio": 94.82842651367187,
+    "nitidez_media": 144.21440242689886,
+    "retardo_movimiento_s": 0.0,
+    "correlacion_movimiento": 0.0,
+    "deteccion_marcadores": {}
+  },
+  "camara_general": {
+    "fotogramas": 822,
+    "fps_real": 20.833291113462177,
+    "huecos_mas_de_50ms": 294,
+    "hueco_maximo_ms": 470.99995613098145,
+    "brillo_medio": 87.7621740571952,
+    "nitidez_media": 65.30310239834161,
+    "retardo_movimiento_s": 0.0,
+    "correlacion_movimiento": 0.0,
+    "deteccion_marcadores": {}
+  },
+  "camara_logitech": {
+    "fotogramas": 763,
+    "fps_real": 29.411627760208123,
+    "huecos_mas_de_50ms": 373,
+    "hueco_maximo_ms": 867.0001029968262,
+    "brillo_medio": 59.44757825520835,
+    "nitidez_media": 81.42549581009949,
+    "retardo_movimiento_s": 0.0,
+    "correlacion_movimiento": 0.0,
+    "deteccion_marcadores": {}
+  },
+  "camara_windows": {
+    "fotogramas": 565,
+    "fps_real": 14.92539267947249,
+    "huecos_mas_de_50ms": 502,
+    "hueco_maximo_ms": 100.00014305114746,
+    "brillo_medio": 97.7570628049925,
+    "nitidez_media": 191.12546477237518,
+    "retardo_movimiento_s": 0.0,
+    "correlacion_movimiento": 0.0,
+    "deteccion_marcadores": {}
+  }
+}

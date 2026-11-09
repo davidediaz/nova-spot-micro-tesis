@@ -1,0 +1,56 @@
+marcha,termino,nombre,inicio,final
+paso,vivo,Seguir de pie,413.55,435.0
+paso,avance,Avance,10.08,12.1
+paso,actitud,Inclinación,-101.55,-80.94
+paso,altura,Altura,-0.06,-0.09
+paso,base,Lejos de la base,-7.26,-12.5
+paso,correccion,Corrección grande,-0.12,-0.86
+paso,lateral,Desvío lateral,-62.65,-7.53
+paso,giro,Giro,-353.88,-210.17
+paso,suavidad,Brusquedad,-865.71,-59.48
+paso,coxas,Coxas,-395.09,-374.65
+paso,giro_ciclo,Giro por ciclo,-721.75,-469.98
+trote,vivo,Seguir de pie,246.15,429.0
+trote,avance,Avance,3.2,10.12
+trote,actitud,Inclinación,-223.05,-94.07
+trote,altura,Altura,-0.16,-0.4
+trote,base,Lejos de la base,-9.39,-22.28
+trote,correccion,Corrección grande,-0.07,-0.84
+trote,lateral,Desvío lateral,-116.75,-14.13
+trote,giro,Giro,-1274.93,-32.91
+trote,suavidad,Brusquedad,-515.35,-68.96
+trote,coxas,Coxas,-316.63,-470.86
+trote,giro_ciclo,Giro por ciclo,-7101.02,-20.87
+carrera,vivo,Seguir de pie,83.93,46.59
+carrera,avance,Avance,0.34,-0.37
+carrera,actitud,Inclinación,-135.86,-51.33
+carrera,altura,Altura,-0.11,-0.18
+carrera,base,Lejos de la base,-3.57,-1.93
+carrera,correccion,Corrección grande,-0.02,-0.09
+carrera,lateral,Desvío lateral,-11.8,-0.78
+carrera,giro,Giro,-204.5,-3.88
+carrera,suavidad,Brusquedad,-175.66,-14.55
+carrera,coxas,Coxas,-105.54,-28.52
+carrera,giro_ciclo,Giro por ciclo,-2286.68,0.0
+gateo,vivo,Seguir de pie,561.0,561.0
+gateo,avance,Avance,30.76,32.33
+gateo,actitud,Inclinación,-55.79,-30.31
+gateo,altura,Altura,-0.05,-0.17
+gateo,base,Lejos de la base,-7.15,-12.91
+gateo,correccion,Corrección grande,-0.17,-1.01
+gateo,lateral,Desvío lateral,-112.72,-8.37
+gateo,giro,Giro,-391.79,-60.24
+gateo,suavidad,Brusquedad,-1174.11,-251.81
+gateo,coxas,Coxas,-584.4,-434.67
+gateo,giro_ciclo,Giro por ciclo,-439.13,-72.83
+galope,vivo,Seguir de pie,230.9,357.0
+galope,avance,Avance,-4.21,23.09
+galope,actitud,Inclinación,-143.54,-43.85
+galope,altura,Altura,-0.5,-0.25
+galope,base,Lejos de la base,-15.49,-26.02
+galope,correccion,Corrección grande,-0.07,-0.38
+galope,lateral,Desvío lateral,-526.61,-776.52
+galope,giro,Giro,-6025.19,-745.18
+galope,suavidad,Brusquedad,-483.25,-587.84
+galope,coxas,Coxas,-459.52,-708.89
+galope,giro_ciclo,Giro por ciclo,-24081.64,-679.52

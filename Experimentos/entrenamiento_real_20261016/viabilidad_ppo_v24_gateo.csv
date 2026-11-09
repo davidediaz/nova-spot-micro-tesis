@@ -1,0 +1,6 @@
+copia,marcha,viabilidad,episodios,avance_m,avance_nominal_m,deriva_m,deriva_nominal_m,caidas,caidas_nominal,inclinacion_max_deg
+ppo_v24_gateo/semilla_4009/intermedias/policy_2700000_steps.zip,gateo,0.0,20,0.615,1.027,0.029,0.135,0,0,3.01
+ppo_v24_gateo/semilla_4009/intermedias/policy_2500000_steps.zip,gateo,0.0,20,0.591,1.027,0.036,0.135,0,0,3.0
+ppo_v24_gateo/semilla_4009/intermedias/policy_2800000_steps.zip,gateo,0.0,20,0.611,1.027,0.029,0.135,0,0,3.04
+ppo_v24_gateo/semilla_4009/intermedias/policy_2900000_steps.zip,gateo,0.0,20,0.609,1.027,0.032,0.135,0,0,3.03
+ppo_v24_gateo/semilla_4003/intermedias/policy_3000000_steps.zip,gateo,0.0,20,0.872,1.027,0.031,0.135,0,0,4.24

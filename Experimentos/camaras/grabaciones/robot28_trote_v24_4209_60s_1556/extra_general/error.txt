@@ -1,0 +1,1 @@
+Command '['ffprobe', '-v', 'error', '-select_streams', 'v', '-show_entries', 'packet=pts_time', '-read_intervals', '%+#1', '-of', 'json', '/home/pavilion/Documentos/Cuadrupedo/Experimentos/camaras/grabaciones/robot28_trote_v24_4209_60s_1556/extra_general/video.mkv']' returned non-zero exit status 1.
