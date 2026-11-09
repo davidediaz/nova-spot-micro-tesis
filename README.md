@@ -37,17 +37,18 @@ La versión exacta de esas políticas está fijada con la etiqueta `politicas-el
 | [`src/`](src/README.md) | Paquetes ROS 2: `nova_sm3_description` (modelo URDF y MJCF, mundos, lanzadores de Gazebo y MuJoCo) y `nova_gait_controller` (máquina de marchas, métricas y supervisor). |
 | [`Arduino/`](Arduino/README.md) | Firmware de la interfaz de E/S (PCA9685, multiplexores y sensores) y bocetos de prueba. El vigente es `movimiento_suspendido_11_servos/`. |
 | [`Raspberry/`](Raspberry/README.md) | Preparación de la Raspberry Pi 4 (controlador previsto), pruebas de hardware y documentación de conexiones. |
-| [`Caminata final/`](Caminata%20final/README.md) | Sesiones de caminata del 21-oct-2026 (ciclo de mejora, vuelta 3) con su informe. |
-| [`GRABACION_FINAL/`](GRABACION_FINAL/README.md) | Paquete final del 5-nov-2026: tesis en PDF y gráficas de convergencia. Los videos quedan solo en el PC. |
 | [`gif/`](gif/README.md) | Animaciones cortas: trote PPO en MuJoCo y gateo nominal en Gazebo. |
-| `Github/` | Página de seguimiento del proyecto (bitácora, cronograma y evidencias), publicada en la rama `gh-pages`. |
-| `ProyectoII_Clases/`, `Seguimiento/` | Material de clase y seguimiento del curso Proyecto de Grado II. |
+| [`Curso_y_seguimiento/`](Curso_y_seguimiento/README.md) | Material del curso Proyecto de Grado II, seguimiento con el profesor y página web de progreso. |
 | `scripts/` | Utilidades: preparar y verificar la Raspberry Pi y ejemplos del modelo matemático. |
 | `CONTINUIDAD.md` | **Bitácora diaria** del proyecto: qué se hizo, con qué datos y qué quedó pendiente. Es el mejor punto de partida para retomar. |
 
-Los archivos sueltos de la raíz son informes de sesiones concretas (`INFORME_INTEGRAL_LECTURAS_*.md`,
-`ANEXO_METRICO_*.csv`), un esquema de medidas (`medidas_robot_fisico.svg`) y un visor web
-(`visor_interactivo.html`).
+En la raíz quedan solo este README, `CONTINUIDAD.md`, `index.html` (abre la página de progreso) y
+`visor_interactivo.html` (visor web del robot). Los informes de sesiones concretas están en
+`Documentacion/informes/`.
+
+Cada archivo está una sola vez. Las copias que había, como los datos repetidos dentro de cada cámara, la carpeta
+«Caminata final» y el paquete «GRABACION_FINAL», existen solo en el PC del laboratorio; su contenido útil está en
+la carpeta que indica la tabla.
 
 ## Empezar en otro PC
 
@@ -70,8 +71,11 @@ PY=../../.venv-mujoco/bin/python politicas_elegidas_20261105/verificar.sh
 
 ## Qué no está en el repositorio
 
-- **Videos de las cámaras.** Son pesados y en algunos aparecen personas. Están en el PC del laboratorio y en un
-  disco externo («Vidios tesis»).
+- **Videos de las cámaras e imágenes de las cámaras.** Son pesados y en algunos aparecen personas. Están en el PC del
+  laboratorio y en un disco externo («Vidios tesis»). Los videos de evidencia del 5-nov se publicarán en YouTube.
+- **Copias de un mismo archivo:** los datos repetidos dentro de cada cámara, la carpeta «Caminata final» (copia de
+  `Experimentos/camaras/grabaciones`) y el paquete «GRABACION_FINAL» (PDF y gráficas que ya están en
+  `Documento_TESIS/` y `Documentacion/`).
 - **Copias intermedias de los entrenamientos** (`intermedias/`, cientos de MB). Sí están la política final, la
   configuración y los registros de cada semilla.
 - **Entornos y compilaciones locales:** `.venv-mujoco/`, `build/`, `install/`, `log/` y los repositorios de

@@ -13,5 +13,7 @@ Notas de diseño, protocolos y explicaciones que acompañan a la tesis.
 | `ENTORNO_RL_RESIDUAL_*.md`, `DECISION_TAMANO_MUESTRAL_Y_SEMILLAS_RL.md` | Diseño del aprendizaje por refuerzo. |
 | `presentacion_20261028/` | Presentación completa (46 diapositivas, ecuaciones explicadas en las notas). |
 | `presentacion_charla_20261029/` | Presentación resumida en línea de tiempo (29 diapositivas). |
-| `graficas_convergencia_20261105/` | Gráficas de convergencia por marcha (v31 y v33) para exponer. |
+| Gráficas de convergencia | Están en `Experimentos/entrenamiento_real_20261016/graficas/` (`convergencia/` para la v31 y `convergencia_v33/`). |
+| `informes/` | Informes de sesiones concretas: lecturas integrales del 20 y 21 de octubre con su anexo métrico, y referencias extremas de los AS5600 (7-oct). |
+| `medidas_robot_fisico.svg` | Esquema con las medidas del robot físico. |
 | `ACTIVIDAD_1_CORTE_1_2026_2/`, `Fuentes/` | Entregas del curso y fuentes consultadas. |

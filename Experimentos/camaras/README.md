@@ -21,9 +21,15 @@ sincronizadas en el mismo reloj, y después se analiza.
   y la corrección de la política.
 - `caminata.config.json`: marcha, política, calibración y argumentos exactos.
 - `diagnostico.json`, `comparacion_sim_real.json` y otros: resultados de los análisis.
-- `remota/` y `extra_*/`: hora de inicio y desfase de cada cámara. Sus copias de `caminata.csv` y los videos
-  (`*.mkv`) no se suben al repositorio.
+- `remota/` y `extra_*/`: hora del primer fotograma y desfase de cada cámara. Los videos (`*.mkv`) y las copias
+  de `caminata.csv`, `caminata.config.json` y `caminata.inicio.txt` que el análisis de video deja en cada cámara no
+  se suben, porque son idénticas a las de la carpeta de la caminata. Para reanalizar un video, se copian desde ahí.
 
 Prefijos de las carpetas: `rep_<sesión>_…` son repeticiones de comparación; `robot28_…` y `robot05_…`, las pruebas del
 28-oct y del 5-nov; `evidencia_…`, las caminatas de los videos de evidencia del 5-nov. Los archivos
 `repetibilidad_<sesión>.csv` y `.json` resumen cada sesión.
+
+## `informes/`
+
+Informes de sesiones concretas: el ciclo de mejora del 21-oct (`INFORME_CICLO3_2026-10-21.md`, con su historial
+de grabaciones) y el historial de análisis de ese día.

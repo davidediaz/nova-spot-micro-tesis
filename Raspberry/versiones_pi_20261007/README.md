@@ -131,4 +131,4 @@ delanteras y ausencia de despegue de las traseras. Por ello, el gateo camina y
 avanza, pero aún no cumple el patrón ideal de tres apoyos que declara su plan.
 
 El estado, las evidencias y el orden de trabajo vigentes están en
-`Seguimiento/Seguimiento.md` y `CONTINUIDAD.md`.
+`Curso_y_seguimiento/Seguimiento/Seguimiento.md` y `CONTINUIDAD.md`.

@@ -54,12 +54,12 @@ Documento_TESIS/*.run.xml
 *.db3
 Experimentos/campanas_mujoco/*/rosbag2/
 Experimentos/campanas_mujoco/**/*.log
-ProyectoII_Clases/07_09_2026/.~lock*
+Curso_y_seguimiento/ProyectoII_Clases/07_09_2026/.~lock*
 Experimentos/campana_ppo_escala_20260904/
 
 # Evidencia fotográfica autorizada del prototipo
-!Github/evidencias/2026-09-07/*.jpeg
-!Github/evidencias/2026-09-07/gazebo_nova.png
+!Curso_y_seguimiento/Github/evidencias/2026-09-07/*.jpeg
+!Curso_y_seguimiento/Github/evidencias/2026-09-07/gazebo_nova.png
 
 # Videos de las cámaras (pesados; quedan solo en este PC)
 Experimentos/camaras/grabaciones/**/*.mkv
@@ -73,5 +73,13 @@ Experimentos/camaras/grabaciones/*/extra_*/caminata.csv
 Experimentos/camaras/grabaciones/**/*.jpg
 Experimentos/camaras/vivo/
 # Videos de evidencia (aparece una persona; repositorio público) y comprimidos duplicados
-GRABACION_FINAL/Videos_evidencia_5nov/*.mp4
+GRABACION_FINAL/
 gif.zip
+# Copia de Experimentos/camaras/grabaciones (su informe está en Experimentos/camaras/informes/)
+Caminata final/
+# Copias exactas, dentro de cada cámara, de los archivos de la caminata (solo hacen falta para reanalizar videos)
+Experimentos/camaras/grabaciones/*/remota/caminata.config.json
+Experimentos/camaras/grabaciones/*/remota/caminata.inicio.txt
+Experimentos/camaras/grabaciones/*/extra_*/caminata.config.json
+Experimentos/camaras/grabaciones/*/extra_*/caminata.inicio.txt
+Documentacion/graficas_convergencia_20261105/
